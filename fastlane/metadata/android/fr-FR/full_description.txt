@@ -1,0 +1,63 @@
+Un compagnon non officiel et hors ligne pour Marvel Champions : Le Jeu de
+Cartes.
+
+Thwart tient le compte de tout ce qu'une partie de Marvel Champions vous demande
+de suivre, pour que la table puisse se consacrer à jouer.
+
+<b>Cartes</b>
+Tout le catalogue, consultable hors ligne, sans se soucier des accents. Filtrez
+par type, aspect, coût et traits ; triez par extension, nom ou coût. Mettez en
+favori celles qui comptent. Le texte des cartes s'affiche dans la langue que
+vous choisissez, indépendamment de la langue de l'application.
+
+<b>Votre collection</b>
+Cochez les extensions que vous possédez : tout le reste en découle. Le tirage
+aléatoire ne propose que ce que vous pouvez poser sur la table, et vos decks
+sont vérifiés en fonction. Posséder une extension n'est pas posséder tout ce
+qu'elle contient, alors décochez les sets modulaires qui manquent à une boîte
+d'occasion.
+
+<b>Decks</b>
+Importez depuis un lien de decklist, construisez de zéro, vérifiez la légalité
+au fur et à mesure et partagez une liste en texte brut. Les règles de
+construction sont respectées, y compris celles des héros qui les réécrivent :
+les quatre aspects équilibrés d'Adam Warlock, les deux aspects de Spider-Woman,
+les événements hors aspect de Gamora.
+
+<b>Règles</b>
+Le guide de référence dans un onglet à lui, cherchable et hors ligne, parce que
+le moment où quelqu'un a besoin de savoir ce que fait Riposte est le moment où
+le livret est dans un sac sous la table. En français, mots-clés compris.
+
+<b>Parties aléatoires</b>
+Scénario, difficulté, sets modulaires, héros et aspects, tirés uniquement dans
+ce que vous possédez. Verrouillez ce qui est déjà décidé et relancez le reste
+autour. Une page de mise en place vous dit ensuite quoi sortir des boîtes, y
+compris la mise en place imprimée sur la manigance principale du scénario.
+
+<b>Campagnes</b>
+Quatre campagnes sont fournies avec l'application. La mise en place de chaque
+scénario découle de ce que vous avez enregistré dans les précédents : elle vous
+dit quoi poser sur la table plutôt que de vous faire relire le livret. Ce qui
+est stocké est un journal en écriture seule, donc une campagne terminée est le
+récit de ce qui s'est réellement passé.
+
+<b>Historique et statistiques</b>
+Les parties sont chronométrées et enregistrées. Taux de victoire par héros, par
+scénario, par aspect, par difficulté, et solo contre multijoueur, gardés à part
+parce qu'un chiffre mélangé ne décrit ni l'un ni l'autre.
+
+<b>Pas de compte, pas de serveur, pas de publicité</b>
+Tout reste sur l'appareil. Aucune mesure d'audience, aucun serveur. Une
+sauvegarde est un simple fichier JSON lisible que vous gardez.
+
+<b>Sans lien avec Marvel ni Fantasy Flight Games</b>
+Thwart est une aide de jeu faite par un joueur. Marvel Champions : Le Jeu de
+Cartes est une propriété Marvel éditée par Fantasy Flight Games ; cette
+application n'est ni affiliée, ni approuvée, ni sponsorisée par eux. Le jeu est
+nommé ici pour dire avec quoi l'application fonctionne. Les données des cartes
+proviennent de MarvelCDB ; aucune image de carte, aucun texte de carte et aucun
+texte de livret de campagne n'est stocké dans ce projet. Il vous faut le jeu
+lui-même, et ses livrets de règles, pour utiliser tout ceci.
+
+Le guide de référence des règles est compilé par deejimy et publié sous CC0.

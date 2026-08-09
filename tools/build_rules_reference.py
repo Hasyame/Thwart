@@ -92,6 +92,15 @@ def readable(text):
         line = re.sub(r"^(\s*)-\s+", lambda m: m.group(1) + "• ", line)
         lines.append(line.strip() if not line.startswith(" ") else line)
     text = "\n".join(lines)
+    # An icon printed inside brackets — "l'icône par joueur (![[img]])" — leaves
+    # the brackets behind once the image goes, and an empty pair mid-sentence
+    # reads as something failed to load.
+    text = re.sub(r"\(\s*\)", "", text)
+    # Only the full stop and the comma. French sets a space before a colon, a
+    # semicolon, a question mark and an exclamation mark, so tidying those away
+    # would be introducing a typo rather than removing one.
+    text = re.sub(r" +([.,])", r"\1", text)
+    text = re.sub(r" {2,}", " ", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 

@@ -17,11 +17,20 @@ that are missing from a second-hand box.
 
 <b>Decks</b>
 Import from a decklist link, build from scratch, check legality as you go, and
-share a list as plain text.
+share a list as plain text. Deck building rules are enforced, including the
+heroes who rewrite them: Adam Warlock's four balanced aspects, Spider-Woman's
+two, Gamora's off-aspect events.
+
+<b>Rules</b>
+The rules reference in a tab of its own, searchable and offline, because the
+moment somebody needs to know what retaliate does is the moment the rulebook is
+in a bag under the table. In English and French, keywords included.
 
 <b>Random games</b>
 Scenario, difficulty, modular sets, heroes and aspects, drawn only from what you
-own. Lock anything you have already decided and roll the rest around it.
+own. Lock anything you have already decided and roll the rest around it. A setup
+page then tells you what to fetch out of the boxes, including the setup printed
+on the scenario's own main scheme.
 
 <b>Campaigns</b>
 Four campaigns ship with the app. Each scenario's setup is worked out from what
@@ -45,3 +54,5 @@ endorsed by or sponsored by them. The game is named here to say what the app
 works with. Card data is fetched from MarvelCDB; no card images, card text or
 campaign book text is stored in this project. You need the game itself, and its
 rulebooks, to use any of this.
+
+The rules reference is compiled by deejimy and released under CC0.
