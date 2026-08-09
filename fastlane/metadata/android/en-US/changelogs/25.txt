@@ -1,0 +1,13 @@
+A random draw, or a setup you chose yourself, now lands on a setup page
+before the game starts: what to fetch out of the boxes — the scenario, its
+main scheme, the difficulty, the modular sets that were drawn and who is
+playing which aspect — and then the setup printed on the scenario's own main
+scheme.
+
+The clock waits for the Play button instead of starting the moment the
+scenario is known. Laying a game out takes minutes, and they were being
+counted as play time, so every recorded game was longer than it really was.
+
+Also fixes losing what you had just done while a screen was still loading:
+an aspect ticked while the hero list loaded, or a search typed while the card
+list was being fetched, could be quietly undone.

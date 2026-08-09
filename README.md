@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.12.0](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.13.0](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -101,6 +101,13 @@ content rather than machinery.
   rather than out of a template, so it arrives in whatever language the cards
   are in, and covers sixty of the sixty-two scenarios. Ebony Maw and Thanos
   keep theirs in the rules insert and show nothing rather than a guess.
+- **A setup page for games that are not campaigns.** A random draw, or a setup
+  chosen by hand, lands on the same briefing: what to fetch — the scenario, its
+  main scheme, the difficulty, the modular sets that were drawn and who is
+  playing which aspect — and then the setup printed on the scheme. The clock
+  waits for a Play button rather than starting the moment the scenario is
+  known, because laying a game out takes minutes that are not play, and they
+  were being counted.
 - **Finished campaigns.** Saved runs keep total time, victory points, heroes,
   credits and a per-scenario log of the answers given.
 - **Backup and restore.** Collection, decks, campaigns, play history and
