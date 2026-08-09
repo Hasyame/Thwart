@@ -68,6 +68,13 @@ data object PlayGraph
 @Serializable
 data object PlayRoute
 
+/** The Rules Reference, looked up during a game. */
+@Serializable
+data object RulesGraph
+
+@Serializable
+data object RulesRoute
+
 /** The play history and what it adds up to. */
 @Serializable
 data object StatsGraph

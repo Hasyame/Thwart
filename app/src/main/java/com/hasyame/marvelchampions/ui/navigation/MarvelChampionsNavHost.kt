@@ -20,6 +20,7 @@ import com.hasyame.marvelchampions.ui.decks.DecksScreen
 import com.hasyame.marvelchampions.ui.decks.NewDeckScreen
 import com.hasyame.marvelchampions.ui.plays.GameSessionScreen
 import com.hasyame.marvelchampions.ui.plays.PlaysScreen
+import com.hasyame.marvelchampions.ui.rules.RulesScreen
 import com.hasyame.marvelchampions.ui.play.PlayScreen
 import com.hasyame.marvelchampions.ui.randomizer.RandomizerScreen
 import com.hasyame.marvelchampions.ui.settings.AboutScreen
@@ -183,6 +184,11 @@ fun MarvelChampionsNavHost(
                     onBack = { navController.popBackStack() },
                 )
             }
+        }
+        // The rules are a tab because they are consulted mid game, and anything
+        // behind two taps during somebody else's turn is a rulebook.
+        navigation<RulesGraph>(startDestination = RulesRoute) {
+            composable<RulesRoute> { RulesScreen() }
         }
         // Stats is its own tab, so its own graph and back stack.
         navigation<StatsGraph>(startDestination = PlaysRoute) {

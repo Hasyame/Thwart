@@ -6,6 +6,10 @@
     <string name="destination_decks">Decks</string>
     <string name="destination_campaign">Campagne</string>
     <string name="destination_randomizer">Aléatoire</string>
+    <string name="destination_rules">Règles</string>
+    <string name="rules_search_hint">Rechercher dans les règles</string>
+    <string name="rules_no_results">Aucune règle ne correspond à votre recherche.</string>
+    <string name="rules_english_only">En anglais seulement pour le moment.</string>
     <string name="destination_settings">Réglages</string>
 
     <!-- Common actions -->
