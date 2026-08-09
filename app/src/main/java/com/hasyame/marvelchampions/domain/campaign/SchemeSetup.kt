@@ -65,8 +65,9 @@ object SchemeSetup {
     }
 
     private fun section(text: String?): String? {
-        val match = heading.find(text.orEmpty()) ?: return null
-        val rest = text!!.substring(match.range.last + 1)
+        val whole = text.orEmpty()
+        val match = heading.find(whole) ?: return null
+        val rest = whole.substring(match.range.last + 1)
         val end = nextHeading.find(rest)?.range?.first ?: rest.length
         return readable(rest.substring(0, end)).ifBlank { null }
     }

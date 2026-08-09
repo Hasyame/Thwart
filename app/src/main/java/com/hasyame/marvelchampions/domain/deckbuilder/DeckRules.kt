@@ -141,8 +141,6 @@ sealed interface DeckProblem {
         val quantity: Int,
     ) : DeckProblem
 
-    data class OverAspectLimit(val aspect: String, val actual: Int, val limit: Int) : DeckProblem
-
     /** A signature card of the hero missing, or present in the wrong number. */
     data class MissingRequiredCard(
         val cardCode: String,

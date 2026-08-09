@@ -393,6 +393,32 @@ class DeckValidatorTest {
     }
 
     @Test
+    fun `a unique card with no subtitle is the character itself`() {
+        // The "Captain America" title upgrade carries no subtitle, so it is the
+        // same Captain America the deck is built around and cannot be in it.
+        // Half the name clashes in the pool are of this shape.
+        val steve = heroRules.copy(
+            identityTitle = "Captain America",
+            identityAlterEgo = "Steve Rogers",
+        )
+        val (slots, cards) = fillerDeck(count = 39)
+        val withTitle = slots + mapOf("53023" to 1)
+        val titleCards = cards + mapOf(
+            "53023" to card("53023", "leadership", type = "upgrade", unique = true)
+                .copy(name = "Captain America", subtitle = null),
+        )
+
+        val result = DeckValidator.validate(steve, listOf("justice"), withTitle, titleCards)
+
+        assertTrue(
+            result.problems.toString(),
+            result.problems.any {
+                it is DeckProblem.DuplicateUniqueCard && it.cardCode == "53023"
+            },
+        )
+    }
+
+    @Test
     fun `a hero's own aspect cards are legal whatever aspects were chosen`() {
         // Spider-Woman's set holds one event of each aspect. Venom Blast is an
         // aggression card and belongs in her deck even when she has picked

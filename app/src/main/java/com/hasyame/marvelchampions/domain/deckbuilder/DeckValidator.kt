@@ -128,58 +128,90 @@ object DeckValidator {
         val byTitle = slots.entries
             .filter { it.value > 0 && it.key !in rules.requiredCards }
             .mapNotNull { (code, quantity) -> cards[code]?.let { it to quantity } }
+            // A unique card is limited to one by its own rule, which counts the
+            // identity card as well. Leaving it here too would report it twice,
+            // and judging a whole title by whether its first printing happened
+            // to be unique is not something to rely on.
+            .filter { (card, _) -> !card.isUnique }
             .groupBy { (card, _) -> card.name }
 
         byTitle.forEach { (title, entries) ->
             val total = entries.sumOf { it.second }
-            val first = entries.first().first
-            if (first.isUnique) {
-                return@forEach
-            }
             // The identity's own limit wins where it has one: Adam Warlock
             // allows a single copy of anything that is not his.
             val limit = rules.copyLimitOverride
                 ?: entries.minOf { (card, _) -> card.deckLimit ?: MAXIMUM_COPIES }
             if (total > limit) {
-                problems += DeckProblem.OverCopyLimit(first.code, title, total, limit)
+                problems += DeckProblem.OverCopyLimit(
+                    entries.first().first.code,
+                    title,
+                    total,
+                    limit,
+                )
             }
         }
         return problems
     }
 
+    /** One unique card in the deck: its code, who it is, and how many copies. */
+    private data class UniqueCopy(
+        val code: String,
+        val subtitle: String,
+        val quantity: Int,
+    )
+
     /**
      * One copy of each unique card, counting the identity card as one of them.
      *
-     * Keyed on title *and* subtitle, because that is what the rule turns on:
-     * Spider-Man (Miles Morales) and Spider-Man (Peter Parker) are two people
-     * and may share a deck. The identity has no subtitle of its own, so its
-     * alter-ego stands in — which is exactly why Peter Parker cannot take the
-     * Spider-Man ally that is also Peter Parker, while Miles is fine.
+     * Grouped by title, then told apart by subtitle — but only where both cards
+     * have one. Spider-Man (Miles Morales) and Spider-Man (Peter Parker) are two
+     * people and may share a deck; the Captain America *title* upgrade carries
+     * no subtitle at all and is therefore the same Captain America the deck is
+     * built around. Half of the forty-eight name clashes in the pool are of that
+     * second kind, so reading a missing subtitle as "somebody else" would have
+     * let a good number of illegal cards through.
+     *
+     * The identity's alter-ego stands in for its subtitle, which is why Peter
+     * Parker cannot take the Spider-Man ally who is also Peter Parker.
      */
     private fun uniqueProblems(
         rules: HeroDeckRules,
         slots: Map<String, Int>,
         cards: Map<String, DeckCardInfo>,
     ): List<DeckProblem> {
-        val problems = mutableListOf<DeckProblem>()
-        val counted = mutableMapOf<Pair<String, String>, Int>()
+        val byTitle = mutableMapOf<String, MutableList<UniqueCopy>>()
 
         rules.identityTitle?.let { title ->
-            counted[title to rules.identityAlterEgo.orEmpty()] = 1
+            byTitle.getOrPut(title) { mutableListOf() } +=
+                UniqueCopy(rules.heroCode, rules.identityAlterEgo.orEmpty(), 1)
+        }
+        slots.forEach { (code, quantity) ->
+            val card = cards[code] ?: return@forEach
+            if (quantity < 1 || !card.isUnique) {
+                return@forEach
+            }
+            byTitle.getOrPut(card.name) { mutableListOf() } +=
+                UniqueCopy(code, card.subtitle.orEmpty(), quantity)
         }
 
-        slots.entries
-            .filter { it.value > 0 }
-            .mapNotNull { (code, quantity) -> cards[code]?.let { Triple(code, it, quantity) } }
-            .filter { (_, card, _) -> card.isUnique }
-            .forEach { (code, card, quantity) ->
-                val key = card.name to card.subtitle.orEmpty()
-                val total = (counted[key] ?: 0) + quantity
-                counted[key] = total
+        val problems = mutableListOf<DeckProblem>()
+        byTitle.forEach { (title, copies) ->
+            val clashes = if (copies.any { it.subtitle.isBlank() }) {
+                // One of them is the character plainly, so all of them are.
+                listOf(copies)
+            } else {
+                copies.groupBy { it.subtitle }.values
+            }
+            clashes.forEach { group ->
+                val total = group.sumOf { it.quantity }
                 if (total > 1) {
-                    problems += DeckProblem.DuplicateUniqueCard(code, card.name, total)
+                    // Named after a card in the deck rather than the identity,
+                    // which is not something the player can remove.
+                    val offender = group.firstOrNull { it.code != rules.heroCode } ?: group.first()
+                    problems += DeckProblem.DuplicateUniqueCard(offender.code, title, total)
                 }
             }
+        }
         return problems
     }
 

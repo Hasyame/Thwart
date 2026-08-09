@@ -289,14 +289,6 @@ private fun problemMessage(problem: DeckProblem): String = when (problem) {
     is DeckProblem.DuplicateUniqueCard ->
         stringResource(R.string.decks_problem_unique, problem.cardName)
 
-    is DeckProblem.OverAspectLimit -> pluralStringResource(
-        R.plurals.decks_problem_aspect_limit,
-        problem.actual,
-        problem.aspect,
-        problem.actual,
-        problem.limit,
-    )
-
     is DeckProblem.MissingRequiredCard -> stringResource(
         R.string.decks_problem_required_card,
         problem.cardName,
