@@ -61,6 +61,33 @@ git push origin com.hasyame.marvelchampions
 Open the MR against `fdroiddata` with the **New App** label, and watch it for
 questions — the reviewers will ask, and a fast answer is what keeps it moving.
 
+## What the first attempt got wrong
+
+The pipeline on the fork built the app fine and then failed five metadata
+checks. All five are fixed in the file beside this one, but they are worth
+writing down, because they are easy to make again.
+
+- **`Categories: Games` is not a category.** The list is specific — `Card Game`,
+  `Board Game`, `Game Helper` and so on. Thwart is a companion to a physical
+  game rather than a game, so it is `Game Helper`. This failed twice, once in
+  the schema check and once in `fdroid lint`.
+- **`rewritemeta` rebuilds the file from the parsed YAML, so comments are lost.**
+  The explanatory comment above `AntiFeatures` was deleted every time it ran,
+  and the job fails when the file is not already what the tool would write.
+  Order matters too: `AntiFeatures` comes first, and there is a blank line
+  before `AutoName`.
+- **`checkupdates` adds `AutoName`.** Same rule — the file has to already be
+  what the tool would produce.
+- **The APK carried a "Dependency metadata" signing block.** The Android plugin
+  writes an encrypted list of every library into the signing block for the Play
+  Console to read, and F-Droid's scanner refuses an APK that has one. Turned off
+  in `app/build.gradle.kts` with `dependenciesInfo { includeInApk = false }`,
+  from **v1.13.1** onwards — which is why the build entry points at that tag and
+  nothing earlier.
+
+The metadata file is canonical as it stands: `fdroid rewritemeta` over it
+changes nothing, and it validates against `schemas/metadata.json`.
+
 ## What a reviewer will find
 
 - MIT, with a LICENSE file

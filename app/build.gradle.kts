@@ -37,6 +37,20 @@ android {
     }
 
     /**
+     * Keeps the dependency list out of the APK.
+     *
+     * The Android plugin otherwise writes a Google-encrypted block naming every
+     * library and version into the signing block, for the Play Console to read.
+     * This app is not on Play, nobody here can decrypt it, and F-Droid's scanner
+     * refuses an APK that carries one — "found extra signing block 'Dependency
+     * metadata'" is what stopped the submission.
+     */
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
+    /**
      * Release signing.
      *
      * The signing password has to be plain text somewhere — Gradle hands the

@@ -1,46 +1,28 @@
-# Build metadata for F-Droid.
-#
-# This file does not belong to this repository — it is kept here so it stays
-# beside the code it describes. To submit, copy it into a fork of
-#   https://gitlab.com/fdroid/fdroiddata
-# as metadata/com.hasyame.marvelchampions.yml on a branch of the same name, and
-# open a merge request labelled "New App".
-#
-# Before pushing, in the fdroidserver container:
-#   fdroid readmeta
-#   fdroid rewritemeta com.hasyame.marvelchampions
-#   fdroid lint com.hasyame.marvelchampions
-#   fdroid build com.hasyame.marvelchampions
-
+AntiFeatures:
+  NonFreeNet:
+    en-US: Card data is downloaded from MarvelCDB, a third-party service.
 Categories:
-  - Games
-
+  - Game Helper
 License: MIT
-
 AuthorName: Hasyame
 SourceCode: https://github.com/Hasyame/Thwart
 IssueTracker: https://github.com/Hasyame/Thwart/issues
 Changelog: https://github.com/Hasyame/Thwart/releases
 
-# Card data is fetched from MarvelCDB, which is a third-party service and not
-# itself free software. The app is fully usable offline once the cards have been
-# fetched, but it cannot get them anywhere else.
-AntiFeatures:
-  NonFreeNet:
-    en-US: Card data is downloaded from MarvelCDB, a third-party service.
+AutoName: Thwart
 
 RepoType: git
 Repo: https://github.com/Hasyame/Thwart.git
 
 Builds:
-  - versionName: 1.5.5
-    versionCode: 13
-    commit: v1.5.5
+  - versionName: 1.13.1
+    versionCode: 26
+    commit: v1.13.1
     subdir: app
     gradle:
       - yes
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.5.5
-CurrentVersionCode: 13
+CurrentVersion: 1.13.1
+CurrentVersionCode: 26
