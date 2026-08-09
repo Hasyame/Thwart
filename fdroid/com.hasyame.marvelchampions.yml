@@ -17,7 +17,7 @@ Repo: https://github.com/Hasyame/Thwart.git
 Builds:
   - versionName: 1.14.0
     versionCode: 27
-    commit: v1.14.0
+    commit: 8af10381a688a953555e3189b8d3c70c01d69dc5
     subdir: app
     gradle:
       - yes

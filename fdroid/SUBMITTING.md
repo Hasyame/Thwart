@@ -85,6 +85,15 @@ writing down, because they are easy to make again.
   from **v1.13.1** onwards — which is why the build entry points at that tag and
   nothing earlier.
 
+- **`commit:` must be a full commit hash, not a tag.** A reviewer asked for this
+  on the first submission. A tag can be moved or deleted after the fact and a
+  hash cannot, so the hash is what a build recipe should pin. Get it with
+  `git rev-list -n 1 v1.14.0`.
+
+  Only the hand-written entry needs it. F-Droid's own updater resolves the tag
+  before writing — `check_tags` calls `vcs.getref()` — so every automatic entry
+  after this one carries a hash already.
+
 The metadata file is canonical as it stands: `fdroid rewritemeta` over it
 changes nothing, and it validates against `schemas/metadata.json`.
 
