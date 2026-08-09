@@ -24,8 +24,8 @@ android {
         // Must increase for every release. v1.0.0 is already published, and a
         // device refuses an install whose versionCode is not higher than the
         // one it already has — silently, from the user's point of view.
-        versionCode = 22
-        versionName = "1.11.0"
+        versionCode = 23
+        versionName = "1.11.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.11.0](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.11.1](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -128,6 +128,29 @@ Campaigns are added after they have been played, so that the mechanics in the
 template come from experience rather than from a reading of the book. That is
 the whole roadmap — no further app features are planned, and anything else will
 come from something going wrong at a real table.
+
+## Web companion
+
+Players on iPhone cannot install an APK, and an iOS build would mean Kotlin
+Multiplatform, a Mac and a yearly fee to reach one more platform. `web/` is a
+page instead: **card search and the rules reference**, offline after the first
+visit, added to a home screen from any browser.
+
+Deliberately not the whole app. Decks, campaigns, play history and backups stay
+on Android, because a browser can evict its own storage without warning and
+those are the things a player cannot lose. The web version holds nothing you
+would miss if the browser forgot it.
+
+`web/data/` is generated, never committed — it is card text, like the app's
+seed. The Pages workflow fetches it before deploying, so every deploy publishes
+what MarvelCDB has that day. See [web/SCOPE.md](web/SCOPE.md).
+
+To run it locally:
+
+```
+python tools/build_web_data.py
+python -m http.server 8765 --directory web
+```
 
 ## Versioning
 
