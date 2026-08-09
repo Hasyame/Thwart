@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.11.1](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.12.0](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -47,7 +47,12 @@ content rather than machinery.
   cards came with Deadpool.
 - **Decks.** Import from a MarvelCDB link or a share from the browser, build
   from scratch, edit, check legality as you go, see what a deck is made of, and
-  share a decklist as plain text.
+  share a decklist as plain text. Legality follows the printed rules: the
+  hero's own cards in their printed numbers, copies counted by title rather
+  than by printing, unique cards counting the identity card and told apart only
+  by a subtitle both of them carry, and the identities that rewrite the rules —
+  Adam Warlock's four balanced aspects and single copies, Spider-Woman's two
+  aspects in equal number, Gamora's six off-aspect events.
 - **Randomiser.** Scenario, difficulty, modular sets, heroes and aspects, drawn
   only from what you own, with locking, rerolls and a history. Tap any row to
   choose it yourself instead — the choice locks, and the rest rolls around it.
@@ -90,6 +95,12 @@ content rather than machinery.
   so it cannot change while you read it, and kept out of the pool next time. A
   mission's own setup and whatever it leaves behind follow it through the rest
   of the campaign.
+- **The setup printed on the scenario.** A campaign briefing lists the cards to
+  fetch, then the campaign's own steps, then the setup written on the main
+  scheme itself — the order it is done in at the table. Read off the card
+  rather than out of a template, so it arrives in whatever language the cards
+  are in, and covers sixty of the sixty-two scenarios. Ebony Maw and Thanos
+  keep theirs in the rules insert and show nothing rather than a guess.
 - **Finished campaigns.** Saved runs keep total time, victory points, heroes,
   credits and a per-scenario log of the answers given.
 - **Backup and restore.** Collection, decks, campaigns, play history and

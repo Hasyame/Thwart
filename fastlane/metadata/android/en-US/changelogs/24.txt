@@ -1,0 +1,25 @@
+Fixes two bugs a player reported from a Galaxy Z Fold 7.
+
+Opening or closing the phone no longer throws you into the settings menu and
+leaves the Play tab unable to move. Rotating any phone did the same thing; a
+fold just does it every time you open it.
+
+Heroes are no longer missing from the randomiser. Every install pre-ticked
+somebody else's fifteen packs, so the app hid the heroes it believed you did
+not own. A new install now assumes the Core Set and nothing else, and the
+collection screen is there to correct it.
+
+Tapping the tab you are already on now returns to its list. After building a
+deck there was no way back to the deck list except the back gesture.
+
+Campaign briefings now print the setup written on the scenario's own main
+scheme, after the campaign's setup, in the order you do it at the table.
+
+Campaigns follow your card language. They were always French, whatever you
+had chosen, even though the English text was there all along.
+
+Deck legality has been revised against the printed rules: the hero's own
+cards must be present in their printed numbers, copies are counted by title
+rather than by printing, unique cards count the identity card, and Adam
+Warlock's four balanced aspects and single copies are understood. His decks
+were always rejected before.

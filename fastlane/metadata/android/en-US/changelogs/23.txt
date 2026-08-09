@@ -1,3 +1,0 @@
-Fixes the last entry of the Rules tab, which ended in the website's own page
-furniture: a tracking script, a disclaimer and the markup of a hidden dialog.
-YOU is now the rule and nothing else.
