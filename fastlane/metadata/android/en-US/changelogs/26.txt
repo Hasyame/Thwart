@@ -1,0 +1,7 @@
+Packaging only, no change to how the app behaves.
+
+The build no longer writes Google's dependency-metadata block into the APK.
+It is an encrypted list of every library, meant for the Play Console, which
+this app does not use and nobody else can read. F-Droid's scanner refuses an
+APK that carries one, so it had to go before the app could be submitted
+there.
