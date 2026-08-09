@@ -47,11 +47,17 @@ class CollectionRepository @Inject constructor(
             ownedPackDao.observeOwned(),
         ) { packs, owned ->
             val quantities = owned.associate { it.packCode to it.quantity }
+            // Corrected here as well as in packNames: this is the screen where a
+            // player actually reads pack titles, and it takes them from the
+            // database rather than going through that function.
+            val corrections = setNameOverrides.packsForLocale(locale)
             packs.map { named ->
                 PackOwnership(
                     pack = named.pack,
                     quantity = quantities[named.pack.code] ?: 0,
-                    name = named.localizedName ?: named.pack.code,
+                    name = corrections[named.pack.code]
+                        ?: named.localizedName
+                        ?: named.pack.code,
                 )
             }
         }

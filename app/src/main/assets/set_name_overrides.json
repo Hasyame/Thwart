@@ -19,6 +19,10 @@
     "young_avengers": "Jeunes Avengers"
   },
   "packs": {
-    "fr": {}
+    "fr": {
+      "aos": "Agents du S.H.I.E.L.D.",
+      "fne": "Peur de Rien",
+      "tt": "La Félonie du Filou"
+    }
   }
 }
