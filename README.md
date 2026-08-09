@@ -294,6 +294,10 @@ builds from this source and the snapshot is not in it. So the F-Droid build and
 the GitHub release differ — same code, but one arrives with the cards and one
 fetches them.
 
+How a new version reaches F-Droid — which is by itself, from the git tag — is in
+[fdroid/RELEASING.md](fdroid/RELEASING.md). The one-time submission is in
+[fdroid/SUBMITTING.md](fdroid/SUBMITTING.md).
+
 Campaign templates in `app/src/main/assets/campaigns/` hold **mechanics only** —
 card codes, counters, conditions and effects, plus short labels and a
 two-sentence blurb per scenario, all written for this app. They contain no rules
