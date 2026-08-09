@@ -254,10 +254,15 @@ installed copy of the app.
 Verify which key a build actually used:
 
 ```bash
-keytool -printcert -jarfile app/build/outputs/apk/release/app-release.apk
+apksigner verify --print-certs app/build/outputs/apk/release/app-release.apk
 ```
 
-A debug-signed build shows `CN=Android Debug`.
+A debug-signed build shows `CN=Android Debug`. `apksigner` lives in
+`$ANDROID_HOME/build-tools/<version>/`.
+
+Not `keytool -printcert -jarfile`: the APK is signed with scheme v2 and v3 and
+carries no v1 JAR signature, so keytool reads it as **unsigned** and says so —
+which looks exactly like the failure this command is meant to detect.
 
 ## Card data
 
