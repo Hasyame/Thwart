@@ -253,6 +253,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.hilt.android)
+    // hiltViewModel() moved here from hilt-navigation-compose, which now only
+    // re-exports it as a deprecation. Declared rather than leant on as a
+    // transitive of the other, so the import cannot break under a version bump
+    // that drops the old artefact.
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.compiler)

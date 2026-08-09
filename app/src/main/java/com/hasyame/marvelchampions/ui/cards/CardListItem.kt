@@ -111,7 +111,7 @@ fun CardListItem(
                 // which looked like a bug because it was one.
                 text = listOfNotNull(
                     card.typeName,
-                    card.factionName?.takeIf { aspectColor(card.factionCode) != null },
+                    card.factionName.takeIf { aspectColor(card.factionCode) != null },
                     card.traits?.takeIf { it.isNotBlank() },
                 ).joinToString(" · "),
                 maxLines = 1,
