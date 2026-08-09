@@ -44,8 +44,12 @@ class NewDeckViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
+            // Loaded into a local before the state is read. Written inline the
+            // state is read before the load suspends, so an aspect ticked while
+            // the sixty-five heroes were being fetched was quietly discarded.
+            val heroes = builderRepository.heroes(locale)
             state.value = state.value.copy(
-                heroes = builderRepository.heroes(locale),
+                heroes = heroes,
                 isLoading = false,
             )
         }

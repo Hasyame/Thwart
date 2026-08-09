@@ -111,7 +111,8 @@ class DeckEditorViewModel @Inject constructor(
         val id = deckId ?: return
         viewModelScope.launch {
             deckRepository.renameDeck(id, name)
-            state.value = state.value.copy(deck = deckRepository.getDeck(id))
+            val renamed = deckRepository.getDeck(id)
+            state.value = state.value.copy(deck = renamed)
         }
     }
 
@@ -140,15 +141,17 @@ class DeckEditorViewModel @Inject constructor(
         val deck = state.value.deck ?: return
         val locale = preferences.currentCardLocale()
         val rules = state.value.rules
-        state.value = state.value.copy(
-            candidates = builderRepository.candidateCards(
-                heroSetCode = rules?.heroSetCode,
-                aspects = DeckRepository.parseAspects(deck.aspects),
-                locale = locale,
-                query = state.value.query,
-                ownedOnly = state.value.ownedOnly,
-            ),
+        // Fetched first, and only then written back. Inline, the state is read
+        // before the search suspends, so anything typed while four hundred
+        // candidates were being queried was reverted under the player's hands.
+        val candidates = builderRepository.candidateCards(
+            heroSetCode = rules?.heroSetCode,
+            aspects = DeckRepository.parseAspects(deck.aspects),
+            locale = locale,
+            query = state.value.query,
+            ownedOnly = state.value.ownedOnly,
         )
+        state.value = state.value.copy(candidates = candidates)
     }
 
     private companion object {
