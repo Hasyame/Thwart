@@ -32,9 +32,14 @@ def fetch(url):
 
 
 def strip_tags(html):
+    # Scripts and styles go body and all. Stripping tags alone keeps what was
+    # between them, which is how the last entry on the page ended up carrying
+    # the site's Google Analytics snippet: the final <h2> takes everything after
+    # it, and everything after it includes the footer scripts.
+    text = re.sub(r"<(script|style)[^>]*>.*?</\1\s*>", " ", html, flags=re.I | re.S)
     # Paragraph and list boundaries become newlines before the tags go, or the
     # whole entry arrives as one run-on sentence.
-    text = re.sub(r"<\s*/?\s*(p|br|li|div|tr)[^>]*>", "\n", html, flags=re.I)
+    text = re.sub(r"<\s*/?\s*(p|br|li|div|tr)[^>]*>", "\n", text, flags=re.I)
     text = re.sub(r"<[^>]+>", "", text)
     text = (text.replace("&nbsp;", " ").replace("&amp;", "&")
                 .replace("&lt;", "<").replace("&gt;", ">")
@@ -43,8 +48,22 @@ def strip_tags(html):
     return "\n".join(line for line in lines if line).strip()
 
 
+def content_only(html):
+    """Everything before the page furniture.
+
+    The last heading takes all the markup that follows it, and what follows it
+    is the site footer and a hidden card modal. Without this the final entry
+    ends in "Deck Quantity:" and a disclaimer about Fantasy Flight Games.
+    """
+    for marker in ('<div id="push"', "<footer"):
+        cut = html.find(marker)
+        if cut > 0:
+            return html[:cut]
+    return html
+
+
 def main():
-    html = fetch(SOURCE)
+    html = content_only(fetch(SOURCE))
 
     # Split on headings, keeping the heading with the block that follows it.
     parts = re.split(r"<h2[^>]*>(.*?)</h2>", html, flags=re.S)
