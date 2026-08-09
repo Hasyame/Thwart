@@ -140,6 +140,23 @@ template come from experience rather than from a reading of the book. That is
 the whole roadmap — no further app features are planned, and anything else will
 come from something going wrong at a real table.
 
+## Running it on a PC
+
+Drag the APK from [the latest release](https://github.com/Hasyame/Thwart/releases/latest)
+onto a [BlueStacks](https://www.bluestacks.com/) window and it installs. There is
+nothing to publish and nothing to sign up for — BlueStacks runs Android apps, it
+is not a shop.
+
+It is a good fit by accident. The APK carries x86 and x86\_64 alongside the ARM
+builds, so it runs natively rather than through translation; it asks for
+`faketouch` rather than a real touchscreen, so a mouse is fine; and a BlueStacks
+window is wide, which is the size at which the app lays itself out as a
+navigation rail with the card list and the card side by side.
+
+now.gg, the cloud version where apps run in a browser, is a different thing and
+not worth it here: it wants a minimum of Android 7 where this app asks for 9, and
+streaming an offline-first app from a server is the opposite of the point.
+
 ## Web companion
 
 Players on iPhone cannot install an APK, and an iOS build would mean Kotlin
