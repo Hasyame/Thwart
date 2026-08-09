@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,7 +33,11 @@ class SetNameOverrides @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
-    private val cache = mutableMapOf<String, Map<String, String>>()
+    // Concurrent because the reads are not: the card list and the collection
+    // screen both ask for corrections, on the IO dispatcher, at the same
+    // moment. `getOrPut` on a plain HashMap from two threads can corrupt it,
+    // and the failure that follows is a hang rather than an exception.
+    private val cache = ConcurrentHashMap<String, Map<String, String>>()
 
     /** Code to corrected name, for one locale. Empty when there is nothing to fix. */
     suspend fun forLocale(locale: CardLocale): Map<String, String> =
