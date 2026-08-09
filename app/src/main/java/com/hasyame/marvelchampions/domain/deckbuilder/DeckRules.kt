@@ -13,10 +13,45 @@ data class HeroDeckRules(
     /** How many aspects this hero picks. One for nearly every hero. */
     val aspectCount: Int = 1,
     /**
-     * Cap on cards taken from each chosen aspect, when the hero trades breadth
-     * for depth. Adam Warlock picks four aspects but only one card from each.
+     * A copy limit the identity imposes on every card that is not its own.
+     *
+     * Adam Warlock is the only hero with one: "you cannot include more than 1
+     * copy of any non-Adam Warlock card". It overrides each card's printed
+     * limit rather than adding to it.
+     *
+     * This is the `limit` of `deck_requirements`, and it used to be read as a
+     * cap on how many cards each aspect could contribute — which made every
+     * legal Adam Warlock deck illegal, since one card per aspect is a four-card
+     * deck.
      */
-    val perAspectLimit: Int? = null,
+    val copyLimitOverride: Int? = null,
+    /**
+     * True when the chosen aspects must contribute the same number of cards.
+     *
+     * Adam Warlock takes four aspects in equal number, Spider-Woman two. Every
+     * hero who picks more than one aspect has to balance them, so this follows
+     * from [aspectCount] rather than being stated separately.
+     */
+    val aspectsMustBalance: Boolean = false,
+    /**
+     * The identity's own cards, by code and printed quantity.
+     *
+     * A deck must contain all of them, in exactly those numbers — the hero's
+     * signature cards are not optional and not adjustable.
+     */
+    val requiredCards: Map<String, Int> = emptyMap(),
+    /** The identity card's title, which competes with unique cards in the deck. */
+    val identityTitle: String? = null,
+    /**
+     * The identity's alter-ego name, which is its subtitle for the unique rule.
+     *
+     * The identity card has no subtitle of its own — Spider-Man's `subname` is
+     * empty — so the ally "Spider-Man (Peter Parker)" would look like a
+     * different card and be allowed into Peter Parker's own deck. The alter-ego
+     * side is what tells them apart, and it is the reason Miles Morales can be
+     * an ally in Peter's deck while Peter cannot.
+     */
+    val identityAlterEgo: String? = null,
     /** Extra allowances that widen what is legal, straight from `deck_options`. */
     val options: List<DeckOption> = emptyList(),
     /**
@@ -52,6 +87,13 @@ data class DeckOption(
 data class DeckCardInfo(
     val code: String,
     val name: String,
+    /**
+     * The subtitle, which is what lets two unique cards of the same name
+     * coexist: Spider-Man (Miles Morales) and Spider-Man (Peter Parker) are
+     * different people. 52 unique titles in the pool are printed with more than
+     * one subtitle.
+     */
+    val subtitle: String? = null,
     val factionCode: String,
     val typeCode: String,
     val cardSetCode: String?,
@@ -100,6 +142,22 @@ sealed interface DeckProblem {
     ) : DeckProblem
 
     data class OverAspectLimit(val aspect: String, val actual: Int, val limit: Int) : DeckProblem
+
+    /** A signature card of the hero missing, or present in the wrong number. */
+    data class MissingRequiredCard(
+        val cardCode: String,
+        val cardName: String,
+        val required: Int,
+        val actual: Int,
+    ) : DeckProblem
+
+    /**
+     * Chosen aspects contributing different numbers of cards.
+     *
+     * [counts] is aspect to cards taken from it, so the message can say which
+     * side is short rather than only that something is uneven.
+     */
+    data class UnbalancedAspects(val counts: Map<String, Int>) : DeckProblem
 }
 
 data class DeckValidation(

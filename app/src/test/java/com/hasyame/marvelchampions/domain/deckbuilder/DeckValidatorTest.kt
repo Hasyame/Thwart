@@ -207,31 +207,207 @@ class DeckValidatorTest {
         )
     }
 
-    @Test
-    fun `adam warlock may take only one card per aspect`() {
-        val warlock = HeroDeckRules(
-            heroCode = "21031a",
-            heroSetCode = "adam_warlock",
-            aspectCount = 4,
-            perAspectLimit = 1,
-        )
-        val slots = mapOf("j1" to 1, "j2" to 1)
-        val cards = mapOf(
-            "j1" to card("j1", "justice"),
-            "j2" to card("j2", "justice"),
-        )
+    /**
+     * Adam Warlock: four aspects in equal number, and a single copy of anything
+     * that is not his.
+     *
+     * MarvelCDB states this as `{"aspects": 4, "limit": 1}`, and the limit was
+     * read as a cap per aspect — which made a legal forty-card deck illegal,
+     * because one card from each of four aspects is a four-card deck.
+     */
+    private val warlock = HeroDeckRules(
+        heroCode = "21031a",
+        heroSetCode = "adam_warlock",
+        aspectCount = 4,
+        copyLimitOverride = 1,
+        aspectsMustBalance = true,
+    )
 
-        val result = DeckValidator.validate(
-            warlock,
-            listOf("justice", "aggression", "leadership", "protection"),
-            slots,
-            cards,
-        )
+    private val fourAspects = listOf("justice", "aggression", "leadership", "protection")
+
+    /** Ten single copies from each of the four aspects: forty cards, balanced. */
+    private fun warlockDeck(): Pair<Map<String, Int>, Map<String, DeckCardInfo>> {
+        val slots = mutableMapOf<String, Int>()
+        val cards = mutableMapOf<String, DeckCardInfo>()
+        fourAspects.forEach { aspect ->
+            repeat(10) { index ->
+                val code = "$aspect$index"
+                slots[code] = 1
+                cards[code] = card(code, aspect)
+            }
+        }
+        return slots to cards
+    }
+
+    @Test
+    fun `adam warlock's forty card deck is legal`() {
+        val (slots, cards) = warlockDeck()
+
+        val result = DeckValidator.validate(warlock, fourAspects, slots, cards)
+
+        assertTrue(result.problems.toString(), result.isLegal)
+    }
+
+    @Test
+    fun `adam warlock may not take a second copy of anything`() {
+        val (slots, cards) = warlockDeck()
+        // A second copy of one card, and one fewer elsewhere so the deck still
+        // has forty cards and the aspects still balance.
+        val doubled = slots.toMutableMap().apply {
+            this["justice0"] = 2
+            remove("justice9")
+        }
+
+        val result = DeckValidator.validate(warlock, fourAspects, doubled, cards)
 
         assertTrue(
+            result.problems.toString(),
+            result.problems.any { it is DeckProblem.OverCopyLimit && it.limit == 1 },
+        )
+    }
+
+    @Test
+    fun `adam warlock's aspects must be equal`() {
+        val (slots, cards) = warlockDeck()
+        val lopsided = slots.toMutableMap().apply {
+            remove("justice9")
+            this["aggression10"] = 1
+        }
+        val withExtra = cards + ("aggression10" to card("aggression10", "aggression"))
+
+        val result = DeckValidator.validate(warlock, fourAspects, lopsided, withExtra)
+
+        val unbalanced = result.problems.filterIsInstance<DeckProblem.UnbalancedAspects>()
+        assertEquals(1, unbalanced.size)
+        assertEquals(9, unbalanced.single().counts["justice"])
+        assertEquals(11, unbalanced.single().counts["aggression"])
+    }
+
+    @Test
+    fun `spider-woman's two aspects must be equal`() {
+        val jessica = HeroDeckRules(
+            heroCode = "04031a",
+            heroSetCode = "spider_woman",
+            aspectCount = 2,
+            aspectsMustBalance = true,
+        )
+        val slots = mutableMapOf<String, Int>()
+        val cards = mutableMapOf<String, DeckCardInfo>()
+        repeat(21) { slots["j$it"] = 1; cards["j$it"] = card("j$it", "justice") }
+        repeat(19) { slots["a$it"] = 1; cards["a$it"] = card("a$it", "aggression") }
+
+        val result = DeckValidator.validate(jessica, listOf("justice", "aggression"), slots, cards)
+
+        assertTrue(
+            result.problems.toString(),
+            result.problems.any { it is DeckProblem.UnbalancedAspects },
+        )
+    }
+
+    @Test
+    fun `three copies means three by title, not three of each printing`() {
+        // 225 player-card titles are printed under more than one code. Counting
+        // per code let a deck hold three of one printing and three of another.
+        val (slots, cards) = fillerDeck(count = 37)
+        val withReprints = slots + mapOf("r1" to 2, "r2" to 2)
+        val reprintCards = cards + mapOf(
+            "r1" to card("r1", "justice").copy(name = "Reprinted"),
+            "r2" to card("r2", "justice").copy(name = "Reprinted"),
+        )
+
+        val result = DeckValidator.validate(heroRules, listOf("justice"), withReprints, reprintCards)
+
+        assertTrue(
+            result.problems.toString(),
             result.problems.any {
-                it is DeckProblem.OverAspectLimit && it.aspect == "justice" && it.limit == 1
+                it is DeckProblem.OverCopyLimit && it.cardName == "Reprinted" && it.quantity == 4
             },
+        )
+    }
+
+    @Test
+    fun `the identity card counts against its own unique title`() {
+        // Peter Parker cannot take the Spider-Man ally who is also Peter
+        // Parker. The identity has no subtitle of its own, so the alter-ego
+        // stands in for one.
+        val peter = heroRules.copy(
+            identityTitle = "Spider-Man",
+            identityAlterEgo = "Peter Parker",
+        )
+        val (slots, cards) = fillerDeck(count = 39)
+        val withAlly = slots + mapOf("ally" to 1)
+        val allyCards = cards + mapOf(
+            "ally" to card("ally", "justice", unique = true)
+                .copy(name = "Spider-Man", subtitle = "Peter Parker"),
+        )
+
+        val result = DeckValidator.validate(peter, listOf("justice"), withAlly, allyCards)
+
+        assertTrue(
+            result.problems.toString(),
+            result.problems.any { it is DeckProblem.DuplicateUniqueCard },
+        )
+    }
+
+    @Test
+    fun `a unique card of the same title but another subtitle may share the deck`() {
+        // Miles Morales is a different Spider-Man, and legal in Peter's deck.
+        val peter = heroRules.copy(
+            identityTitle = "Spider-Man",
+            identityAlterEgo = "Peter Parker",
+        )
+        val (slots, cards) = fillerDeck(count = 39)
+        val withAlly = slots + mapOf("ally" to 1)
+        val allyCards = cards + mapOf(
+            "ally" to card("ally", "justice", unique = true)
+                .copy(name = "Spider-Man", subtitle = "Miles Morales"),
+        )
+
+        val result = DeckValidator.validate(peter, listOf("justice"), withAlly, allyCards)
+
+        assertTrue(result.problems.toString(), result.isLegal)
+    }
+
+    @Test
+    fun `the hero's own cards must all be there, in their printed numbers`() {
+        val withSignature = heroRules.copy(
+            requiredCards = mapOf("01003" to 2, "01005" to 3),
+        )
+        val (slots, cards) = fillerDeck(count = 37)
+        // Two of the three Swinging Web Kicks, and no Backflips at all.
+        val deck = slots + mapOf("01005" to 2)
+        val info = cards + mapOf(
+            "01003" to card("01003", "hero", setCode = "spider_man").copy(name = "Backflip"),
+            "01005" to card("01005", "hero", setCode = "spider_man")
+                .copy(name = "Swinging Web Kick"),
+        )
+
+        val result = DeckValidator.validate(withSignature, listOf("justice"), deck, info)
+
+        val missing = result.problems.filterIsInstance<DeckProblem.MissingRequiredCard>()
+        assertEquals(2, missing.size)
+        assertTrue(missing.any { it.cardName == "Backflip" && it.actual == 0 && it.required == 2 })
+        assertTrue(
+            missing.any { it.cardName == "Swinging Web Kick" && it.actual == 2 && it.required == 3 },
+        )
+    }
+
+    @Test
+    fun `a hero's own cards are not held to the three copy limit`() {
+        // Some signature cards are printed in threes and one in four; the
+        // printed quantity is the rule for them.
+        val withSignature = heroRules.copy(requiredCards = mapOf("sig" to 4))
+        val (slots, cards) = fillerDeck(count = 36)
+        val deck = slots + mapOf("sig" to 4)
+        val info = cards + mapOf(
+            "sig" to card("sig", "hero", setCode = "spider_man", deckLimit = 4),
+        )
+
+        val result = DeckValidator.validate(withSignature, listOf("justice"), deck, info)
+
+        assertTrue(
+            result.problems.toString(),
+            result.problems.none { it is DeckProblem.OverCopyLimit },
         )
     }
 

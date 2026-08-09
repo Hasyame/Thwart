@@ -20,12 +20,24 @@ import kotlinx.serialization.json.jsonPrimitive
  */
 object HeroDeckRulesParser {
 
-    fun parse(hero: CardEntity, json: Json): HeroDeckRules {
+    fun parse(
+        hero: CardEntity,
+        json: Json,
+        /** The hero's own cards and their printed quantities, excluding the identity. */
+        requiredCards: Map<String, Int> = emptyMap(),
+        /** The alter-ego side's name, which serves as the identity's subtitle. */
+        alterEgoName: String? = null,
+    ): HeroDeckRules {
         val requirements = hero.deckRequirementsJson?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
         val requirement = requirements?.jsonArray?.firstOrNull()?.jsonObject
 
         val aspectCount = requirement?.get("aspects")?.jsonPrimitive?.content?.toIntOrNull() ?: 1
-        val perAspectLimit = requirement?.get("limit")?.jsonPrimitive?.content?.toIntOrNull()
+
+        // Adam Warlock's `{"aspects": 4, "limit": 1}`. The limit is on copies of
+        // a card, not on cards per aspect: read the other way it made a legal
+        // forty-card deck illegal, because one card from each of four aspects
+        // is a four-card deck.
+        val copyLimitOverride = requirement?.get("limit")?.jsonPrimitive?.content?.toIntOrNull()
 
         val options = hero.deckOptionsJson
             ?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
@@ -49,7 +61,13 @@ object HeroDeckRulesParser {
             heroCode = hero.code,
             heroSetCode = hero.cardSetCode,
             aspectCount = aspectCount,
-            perAspectLimit = perAspectLimit,
+            copyLimitOverride = copyLimitOverride,
+            // Picking more than one aspect always means picking them in equal
+            // number; no hero picks several and is free to weight them.
+            aspectsMustBalance = aspectCount > 1,
+            requiredCards = requiredCards,
+            identityTitle = hero.name,
+            identityAlterEgo = alterEgoName,
             options = options,
             minDeckSize = sizeOverride?.first,
             maxDeckSize = sizeOverride?.second,
@@ -65,6 +83,7 @@ object HeroDeckRulesParser {
 fun CardEntity.toDeckCardInfo(): DeckCardInfo = DeckCardInfo(
     code = code,
     name = name,
+    subtitle = subname,
     factionCode = factionCode,
     typeCode = typeCode,
     cardSetCode = cardSetCode,

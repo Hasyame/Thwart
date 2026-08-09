@@ -233,6 +233,8 @@
         <item quantity="other">%1$s: %2$d copies, limit is %3$d.</item>
     </plurals>
     <string name="decks_problem_unique">%1$s is unique, only one copy allowed.</string>
+    <string name="decks_problem_required_card">%1$s is one of the hero\'s own cards — required: %2$d, in the deck: %3$d.</string>
+    <string name="decks_problem_unbalanced_aspects">Your aspects must contribute the same number of cards (%1$s).</string>
     <plurals name="decks_problem_aspect_limit">
         <item quantity="one">%1$s: %2$d card, limit is %3$d.</item>
         <item quantity="other">%1$s: %2$d cards, limit is %3$d.</item>

@@ -13,6 +13,9 @@ object DeckValidator {
     private const val BASIC_FACTION = "basic"
     private const val HERO_FACTION = "hero"
 
+    /** The printed limit on an ordinary card, when the data does not say. */
+    private const val MAXIMUM_COPIES = 3
+
     fun validate(
         rules: HeroDeckRules,
         chosenAspects: List<String>,
@@ -34,6 +37,23 @@ object DeckValidator {
             problems += DeckProblem.TooManyCards(totalCards, rules.effectiveMaximum)
         }
 
+        // The hero's own cards are not optional and not adjustable: the deck
+        // must hold every one of them, in the number printed on the card.
+        rules.requiredCards.forEach { (code, required) ->
+            val actual = slots[code] ?: 0
+            if (actual != required) {
+                problems += DeckProblem.MissingRequiredCard(
+                    cardCode = code,
+                    cardName = cards[code]?.name ?: code,
+                    required = required,
+                    actual = actual,
+                )
+            }
+        }
+
+        problems += copyLimitProblems(rules, slots, cards)
+        problems += uniqueProblems(rules, slots, cards)
+
         // How many cards each deck_options allowance has admitted so far, so a
         // limited allowance stops admitting once it is full.
         val optionUsage = IntArray(rules.options.size)
@@ -44,14 +64,6 @@ object DeckValidator {
 
             if (quantity < 1) {
                 continue
-            }
-
-            val limit = card.deckLimit
-            if (limit != null && quantity > limit) {
-                problems += DeckProblem.OverCopyLimit(code, card.name, quantity, limit)
-            }
-            if (card.isUnique && quantity > 1) {
-                problems += DeckProblem.DuplicateUniqueCard(code, card.name, quantity)
             }
 
             when {
@@ -78,15 +90,93 @@ object DeckValidator {
             }
         }
 
-        rules.perAspectLimit?.let { limit ->
-            aspectUsage.forEach { (aspect, used) ->
-                if (used > limit) {
-                    problems += DeckProblem.OverAspectLimit(aspect, used, limit)
-                }
+        // A hero who picks more than one aspect has to take the same number from
+        // each: four for Adam Warlock, two for Spider-Woman. Only checked once
+        // the right number of aspects has been chosen, because complaining that
+        // one aspect and no other are unequal helps nobody.
+        if (rules.aspectsMustBalance && chosenAspects.size == rules.aspectCount) {
+            val counts = chosenAspects.associateWith { aspectUsage[it] ?: 0 }
+            if (counts.values.distinct().size > 1) {
+                problems += DeckProblem.UnbalancedAspects(counts)
             }
         }
 
         return DeckValidation(problems = problems, totalCards = totalCards)
+    }
+
+    /**
+     * Copy limits, counted by title rather than by code.
+     *
+     * "No more than three copies by title" is not the same as three copies of a
+     * card code: 225 player-card titles in the pool are printed under more than
+     * one code, so three of one printing and three of another is six copies of
+     * the same card and was passing.
+     *
+     * The hero's own signature cards are exempt — their printed quantity is the
+     * rule for them, and it is checked separately.
+     */
+    private fun copyLimitProblems(
+        rules: HeroDeckRules,
+        slots: Map<String, Int>,
+        cards: Map<String, DeckCardInfo>,
+    ): List<DeckProblem> {
+        val problems = mutableListOf<DeckProblem>()
+        val byTitle = slots.entries
+            .filter { it.value > 0 && it.key !in rules.requiredCards }
+            .mapNotNull { (code, quantity) -> cards[code]?.let { it to quantity } }
+            .groupBy { (card, _) -> card.name }
+
+        byTitle.forEach { (title, entries) ->
+            val total = entries.sumOf { it.second }
+            val first = entries.first().first
+            if (first.isUnique) {
+                return@forEach
+            }
+            // The identity's own limit wins where it has one: Adam Warlock
+            // allows a single copy of anything that is not his.
+            val limit = rules.copyLimitOverride
+                ?: entries.minOf { (card, _) -> card.deckLimit ?: MAXIMUM_COPIES }
+            if (total > limit) {
+                problems += DeckProblem.OverCopyLimit(first.code, title, total, limit)
+            }
+        }
+        return problems
+    }
+
+    /**
+     * One copy of each unique card, counting the identity card as one of them.
+     *
+     * Keyed on title *and* subtitle, because that is what the rule turns on:
+     * Spider-Man (Miles Morales) and Spider-Man (Peter Parker) are two people
+     * and may share a deck. The identity has no subtitle of its own, so its
+     * alter-ego stands in — which is exactly why Peter Parker cannot take the
+     * Spider-Man ally that is also Peter Parker, while Miles is fine.
+     */
+    private fun uniqueProblems(
+        rules: HeroDeckRules,
+        slots: Map<String, Int>,
+        cards: Map<String, DeckCardInfo>,
+    ): List<DeckProblem> {
+        val problems = mutableListOf<DeckProblem>()
+        val counted = mutableMapOf<Pair<String, String>, Int>()
+
+        rules.identityTitle?.let { title ->
+            counted[title to rules.identityAlterEgo.orEmpty()] = 1
+        }
+
+        slots.entries
+            .filter { it.value > 0 }
+            .mapNotNull { (code, quantity) -> cards[code]?.let { Triple(code, it, quantity) } }
+            .filter { (_, card, _) -> card.isUnique }
+            .forEach { (code, card, quantity) ->
+                val key = card.name to card.subtitle.orEmpty()
+                val total = (counted[key] ?: 0) + quantity
+                counted[key] = total
+                if (total > 1) {
+                    problems += DeckProblem.DuplicateUniqueCard(code, card.name, total)
+                }
+            }
+        return problems
     }
 
     /**

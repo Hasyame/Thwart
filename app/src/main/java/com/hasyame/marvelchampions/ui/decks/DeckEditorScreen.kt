@@ -296,4 +296,18 @@ private fun problemMessage(problem: DeckProblem): String = when (problem) {
         problem.actual,
         problem.limit,
     )
+
+    is DeckProblem.MissingRequiredCard -> stringResource(
+        R.string.decks_problem_required_card,
+        problem.cardName,
+        problem.required,
+        problem.actual,
+    )
+
+    // Named rather than counted: "justice 9, aggression 11" says what to fix,
+    // where "your aspects are uneven" leaves the player counting.
+    is DeckProblem.UnbalancedAspects -> stringResource(
+        R.string.decks_problem_unbalanced_aspects,
+        problem.counts.entries.joinToString(", ") { "${it.key} ${it.value}" },
+    )
 }

@@ -45,7 +45,26 @@ class DeckBuilderRepository @Inject constructor(
     suspend fun heroRules(heroCode: String, locale: CardLocale): HeroDeckRules? =
         withContext(ioDispatcher) {
             val hero = cardDao.getCard(heroCode, locale.code) ?: return@withContext null
-            HeroDeckRulesParser.parse(hero, json)
+
+            // The identity's own cards, at the quantity printed on each. The
+            // identity and its alter-ego side are in the same set but are not
+            // deck cards, so they are excluded.
+            val signature = hero.cardSetCode
+                ?.let { cardDao.getCardSet(it, locale.code) }
+                .orEmpty()
+                .filter { it.typeCode != HERO_TYPE && it.typeCode != ALTER_EGO_TYPE }
+                .associate { it.code to it.quantity }
+
+            // The alter-ego's name is the identity's subtitle for the unique
+            // rule, and it is on the other side of the card.
+            val alterEgo = hero.linkedToCode?.let { cardDao.getCard(it, locale.code) }?.name
+
+            HeroDeckRulesParser.parse(
+                hero = hero,
+                json = json,
+                requiredCards = signature,
+                alterEgoName = alterEgo,
+            )
         }
 
     /**
@@ -86,7 +105,11 @@ class DeckBuilderRepository @Inject constructor(
         slots: Map<String, Int>,
         locale: CardLocale,
     ): DeckValidation = withContext(ioDispatcher) {
-        val cards = slots.keys.mapNotNull { cardDao.getCard(it, locale.code) }
+        // The hero's own cards too, not only what is in the deck: a signature
+        // card that is missing has to be named in the message, and a code is
+        // not a name.
+        val codes = slots.keys + rules.requiredCards.keys
+        val cards = codes.mapNotNull { cardDao.getCard(it, locale.code) }
             .associate { it.code to it.toDeckCardInfo() }
         DeckValidator.validate(rules, aspects, slots, cards)
     }
@@ -98,6 +121,7 @@ class DeckBuilderRepository @Inject constructor(
         const val BASIC_FACTION = "basic"
         const val HERO_FACTION = "hero"
         const val HERO_TYPE = "hero"
+        const val ALTER_EGO_TYPE = "alter_ego"
         const val CANDIDATE_LIMIT = 400
     }
 }
