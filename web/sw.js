@@ -9,6 +9,7 @@
  * means the cards you look up are the cards you have. */
 
 var VERSION = 'thwart-v1';
+var IMAGE_HOST = 'marvelcdb.com';
 var SHELL = VERSION + '-shell';
 var IMAGES = VERSION + '-images';
 
@@ -52,7 +53,11 @@ self.addEventListener('fetch', function (event) {
   // Card pictures: from the cache if seen before, otherwise fetched and kept.
   // no-cors gives an opaque response, which cannot be read but renders in an
   // <img> perfectly well — which is all this needs.
-  if (url.hostname.indexOf('marvelcdb.com') >= 0) {
+  //
+  // The host is matched exactly, or as a subdomain. Asking whether the name
+  // merely contains "marvelcdb.com" would have said yes to
+  // marvelcdb.com.example.net, which is a different site entirely.
+  if (url.hostname === IMAGE_HOST || url.hostname.endsWith('.' + IMAGE_HOST)) {
     event.respondWith(
       caches.open(IMAGES).then(function (cache) {
         return cache.match(request).then(function (hit) {
