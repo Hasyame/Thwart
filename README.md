@@ -37,7 +37,16 @@ content rather than machinery.
   offline, because the moment somebody needs to know what *retaliate* does is
   the moment the rulebook is in a bag under the table. Searching answers with
   the keyword first and the rules that merely mention it after — "stun" returns
-  STUNNED, not the eleven rules that use the word. English only for now.
+  STUNNED, not the eleven rules that use the word. **In both languages**,
+  keyword included: in French the entry is *Riposte X*, which is the word
+  printed on the card in front of you. It follows the app language, since the
+  rules are the app talking rather than a card.
+
+  Built from [deejimy/mc-reference](https://github.com/deejimy/mc-reference), a
+  reference guide for rulebook v1.8 maintained by **deejimy** and released under
+  CC0. Every page there carries the French text beside the English it was
+  translated from, so one source gives both languages and they cannot drift
+  apart. The app credits him under the list.
 - **Collection.** Mark the packs you own; everything the app offers follows from
   it. Owning a pack is not owning everything in it, so tapping one opens the
   scenarios and modular sets inside — untick whatever is missing from a
@@ -264,6 +273,15 @@ The source code is released under the [MIT Licence](LICENSE).
 That licence covers **this code only**. It grants no rights whatsoever over
 Marvel Champions: The Card Game, its cards, artwork, rules or campaign books,
 none of which are mine to license — see below.
+
+### With thanks
+
+The Rules tab is built from
+[deejimy/mc-reference](https://github.com/deejimy/mc-reference), a bilingual
+reference guide for rulebook v1.8 compiled by **deejimy** and released under
+CC0. The French rules in this app are his work, and the English comes from the
+same pages, which is why the two always agree. CC0 asks for nothing in return;
+crediting him is the least this can do.
 
 ## Legal
 

@@ -22,12 +22,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -49,6 +51,11 @@ import com.hasyame.marvelchampions.data.seed.RuleEntry
 fun RulesScreen(viewModel: RulesViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    // Read from the configuration rather than from settings, so it is whatever
+    // the app is actually being displayed in — including "follow the phone".
+    val language = LocalConfiguration.current.locales[0].language
+    LaunchedEffect(language) { viewModel.onAppLanguage(language) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -96,6 +103,23 @@ fun RulesScreen(viewModel: RulesViewModel = hiltViewModel()) {
 
             LazyColumn(Modifier.fillMaxSize()) {
                 items(state.entries, key = { it.term }) { entry -> RuleRow(entry) }
+
+                // At the foot rather than the top: an acknowledgement, not a
+                // banner. The player came here to look something up.
+                state.credit?.let { credit ->
+                    item {
+                        Text(
+                            text = stringResource(
+                                R.string.rules_credit,
+                                credit.name,
+                                credit.licence,
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(16.dp),
+                        )
+                    }
+                }
             }
         }
     }
@@ -104,9 +128,9 @@ fun RulesScreen(viewModel: RulesViewModel = hiltViewModel()) {
 /**
  * A keyword, opened by tapping it.
  *
- * Collapsed by default because the reference is 143 entries and some run to
- * several paragraphs: a wall of rules text is not a thing anybody scans mid
- * game.
+ * Collapsed by default because the reference runs to a couple of hundred
+ * entries and some go on for several paragraphs: a wall of rules text is not a
+ * thing anybody scans mid game.
  */
 @Composable
 private fun RuleRow(entry: RuleEntry) {

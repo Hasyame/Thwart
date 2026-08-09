@@ -10,6 +10,7 @@
     <string name="rules_search_hint">Search the rules</string>
     <string name="rules_no_results">No rule matches your search.</string>
     <string name="rules_english_only">English only for now.</string>
+    <string name="rules_credit">Rules reference compiled by %1$s, released under %2$s. Unofficial, and not endorsed by Fantasy Flight Games.</string>
     <string name="destination_settings">Settings</string>
 
     <!-- Common actions -->

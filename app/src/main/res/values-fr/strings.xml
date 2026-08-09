@@ -10,6 +10,7 @@
     <string name="rules_search_hint">Rechercher dans les règles</string>
     <string name="rules_no_results">Aucune règle ne correspond à votre recherche.</string>
     <string name="rules_english_only">En anglais seulement pour le moment.</string>
+    <string name="rules_credit">Guide de référence compilé par %1$s, publié sous %2$s. Non officiel, sans lien avec Fantasy Flight Games.</string>
     <string name="destination_settings">Réglages</string>
 
     <!-- Common actions -->
