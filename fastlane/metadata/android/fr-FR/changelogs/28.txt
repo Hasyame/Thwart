@@ -1,0 +1,16 @@
+Des corrections et du rangement, rien qui change ce que fait l'application.
+
+Trois noms d'extension qui s'affichaient en anglais s'affichent maintenant en
+français : Agents du S.H.I.E.L.D., Peur de Rien et La Félonie du Filou. Les
+autres noms que la base de cartes laisse en anglais sont ceux que l'édition
+française imprime en anglais elle aussi : ils sont donc corrects tels quels.
+
+Deux choses dans la connexion à BoardGameGeek, trouvées en relisant le code et
+non signalées par quelqu'un. Un cookie de session aurait pu quitter
+BoardGameGeek si l'une de ses pages avait redirigé ailleurs ; il reste
+désormais sur le site auquel il appartient. Et un mot de passe contenant une
+tabulation ou un retour à la ligne construisait une requête que BoardGameGeek
+ne pouvait que refuser — on vous répondait alors que vos identifiants étaient
+faux, ce qui était à la fois inexact et impossible à corriger de votre côté.
+
+La fiche F-Droid est en français, pour ceux qui trouvent l'application par là.

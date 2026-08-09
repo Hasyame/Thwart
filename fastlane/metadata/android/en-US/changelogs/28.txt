@@ -1,0 +1,15 @@
+Fixes and housekeeping, no change to what the app does.
+
+Three pack names that were showing in English now show in French: Agents du
+S.H.I.E.L.D., Peur de Rien and La Félonie du Filou. The rest of the names the
+card database leaves in English are names the French edition prints in English
+too, so they are correct as they stand.
+
+Two things in the BoardGameGeek connection, found by reading the code rather
+than from a report. A session cookie could have travelled off BoardGameGeek if
+one of its pages had redirected elsewhere; it is now held to the site it
+belongs to. And a password containing a tab or a line break built a request
+BoardGameGeek could only refuse — you were then told your credentials were
+wrong, which was neither true nor something you could do anything about.
+
+The F-Droid listing is in French now, for anyone who finds the app there.
