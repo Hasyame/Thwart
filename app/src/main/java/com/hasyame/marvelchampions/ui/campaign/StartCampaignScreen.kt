@@ -113,7 +113,7 @@ fun StartCampaignScreen(
                         FilterChip(
                             selected = template?.id == candidate.id,
                             onClick = { chosenTemplateId = candidate.id },
-                            label = { Text(candidate.name.resolve("fr")) },
+                            label = { Text(candidate.name.resolve(state.localeCode)) },
                         )
                     }
                 }
@@ -124,7 +124,7 @@ fun StartCampaignScreen(
                     value = name,
                     onValueChange = { name = it },
                     singleLine = true,
-                    placeholder = { Text(template?.name?.resolve("fr").orEmpty()) },
+                    placeholder = { Text(template?.name?.resolve(state.localeCode).orEmpty()) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

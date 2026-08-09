@@ -7,6 +7,7 @@ import com.hasyame.marvelchampions.data.repository.CampaignRepository
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckProblem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,8 @@ data class StartCampaignUiState(
     val templates: List<CampaignTemplate> = emptyList(),
     val candidates: List<RosterCandidate> = emptyList(),
     val isLoading: Boolean = true,
+    /** Campaign names follow the card language, like the rest of the campaign. */
+    val localeCode: String = CardLocale.FRENCH.code,
 )
 
 @HiltViewModel
@@ -72,6 +75,7 @@ class StartCampaignViewModel @Inject constructor(
                         )
                     },
                     isLoading = false,
+                    localeCode = locale.code,
                 )
             }
         }

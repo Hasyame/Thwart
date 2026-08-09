@@ -280,7 +280,7 @@ class CampaignRunViewModel @Inject constructor(
                         ?.takeIf { it != scenarioId }
                         ?.let { next ->
                             reloaded?.template?.scenarios?.firstOrNull { it.id == next }
-                                ?.name?.resolve("fr")
+                                ?.name?.resolve(reloaded.localeCode)
                         },
                     campaignFinished = finished,
                 ),

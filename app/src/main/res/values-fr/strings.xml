@@ -267,6 +267,7 @@
     <string name="campaign_not_ready">Pas encore prêt</string>
     <string name="campaign_pre_setup">Mise en place</string>
     <string name="campaign_setup_label">Mise en place de campagne</string>
+    <string name="campaign_scheme_setup">Mise en place de la manigance principale</string>
     <string name="campaign_villain_deck_label">Deck du méchant</string>
     <string name="campaign_main_scheme_label">Deck manigance principale</string>
     <string name="campaign_encounter_sets_label">Deck rencontre</string>

@@ -8,6 +8,7 @@ import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero
+import com.hasyame.marvelchampions.domain.campaign.SchemeSetup
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignHero
@@ -19,10 +20,12 @@ import com.hasyame.marvelchampions.domain.campaign.template.LocalizedText
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateError
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidationException
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidator
+import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.util.UUID
@@ -41,11 +44,20 @@ data class CampaignCardNames(
     val sets: Map<String, String> = emptyMap(),
     /** Host-relative image paths, for the market's shop layout. */
     val images: Map<String, String> = emptyMap(),
+    /**
+     * The setup printed on a main scheme, by card code.
+     *
+     * Only the first stage of a scenario has one, so only those codes appear.
+     */
+    val setupSteps: Map<String, List<String>> = emptyMap(),
 ) {
     /** Falls back to the code, so a card missing from the database is still identifiable. */
     fun card(code: String): String = cards[code] ?: code
 
     fun set(code: String): String = sets[code] ?: code
+
+    /** Setup steps printed on the given main schemes, in the order given. */
+    fun setup(codes: List<String>): List<String> = codes.flatMap { setupSteps[it].orEmpty() }
 }
 
 /** A loaded run: the template, the derived state, and the timer. */
@@ -56,6 +68,14 @@ data class CampaignRun(
     val events: List<CampaignEvent>,
     val timer: TimerState,
     val names: CampaignCardNames = CampaignCardNames(),
+    /**
+     * The language the campaign text is read in, which follows the cards.
+     *
+     * Somebody playing French cards wants French scenario names, whatever
+     * language the app's own buttons are in — the same rule the rules
+     * reference follows.
+     */
+    val localeCode: String = CardLocale.FRENCH.code,
     /** Every card in every deck being played, for prompts that pick from them. */
     val deckCards: List<CampaignDeckCard> = emptyList(),
     /**
@@ -150,11 +170,23 @@ class CampaignRepository @Inject constructor(
     private val cardDao: CardDao,
     private val deckRepository: DeckRepository,
     private val playRepository: PlayRepository,
+    private val preferences: AppPreferences,
     private val json: Json,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     private val engine = CampaignEngine()
+
+    /**
+     * The language campaign text is read in.
+     *
+     * Every one of these used to be the literal string "fr", so the campaigns
+     * were French whatever the player had chosen, even though the templates
+     * carry English for all but one of their 321 strings. It follows the card
+     * language rather than the app language: the scenario names have to match
+     * the box on the table.
+     */
+    private suspend fun localeCode(): String = preferences.cardLocale.first().code
 
     /** Parsed campaign assets, held for the life of the process. */
     @Volatile
@@ -177,7 +209,13 @@ class CampaignRepository @Inject constructor(
         // the app runs, and every campaign load consults them to pick up
         // corrected rules — reading, decoding and fully validating each one on
         // every action was pure waste.
-        bundledCache ?: readBundledTemplates().also { bundledCache = it }
+        //
+        // Sorted here rather than in the cache, because alphabetical order is a
+        // fact about the language and the language can change while the parsed
+        // templates cannot.
+        val code = localeCode()
+        (bundledCache ?: readBundledTemplates().also { bundledCache = it })
+            .sortedBy { it.name.resolve(code) }
     }
 
     private fun readBundledTemplates(): List<CampaignTemplate> {
@@ -193,7 +231,6 @@ class CampaignRepository @Inject constructor(
                     ).expanded()
                 }.getOrNull()
             }
-            .sortedBy { it.name.resolve("fr") }
     }
 
     /**
@@ -240,8 +277,8 @@ class CampaignRepository @Inject constructor(
             CampaignRunEntity(
                 id = runId,
                 templateId = template.id,
-                templateName = template.name.resolve("fr"),
-                name = name.ifBlank { template.name.resolve("fr") },
+                templateName = template.name.resolve(localeCode()),
+                name = name.ifBlank { template.name.resolve(localeCode()) },
                 difficulty = difficulty,
                 createdAt = System.currentTimeMillis(),
                 // The template travels with the run so it stays readable even
@@ -311,6 +348,7 @@ class CampaignRepository @Inject constructor(
             // Cards recorded during play are named too, so a step that reads
             // back a list shows titles rather than codes.
             names = resolveNames(template, locale, state.cardLists.values.flatten().toSet()),
+            localeCode = locale.code,
             deckCards = deckCards(state, locale),
             stateBeforeLastScenario = before,
         )
@@ -413,6 +451,13 @@ class CampaignRepository @Inject constructor(
             sets = setNames,
             images = resolved.mapNotNull { (code, card) ->
                 card.imageSrc?.let { code to it }
+            }.toMap(),
+            // Keyed by card code rather than by scenario, which is what makes
+            // "only the first stage" fall out on its own: a 2A or 3A scheme
+            // carries no setup, so asking it for one yields nothing and the
+            // screen shows nothing.
+            setupSteps = resolved.mapNotNull { (code, card) ->
+                SchemeSetup.steps(card.text).takeIf { it.isNotEmpty() }?.let { code to it }
             }.toMap(),
         )
     }
@@ -692,7 +737,7 @@ class CampaignRepository @Inject constructor(
                 scenarios = state.completedScenarios.map { result ->
                     val scenario = template.scenarios.firstOrNull { it.id == result.scenarioId }
                     ScenarioLogEntry(
-                        scenarioName = scenario?.name?.resolve("fr")?.takeIf { it.isNotBlank() }
+                        scenarioName = scenario?.name?.resolve(localeCode())?.takeIf { it.isNotBlank() }
                             ?: result.scenarioId,
                         victory = result.victory,
                         elapsedMillis = result.elapsedMillis,
@@ -701,6 +746,7 @@ class CampaignRepository @Inject constructor(
                             result.answers,
                             state,
                             resolveNames(template, locale, state.cardLists.values.flatten().toSet()),
+                            locale.code,
                         ),
                     )
                 },
@@ -719,10 +765,11 @@ class CampaignRepository @Inject constructor(
         answers: com.hasyame.marvelchampions.domain.campaign.engine.AnswerSet,
         state: CampaignState,
         names: CampaignCardNames = CampaignCardNames(),
+        localeCode: String = CardLocale.FRENCH.code,
     ): List<Pair<String, String>> {
         val prompts = scenario?.onVictory?.prompts.orEmpty()
         fun label(id: String) =
-            prompts.firstOrNull { it.id == id }?.label?.resolve("fr")?.takeIf { it.isNotBlank() }
+            prompts.firstOrNull { it.id == id }?.label?.resolve(localeCode)?.takeIf { it.isNotBlank() }
                 // The finished-campaign log is the one place a question is read
                 // back long after it was asked, and it was printing the raw
                 // placeholder — "{card:21184b}" where it meant a card's name.

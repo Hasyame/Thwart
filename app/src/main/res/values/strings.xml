@@ -252,6 +252,7 @@
     <string name="campaign_not_ready">I\'m not ready yet</string>
     <string name="campaign_pre_setup">Pre-setup</string>
     <string name="campaign_setup_label">Campaign setup</string>
+    <string name="campaign_scheme_setup">Main scheme setup</string>
     <string name="campaign_villain_deck_label">Villain deck</string>
     <string name="campaign_main_scheme_label">Main scheme deck</string>
     <string name="campaign_encounter_sets_label">Encounter deck</string>

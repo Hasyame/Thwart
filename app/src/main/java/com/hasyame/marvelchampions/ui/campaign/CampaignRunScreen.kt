@@ -93,7 +93,7 @@ fun CampaignRunScreen(
             colors = comicTopBarColors(),
                 title = {
                     Text(
-                        scenario?.name?.resolve("fr")?.takeIf { it.isNotBlank() }
+                        scenario?.name?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
                             ?: run?.entity?.name.orEmpty(),
                     )
                 },
@@ -218,7 +218,7 @@ private fun BriefingPage(
         // The story sits in a caption box, which is both what a comic does with
         // narration and what makes it readable: italic body text straight on
         // the halftone had the dots showing through every line.
-        scenario.flavour?.resolve("fr")?.takeIf { it.isNotBlank() }?.let {
+        scenario.flavour?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }?.let {
             ComicPanel(Modifier.fillMaxWidth()) {
                 Text(
                     text = it,
@@ -288,13 +288,13 @@ private fun BriefingPage(
                         // that read it saying everything. Rendering its empty
                         // text would put a bullet with nothing after it on the
                         // briefing.
-                        .filter { it.text.resolve("fr").isNotBlank() }
+                        .filter { it.text.resolve(run.localeCode).isNotBlank() }
                         .forEach { step ->
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
                                     campaignText(
                                         "• " + resolveDraws(
-                                            step.text.resolve("fr"),
+                                            step.text.resolve(run.localeCode),
                                             run,
                                             run.state.currentScenarioId,
                                         ),
@@ -404,7 +404,7 @@ private fun BriefingPage(
                                                     enabled = enabled,
                                                 ) {
                                                     Text(
-                                                        action.label.resolve("fr") +
+                                                        action.label.resolve(run.localeCode) +
                                                             " — " + hero.name,
                                                     )
                                                 }
@@ -414,11 +414,32 @@ private fun BriefingPage(
                                         OutlinedButton(
                                             onClick = { onSetupAction(action.id, null) },
                                             enabled = enabled,
-                                        ) { Text(action.label.resolve("fr")) }
+                                        ) { Text(action.label.resolve(run.localeCode)) }
                                     }
                                 }
                             }
                         }
+                }
+            }
+        }
+
+        // Last, because that is the order it is done in: gather the cards, apply
+        // whatever the campaign changes, then follow the setup printed on the
+        // scheme itself. Read off the card rather than written into the
+        // template, so it arrives in the language the cards are in.
+        scenario.baseSetup?.let { setup ->
+            run.names.setup(setup.mainScheme).takeIf { it.isNotEmpty() }?.let { steps ->
+                ComicPanel(Modifier.fillMaxWidth()) {
+                    Column(
+                        Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.campaign_scheme_setup),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        steps.forEach { step -> Text(campaignText("• $step")) }
+                    }
                 }
             }
         }
@@ -474,7 +495,7 @@ private fun PlayingPage(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = scenario?.name?.resolve("fr").orEmpty(),
+            text = scenario?.name?.resolve(run.localeCode).orEmpty(),
             style = MaterialTheme.typography.headlineSmall,
         )
         Text(
@@ -514,7 +535,7 @@ private fun PlayingPage(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                scenario?.victoryLabel?.resolve("fr")?.takeIf { it.isNotBlank() }
+                scenario?.victoryLabel?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
                     ?: stringResource(R.string.campaign_victory),
             )
         }
@@ -524,7 +545,7 @@ private fun PlayingPage(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                scenario?.defeatLabel?.resolve("fr")?.takeIf { it.isNotBlank() }
+                scenario?.defeatLabel?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
                     ?: stringResource(R.string.campaign_defeat),
             )
         }
@@ -794,10 +815,10 @@ private fun ChoosePage(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = scenario.name?.resolve("fr").orEmpty().ifBlank { scenario.id },
+                        text = scenario.name?.resolve(run.localeCode).orEmpty().ifBlank { scenario.id },
                         style = MaterialTheme.typography.titleMedium,
                     )
-                    scenario.flavour?.resolve("fr")?.takeIf { it.isNotBlank() }?.let {
+                    scenario.flavour?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }?.let {
                         Text(it, style = MaterialTheme.typography.bodySmall)
                     }
                 }

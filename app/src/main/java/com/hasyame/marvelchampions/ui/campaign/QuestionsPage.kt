@@ -136,7 +136,7 @@ fun QuestionsPage(
             // The card the app drew, named, so the question is about the thing
             // on the table rather than a generic one.
             val plainLabel = resolveDraws(
-                prompt.label?.resolve("fr").orEmpty().ifBlank { prompt.id },
+                prompt.label?.resolve(run.localeCode).orEmpty().ifBlank { prompt.id },
                 run,
                 run.state.currentScenarioId,
             )
@@ -331,7 +331,7 @@ fun QuestionsPage(
                                         onClick = { choices[prompt.id] = option.id },
                                         label = {
                                             Text(
-                                                option.label?.resolve("fr").orEmpty()
+                                                option.label?.resolve(run.localeCode).orEmpty()
                                                     .ifBlank { option.id },
                                             )
                                         },
