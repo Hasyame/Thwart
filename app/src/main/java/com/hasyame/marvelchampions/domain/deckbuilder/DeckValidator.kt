@@ -67,13 +67,17 @@ object DeckValidator {
             }
 
             when {
-                // The hero's own signature cards. A hero-faction card from a
-                // different hero is not legal here, which is why the set code
-                // is compared rather than just the faction.
+                // The hero's own cards, whatever faction they carry, and never
+                // counted towards a chosen aspect. Spider-Woman's set holds one
+                // event of each aspect: they are hers in every deck, and
+                // reading them as aspect cards both made two of them illegal
+                // and threw off the balance between her two chosen aspects.
+                rules.heroSetCode != null && card.cardSetCode == rules.heroSetCode -> Unit
+
+                // A hero-faction card from somebody else's set, which is never
+                // legal — Spider-Man's Web-Shooter cannot go in Thor's deck.
                 card.factionCode == HERO_FACTION ->
-                    if (rules.heroSetCode != null && card.cardSetCode != rules.heroSetCode) {
-                        problems += DeckProblem.OffAspectCard(code, card.name, card.factionCode)
-                    }
+                    problems += DeckProblem.OffAspectCard(code, card.name, card.factionCode)
 
                 card.factionCode == BASIC_FACTION -> Unit
 

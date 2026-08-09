@@ -46,12 +46,22 @@ class DeckBuilderRepository @Inject constructor(
         withContext(ioDispatcher) {
             val hero = cardDao.getCard(heroCode, locale.code) ?: return@withContext null
 
-            // The identity's own cards, at the quantity printed on each. The
-            // identity and its alter-ego side are in the same set but are not
-            // deck cards, so they are excluded.
+            // The identity's own cards, at the quantity printed on each.
+            //
+            // Everything in the hero's set except the three things that are not
+            // deck cards: the identity, the alter-ego, and the obligation, which
+            // is shuffled into the encounter deck instead. Adam Warlock's
+            // Regeneration Cycle is an obligation, and requiring it made his
+            // deck permanently illegal.
+            //
+            // Faction is deliberately not the filter. Spider-Woman's set holds
+            // one event of each aspect — Venom Blast, Pheromones, Contaminant
+            // Immunity, Inconspicuous — and those are her cards in every deck
+            // she builds, whichever two aspects she picks.
             val signature = hero.cardSetCode
                 ?.let { cardDao.getCardSet(it, locale.code) }
                 .orEmpty()
+                .filter { it.factionCode != ENCOUNTER_FACTION }
                 .filter { it.typeCode != HERO_TYPE && it.typeCode != ALTER_EGO_TYPE }
                 .associate { it.code to it.quantity }
 
@@ -122,6 +132,7 @@ class DeckBuilderRepository @Inject constructor(
         const val HERO_FACTION = "hero"
         const val HERO_TYPE = "hero"
         const val ALTER_EGO_TYPE = "alter_ego"
+        const val ENCOUNTER_FACTION = "encounter"
         const val CANDIDATE_LIMIT = 400
     }
 }

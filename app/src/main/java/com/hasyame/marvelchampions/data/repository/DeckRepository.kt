@@ -4,6 +4,7 @@ import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.SavedDeckDao
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.deckbuilder.HeroDeckRulesParser
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.dto.DeckDto
 import com.hasyame.marvelchampions.data.marvelcdb.dto.DeckMetaDto
@@ -109,7 +110,7 @@ class DeckRepository @Inject constructor(
             }
 
             val dto = json.decodeFromString(DeckDto.serializer(), body)
-            val entity = dto.toEntity(reference, body)
+            val entity = withCompleteAspects(dto.toEntity(reference, body))
             savedDeckDao.upsert(entity)
             DeckImportResult.Success(entity.id)
         } catch (_: IOException) {
@@ -214,6 +215,41 @@ class DeckRepository @Inject constructor(
         true
     }
 
+    /**
+     * Fills in aspects an imported deck could not have carried.
+     *
+     * MarvelCDB's metadata has room for two aspects — `aspect` and `aspect2` —
+     * and Adam Warlock takes four. His imported decks therefore arrived naming
+     * two of them, which read as a two-aspect deck: the app displayed
+     * "Aggression / Justice" and called the other half of his cards illegal.
+     *
+     * The cards themselves know better, so the rest is read off them. Only ever
+     * adds; an aspect the deck's author recorded is never dropped.
+     */
+    private suspend fun withCompleteAspects(deck: SavedDeckEntity): SavedDeckEntity {
+        val hero = cardDao.getCard(deck.heroCode, CardLocale.ENGLISH.code)
+            ?: cardDao.getCardPreferringLocale(deck.heroCode, CardLocale.ENGLISH.code)
+            ?: return deck
+        val needed = HeroDeckRulesParser.parse(hero, json).aspectCount
+        val recorded = parseAspects(deck.aspects)
+        if (recorded.size >= needed) {
+            return deck
+        }
+
+        val fromCards = parseSlots(deck.slots).keys
+            .mapNotNull { cardDao.getCardPreferringLocale(it, CardLocale.ENGLISH.code) }
+            .map { it.factionCode }
+            .filter { it in ASPECT_FACTIONS }
+            .distinct()
+
+        val complete = (recorded + fromCards).distinct().take(needed)
+        return if (complete.size > recorded.size) {
+            deck.copy(aspects = complete.joinToString(","))
+        } else {
+            deck
+        }
+    }
+
     suspend fun setAspects(deckId: String, aspects: List<String>) = withContext(ioDispatcher) {
         savedDeckDao.getDeck(deckId)?.let {
             savedDeckDao.upsert(it.copy(aspects = aspects.joinToString(",")))
@@ -294,6 +330,10 @@ class DeckRepository @Inject constructor(
     companion object {
         /** Marks a deck built in the app rather than imported. */
         const val LOCAL_KIND: String = "LOCAL"
+
+        /** The four aspects a deck can be customised from. */
+        private val ASPECT_FACTIONS =
+            setOf("aggression", "justice", "leadership", "protection")
         private const val LOCAL_ID_PREFIX = "local-"
 
         fun isLocal(deck: SavedDeckEntity): Boolean = deck.kind == LOCAL_KIND

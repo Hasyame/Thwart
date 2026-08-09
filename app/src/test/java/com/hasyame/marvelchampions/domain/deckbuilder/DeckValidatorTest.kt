@@ -393,6 +393,46 @@ class DeckValidatorTest {
     }
 
     @Test
+    fun `a hero's own aspect cards are legal whatever aspects were chosen`() {
+        // Spider-Woman's set holds one event of each aspect. Venom Blast is an
+        // aggression card and belongs in her deck even when she has picked
+        // justice and leadership.
+        val jessica = HeroDeckRules(
+            heroCode = "04031a",
+            heroSetCode = "spider_woman",
+            aspectCount = 2,
+            aspectsMustBalance = true,
+            requiredCards = mapOf("04035" to 2),
+        )
+        val slots = mutableMapOf<String, Int>("04035" to 2)
+        val cards = mutableMapOf(
+            "04035" to card("04035", "aggression", type = "event", setCode = "spider_woman"),
+        )
+        repeat(19) { slots["j$it"] = 1; cards["j$it"] = card("j$it", "justice") }
+        repeat(19) { slots["l$it"] = 1; cards["l$it"] = card("l$it", "leadership") }
+
+        val result = DeckValidator.validate(jessica, listOf("justice", "leadership"), slots, cards)
+
+        assertTrue(result.problems.toString(), result.isLegal)
+    }
+
+    @Test
+    fun `another hero's signature card is still refused`() {
+        val (slots, cards) = fillerDeck(count = 39)
+        val withStranger = slots + mapOf("thor1" to 1)
+        val strangerCards = cards + mapOf(
+            "thor1" to card("thor1", "hero", setCode = "thor"),
+        )
+
+        val result = DeckValidator.validate(heroRules, listOf("justice"), withStranger, strangerCards)
+
+        assertTrue(
+            result.problems.toString(),
+            result.problems.any { it is DeckProblem.OffAspectCard && it.cardCode == "thor1" },
+        )
+    }
+
+    @Test
     fun `a hero's own cards are not held to the three copy limit`() {
         // Some signature cards are printed in threes and one in four; the
         // printed quantity is the rule for them.
