@@ -4,25 +4,21 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * The user's physical collection, pre-seeded on first launch so the app is
- * useful immediately. Every code was resolved against `/api/public/packs/` on
- * 2026-08-01 — see `docs/DATA_SOURCES.md`.
+ * What a new install assumes you own: the Core Set, and nothing else.
  *
- * Elektra, Iron Fist and Shadowland are deliberately absent: they are announced
- * or on pre-order and MarvelCDB has no pack for them yet, so there is no code to
- * put here. They can be ticked in the collection screen once MarvelCDB adds
- * them.
+ * The one box nobody plays this game without, which is the whole argument for
+ * pre-ticking anything. It leaves the randomiser working on day one — three
+ * scenarios, five heroes, Standard I and Expert I — while claiming nothing that
+ * might be untrue, and the collection screen opens on first launch to be
+ * corrected.
+ *
+ * This used to be the author's own fifteen packs, which shipped to everybody. A
+ * player on a Galaxy Z Fold 7 reported heroes missing: the app was offering 23
+ * of 65, because it believed he owned somebody else's collection. A default is
+ * a claim about the person installing it, and the only honest claim is the box
+ * the game cannot be played without.
  */
-internal val PRESEEDED_COLLECTION: List<String> = listOf(
-    // Core
-    "core",
-    // Hero packs
-    "msm", "magneto", "drs", "wonder_man", "gambit", "deadpool", "hercules",
-    // Scenario packs
-    "gob", "sm",
-    // Campaign boxes
-    "fne", "aoa", "gmw", "mts", "trors",
-)
+internal val PRESEEDED_COLLECTION: List<String> = listOf("core")
 
 /** What the app needs to do before showing anything on first launch. */
 enum class FirstRunOutcome {
