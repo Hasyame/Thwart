@@ -273,6 +273,11 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
 
+    // Navigation is covered by the ordinary test task, through Robolectric and
+    // a real NavController rather than a device. Two bugs reached players
+    // through this gap: tapping the tab you were already on doing nothing, and
+    // a one-shot navigation re-firing on every rebuilt composition.
+    testImplementation(libs.androidx.navigation.testing)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
