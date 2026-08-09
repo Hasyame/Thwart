@@ -1,0 +1,13 @@
+The Rules tab now works in French.
+
+Not only the explanations — the keywords too. Looking up the word printed on
+a French card finds "Riposte X" rather than "retaliate", because that is what
+you are holding.
+
+It follows the language the app is set to, not the language of your cards:
+the rules are the app talking, so somebody reading the interface in French
+gets them in French whichever language their collection is printed in.
+
+There are 247 entries now instead of 143, and they follow rulebook v1.8, so
+the English is better too. All of it comes from the bilingual reference guide
+compiled by deejimy and released under CC0 — he is credited under the list.
