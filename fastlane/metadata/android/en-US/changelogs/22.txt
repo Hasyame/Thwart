@@ -1,0 +1,8 @@
+Adds a Rules tab: the Rules Reference, searchable and offline, so a keyword
+can be settled at the table without a signal. Searching puts the matching
+keyword first and the rules that merely mention it after, because looking up
+"stun" should answer with STUNNED. English only for now.
+
+Settings now carries two languages instead of one. The card language and the
+language of the app itself are separate settings, so French cards can be read
+in an English interface or the other way round. The choice is remembered.

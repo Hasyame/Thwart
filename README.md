@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.10.1](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.11.0](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -33,6 +33,11 @@ content rather than machinery.
 - **Offline images.** Download the pictures for the packs you own, so cards are
   readable at a table with no signal. Never automatic — it is a large download
   and asking first is the only decent way to do that on mobile data.
+- **Rules reference.** The Rules Reference in a tab of its own, searchable and
+  offline, because the moment somebody needs to know what *retaliate* does is
+  the moment the rulebook is in a bag under the table. Searching answers with
+  the keyword first and the rules that merely mention it after — "stun" returns
+  STUNNED, not the eleven rules that use the word. English only for now.
 - **Collection.** Mark the packs you own; everything the app offers follows from
   it. Owning a pack is not owning everything in it, so tapping one opens the
   scenarios and modular sets inside — untick whatever is missing from a
@@ -90,6 +95,11 @@ content rather than machinery.
 - **Backup and restore.** Collection, decks, campaigns, play history and
   favourites to a single readable JSON file, and back again on any device.
   There is no account and no server, so without this the phone is the only copy.
+- **Two languages, chosen separately.** The language of the card text and the
+  language of the app itself are different settings, because a French player
+  with an English collection is a normal thing to be. Either can be French or
+  English, and the app can also just follow the phone. The choice survives a
+  restart on every supported version of Android.
 - **Dark theme**, on by default, and light if you prefer it. Both are built
   around the game's own aspect colours meaning only one thing: aggression red,
   justice gold, leadership blue, protection green belong to the cards, so the
