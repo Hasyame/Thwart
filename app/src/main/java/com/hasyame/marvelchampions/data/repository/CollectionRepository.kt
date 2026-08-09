@@ -151,9 +151,20 @@ class CollectionRepository @Inject constructor(
         }
     }
 
-    /** Pack code to its localised name, falling back to the code. */
-    suspend fun packNames(locale: CardLocale): Map<String, String> =
-        packDao.getTranslations(locale.code).associate { it.packCode to it.name }
+    /**
+     * Pack code to its localised name, falling back to the code.
+     *
+     * Corrected the same way set names are. MarvelCDB leaves a number of pack
+     * titles in English on its French endpoint, so the collection screen and
+     * everything that names a pack were showing "Agents of S.H.I.E.L.D." to
+     * somebody holding the French box. Scenarios and modular sets have been
+     * corrected here since the French names went in; packs were simply missed.
+     */
+    suspend fun packNames(locale: CardLocale): Map<String, String> {
+        val overrides = setNameOverrides.packsForLocale(locale)
+        return packDao.getTranslations(locale.code)
+            .associate { it.packCode to (overrides[it.packCode] ?: it.name) }
+    }
 
     fun observeExcludedModularSets(): Flow<Set<String>> =
         excludedModularSetDao.observeExcluded().map { rows -> rows.map { it.setCode }.toSet() }

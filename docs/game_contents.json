@@ -4,6 +4,188 @@
     "https://marvelcdb.com/api/public/cards/?encounter=1",
     "https://fr.marvelcdb.com/api/public/cards/?encounter=1"
   ],
+  "packNames": [
+    {
+      "code": "aos",
+      "en": "Agents of S.H.I.E.L.D.",
+      "fr": null
+    },
+    {
+      "code": "angel",
+      "en": "Angel",
+      "fr": null
+    },
+    {
+      "code": "ant",
+      "en": "Ant-Man",
+      "fr": null
+    },
+    {
+      "code": "bp",
+      "en": "Black Panther",
+      "fr": null
+    },
+    {
+      "code": "bkw",
+      "en": "Black Widow",
+      "fr": null
+    },
+    {
+      "code": "cap",
+      "en": "Captain America",
+      "fr": null
+    },
+    {
+      "code": "cw",
+      "en": "Civil War",
+      "fr": null
+    },
+    {
+      "code": "deadpool",
+      "en": "Deadpool",
+      "fr": null
+    },
+    {
+      "code": "drax",
+      "en": "Drax",
+      "fr": null
+    },
+    {
+      "code": "falcon",
+      "en": "Falcon",
+      "fr": null
+    },
+    {
+      "code": "fne",
+      "en": "Fear No Evil",
+      "fr": null
+    },
+    {
+      "code": "gambit",
+      "en": "Gambit",
+      "fr": null
+    },
+    {
+      "code": "gam",
+      "en": "Gamora",
+      "fr": null
+    },
+    {
+      "code": "hercules",
+      "en": "Hercules",
+      "fr": null
+    },
+    {
+      "code": "hlk",
+      "en": "Hulk",
+      "fr": null
+    },
+    {
+      "code": "ironheart",
+      "en": "Ironheart",
+      "fr": null
+    },
+    {
+      "code": "magneto",
+      "en": "Magneto",
+      "fr": null
+    },
+    {
+      "code": "next_evol",
+      "en": "NeXt Evolution",
+      "fr": null
+    },
+    {
+      "code": "nebu",
+      "en": "Nebula",
+      "fr": null
+    },
+    {
+      "code": "nova",
+      "en": "Nova",
+      "fr": null
+    },
+    {
+      "code": "psylocke",
+      "en": "Psylocke",
+      "fr": null
+    },
+    {
+      "code": "spdr",
+      "en": "SP//dr",
+      "fr": null
+    },
+    {
+      "code": "silk",
+      "en": "Silk",
+      "fr": null
+    },
+    {
+      "code": "stld",
+      "en": "Star-Lord",
+      "fr": null
+    },
+    {
+      "code": "synthezoid",
+      "en": "Synthezoid Smackdown",
+      "fr": null
+    },
+    {
+      "code": "hood",
+      "en": "The Hood",
+      "fr": null
+    },
+    {
+      "code": "thor",
+      "en": "Thor",
+      "fr": null
+    },
+    {
+      "code": "tt",
+      "en": "Trickster Takeover",
+      "fr": null
+    },
+    {
+      "code": "valk",
+      "en": "Valkyrie",
+      "fr": null
+    },
+    {
+      "code": "vnm",
+      "en": "Venom",
+      "fr": null
+    },
+    {
+      "code": "vision",
+      "en": "Vision",
+      "fr": null
+    },
+    {
+      "code": "warm",
+      "en": "War Machine",
+      "fr": null
+    },
+    {
+      "code": "winter",
+      "en": "Winter Soldier",
+      "fr": null
+    },
+    {
+      "code": "wolv",
+      "en": "Wolverine",
+      "fr": null
+    },
+    {
+      "code": "wonder_man",
+      "en": "Wonder Man",
+      "fr": null
+    },
+    {
+      "code": "x23",
+      "en": "X-23",
+      "fr": null
+    }
+  ],
   "waves": [
     {
       "wave": 0,

@@ -12,10 +12,14 @@ Usage:
 """
 import json
 import io
+import os
 import urllib.request
 
 EN = "https://marvelcdb.com/api/public/cards/?encounter=1"
 FR = "https://fr.marvelcdb.com/api/public/cards/?encounter=1"
+EN_PACKS = "https://marvelcdb.com/api/public/packs/"
+FR_PACKS = "https://fr.marvelcdb.com/api/public/packs/"
+CONTENTS = "docs/game_contents.json"
 
 # --- the boxes ---------------------------------------------------------------
 # (name, code, type, scenarios, modular sets, difficulties the box adds)
@@ -216,7 +220,53 @@ def existing_french():
     return kept
 
 
-def write_overrides(waves, api_french):
+def pack_names():
+    """Packs whose title MarvelCDB returns in English on its French endpoint.
+
+    Found rather than listed: a pack whose French name is byte-for-byte the
+    English one either needs translating or is named after a character and never
+    will be. Both look the same from here, so both are written out with `fr`
+    null and a person decides which is which — the same way the set names were
+    done. Anything already filled in is kept.
+    """
+    kept = {}
+    if os.path.exists(CONTENTS):
+        with io.open(CONTENTS, encoding="utf-8") as handle:
+            for entry in json.load(handle).get("packNames", []):
+                if entry.get("code") and entry.get("fr"):
+                    kept[entry["code"]] = entry["fr"]
+
+    english = {p["code"]: p["name"] for p in fetch(EN_PACKS)}
+    french = {p["code"]: p["name"] for p in fetch(FR_PACKS)}
+    rows = [
+        {"code": code, "en": name, "fr": kept.get(code)}
+        for code, name in sorted(english.items(), key=lambda item: item[1])
+        if french.get(code) == name
+    ]
+    return rows
+
+
+def pack_corrections(document):
+    """French pack titles, from the `packNames` block of the reference file.
+
+    Kept in their own section of the generated file rather than mixed in with
+    the set corrections: thirty-four codes name both a pack and an encounter set
+    (`deadpool`, `magneto`, `gambit`), so one shared table would rename the set
+    whenever the pack was corrected.
+
+    A pack whose French title is the English one — every pack named after a
+    character — belongs nowhere near this file. Only a genuine translation
+    counts.
+    """
+    corrections = {}
+    for entry in document.get("packNames", []):
+        code, french = entry.get("code"), entry.get("fr")
+        if code and french and french != entry.get("en"):
+            corrections[code] = french
+    return corrections
+
+
+def write_overrides(waves, api_french, packs=None):
     """Emits the file the app reads, from the file a person edits.
 
     Two files existed and only one of them was displayed, so a name typed into
@@ -248,12 +298,13 @@ def write_overrides(waves, api_french):
             "keeps whatever the card database says."
         ),
         "fr": dict(sorted(corrections.items())),
+        "packs": {"fr": dict(sorted((packs or {}).items()))},
     }
     with io.open("app/src/main/assets/set_name_overrides.json", "w",
                  encoding="utf-8", newline="\n") as out:
         json.dump(document, out, ensure_ascii=False, indent=2)
         out.write("\n")
-    print("app corrections written:", len(corrections))
+    print("app corrections written:", len(corrections), "sets,", len(packs or {}), "packs")
 
 
 def main():
@@ -309,6 +360,7 @@ def main():
             "entering. Regenerate with tools/build_game_contents.py."
         ),
         "generatedFrom": [EN, FR],
+        "packNames": pack_names(),
         "waves": waves,
     }
 
@@ -316,7 +368,16 @@ def main():
         json.dump(document, out, ensure_ascii=False, indent=2)
         out.write("\n")
 
-    write_overrides(waves, {**fr_villain, **fr_modular})
+    write_overrides(
+        waves,
+        {**fr_villain, **fr_modular},
+        packs=pack_corrections(document),
+    )
+    pending = [e["en"] for e in document["packNames"] if not e["fr"]]
+    if pending:
+        print("pack titles still in English:", len(pending))
+        for name in pending:
+            print("   ", name)
 
     scenarios = [s for w in waves for p in w["packs"] for s in p["scenarios"]]
     modulars = [m for w in waves for p in w["packs"] for m in p["modularSets"]]
