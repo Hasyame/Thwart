@@ -11,8 +11,19 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
  * `saveState`/`restoreState` are what make the stacks independent; popping up to
  * the host graph's start destination keeps the bar from growing an unbounded
  * history of tab switches.
+ *
+ * Tapping the tab you are already on is a different request: it means "take me
+ * back to the top of this". Left to the code below it did nothing at all — the
+ * tab's stack was saved and then immediately restored, landing exactly where it
+ * started. After building a deck that was the whole trap: the editor is inside
+ * the Decks tab, so Decks was already selected, and tapping it kept returning
+ * the editor rather than the deck list.
  */
 fun NavController.navigateToTopLevelDestination(destination: TopLevelDestination) {
+    if (currentBackStackEntry?.destination.isOn(destination)) {
+        popBackStack(destination.route, inclusive = false)
+        return
+    }
     navigate(destination.graphRouteInstance()) {
         popUpTo(graph.findStartDestination().id) {
             saveState = true
