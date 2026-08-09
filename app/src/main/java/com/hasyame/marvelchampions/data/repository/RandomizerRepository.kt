@@ -5,6 +5,7 @@ import com.hasyame.marvelchampions.data.db.dao.RandomizerHistoryDao
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
 import com.hasyame.marvelchampions.data.seed.CardSeedSource
 import com.hasyame.marvelchampions.data.seed.SetNameOverrides
+import com.hasyame.marvelchampions.domain.campaign.SchemeSetup
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.HeroAssignment
@@ -34,6 +35,17 @@ data class RandomizerNames(
     val heroes: Map<String, String> = emptyMap(),
     /** Pack code to its name, so a picker can say where a scenario came from. */
     val packs: Map<String, String> = emptyMap(),
+)
+
+/**
+ * A scenario's first main scheme, and the setup printed on it.
+ *
+ * [steps] is empty for the two scenarios that keep their setup in the rules
+ * insert, and for any scenario the card database has nothing for.
+ */
+data class SchemeBriefing(
+    val schemeName: String? = null,
+    val steps: List<String> = emptyList(),
 )
 
 @Singleton
@@ -169,6 +181,43 @@ class RandomizerRepository @Inject constructor(
         }
     }
 
+    /**
+     * The setup printed on a scenario's own main scheme.
+     *
+     * The same text the campaign briefings show, for the games that are not
+     * campaigns. Every scenario tells you how to set itself up on the 1A side
+     * of its main scheme, and a player who rolled a scenario they have not
+     * played is otherwise reading it off the card with one hand.
+     */
+    suspend fun schemeBriefing(
+        scenarioCode: String,
+        locale: CardLocale,
+    ): SchemeBriefing = withContext(ioDispatcher) {
+        val schemes = cardDao.getCardSet(scenarioCode, locale.code)
+            .filter { it.typeCode == MAIN_SCHEME_TYPE }
+        if (schemes.isEmpty()) {
+            return@withContext SchemeBriefing()
+        }
+
+        // Chosen by what the card carries rather than by its stage. Only the
+        // first stage has a setup, but the stage is written "1A" on sixty of
+        // them and plain "A" on two, and older scenarios number theirs "1" and
+        // print no setup at all because it lives in the campaign book. Asking
+        // for the one with a setup on it answers all three.
+        val withSetup = schemes.firstNotNullOfOrNull { scheme ->
+            SchemeSetup.steps(scheme.text)
+                .takeIf { it.isNotEmpty() }
+                ?.let { scheme to it }
+        }
+
+        SchemeBriefing(
+            // Named even when there is no setup to print, so the briefing can
+            // still say which main scheme to put out.
+            schemeName = (withSetup?.first ?: schemes.minByOrNull { it.stage.orEmpty() })?.name,
+            steps = withSetup?.second.orEmpty(),
+        )
+    }
+
     suspend fun loadNames(locale: CardLocale): RandomizerNames = withContext(ioDispatcher) {
         // Corrections first, then whatever the card database says. MarvelCDB
         // leaves some French set names in English, and a player reading a name
@@ -211,6 +260,7 @@ class RandomizerRepository @Inject constructor(
     suspend fun deleteHistoryEntry(id: String) = historyDao.delete(id)
 
     companion object {
+        private const val MAIN_SCHEME_TYPE = "main_scheme"
         private const val MODULAR_SET = "modular"
 
         /** A versus game takes three or four modular sets, never one. */

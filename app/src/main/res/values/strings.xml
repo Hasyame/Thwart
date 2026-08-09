@@ -434,6 +434,8 @@
     <string name="session_aspect">…with which aspect?</string>
     <string name="session_table">At the table</string>
     <string name="session_start">Start playing</string>
+    <string name="session_play">Play</string>
+    <string name="session_change_setup">Change the setup</string>
     <string name="session_pause">Pause</string>
     <string name="session_resume">Resume</string>
     <string name="session_won">We won</string>

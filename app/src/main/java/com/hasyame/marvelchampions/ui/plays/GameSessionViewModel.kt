@@ -8,6 +8,7 @@ import com.hasyame.marvelchampions.data.repository.PlayRecorded
 import com.hasyame.marvelchampions.data.repository.PlayRepository
 import com.hasyame.marvelchampions.data.repository.RandomizerNames
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
+import com.hasyame.marvelchampions.data.repository.SchemeBriefing
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
@@ -22,10 +23,20 @@ import javax.inject.Inject
 /** One player at the table: who they are and which aspect they brought. */
 data class SessionHero(val heroCode: String, val aspect: String)
 
-/** Which half of the screen is showing. */
+/** Which part of the screen is showing. */
 enum class SessionPhase {
     /** Choosing the game. */
     SETUP,
+
+    /**
+     * Chosen, and being laid out on the table.
+     *
+     * What to fetch, and the setup printed on the scenario's own main scheme.
+     * The clock is deliberately not running: putting a game out takes several
+     * minutes, and counting them as play time made every game longer than it
+     * was.
+     */
+    BRIEFING,
 
     /** Clock running. */
     PLAYING,
@@ -55,6 +66,8 @@ data class GameSessionUiState(
      */
     val firstPlayerIndex: Int? = null,
     val elapsedMillis: Long = 0,
+    /** The scenario's own main scheme and the setup printed on it. */
+    val briefing: SchemeBriefing = SchemeBriefing(),
     val isLoading: Boolean = true,
     /** True from the moment a result is tapped until it has been filed. */
     val isFinishing: Boolean = false,
@@ -88,9 +101,17 @@ class GameSessionViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
+            // Fetched into locals first, and the state read only once they are
+            // all in hand. Written as `state.value.copy(pools = load(), ...)`
+            // the receiver is read before the first suspension, so anything
+            // written while the pools loaded was applied to a stale snapshot
+            // and lost — which is what happened to the briefing, since one
+            // small query finishes long before these two.
+            val pools = randomizerRepository.loadPools(locale)
+            val names = randomizerRepository.loadNames(locale)
             state.value = state.value.copy(
-                pools = randomizerRepository.loadPools(locale),
-                names = randomizerRepository.loadNames(locale),
+                pools = pools,
+                names = names,
                 isLoading = false,
             )
         }
@@ -133,8 +154,9 @@ class GameSessionViewModel @Inject constructor(
                 .ifEmpty { state.value.modularSetCodes },
         )
 
-        // A draw arrives complete, so the clock starts rather than showing a
-        // setup page asking the player to confirm what was just rolled.
+        // A draw arrives complete, so there is nothing to choose: it goes
+        // straight to the briefing, which is the part the player needs — what
+        // to fetch out of the boxes and how the scenario is laid out.
         if (autoStart) {
             start()
         }
@@ -169,15 +191,36 @@ class GameSessionViewModel @Inject constructor(
     }
 
     /**
-     * Starts the clock, and settles who goes first.
+     * Moves to the briefing: what to fetch, and the scenario's own setup.
+     *
+     * The clock does not start here. It starts when the player says the table
+     * is ready, which is what [beginPlaying] is for.
+     */
+    fun start() {
+        val current = state.value
+        if (!current.canStart) {
+            return
+        }
+        state.value = current.copy(phase = SessionPhase.BRIEFING)
+
+        val scenario = current.scenarioCode ?: return
+        viewModelScope.launch {
+            val locale = preferences.currentCardLocale()
+            val briefing = randomizerRepository.schemeBriefing(scenario, locale)
+            state.value = state.value.copy(briefing = briefing)
+        }
+    }
+
+    /**
+     * The table is laid out. Starts the clock, and settles who goes first.
      *
      * The rules have the players decide that between them, which at a real
      * table is a pause and a shrug. Drawn here instead, once, and only when
      * there is more than one player.
      */
-    fun start() {
+    fun beginPlaying() {
         val current = state.value
-        if (!current.canStart) {
+        if (current.phase != SessionPhase.BRIEFING) {
             return
         }
         state.value = current.copy(
@@ -185,6 +228,13 @@ class GameSessionViewModel @Inject constructor(
             timer = TimerState().start(System.currentTimeMillis()),
             firstPlayerIndex = if (current.heroes.size > 1) current.heroes.indices.random() else null,
         )
+    }
+
+    /** Back to the choices, from the briefing. Nothing has been recorded yet. */
+    fun backToSetup() {
+        if (state.value.phase == SessionPhase.BRIEFING) {
+            state.value = state.value.copy(phase = SessionPhase.SETUP)
+        }
     }
 
     /** Called on a ticker while the clock runs, so the display keeps up. */

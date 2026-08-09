@@ -126,6 +126,13 @@ fun GameSessionScreen(
                 modifier = Modifier.padding(padding),
             )
 
+            state.phase == SessionPhase.BRIEFING -> BriefingPhase(
+                state = state,
+                onPlay = viewModel::beginPlaying,
+                onBack = viewModel::backToSetup,
+                modifier = Modifier.padding(padding),
+            )
+
             else -> PlayingPhase(
                 state = state,
                 viewModel = viewModel,
@@ -331,6 +338,112 @@ private fun PickerSection(title: String, content: @Composable () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(title, style = MaterialTheme.typography.labelLarge)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { content() }
+    }
+}
+
+/**
+ * What to put on the table, before the clock starts.
+ *
+ * The same two halves a campaign briefing has, minus the campaign's own steps
+ * because there are none here: what to fetch out of the boxes, then the setup
+ * printed on the scenario's own main scheme. The clock waits, because laying a
+ * game out takes minutes that are not play.
+ */
+@Composable
+private fun BriefingPhase(
+    state: GameSessionUiState,
+    onPlay: () -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        ComicPanel(Modifier.fillMaxWidth()) {
+            Column(
+                Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.campaign_pre_setup),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                state.scenarioCode?.let { code ->
+                    BriefingRow(
+                        label = stringResource(R.string.randomizer_scenario),
+                        value = state.names.scenarios[code] ?: code,
+                    )
+                }
+                state.briefing.schemeName?.let {
+                    BriefingRow(
+                        label = stringResource(R.string.campaign_main_scheme_label),
+                        value = it,
+                    )
+                }
+                BriefingRow(
+                    label = stringResource(R.string.randomizer_difficulty),
+                    value = stringResource(
+                        Difficulty.entries
+                            .firstOrNull { it.name.lowercase() == state.difficulty }
+                            ?.labelRes()
+                            ?: R.string.difficulty_standard_i,
+                    ),
+                )
+                // The sets that were drawn, which is the part a player cannot
+                // work out from the scenario alone.
+                state.modularSetCodes.takeIf { it.isNotEmpty() }?.let { sets ->
+                    BriefingRow(
+                        label = stringResource(R.string.campaign_encounter_sets_label),
+                        value = sets.joinToString(", ") { state.names.modularSets[it] ?: it },
+                    )
+                }
+                state.heroes.takeIf { it.isNotEmpty() }?.let { heroes ->
+                    BriefingRow(
+                        label = stringResource(R.string.randomizer_heroes),
+                        value = heroes.joinToString(", ") { hero ->
+                            (state.names.heroes[hero.heroCode] ?: hero.heroCode) +
+                                " · " + hero.aspect.replaceFirstChar(Char::uppercase)
+                        },
+                    )
+                }
+            }
+        }
+
+        // Absent for the two scenarios that keep their setup in the rules
+        // insert. Nothing is shown rather than a guess.
+        state.briefing.steps.takeIf { it.isNotEmpty() }?.let { steps ->
+            ComicPanel(Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.campaign_scheme_setup),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    steps.forEach { step -> Text("• $step") }
+                }
+            }
+        }
+
+        Button(onClick = onPlay, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.session_play))
+        }
+        OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.session_change_setup))
+        }
+    }
+}
+
+@Composable
+private fun BriefingRow(label: String, value: String) {
+    Column {
+        Text(label, style = MaterialTheme.typography.labelLarge)
+        Text(value, style = MaterialTheme.typography.bodyLarge)
     }
 }
 
