@@ -118,7 +118,7 @@ class BggClient @Inject constructor(
         runCatching { client.newCall(request).execute() }.fold(
             onSuccess = { response ->
                 response.use {
-                    val body = it.body?.string().orEmpty()
+                    val body = it.body.string()
                     when {
                         !it.isSuccessful -> BggResult.Rejected("HTTP ${it.code}")
                         // A rejected save comes back 200 with an error in the
@@ -171,9 +171,6 @@ class BggClient @Inject constructor(
         """{"credentials":{"username":"${username.escapeJson()}",""" +
             """"password":"${password.escapeJson()}"}}"""
 
-    private fun String.escapeJson(): String =
-        replace("\\", "\\\\").replace("\"", "\\\"")
-
     /**
      * A client per report, with cookies held only in memory.
      *
@@ -193,7 +190,17 @@ class BggClient @Inject constructor(
             this.cookies += cookies
         }
 
-        override fun loadForRequest(url: HttpUrl): List<Cookie> = cookies
+        /**
+         * Only the cookies that belong to [url]. Returning the whole jar was
+         * the same thing as long as BGG answered every request itself, but
+         * OkHttp follows a redirect wherever it points, including off the
+         * host — and the cookie held here is a live session for somebody's
+         * account. [Cookie.matches] applies the domain, path and secure rules
+         * the cookie was set with, so a redirect elsewhere now leaves with
+         * nothing attached.
+         */
+        override fun loadForRequest(url: HttpUrl): List<Cookie> =
+            cookies.filter { it.matches(url) }
     }
 
     private companion object {
@@ -205,5 +212,36 @@ class BggClient @Inject constructor(
         const val USER_AGENT = "MarvelChampionsCompanion/1.0 (github.com/Hasyame)"
         const val HTTP_UNAUTHORIZED = 401
         const val ERROR_DETAIL_LIMIT = 200
+    }
+}
+
+/**
+ * The backslash and the quote, and the control characters a JSON string is
+ * not allowed to carry raw.
+ *
+ * The first two were always escaped; the rest were not, and a password
+ * holding a tab or a line break — which a password manager will happily
+ * produce — built a body BGG could only reject. The player was then told
+ * their credentials were wrong, which was both untrue and unfixable from
+ * their side.
+ *
+ * Top level and internal so it can be tested without a client: the whole
+ * point is the characters nobody types on purpose.
+ */
+internal fun String.escapeJson(): String = buildString(length) {
+    for (character in this@escapeJson) {
+        when {
+            character == '\\' -> append("\\\\")
+            character == '\"' -> append("\\\"")
+            character == '\n' -> append("\\n")
+            character == '\r' -> append("\\r")
+            character == '\t' -> append("\\t")
+            character == '\b' -> append("\\b")
+            character == '\u000C' -> append("\\f")
+            character < ' ' ->
+                append("\\u").append(character.code.toString(16).padStart(4, '0'))
+
+            else -> append(character)
+        }
     }
 }
