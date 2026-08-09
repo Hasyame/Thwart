@@ -51,6 +51,9 @@ fun MarvelChampionsApp(
             // A shared deck link wins over the first-run collection prompt:
             // the user asked for something specific.
             openCollectionFirst = startup.openCollectionFirst && sharedLink.isNullOrBlank(),
+            consumeOpenCollection = {
+                sharedLink.isNullOrBlank() && viewModel.consumeOpenCollection()
+            },
             sharedLink = sharedLink,
             onSharedLinkHandled = onSharedLinkHandled,
         )
@@ -60,6 +63,7 @@ fun MarvelChampionsApp(
 @Composable
 private fun AppContent(
     openCollectionFirst: Boolean,
+    consumeOpenCollection: () -> Boolean,
     sharedLink: String?,
     onSharedLinkHandled: () -> Unit,
 ) {
@@ -69,8 +73,13 @@ private fun AppContent(
     // A fresh install goes straight to the collection. Navigating rather than
     // making it the start destination keeps Settings underneath it, so the back
     // gesture leads somewhere sensible instead of closing the app.
-    LaunchedEffect(openCollectionFirst) {
-        if (openCollectionFirst) {
+    //
+    // Asked of the view model rather than of this composition, and consumed
+    // rather than read: a fold, an unfold or a rotation builds a new
+    // composition over the same view model, and reading a plain flag here sent
+    // the player back to the collection screen every single time.
+    LaunchedEffect(Unit) {
+        if (consumeOpenCollection()) {
             navController.navigate(CollectionRoute)
         }
     }
