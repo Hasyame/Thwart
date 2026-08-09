@@ -83,6 +83,9 @@
     <!-- Settings -->
     <string name="settings_collection">Ma collection</string>
     <string name="settings_collection_summary">Choisissez les extensions que vous possédez</string>
+    <string name="settings_app_language">Langue de l\'application</string>
+    <string name="settings_app_language_summary">La langue de l\'application elle-même, indépendante du texte des cartes.</string>
+    <string name="settings_app_language_system">Système</string>
     <string name="settings_card_language">Langue des cartes</string>
     <string name="settings_card_language_summary">La langue du texte des cartes, indépendante de la langue de l\'application.</string>
     <string name="settings_update_cards">Mettre à jour les cartes depuis MarvelCDB</string>

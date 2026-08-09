@@ -82,6 +82,21 @@
                 tools:node="remove" />
         </provider>
 
+        <!--
+          Not a service that runs: AppCompat reads this metadata to decide
+          whether to remember the chosen language itself. Android 13 stores a
+          per-app language for us; below that, without this, the setting is
+          forgotten every time the app closes.
+        -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
     </application>
 
 </manifest>

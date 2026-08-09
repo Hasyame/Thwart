@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
@@ -108,6 +110,9 @@ fun SettingsScreen(
                     )
                 }
             }
+            HorizontalDivider()
+
+            AppLanguageSection()
             HorizontalDivider()
 
             Text(
@@ -269,6 +274,63 @@ fun SettingsScreen(
  * that has only ever wanted the network, to produce something less useful than
  * the word you would have typed anyway.
  */
+/**
+ * The language the app speaks, as against the language of the cards.
+ *
+ * The two really are separate — plenty of people read the app in French and the
+ * cards in English, because English is what their group says out loud — but only
+ * the card language had a control here. The app language could be changed from
+ * Android's own settings, three screens deep, and on Android 12 not at all.
+ *
+ * The choice is not kept in this app's preferences. AppCompat owns it, so that
+ * Android 13 and above shows the same value in system settings instead of the
+ * two quietly disagreeing.
+ */
+@Composable
+private fun AppLanguageSection() {
+    val selected = AppCompatDelegate.getApplicationLocales()
+        .toLanguageTags()
+        .takeIf { it.isNotBlank() }
+        ?.substringBefore('-')
+
+    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = stringResource(R.string.settings_app_language),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        Text(
+            text = stringResource(R.string.settings_app_language_summary),
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Following the system has to stay reachable: somebody who picks a
+            // language should be able to put it back without knowing which one
+            // their phone was using.
+            FilterChip(
+                selected = selected == null,
+                onClick = {
+                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+                },
+                label = { Text(stringResource(R.string.settings_app_language_system)) },
+            )
+            listOf(
+                "fr" to R.string.language_french,
+                "en" to R.string.language_english,
+            ).forEach { (tag, label) ->
+                FilterChip(
+                    selected = selected == tag,
+                    onClick = {
+                        AppCompatDelegate.setApplicationLocales(
+                            LocaleListCompat.forLanguageTags(tag),
+                        )
+                    },
+                    label = { Text(stringResource(label)) },
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun PlayLocationSection(
     state: SettingsUiState,

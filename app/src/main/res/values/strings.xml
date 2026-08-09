@@ -80,6 +80,9 @@
     <!-- Settings -->
     <string name="settings_collection">My collection</string>
     <string name="settings_collection_summary">Choose the packs you own</string>
+    <string name="settings_app_language">App language</string>
+    <string name="settings_app_language_summary">The language of the app itself, independent of the card text.</string>
+    <string name="settings_app_language_system">System</string>
     <string name="settings_card_language">Card language</string>
     <string name="settings_card_language_summary">The language of card text, independent of the app language.</string>
     <string name="settings_update_cards">Update cards from MarvelCDB</string>
