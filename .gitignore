@@ -18,6 +18,11 @@ keystore.properties
 # Never committed: it is Fantasy Flight's card text (see README, Legal).
 /app/src/main/assets/seed/
 
+# The web companion's copy of the same thing, for the same reason. Built by
+# `python tools/build_web_data.py`, which the Pages workflow runs before it
+# deploys — so the published site carries the cards and the repository does not.
+/web/data/
+
 # Campaign templates in app/src/main/assets/campaigns/ ARE committed. They hold
 # mechanics only — card codes, counters, conditions, effects — and no rules or
 # flavour text from the campaign book. See README, Legal.

@@ -1,0 +1,161 @@
+/* The app's palette, so the two do not look like strangers. The aspect colours
+   are the game's own and mean exactly one thing, so nothing else in the page is
+   allowed to use them. */
+:root {
+  --ink: #0D0809;
+  --raised: #1A1213;
+  --raised-high: #241A1A;
+  --outline: #5A4A48;
+  --text: #F2E7E2;
+  --muted: #B9A6A3;
+  --red: #E30022;
+  --aggression: #C0392B;
+  --justice: #D4A017;
+  --leadership: #2E6DA4;
+  --protection: #3E8E5A;
+  --basic: #7A7A7A;
+  --pool: #B0407A;
+  --bar: 56px;
+  --tabs: calc(58px + env(safe-area-inset-bottom));
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overscroll-behavior-y: none;
+}
+
+/* Header */
+.bar {
+  position: fixed; inset: 0 0 auto 0; z-index: 20;
+  height: calc(var(--bar) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) 16px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--red); color: #480007;
+}
+.bar h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: .3px; }
+.lang {
+  border: 2px solid #480007; background: transparent; color: #480007;
+  font: 700 13px/1 system-ui; padding: 7px 10px; border-radius: 999px; cursor: pointer;
+}
+
+main { padding: calc(var(--bar) + env(safe-area-inset-top)) 0 var(--tabs); }
+
+.controls { padding: 12px 16px 4px; }
+input[type=search] {
+  width: 100%; padding: 12px 14px; font-size: 16px;
+  color: var(--text); background: var(--raised);
+  border: 1px solid var(--outline); border-radius: 10px;
+  -webkit-appearance: none;
+}
+input[type=search]:focus { outline: 2px solid var(--red); outline-offset: 1px; }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  /* 40px tall rather than the 29px the text alone gives: these are tapped with
+     a thumb, often one-handed, and often mid-turn. */
+  flex: 0 0 auto; min-height: 40px; padding: 0 14px; border-radius: 999px;
+  display: inline-flex; align-items: center; cursor: pointer;
+  border: 1px solid var(--outline); background: transparent;
+  color: var(--muted); font: 600 13px/1 system-ui; white-space: nowrap;
+}
+.chip[aria-pressed=true] { background: var(--raised-high); color: var(--text); border-color: var(--text); }
+
+.count { margin: 6px 16px 0; color: var(--muted); font-size: 13px; }
+
+/* Card rows */
+.list, .rules { list-style: none; margin: 8px 0 0; padding: 0; }
+.row {
+  display: flex; gap: 12px; align-items: center;
+  padding: 11px 16px; border-bottom: 1px solid #241A1A; cursor: pointer;
+}
+.row:active { background: var(--raised); }
+.pip {
+  flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-items: center;
+  font: 800 14px/1 system-ui; color: #0F0A0A; background: var(--basic);
+}
+.aggression { background: var(--aggression); color: #fff; }
+.justice    { background: var(--justice); }
+.leadership { background: var(--leadership); color: #fff; }
+.protection { background: var(--protection); color: #fff; }
+.pool       { background: var(--pool); color: #fff; }
+.hero, .encounter, .campaign { background: var(--basic); color: #fff; }
+
+.row .meta { min-width: 0; }
+.row .name { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .sub { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .cost { margin-left: auto; color: var(--muted); font: 700 15px/1 system-ui; }
+
+/* Rules */
+.rule { padding: 12px 16px; border-bottom: 1px solid #241A1A; cursor: pointer; }
+.rule h2 { margin: 0 0 3px; font-size: 15px; font-weight: 750; }
+.rule p { margin: 0; color: var(--muted); font-size: 14px; white-space: pre-wrap; }
+.rule.short p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rule .note { color: var(--red); font-size: 12px; margin-top: 6px; }
+
+/* Tabs */
+.tabs {
+  position: fixed; inset: auto 0 0 0; z-index: 20; display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #120C0D; border-top: 1px solid #241A1A;
+}
+.tabs button {
+  flex: 1; padding: 9px 0 11px; background: none; border: 0; cursor: pointer;
+  color: var(--muted); font: 600 12px/1.6 system-ui;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.tabs button.on { color: var(--red); }
+.tabs .ico { font-size: 17px; line-height: 1; }
+
+/* Detail */
+dialog {
+  width: min(560px, 100%); max-height: 92dvh; margin: auto auto 0; padding: 0;
+  border: 0; border-radius: 16px 16px 0 0; background: var(--raised); color: var(--text);
+  overflow: auto;
+}
+dialog::backdrop { background: #000a; }
+.close {
+  position: sticky; top: 8px; left: 100%; margin: 8px 8px 0; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--outline); background: var(--raised-high); color: var(--text);
+  font-size: 20px; line-height: 1;
+}
+#detail-body { padding: 0 18px 26px; margin-top: -34px; }
+#detail-body h2 { margin: 0 0 2px; font-size: 21px; }
+#detail-body .subname { color: var(--muted); margin: 0 0 10px; font-style: italic; }
+#detail-body .traits { color: var(--text); font-weight: 650; font-style: italic; margin: 0 0 10px; }
+#detail-body .body { white-space: pre-wrap; }
+#detail-body .body hr { border: 0; border-top: 1px solid var(--outline); margin: 10px 0; }
+#detail-body .flavor { color: var(--muted); font-style: italic; margin-top: 12px; }
+/* The game's icons. MarvelCDB writes them as [energy] and friends; a word in a
+   box is not the printed symbol, but it reads as an icon rather than as a typo. */
+.glyph {
+  display: inline-block; padding: 1px 6px; margin: 0 1px; border-radius: 5px;
+  background: var(--raised-high); border: 1px solid var(--outline);
+  font: 700 11px/1.5 system-ui; letter-spacing: .4px; vertical-align: baseline;
+}
+.sym { color: var(--justice); font-weight: 700; }
+#detail-body .where { color: var(--muted); font-size: 13px; margin-top: 16px; }
+#detail-body img { width: 100%; border-radius: 10px; margin: 12px 0; background: var(--raised-high); }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.stat {
+  padding: 6px 10px; border-radius: 8px; background: var(--raised-high);
+  font: 600 13px/1 system-ui; color: var(--muted);
+}
+.stat b { color: var(--text); font-size: 15px; }
+
+/* Boot */
+.boot { position: fixed; inset: 0; z-index: 40; display: grid; place-content: center; justify-items: center; gap: 10px; background: var(--ink); }
+.boot p { color: var(--muted); margin: 0; }
+.boot[hidden] { display: none; }
+.pow {
+  font: 800 30px/1 system-ui; color: #241A1A; background: var(--text);
+  padding: 26px 30px; border-radius: 50%; letter-spacing: 1px;
+}
+.empty { padding: 26px 16px; color: var(--muted); }

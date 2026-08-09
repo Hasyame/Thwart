@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thwart</title>
+<meta name="description" content="An offline card search and rules reference for Marvel Champions.">
+<meta name="theme-color" content="#0D0809">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="bar">
+  <h1 id="title">Cards</h1>
+  <button id="lang" class="lang" type="button" aria-label="Language">EN</button>
+</header>
+
+<main>
+  <!-- Cards -->
+  <section id="view-cards" class="view">
+    <div class="controls">
+      <input id="q" type="search" placeholder="Search cards" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Search cards">
+      <div class="chips" id="filters"></div>
+    </div>
+    <p class="count" id="count"></p>
+    <ul class="list" id="results"></ul>
+    <div id="sentinel"></div>
+  </section>
+
+  <!-- Rules -->
+  <section id="view-rules" class="view" hidden>
+    <div class="controls">
+      <input id="rq" type="search" placeholder="Search the rules" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Search the rules">
+    </div>
+    <ul class="rules" id="rules"></ul>
+  </section>
+</main>
+
+<nav class="tabs">
+  <button data-view="cards" class="on" type="button"><span class="ico">&#9679;</span>Cards</button>
+  <button data-view="rules" type="button"><span class="ico">&#9632;</span>Rules</button>
+</nav>
+
+<!-- Card detail -->
+<dialog id="detail">
+  <button class="close" id="close" type="button" aria-label="Close">&times;</button>
+  <div id="detail-body"></div>
+</dialog>
+
+<div id="boot" class="boot"><span class="pow">POW!</span><p>Loading the archive</p></div>
+
+<script src="app.js"></script>
+</body>
+</html>
