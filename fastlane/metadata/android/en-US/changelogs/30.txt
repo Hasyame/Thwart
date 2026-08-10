@@ -1,0 +1,9 @@
+Share a finished campaign.
+
+A campaign is a dozen hours of evenings spread over weeks, and until now the
+record of one could only be looked at. There is a share button on it now: the
+totals, then every scenario with whether you won it and how long it took, as
+plain text you can paste into a message, a forum or a Discord channel.
+
+Plain text rather than a picture on purpose — it can be read by somebody who
+does not have the app, needs no attachment, and pastes anywhere.

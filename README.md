@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.14.2](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.15.0](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -118,7 +118,10 @@ content rather than machinery.
   known, because laying a game out takes minutes that are not play, and they
   were being counted.
 - **Finished campaigns.** Saved runs keep total time, victory points, heroes,
-  credits and a per-scenario log of the answers given.
+  credits and a per-scenario log of the answers given. A finished run shares as
+  plain text — the totals and every scenario with its result and its time —
+  because a campaign is a dozen hours spread over weeks and the end of one is
+  the moment somebody wants to show the people they played it with.
 - **Backup and restore.** Collection, decks, campaigns, play history and
   favourites to a single readable JSON file, and back again on any device.
   There is no account and no server, so without this the phone is the only copy.

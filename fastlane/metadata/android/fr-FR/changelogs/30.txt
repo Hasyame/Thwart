@@ -1,0 +1,10 @@
+Partagez une campagne terminée.
+
+Une campagne, c'est une douzaine d'heures de soirées étalées sur des semaines,
+et jusqu'ici son récapitulatif ne pouvait qu'être regardé. Il porte désormais
+un bouton de partage : les totaux, puis chaque scénario avec sa victoire ou sa
+défaite et son temps, en texte brut à coller dans un message, un forum ou un
+salon Discord.
+
+Du texte brut plutôt qu'une image, volontairement : il se lit même sans
+l'application, ne demande aucune pièce jointe et se colle partout.
