@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -18,13 +19,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -33,7 +40,11 @@ import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.repository.CampaignSummary
+import com.hasyame.marvelchampions.domain.campaign.CampaignShareLabels
+import com.hasyame.marvelchampions.domain.campaign.CampaignShareScenario
+import com.hasyame.marvelchampions.domain.campaign.CampaignShareText
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
+import com.hasyame.marvelchampions.ui.util.shareText
 
 /**
  * What a campaign amounted to: the totals, then each scenario with the answers
@@ -50,8 +61,19 @@ fun CampaignRecordScreen(
     viewModel: CampaignRecordViewModel = hiltViewModel(),
 ) {
     val summary by viewModel.summary.collectAsStateWithLifecycle()
+    val shareContext = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    var noShareApp by remember { mutableStateOf(false) }
+    val noShareAppMessage = stringResource(R.string.campaign_share_no_app)
 
     LaunchedEffect(runId) { viewModel.load(runId) }
+
+    LaunchedEffect(noShareApp) {
+        if (noShareApp) {
+            snackbarHostState.showSnackbar(noShareAppMessage)
+            noShareApp = false
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -71,8 +93,36 @@ fun CampaignRecordScreen(
                         )
                     }
                 },
+                actions = {
+                    // In the bar rather than behind a menu, for the same reason
+                    // a decklist's is: the end of a campaign is the moment
+                    // somebody wants to show the people they played it with.
+                    val record = summary
+                    val labels = campaignShareLabels()
+                    IconButton(
+                        enabled = record != null,
+                        onClick = {
+                            record?.let {
+                                val shared = shareText(
+                                    context = shareContext,
+                                    subject = it.entity.templateName,
+                                    text = it.asShareText(labels),
+                                )
+                                if (!shared) {
+                                    noShareApp = true
+                                }
+                            }
+                        },
+                    ) {
+                        Icon(
+                            Icons.Filled.Share,
+                            contentDescription = stringResource(R.string.campaign_share),
+                        )
+                    }
+                },
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
         val record = summary
         if (record == null) {
@@ -216,6 +266,51 @@ private fun StatsCard(record: CampaignSummary) {
         }
     }
 }
+
+/** The same words the screen shows, for the text that leaves the app. */
+@Composable
+private fun campaignShareLabels() = CampaignShareLabels(
+    finished = stringResource(R.string.campaign_finished_title),
+    inProgress = stringResource(R.string.campaign_share_in_progress),
+    difficulty = stringResource(R.string.campaign_stat_difficulty),
+    totalTime = stringResource(R.string.campaign_stat_time),
+    victoryPoints = stringResource(R.string.campaign_stat_vp),
+    heroes = stringResource(R.string.campaign_stat_heroes),
+    scenariosPlayed = stringResource(R.string.campaign_stat_scenarios),
+    wins = stringResource(R.string.campaign_stat_wins),
+    defeats = stringResource(R.string.campaign_stat_defeats),
+    winRate = stringResource(R.string.campaign_stat_winrate),
+    cardsBought = stringResource(R.string.campaign_stat_cards_bought),
+    creditsLeft = stringResource(R.string.campaign_stat_credits_left),
+    victory = stringResource(R.string.campaign_victory),
+    defeat = stringResource(R.string.campaign_defeat),
+    footer = stringResource(R.string.campaign_share_footer),
+)
+
+private fun CampaignSummary.asShareText(labels: CampaignShareLabels): String =
+    CampaignShareText.format(
+        campaignName = entity.name,
+        templateName = entity.templateName,
+        difficulty = entity.difficulty.replaceFirstChar(Char::uppercase),
+        finished = finished,
+        totalTime = TimerState.format(totalTimeMillis),
+        victoryPoints = totalVictoryPoints,
+        heroNames = heroNames,
+        scenariosWon = scenariosWon,
+        scenariosLost = scenariosLost,
+        winRatePercent = winRatePercent,
+        hasMarket = hasMarket,
+        cardsBought = cardsBought,
+        creditsRemaining = creditsRemaining,
+        scenarios = scenarios.map {
+            CampaignShareScenario(
+                name = it.scenarioName,
+                victory = it.victory,
+                time = TimerState.format(it.elapsedMillis),
+            )
+        },
+        labels = labels,
+    )
 
 @Composable
 private fun Stat(label: String, value: String) {

@@ -538,4 +538,8 @@
     <string name="difficulty_standard_iii">Standard III</string>
     <string name="campaign_choose_one">Touchez celle que vous gardez</string>
     <string name="campaign_choose_scenario">Quel scénario ensuite ?</string>
+    <string name="campaign_share">Partager cette campagne</string>
+    <string name="campaign_share_no_app">Aucune application de cet appareil ne peut partager du texte.</string>
+    <string name="campaign_share_in_progress">Campagne en cours</string>
+    <string name="campaign_share_footer">Suivie avec Thwart, une application compagnon gratuite pour Marvel Champions : https://github.com/Hasyame/Thwart</string>
 </resources>
