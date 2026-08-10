@@ -15,12 +15,21 @@ sealed interface StartupState {
     data object Loading : StartupState
 
     /**
-     * Ready to show the app. [openCollectionFirst] sends a brand new install to
-     * the collection screen: an empty collection makes the randomiser useless
-     * and the campaign tab unavailable, so asking on day one beats letting the
-     * user discover it.
+     * Ready to show the app.
+     *
+     * [openCollectionFirst] sends a brand new install to the collection screen:
+     * an empty collection makes the randomiser useless and the campaign tab
+     * unavailable, so asking on day one beats letting the user discover it.
+     *
+     * [startInSettings] is the wider case, and covers the build with no bundled
+     * cards. There the collection screen would list nothing at all — there are
+     * no packs to tick until a sync has run — so the app opens on Settings,
+     * where the button that fixes it lives.
      */
-    data class Ready(val openCollectionFirst: Boolean) : StartupState
+    data class Ready(
+        val openCollectionFirst: Boolean,
+        val startInSettings: Boolean,
+    ) : StartupState
 }
 
 @HiltViewModel
@@ -37,7 +46,12 @@ class AppStartViewModel @Inject constructor(
         viewModelScope.launch {
             val outcome = firstRunInitializer.initialize()
             state.value = StartupState.Ready(
-                openCollectionFirst = outcome != FirstRunOutcome.ALREADY_READY,
+                // Only when there is a collection to correct. A build without
+                // the bundled cards has no packs yet, and opening a screen
+                // reading "0 of 0 packs owned" told the player nothing except
+                // that something was wrong.
+                openCollectionFirst = outcome == FirstRunOutcome.SEEDED,
+                startInSettings = outcome != FirstRunOutcome.ALREADY_READY,
             )
         }
     }

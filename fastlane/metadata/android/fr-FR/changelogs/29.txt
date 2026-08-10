@@ -1,0 +1,14 @@
+Une correction du premier lancement, pour les versions livrées sans les cartes.
+
+La version disponible sur F-Droid est compilée depuis les sources sur une
+machine sans réseau : contrairement à celle de GitHub, elle arrive avec une
+base de cartes vide et doit les télécharger une fois avant de servir à quoi que
+ce soit. Elle s'ouvrait sur l'écran de collection, qui dans cet état n'affiche
+rien du tout et indique « 0 extension possédée sur 0 » — pas de cartes, aucune
+explication, et rien qui indique quoi faire.
+
+Elle s'ouvre désormais sur les Réglages, là où se trouve le bouton qui les
+télécharge. Une pression suffit et l'application se remplit.
+
+Rien ne change pour la version installée depuis GitHub : elle arrive toujours
+avec toutes les cartes.

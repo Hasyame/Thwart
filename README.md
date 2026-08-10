@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.14.1](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.14.2](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -311,11 +311,12 @@ snapshot is fetched by `./gradlew fetchCardSeed` at packaging time and is
 deliberately never committed, but it is inside the APK you download from the
 releases page.
 
-A build made without it works too: the app detects the snapshot is absent and
-downloads the cards on first sync. That is what F-Droid ships, since F-Droid
-builds from this source and the snapshot is not in it. So the F-Droid build and
-the GitHub release differ — same code, but one arrives with the cards and one
-fetches them.
+A build made without it works too, with one step: the app detects the snapshot
+is absent, opens on Settings and waits to be told to fetch the cards. It does
+not download them on its own — nothing in this app does, deliberately. That is
+what F-Droid ships, since F-Droid builds from this source and the snapshot is
+not in it. So the F-Droid build and the GitHub release differ — same code, but
+one arrives with the cards and one asks before fetching them.
 
 How a new version reaches F-Droid — which is by itself, from the git tag — is in
 [fdroid/RELEASING.md](fdroid/RELEASING.md). The one-time submission is in

@@ -1,0 +1,13 @@
+A fix for the first launch of a build that ships without the cards in it.
+
+The version on F-Droid is built from source on a machine with no network, so
+unlike the one from GitHub it arrives with an empty card database and has to
+fetch the cards once before it can do anything. It was opening on the
+collection screen, which in that state lists nothing at all and reads "0 of 0
+packs owned" — no cards, no explanation, and no sign of what to do about it.
+
+It now opens on Settings, where the button that downloads them is. One tap and
+the app fills up.
+
+Nothing changes for the version installed from GitHub: it still arrives with
+every card already in it.

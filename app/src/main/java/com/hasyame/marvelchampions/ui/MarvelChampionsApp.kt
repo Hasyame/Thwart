@@ -51,6 +51,7 @@ fun MarvelChampionsApp(
             // A shared deck link wins over the first-run collection prompt:
             // the user asked for something specific.
             openCollectionFirst = startup.openCollectionFirst && sharedLink.isNullOrBlank(),
+            startInSettings = startup.startInSettings && sharedLink.isNullOrBlank(),
             consumeOpenCollection = {
                 sharedLink.isNullOrBlank() && viewModel.consumeOpenCollection()
             },
@@ -63,6 +64,7 @@ fun MarvelChampionsApp(
 @Composable
 private fun AppContent(
     openCollectionFirst: Boolean,
+    startInSettings: Boolean,
     consumeOpenCollection: () -> Boolean,
     sharedLink: String?,
     onSharedLinkHandled: () -> Unit,
@@ -120,7 +122,11 @@ private fun AppContent(
             navController = navController,
             startDestination = when {
                 sharedLink != null -> DecksGraph
-                openCollectionFirst -> SettingsGraph
+                // Settings for both first-run cases: it sits under the
+                // collection screen so the back gesture lands somewhere, and
+                // when there are no cards at all it is the screen holding the
+                // only button that helps.
+                startInSettings -> SettingsGraph
                 else -> CardsGraph
             },
             sharedLink = sharedLink,
