@@ -25,11 +25,15 @@ and better than a guessed translation on a card somebody is hunting for in a
 box. It stops mattering the day MarvelCDB publishes, when the table goes away
 and real card names arrive in both languages.
 
-Presentation, from the table's own words: after the draw, say plainly which
-two places the villains hit. Then ask which scenario to play - all unresolved
-ones, not only the two drawn, because the heroes may go anywhere. When one
-environment is left there is nothing to show and nothing to ask: it is drawn
-and ticked twice on its own.
+Presentation: after the draw, say plainly which two places the villains hit.
+Then ask which scenario to play - **all unresolved ones, not only the two
+drawn**. This was raised twice and settled on the book: p.9 step 4 is "un des
+scenarios qui n'a ete ni Acheve ni Echoue", any of them, and that is the rule
+to follow over any looser wording. The villains hit two places; the heroes go
+where they like, and the place they walk past is the one that falls.
+
+When one environment is left there is nothing to show and nothing to ask: it
+is drawn and ticked twice on its own.
 
 
 Written as a script rather than by hand because the file repeats itself five
