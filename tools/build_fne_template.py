@@ -1,6 +1,30 @@
 # -*- coding: utf-8 -*-
 """Writes app/src/main/assets/campaigns/fne.json.
 
+STILL TO DO, and the reason is here so it is not re-argued:
+
+The app must **draw**, not ask. Today it asks the table which environments
+they drew, which is backwards - this app exists to automate what the rules
+leave to chance. Use DrawDefinition, whose fields were written for exactly
+this: `from` the five environments, `count` 2, `excluding` a list of resolved
+scenarios so a card that left the pile is never drawn, and `counts` mapping
+each environment to its scenario's counter. A second draw picks the villain,
+`excluding` those already recorded - which is what villainDeckFromDraw and
+villainDecks are for.
+
+Blocker: DrawDefinition takes MarvelCDB codes and this pack has none published
+for its encounter side, so a drawn card would display as its raw id. Either
+wait for MarvelCDB, or carry a small local id-to-name table consulted before
+the card database. The second is the only one that automates anything this
+year.
+
+Presentation, from the table's own words: after the draw, say plainly which
+two places the villains hit. Then ask which scenario to play - all unresolved
+ones, not only the two drawn, because the heroes may go anywhere. When one
+environment is left there is nothing to show and nothing to ask: it is drawn
+and ticked twice on its own.
+
+
 Written as a script rather than by hand because the file repeats itself five
 times over — every interchangeable scenario shares the same victory bookkeeping
 — and five hand-copied blocks are five chances for them to drift apart.
