@@ -266,9 +266,14 @@ data class DrawDefinition(
     /**
      * How many candidates to offer when the players choose rather than the app.
      *
-     * Fear No Evil deals two environments and keeps the one the table picks;
-     * the other goes back into the pool. Zero means the draw decides, which is
-     * every other campaign.
+     * Zero means the draw decides, which is every other campaign.
+     *
+     * This used to claim Fear No Evil "keeps the one the table picks". It does
+     * not, and the mistake cost a rewrite: both drawn environments push their
+     * scenarios along, and the table is then free to play *any* scenario not
+     * yet finished or failed — including one nobody drew. The villains hit two
+     * places at once; the heroes go wherever they like, and the place they
+     * ignore is the one that falls.
      */
     val offer: Int = 0,
     /**

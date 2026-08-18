@@ -67,10 +67,15 @@ VILLAINS = [
 def progression_actions():
     """One button per scenario, for the two environments drawn this game.
 
-    The app records the draw rather than making it: the environments are cards
-    in the player's hands and shuffling them is part of the ritual. When
-    MarvelCDB publishes the encounter side, this becomes a real draw with
-    `offer` and `counts`, which the schema already understands.
+    KNOWN WRONG, and the reason is written down so the fix is not re-derived:
+    page 9 runs draw -> progress -> choose, in that order, and this runs after
+    the choice with five unbounded buttons. It must become part of the previous
+    game's outcome so the ticks land before the table picks, exactly two
+    environments are drawn (or one, ticked twice), and only environments still
+    in the pool are offered.
+
+    What is *not* wrong: the scenario played is not restricted to the two drawn.
+    The villains push two places; the heroes may go anywhere unresolved.
     """
     steps = []
     for scenario_id, name_fr, name_en, counter in SCENARIOS:
