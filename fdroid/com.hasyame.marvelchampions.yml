@@ -1,7 +1,15 @@
 AntiFeatures:
   NonFreeNet:
-    en-US: Card and pack data is downloaded from MarvelCDB, a third-party service. Separately, and only if you set it up yourself, the app can sign in to BoardGameGeek with your account credentials and post your finished games to your BoardGameGeek play log. Both services are optional and neither is contacted until you ask for it.
-    fr-FR: Les données des cartes et des extensions sont téléchargées depuis MarvelCDB, un service tiers. Par ailleurs, et uniquement si vous le configurez vous-même, l'application peut se connecter à BoardGameGeek avec vos identifiants et y enregistrer vos parties terminées. Les deux services sont facultatifs et aucun n'est contacté sans votre demande.
+    en-US: Card and pack data is downloaded from MarvelCDB, a third-party service.
+      Separately, and only if you set it up yourself, the app can sign in to BoardGameGeek
+      with your account credentials and post your finished games to your BoardGameGeek
+      play log. Both services are optional and neither is contacted until you ask
+      for it.
+    fr-FR: Les données des cartes et des extensions sont téléchargées depuis MarvelCDB,
+      un service tiers. Par ailleurs, et uniquement si vous le configurez vous-même,
+      l'application peut se connecter à BoardGameGeek avec vos identifiants et y enregistrer
+      vos parties terminées. Les deux services sont facultatifs et aucun n'est contacté
+      sans votre demande.
 Categories:
   - Game Helper
 License: MIT
