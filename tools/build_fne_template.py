@@ -84,7 +84,9 @@ def progression_actions():
                 "Environnement pioché : %s" % name_fr,
                 "Environment drawn: %s" % name_en,
             ),
-            "when": {"counter": counter, "atMost": 2},
+            "when": {"all": [
+                {"counter": c, "atMost": 0} for _, _, _, c in SCENARIOS
+            ]},
             "action": {
                 "id": "progress_" + scenario_id,
                 "label": text("Faire progresser", "Advance"),
@@ -93,6 +95,54 @@ def progression_actions():
             },
         })
     return steps
+
+
+def environment_draw():
+    """The p.9 draw, run at the end of a game so it lands before the choice.
+
+    Two prompts rather than one: both drawn environments push their scenario,
+    and when only one is left the rule is to tick it twice — which falls out
+    for free if the player names it in both, so no third question is needed.
+
+    The scenario played afterwards is deliberately unconstrained. The villains
+    hit two places; the heroes go wherever they like, and the place they walk
+    past is the one that falls.
+    """
+    options = [
+        {"id": sid, "label": text(fr, en)}
+        for sid, fr, en, _ in SCENARIOS
+    ]
+    prompts = [
+        {
+            "id": "env1",
+            "type": "choice",
+            "label": text(
+                "Premier environnement pioché",
+                "First environment drawn",
+            ),
+            "options": options,
+        },
+        {
+            "id": "env2",
+            "type": "choice",
+            "label": text(
+                "Second environnement pioché (le même s'il n'en restait qu'un)",
+                "Second environment drawn (the same one if only one was left)",
+            ),
+            "options": options,
+        },
+    ]
+    effects = []
+    for prompt in ("env1", "env2"):
+        for sid, _, _, counter in SCENARIOS:
+            effects.append({
+                "op": "addCounter",
+                "counter": counter,
+                "value": 1,
+                "max": 3,
+                "when": {"choice": prompt, "choiceIs": sid},
+            })
+    return prompts, effects
 
 
 def shared_campaign_setup():
@@ -189,6 +239,7 @@ def victory_outcome(scenario_id):
                     "Is Typhoid Mary / Bloody Mary in the victory pile?",
                 ),
             },
+        ] + environment_draw()[0] + [
             {
                 "id": "retires",
                 "type": "deckCardSelect",
@@ -198,7 +249,7 @@ def victory_outcome(scenario_id):
                 ),
             },
         ],
-        "effects": [
+        "effects": environment_draw()[1] + [
             {"op": "setFlag", "flag": "confianceGagnee", "boolValue": True,
              "when": {"answer": "confiance"}},
             {"op": "setFlag", "flag": "maryVaincue", "boolValue": True,
@@ -211,13 +262,15 @@ def victory_outcome(scenario_id):
 
 
 def defeat_outcome(scenario_id, counter):
+    prompts, effects = environment_draw()
     return {
+        "prompts": prompts,
         "effects": [
             # Standard lets a lost scenario be played again; only Expert pushes
             # it further along the track.
             {"op": "addCounter", "counter": counter, "value": 1, "max": 3,
              "when": {"difficulty": "expert"}},
-        ],
+        ] + effects,
         "next": [{"choose": True}],
     }
 

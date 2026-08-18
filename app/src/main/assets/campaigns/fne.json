@@ -106,8 +106,28 @@
      "en": "Environment drawn: Art Museum Heist"
     },
     "when": {
-     "counter": "pressionMusee",
-     "atMost": 2
+     "all": [
+      {
+       "counter": "pressionMusee",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionPoursuite",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRacket",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRaft",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRotatives",
+       "atMost": 0
+      }
+     ]
     },
     "action": {
      "id": "progress_s1_musee",
@@ -131,8 +151,28 @@
      "en": "Environment drawn: The Getaway"
     },
     "when": {
-     "counter": "pressionPoursuite",
-     "atMost": 2
+     "all": [
+      {
+       "counter": "pressionMusee",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionPoursuite",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRacket",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRaft",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRotatives",
+       "atMost": 0
+      }
+     ]
     },
     "action": {
      "id": "progress_s2_poursuite",
@@ -156,8 +196,28 @@
      "en": "Environment drawn: Protection Racket"
     },
     "when": {
-     "counter": "pressionRacket",
-     "atMost": 2
+     "all": [
+      {
+       "counter": "pressionMusee",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionPoursuite",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRacket",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRaft",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRotatives",
+       "atMost": 0
+      }
+     ]
     },
     "action": {
      "id": "progress_s3_racket",
@@ -181,8 +241,28 @@
      "en": "Environment drawn: The Raft Breakout"
     },
     "when": {
-     "counter": "pressionRaft",
-     "atMost": 2
+     "all": [
+      {
+       "counter": "pressionMusee",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionPoursuite",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRacket",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRaft",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRotatives",
+       "atMost": 0
+      }
+     ]
     },
     "action": {
      "id": "progress_s4_raft",
@@ -206,8 +286,28 @@
      "en": "Environment drawn: Stop the Presses"
     },
     "when": {
-     "counter": "pressionRotatives",
-     "atMost": 2
+     "all": [
+      {
+       "counter": "pressionMusee",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionPoursuite",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRacket",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRaft",
+       "atMost": 0
+      },
+      {
+       "counter": "pressionRotatives",
+       "atMost": 0
+      }
+     ]
     },
     "action": {
      "id": "progress_s5_rotatives",
@@ -369,6 +469,96 @@
       }
      },
      {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
       "id": "retires",
       "type": "deckCardSelect",
       "label": {
@@ -378,6 +568,106 @@
      }
     ],
     "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
+      }
+     },
      {
       "op": "setFlag",
       "flag": "confianceGagnee",
@@ -412,6 +702,98 @@
     ]
    },
    "onDefeat": {
+    "prompts": [
+     {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     }
+    ],
     "effects": [
      {
       "op": "addCounter",
@@ -420,6 +802,106 @@
       "max": 3,
       "when": {
        "difficulty": "expert"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
       }
      }
     ],
@@ -493,6 +975,96 @@
       }
      },
      {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
       "id": "retires",
       "type": "deckCardSelect",
       "label": {
@@ -502,6 +1074,106 @@
      }
     ],
     "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
+      }
+     },
      {
       "op": "setFlag",
       "flag": "confianceGagnee",
@@ -536,6 +1208,98 @@
     ]
    },
    "onDefeat": {
+    "prompts": [
+     {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     }
+    ],
     "effects": [
      {
       "op": "addCounter",
@@ -544,6 +1308,106 @@
       "max": 3,
       "when": {
        "difficulty": "expert"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
       }
      }
     ],
@@ -617,6 +1481,96 @@
       }
      },
      {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
       "id": "retires",
       "type": "deckCardSelect",
       "label": {
@@ -626,6 +1580,106 @@
      }
     ],
     "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
+      }
+     },
      {
       "op": "setFlag",
       "flag": "confianceGagnee",
@@ -660,6 +1714,98 @@
     ]
    },
    "onDefeat": {
+    "prompts": [
+     {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     }
+    ],
     "effects": [
      {
       "op": "addCounter",
@@ -668,6 +1814,106 @@
       "max": 3,
       "when": {
        "difficulty": "expert"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
       }
      }
     ],
@@ -741,6 +1987,96 @@
       }
      },
      {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
       "id": "retires",
       "type": "deckCardSelect",
       "label": {
@@ -750,6 +2086,106 @@
      }
     ],
     "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
+      }
+     },
      {
       "op": "setFlag",
       "flag": "confianceGagnee",
@@ -784,6 +2220,98 @@
     ]
    },
    "onDefeat": {
+    "prompts": [
+     {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     }
+    ],
     "effects": [
      {
       "op": "addCounter",
@@ -792,6 +2320,106 @@
       "max": 3,
       "when": {
        "difficulty": "expert"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
       }
      }
     ],
@@ -865,6 +2493,96 @@
       }
      },
      {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
       "id": "retires",
       "type": "deckCardSelect",
       "label": {
@@ -874,6 +2592,106 @@
      }
     ],
     "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
+      }
+     },
      {
       "op": "setFlag",
       "flag": "confianceGagnee",
@@ -908,6 +2726,98 @@
     ]
    },
    "onDefeat": {
+    "prompts": [
+     {
+      "id": "env1",
+      "type": "choice",
+      "label": {
+       "fr": "Premier environnement pioché",
+       "en": "First environment drawn"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     },
+     {
+      "id": "env2",
+      "type": "choice",
+      "label": {
+       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
+       "en": "Second environment drawn (the same one if only one was left)"
+      },
+      "options": [
+       {
+        "id": "s1_musee",
+        "label": {
+         "fr": "Cambriolage du Musée d'Art",
+         "en": "Art Museum Heist"
+        }
+       },
+       {
+        "id": "s2_poursuite",
+        "label": {
+         "fr": "La Poursuite",
+         "en": "The Getaway"
+        }
+       },
+       {
+        "id": "s3_racket",
+        "label": {
+         "fr": "Racket en Bande Organisée",
+         "en": "Protection Racket"
+        }
+       },
+       {
+        "id": "s4_raft",
+        "label": {
+         "fr": "L'Évasion du Raft",
+         "en": "The Raft Breakout"
+        }
+       },
+       {
+        "id": "s5_rotatives",
+        "label": {
+         "fr": "Arrêtez les Rotatives !",
+         "en": "Stop the Presses"
+        }
+       }
+      ]
+     }
+    ],
     "effects": [
      {
       "op": "addCounter",
@@ -916,6 +2826,106 @@
       "max": 3,
       "when": {
        "difficulty": "expert"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env1",
+       "choiceIs": "s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s1_musee"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "choice": "env2",
+       "choiceIs": "s5_rotatives"
       }
      }
     ],
