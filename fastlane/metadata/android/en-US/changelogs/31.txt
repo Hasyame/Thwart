@@ -1,0 +1,19 @@
+Counters at the table, if you want them.
+
+New setting: track health and threat. Off unless you turn it on, and with it
+off nothing about the app changes.
+
+With it on, a game in progress shows the villain's health and the main
+scheme's threat, taken from the printed cards and worked out for the number of
+people playing — Rhino is 14 solo and 56 at four, and you never have to do
+that multiplication. A button ends the round and adds the acceleration, which
+is the thing everybody forgets. The screen stays awake while you play, and a
+switch on the play screen gives that up for one game if you would rather it
+did not.
+
+Counters only. It does not know that a Crisis icon stops thwarting or that a
+minion just arrived: a tracker that gets a rule wrong once stops being trusted
+for the numbers it had right.
+
+Also: panels that were asked to fill the width used to draw a black slab
+beside themselves, and the play screen now scrolls.

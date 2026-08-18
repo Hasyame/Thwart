@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.15.0](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.16.0](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -78,6 +78,13 @@ content rather than machinery.
   Wrecking Crew, not instead of it. Difficulties limited to the boxes they came
   in: Standard I and Expert I in the Core Set, Standard II and Expert II with
   The Hood, Standard III with The Age of Apocalypse.
+- **Counters at the table.** Optional, and off unless you ask for it: the
+  villain's health and the main scheme's threat, worked out from the printed
+  cards for the number of people playing — Rhino is 14 solo and 56 at four —
+  with the per-round acceleration applied by a button so nobody forgets it. The
+  screen is held awake while it runs, and a switch on the play screen gives
+  that up for one game. Counters only: it does not adjudicate rules, because a
+  tracker that is wrong once stops being trusted for the things it had right.
 - **Play log.** Finished games are recorded and timed, whether they came from
   the randomiser, from a campaign, or were set up by hand with your own modular
   sets. The clock can be corrected afterwards, a game can be thrown away before

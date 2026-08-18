@@ -1,0 +1,21 @@
+Des compteurs sur la table, si vous en voulez.
+
+Nouveau réglage : suivre les points de vie et la menace. Désactivé tant que
+vous ne l'activez pas, et tant qu'il l'est, rien ne change dans
+l'application.
+
+Une fois activé, une partie en cours affiche les points de vie du vilain et la
+menace de la manigance principale, lus sur les cartes et calculés pour le
+nombre de joueurs — Rhino a 14 points de vie en solo et 56 à quatre, et vous
+n'avez plus à faire la multiplication. Un bouton termine le round et ajoute
+l'accélération, celle que tout le monde oublie. L'écran reste allumé pendant
+la partie, et un interrupteur sur l'écran de jeu y renonce le temps d'une
+partie.
+
+Des compteurs, rien de plus. L'application ne sait pas qu'une icône de crise
+empêche de contrecarrer, ni qu'un sbire vient d'arriver : un compteur qui se
+trompe une fois sur une règle cesse d'être cru sur les chiffres qu'il donnait
+justes.
+
+Aussi : les panneaux occupant toute la largeur dessinaient une bande noire à
+côté d'eux, et l'écran de jeu défile désormais.
