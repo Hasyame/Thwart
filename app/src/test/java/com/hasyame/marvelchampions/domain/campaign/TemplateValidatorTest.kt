@@ -117,7 +117,7 @@ class TemplateValidatorTest {
     }
 
     @Test
-    fun `a next step with neither goto nor end is rejected`() {
+    fun `a next step that goes nowhere at all is rejected`() {
         val errors = TemplateValidator.validate(
             template(
                 scenarios = listOf(
@@ -126,7 +126,26 @@ class TemplateValidatorTest {
             ),
         )
 
-        assertTrue(errors.any { it.message.contains("needs either goto or end") })
+        assertTrue(errors.any { it.message.contains("needs a goto, an end, or choose") })
+    }
+
+    @Test
+    fun `a next step that hands the choice to the players is accepted`() {
+        // Fear No Evil names no scenario because the table picks one. Rejecting
+        // that was the validator not knowing about a field the schema already
+        // had — and it was written for that campaign.
+        val errors = TemplateValidator.validate(
+            template(
+                scenarios = listOf(
+                    ScenarioTemplate(
+                        id = "s1",
+                        onVictory = Outcome(next = listOf(NextStep(choose = true))),
+                    ),
+                ),
+            ),
+        )
+
+        assertTrue(errors.none { it.path.startsWith("scenarios.s1.onVictory.next") })
     }
 
     @Test

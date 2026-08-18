@@ -1,0 +1,1040 @@
+{
+ "_note": [
+  "Peur de Rien / Fear No Evil. Mechanics only: what to place, what to",
+  "record, and what carries to the next game. No rules text and nothing",
+  "reproduced from the campaign book — this file cannot be played from.",
+  "",
+  "Unlike every other campaign here there is no scenario order. Two",
+  "environments are drawn before each game and push their scenarios",
+  "along whether or not anybody goes there; the table then picks which",
+  "one to actually play. Three ticks and that scenario is lost.",
+  "",
+  "Card codes are absent on purpose: MarvelCDB has published only the",
+  "hero side of this pack, so there is nothing stable to point at yet.",
+  "Setup steps name the cards in words until it does."
+ ],
+ "id": "fne",
+ "schemaVersion": 1,
+ "name": {
+  "fr": "Peur de Rien",
+  "en": "Fear No Evil"
+ },
+ "packCode": "fne",
+ "difficulties": [
+  "standard",
+  "expert"
+ ],
+ "chooseFirstScenario": true,
+ "finaleScenarioId": "s6_caid",
+ "counters": [
+  {
+   "id": "pressionMusee",
+   "scope": "campaign",
+   "initial": 0,
+   "min": 0,
+   "max": 3
+  },
+  {
+   "id": "pressionPoursuite",
+   "scope": "campaign",
+   "initial": 0,
+   "min": 0,
+   "max": 3
+  },
+  {
+   "id": "pressionRacket",
+   "scope": "campaign",
+   "initial": 0,
+   "min": 0,
+   "max": 3
+  },
+  {
+   "id": "pressionRaft",
+   "scope": "campaign",
+   "initial": 0,
+   "min": 0,
+   "max": 3
+  },
+  {
+   "id": "pressionRotatives",
+   "scope": "campaign",
+   "initial": 0,
+   "min": 0,
+   "max": 3
+  },
+  {
+   "id": "hp",
+   "scope": "hero",
+   "initial": 0,
+   "maxFrom": "heroCard.health",
+   "activeWhen": {
+    "difficulty": "expert"
+   }
+  }
+ ],
+ "flagSets": [
+  {
+   "id": "acheve",
+   "scope": "perScenario"
+  },
+  {
+   "id": "confianceGagnee",
+   "scope": "campaign"
+  },
+  {
+   "id": "maryVaincue",
+   "scope": "campaign"
+  }
+ ],
+ "cardLists": [
+  {
+   "id": "alliesRetires",
+   "scope": "campaign"
+  }
+ ],
+ "setupFragments": {
+  "campagne": [
+   {
+    "text": {
+     "fr": "Retirez les environnements des scénarios achevés ou échoués, mélangez le reste et piochez-en deux. S'il n'en reste qu'un, il compte double.",
+     "en": "Remove the environments of finished or failed scenarios, shuffle the rest and draw two. If only one is left, it counts twice."
+    }
+   },
+   {
+    "text": {
+     "fr": "Environnement pioché : Cambriolage du Musée d'Art",
+     "en": "Environment drawn: Art Museum Heist"
+    },
+    "when": {
+     "counter": "pressionMusee",
+     "atMost": 2
+    },
+    "action": {
+     "id": "progress_s1_musee",
+     "label": {
+      "fr": "Faire progresser",
+      "en": "Advance"
+     },
+     "repeatable": true,
+     "effects": [
+      {
+       "op": "addCounter",
+       "counter": "pressionMusee",
+       "value": 1
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "fr": "Environnement pioché : La Poursuite",
+     "en": "Environment drawn: The Getaway"
+    },
+    "when": {
+     "counter": "pressionPoursuite",
+     "atMost": 2
+    },
+    "action": {
+     "id": "progress_s2_poursuite",
+     "label": {
+      "fr": "Faire progresser",
+      "en": "Advance"
+     },
+     "repeatable": true,
+     "effects": [
+      {
+       "op": "addCounter",
+       "counter": "pressionPoursuite",
+       "value": 1
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "fr": "Environnement pioché : Racket en Bande Organisée",
+     "en": "Environment drawn: Protection Racket"
+    },
+    "when": {
+     "counter": "pressionRacket",
+     "atMost": 2
+    },
+    "action": {
+     "id": "progress_s3_racket",
+     "label": {
+      "fr": "Faire progresser",
+      "en": "Advance"
+     },
+     "repeatable": true,
+     "effects": [
+      {
+       "op": "addCounter",
+       "counter": "pressionRacket",
+       "value": 1
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "fr": "Environnement pioché : L'Évasion du Raft",
+     "en": "Environment drawn: The Raft Breakout"
+    },
+    "when": {
+     "counter": "pressionRaft",
+     "atMost": 2
+    },
+    "action": {
+     "id": "progress_s4_raft",
+     "label": {
+      "fr": "Faire progresser",
+      "en": "Advance"
+     },
+     "repeatable": true,
+     "effects": [
+      {
+       "op": "addCounter",
+       "counter": "pressionRaft",
+       "value": 1
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "fr": "Environnement pioché : Arrêtez les Rotatives !",
+     "en": "Environment drawn: Stop the Presses"
+    },
+    "when": {
+     "counter": "pressionRotatives",
+     "atMost": 2
+    },
+    "action": {
+     "id": "progress_s5_rotatives",
+     "label": {
+      "fr": "Faire progresser",
+      "en": "Advance"
+     },
+     "repeatable": true,
+     "effects": [
+      {
+       "op": "addCounter",
+       "counter": "pressionRotatives",
+       "value": 1
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu l'environnement de chaque scénario résolu, face ACHEVÉ ou ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Put each resolved scenario's environment into play, ACHIEVED or FAILED face up, and resolve its Setup."
+    },
+    "when": {
+     "any": [
+      {
+       "countTrue": "acheve",
+       "countAtLeast": 1
+      },
+      {
+       "counter": "pressionMusee",
+       "atLeast": 3
+      },
+      {
+       "counter": "pressionPoursuite",
+       "atLeast": 3
+      },
+      {
+       "counter": "pressionRacket",
+       "atLeast": 3
+      },
+      {
+       "counter": "pressionRaft",
+       "atLeast": 3
+      },
+      {
+       "counter": "pressionRotatives",
+       "atLeast": 3
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "fr": "Retirez de vos decks les alliés et soutiens inscrits comme retirés de la campagne, puis complétez jusqu'à la taille légale.",
+     "en": "Remove from your decks the allies and supports recorded as removed from the campaign, then top up to the legal deck size."
+    },
+    "when": {
+     "cardList": "alliesRetires",
+     "minSize": 1
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu l'alliée de campagne Mary Typhoïde.",
+     "en": "Put the campaign ally Typhoid Mary into play."
+    },
+    "when": {
+     "all": [
+      {
+       "flag": "confianceGagnee"
+      },
+      {
+       "notFlag": "maryVaincue"
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "fr": "Campagne Expert : reprenez les points de vie enregistrés au scénario précédent.",
+     "en": "Expert campaign: set each hit point total to the value recorded last scenario."
+    },
+    "when": {
+     "difficulty": "expert"
+    }
+   },
+   {
+    "text": {
+     "fr": "Expert : chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
+     "en": "Expert: each player may take a facedown encounter card to heal for their REC."
+    },
+    "when": {
+     "difficulty": "expert"
+    }
+   }
+  ]
+ },
+ "scenarios": [
+  {
+   "id": "s1_musee",
+   "name": {
+    "fr": "Cambriolage du Musée d'Art",
+    "en": "Art Museum Heist"
+   },
+   "victoryLabel": {
+    "fr": "Le méchant est vaincu !",
+    "en": "The villain is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Le méchant l'emporte !",
+    "en": "The villain wins!"
+   },
+   "baseSetup": {},
+   "campaignSetup": [
+    {
+     "include": "campagne"
+    },
+    {
+     "text": {
+      "fr": "Méchant SUBORDONNÉ : celui déjà inscrit pour ce scénario, sinon un jamais affronté, sinon un au hasard.",
+      "en": "SUBORDINATE villain: the one already recorded for this scenario, otherwise one never faced, otherwise one at random."
+     }
+    },
+    {
+     "text": {
+      "fr": "Placez 1 menace par case cochée sur la manigance principale (2 en Expert).",
+      "en": "Place 1 threat per ticked box on the main scheme (2 in Expert)."
+     },
+     "when": {
+      "counter": "pressionMusee",
+      "atLeast": 1
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you gather?"
+      }
+     },
+     {
+      "id": "confiance",
+      "type": "boolean",
+      "label": {
+       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 menaces dessus ?",
+       "en": "Is Disturbed Psyche in play with at least 2 threat on it?"
+      }
+     },
+     {
+      "id": "mary",
+      "type": "boolean",
+      "label": {
+       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
+       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+      }
+     },
+     {
+      "id": "retires",
+      "type": "deckCardSelect",
+      "label": {
+       "fr": "Quels alliés ou soutiens uniques ont été retirés de la partie ?",
+       "en": "Which unique allies or supports were removed from the game?"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setFlag",
+      "flag": "confianceGagnee",
+      "boolValue": true,
+      "when": {
+       "answer": "confiance"
+      }
+     },
+     {
+      "op": "setFlag",
+      "flag": "maryVaincue",
+      "boolValue": true,
+      "when": {
+       "answer": "mary"
+      }
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "cardList": "alliesRetires",
+      "from": "retires"
+     },
+     {
+      "op": "setFlag",
+      "flag": "acheve.s1_musee",
+      "boolValue": true
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionMusee",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "s2_poursuite",
+   "name": {
+    "fr": "La Poursuite",
+    "en": "The Getaway"
+   },
+   "victoryLabel": {
+    "fr": "Le méchant est vaincu !",
+    "en": "The villain is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Le méchant l'emporte !",
+    "en": "The villain wins!"
+   },
+   "baseSetup": {},
+   "campaignSetup": [
+    {
+     "include": "campagne"
+    },
+    {
+     "text": {
+      "fr": "Méchant SUBORDONNÉ : celui déjà inscrit pour ce scénario, sinon un jamais affronté, sinon un au hasard.",
+      "en": "SUBORDINATE villain: the one already recorded for this scenario, otherwise one never faced, otherwise one at random."
+     }
+    },
+    {
+     "text": {
+      "fr": "Trouvez et révélez le Camion-Citerne. À 2 cases cochées, placez 1 menace supplémentaire dessus (2 en Expert).",
+      "en": "Find and reveal the Tanker Truck. At 2 ticked boxes, place 1 extra threat on it (2 in Expert)."
+     },
+     "when": {
+      "counter": "pressionPoursuite",
+      "atLeast": 1
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you gather?"
+      }
+     },
+     {
+      "id": "confiance",
+      "type": "boolean",
+      "label": {
+       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 menaces dessus ?",
+       "en": "Is Disturbed Psyche in play with at least 2 threat on it?"
+      }
+     },
+     {
+      "id": "mary",
+      "type": "boolean",
+      "label": {
+       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
+       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+      }
+     },
+     {
+      "id": "retires",
+      "type": "deckCardSelect",
+      "label": {
+       "fr": "Quels alliés ou soutiens uniques ont été retirés de la partie ?",
+       "en": "Which unique allies or supports were removed from the game?"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setFlag",
+      "flag": "confianceGagnee",
+      "boolValue": true,
+      "when": {
+       "answer": "confiance"
+      }
+     },
+     {
+      "op": "setFlag",
+      "flag": "maryVaincue",
+      "boolValue": true,
+      "when": {
+       "answer": "mary"
+      }
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "cardList": "alliesRetires",
+      "from": "retires"
+     },
+     {
+      "op": "setFlag",
+      "flag": "acheve.s2_poursuite",
+      "boolValue": true
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "s3_racket",
+   "name": {
+    "fr": "Racket en Bande Organisée",
+    "en": "Protection Racket"
+   },
+   "victoryLabel": {
+    "fr": "Le méchant est vaincu !",
+    "en": "The villain is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Le méchant l'emporte !",
+    "en": "The villain wins!"
+   },
+   "baseSetup": {},
+   "campaignSetup": [
+    {
+     "include": "campagne"
+    },
+    {
+     "text": {
+      "fr": "Méchant SUBORDONNÉ : celui déjà inscrit pour ce scénario, sinon un jamais affronté, sinon un au hasard.",
+      "en": "SUBORDINATE villain: the one already recorded for this scenario, otherwise one never faced, otherwise one at random."
+     }
+    },
+    {
+     "text": {
+      "fr": "Placez 1 menace par case cochée sur chaque manigance principale (2 en Expert).",
+      "en": "Place 1 threat per ticked box on every main scheme (2 in Expert)."
+     },
+     "when": {
+      "counter": "pressionRacket",
+      "atLeast": 1
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you gather?"
+      }
+     },
+     {
+      "id": "confiance",
+      "type": "boolean",
+      "label": {
+       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 menaces dessus ?",
+       "en": "Is Disturbed Psyche in play with at least 2 threat on it?"
+      }
+     },
+     {
+      "id": "mary",
+      "type": "boolean",
+      "label": {
+       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
+       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+      }
+     },
+     {
+      "id": "retires",
+      "type": "deckCardSelect",
+      "label": {
+       "fr": "Quels alliés ou soutiens uniques ont été retirés de la partie ?",
+       "en": "Which unique allies or supports were removed from the game?"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setFlag",
+      "flag": "confianceGagnee",
+      "boolValue": true,
+      "when": {
+       "answer": "confiance"
+      }
+     },
+     {
+      "op": "setFlag",
+      "flag": "maryVaincue",
+      "boolValue": true,
+      "when": {
+       "answer": "mary"
+      }
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "cardList": "alliesRetires",
+      "from": "retires"
+     },
+     {
+      "op": "setFlag",
+      "flag": "acheve.s3_racket",
+      "boolValue": true
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "s4_raft",
+   "name": {
+    "fr": "L'Évasion du Raft",
+    "en": "The Raft Breakout"
+   },
+   "victoryLabel": {
+    "fr": "Le méchant est vaincu !",
+    "en": "The villain is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Le méchant l'emporte !",
+    "en": "The villain wins!"
+   },
+   "baseSetup": {},
+   "campaignSetup": [
+    {
+     "include": "campagne"
+    },
+    {
+     "text": {
+      "fr": "Méchant SUBORDONNÉ : celui déjà inscrit pour ce scénario, sinon un jamais affronté, sinon un au hasard.",
+      "en": "SUBORDINATE villain: the one already recorded for this scenario, otherwise one never faced, otherwise one at random."
+     }
+    },
+    {
+     "text": {
+      "fr": "Donnez une carte d'état Tenace à chaque sbire PRISONNIER. À 2 cases cochées, donnez-leur aussi une carte de boost face cachée.",
+      "en": "Give each PRISONER minion a Tough status card. At 2 ticked boxes, also give each one a facedown boost card."
+     },
+     "when": {
+      "counter": "pressionRaft",
+      "atLeast": 1
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you gather?"
+      }
+     },
+     {
+      "id": "confiance",
+      "type": "boolean",
+      "label": {
+       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 menaces dessus ?",
+       "en": "Is Disturbed Psyche in play with at least 2 threat on it?"
+      }
+     },
+     {
+      "id": "mary",
+      "type": "boolean",
+      "label": {
+       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
+       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+      }
+     },
+     {
+      "id": "retires",
+      "type": "deckCardSelect",
+      "label": {
+       "fr": "Quels alliés ou soutiens uniques ont été retirés de la partie ?",
+       "en": "Which unique allies or supports were removed from the game?"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setFlag",
+      "flag": "confianceGagnee",
+      "boolValue": true,
+      "when": {
+       "answer": "confiance"
+      }
+     },
+     {
+      "op": "setFlag",
+      "flag": "maryVaincue",
+      "boolValue": true,
+      "when": {
+       "answer": "mary"
+      }
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "cardList": "alliesRetires",
+      "from": "retires"
+     },
+     {
+      "op": "setFlag",
+      "flag": "acheve.s4_raft",
+      "boolValue": true
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "s5_rotatives",
+   "name": {
+    "fr": "Arrêtez les Rotatives !",
+    "en": "Stop the Presses"
+   },
+   "victoryLabel": {
+    "fr": "Le méchant est vaincu !",
+    "en": "The villain is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Le méchant l'emporte !",
+    "en": "The villain wins!"
+   },
+   "baseSetup": {},
+   "campaignSetup": [
+    {
+     "include": "campagne"
+    },
+    {
+     "text": {
+      "fr": "Méchant SUBORDONNÉ : celui déjà inscrit pour ce scénario, sinon un jamais affronté, sinon un au hasard.",
+      "en": "SUBORDINATE villain: the one already recorded for this scenario, otherwise one never faced, otherwise one at random."
+     }
+    },
+    {
+     "text": {
+      "fr": "Retirez 1 jeton Endurance par case cochée de chaque soutien DAILY BUGLE.",
+      "en": "Remove 1 Use token per ticked box from each DAILY BUGLE support."
+     },
+     "when": {
+      "counter": "pressionRotatives",
+      "atLeast": 1
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you gather?"
+      }
+     },
+     {
+      "id": "confiance",
+      "type": "boolean",
+      "label": {
+       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 menaces dessus ?",
+       "en": "Is Disturbed Psyche in play with at least 2 threat on it?"
+      }
+     },
+     {
+      "id": "mary",
+      "type": "boolean",
+      "label": {
+       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
+       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+      }
+     },
+     {
+      "id": "retires",
+      "type": "deckCardSelect",
+      "label": {
+       "fr": "Quels alliés ou soutiens uniques ont été retirés de la partie ?",
+       "en": "Which unique allies or supports were removed from the game?"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setFlag",
+      "flag": "confianceGagnee",
+      "boolValue": true,
+      "when": {
+       "answer": "confiance"
+      }
+     },
+     {
+      "op": "setFlag",
+      "flag": "maryVaincue",
+      "boolValue": true,
+      "when": {
+       "answer": "mary"
+      }
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "cardList": "alliesRetires",
+      "from": "retires"
+     },
+     {
+      "op": "setFlag",
+      "flag": "acheve.s5_rotatives",
+      "boolValue": true
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "choose": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "s6_caid",
+   "name": {
+    "fr": "Le Caïd",
+    "en": "Kingpin"
+   },
+   "victoryLabel": {
+    "fr": "Le Caïd est tombé !",
+    "en": "Kingpin has fallen!"
+   },
+   "defeatLabel": {
+    "fr": "Le Caïd vous échappe.",
+    "en": "Kingpin gets away."
+   },
+   "baseSetup": {},
+   "campaignSetup": [
+    {
+     "include": "campagne"
+    },
+    {
+     "text": {
+      "fr": "Ce scénario n'utilise pas le set Standard. En Expert, il utilise le set Expert.",
+      "en": "This scenario does not use the Standard set. In Expert it uses the Expert set."
+     }
+    },
+    {
+     "text": {
+      "fr": "Révélez votre sbire Némésis mis de côté. S'il double un personnage en jeu, prenez un sbire SUBORDONNÉ à la place.",
+      "en": "Reveal your set-aside nemesis minion. If it doubles a character in play, take a SUBORDINATE minion instead."
+     }
+    },
+    {
+     "text": {
+      "fr": "3 environnements ACHEVÉ ou plus : donnez une carte d'état Tenace à chaque sbire en jeu.",
+      "en": "3 or more ACHIEVED environments: give each minion in play a Tough status card."
+     },
+     "when": {
+      "countTrue": "acheve",
+      "countAtLeast": 3
+     }
+    },
+    {
+     "text": {
+      "fr": "4 environnements ACHEVÉ ou plus : trouvez et révélez James Wesley.",
+      "en": "4 or more ACHIEVED environments: find and reveal James Wesley."
+     },
+     "when": {
+      "countTrue": "acheve",
+      "countAtLeast": 4
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you gather?"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setFlag",
+      "flag": "acheve.s6_caid",
+      "boolValue": true
+     }
+    ],
+    "next": [
+     {
+      "end": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "prompts": [
+     {
+      "id": "retourne",
+      "type": "boolean",
+      "label": {
+       "fr": "Expert : avez-vous retourné un environnement ACHEVÉ sur sa face ÉCHOUÉ pour rejouer ?",
+       "en": "Expert: did you flip an ACHIEVED environment to its FAILED face to replay?"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "end": true,
+      "when": {
+       "all": [
+        {
+         "difficulty": "expert"
+        },
+        {
+         "notAnswer": "retourne"
+        }
+       ]
+      }
+     },
+     {
+      "goto": "s6_caid"
+     }
+    ]
+   }
+  }
+ ]
+}

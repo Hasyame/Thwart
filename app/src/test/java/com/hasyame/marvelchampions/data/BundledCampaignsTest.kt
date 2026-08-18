@@ -65,10 +65,18 @@ class BundledCampaignsTest {
             while (changed) {
                 changed = false
                 template.scenarios.filter { it.id in reachable }.forEach { scenario ->
-                    listOfNotNull(scenario.onVictory, scenario.onDefeat)
+                    val next = listOfNotNull(scenario.onVictory, scenario.onDefeat)
                         .flatMap { it.next }
-                        .mapNotNull { it.goto }
+                    next.mapNotNull { it.goto }
                         .forEach { if (reachable.add(it)) changed = true }
+                    // An outcome that hands the choice to the players reaches
+                    // every scenario, which is the whole shape of Fear No Evil:
+                    // no goto names anything, because the table decides.
+                    if (next.any { it.choose }) {
+                        template.scenarios.forEach {
+                            if (reachable.add(it.id)) changed = true
+                        }
+                    }
                 }
             }
             assertEquals(
