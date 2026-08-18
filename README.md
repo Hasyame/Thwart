@@ -14,7 +14,7 @@ you can read the app in French and the cards in English, or the reverse.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.16.0](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.17.0](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -100,10 +100,15 @@ content rather than machinery.
   so a record can never drift from what was played. Counters, flags, card lists,
   a market, per-scenario questionnaires, and setup steps for one scenario that
   depend on what was recorded in the ones before it. **The Galaxy's Most Wanted**,
-  **Age of Apocalypse**, **The Mad Titan's Shadow** and **The Rise of Red Skull**
-  ship with the app. Where a campaign says each player *chooses* a card, that is
-  compulsory: the questionnaire records one answer per player and will not file
-  until everyone has picked, because every later scenario assumes the card is in
+  **Age of Apocalypse**, **The Mad Titan's Shadow**, **The Rise of Red Skull**
+  and **Fear No Evil** ship with the app. Fear No Evil is the odd one: it has no
+  scenario order at all. Two environments are drawn before every game and push
+  their scenarios along whether or not anybody goes there, the table picks which
+  to play, and a scenario pushed three times is lost without ever being played.
+
+  Where a campaign says each player *chooses* a card, that is compulsory: the
+  questionnaire records one answer per player and will not file until everyone
+  has picked, because every later scenario assumes the card is in
   the deck.
 - **Setup the app does for you.** Anything a campaign tells you to pick at
   random — Age of Apocalypse's side missions and overseers, the order the Four
@@ -149,12 +154,11 @@ content rather than machinery.
 
 ### Next
 
-- **The Fear No Evil campaign template**, once MarvelCDB publishes its encounter
-  cards. The pack currently holds only the two heroes, so there is nothing to
-  build the scenarios against. The engine work the campaign needs — a table that
-  chooses its next scenario, a villain drawn into its own deck, choosing one of
-  two drawn cards, and a counter fed by how often a card was offered — is
-  already done and tested.
+- **Card links in the Fear No Evil template.** The campaign itself ships, but
+  MarvelCDB has published only the hero side of that pack, so its setup steps
+  name cards in words rather than linking them. When the encounter cards appear,
+  the steps gain the usual tappable chips and the environment draw becomes the
+  app's rather than the table's.
 - **Fear No Evil and Shadowland in the randomiser.** Nine scenarios the card
   database has not got. Civil War looked like the same problem and was not — the
   card database had it all along, under a set type nothing else uses — so these

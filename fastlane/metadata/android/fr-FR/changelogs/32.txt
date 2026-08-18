@@ -1,0 +1,17 @@
+Peur de Rien rejoint les campagnes.
+
+C'est la campagne à part, et l'application la gère enfin comme il faut. Il n'y
+a pas d'ordre des scénarios : avant chaque partie, deux environnements sont
+piochés et font progresser leurs scénarios, que vous y alliez ou non, puis la
+table choisit lequel jouer. Un scénario poussé trois fois est perdu sans avoir
+jamais été joué — son environnement reste sur la table pour le reste de la
+campagne, et Le Caïd est d'autant plus dur à la fin.
+
+L'application tient le registre à votre place : quel méchant pour quel
+scénario, où en est chacun, les deux questions de campagne, les alliés et
+soutiens définitivement retirés, et en campagne experte les points de vie
+restants de chaque héros entre les parties.
+
+Une limite à connaître : MarvelCDB n'a publié que la partie héros de cette
+extension, donc les étapes de mise en place nomment les cartes en toutes
+lettres au lieu d'y renvoyer. Les liens suivront.

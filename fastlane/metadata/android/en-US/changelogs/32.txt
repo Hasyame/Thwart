@@ -1,0 +1,18 @@
+Fear No Evil joins the campaigns.
+
+It is the odd one out, and the app now handles it properly. There is no
+scenario order: before every game two environments are drawn and push their
+scenarios further along, whether or not anybody goes there, and then the table
+picks which one to actually play. A scenario pushed three times is lost
+without ever being played — its environment stays on the table for the rest of
+the campaign, and Kingpin is harder at the end for every one you failed to
+save.
+
+The app keeps the campaign log for you: which villain faced which scenario,
+how far each has been pushed, the two campaign questions, the allies and
+supports struck off for good, and in an expert campaign each hero's remaining
+hit points between games.
+
+One limit worth knowing: MarvelCDB has published only the hero side of this
+pack, so the setup steps name cards in words rather than linking them. When
+the encounter cards appear, the links follow.
