@@ -109,8 +109,13 @@ fun ComicPanel(
     val ink = MaterialTheme.colorScheme.outline
     val shape = RoundedCornerShape(6.dp)
 
-    Box(
-        modifier.drawBehind {
+    // The caller's modifier goes on the Surface, which is the panel you can
+    // see, and the shadow is drawn behind that. It used to sit on an outer Box
+    // with the Surface loose inside it: a panel asked to fill the width got a
+    // full-width shadow with a content-width panel on top, which read as an
+    // empty black slab beside the panel wherever the content was narrow.
+    Surface(
+        modifier = modifier.drawBehind {
             val dx = offset.toPx()
             drawRoundRect(
                 // Always dark, never the outline colour. In the dark theme the
@@ -127,12 +132,9 @@ fun ComicPanel(
                 alpha = 1f,
             )
         },
-    ) {
-        Surface(
-            shape = shape,
-            color = color,
-            border = BorderStroke(borderWidth, ink),
-            content = { Box(content = content) },
-        )
-    }
+        shape = shape,
+        color = color,
+        border = BorderStroke(borderWidth, ink),
+        content = { Box(content = content) },
+    )
 }

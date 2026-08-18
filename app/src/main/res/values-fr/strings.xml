@@ -542,4 +542,13 @@
     <string name="campaign_share_no_app">Aucune application de cet appareil ne peut partager du texte.</string>
     <string name="campaign_share_in_progress">Campagne en cours</string>
     <string name="campaign_share_footer">Suivie avec Thwart, une application compagnon gratuite pour Marvel Champions : https://github.com/Hasyame/Thwart</string>
+    <string name="settings_tracker_title">Suivre les points de vie et la menace</string>
+    <string name="settings_tracker_summary">Pendant une partie, compte les points de vie du vilain et la menace de la manigance principale d\'après les cartes, calculés pour votre nombre de joueurs. L\'écran reste allumé pendant le jeu.</string>
+    <string name="session_round">Round %1$d</string>
+    <string name="session_damage">Dégâts sur le vilain</string>
+    <string name="session_threat">Menace sur la manigance principale</string>
+    <string name="session_flip_villain">Retourner le vilain sur son stade suivant</string>
+    <string name="session_advance_scheme">Faire avancer la manigance principale</string>
+    <string name="session_end_round">Terminer le round</string>
+    <string name="session_keep_awake">Garder l\'écran allumé</string>
 </resources>

@@ -1,0 +1,190 @@
+package com.hasyame.marvelchampions.domain.play
+
+/**
+ * One printed side of a villain or a main scheme.
+ *
+ * The numbers are as printed on the card, not as they end up on the table:
+ * most of them are "per player", and the scaling happens here rather than in
+ * the card data because the card does not know how many people turned up.
+ *
+ * The card database expresses that two different ways and they are not
+ * consistent — a villain's health carries `health_per_hero`, where true means
+ * multiply, while a scheme's threat carries `threat_fixed`, where **false**
+ * means multiply. Both are normalised to [perPlayer] on the way in, once, so
+ * that nothing downstream has to remember which spelling it is dealing with.
+ */
+data class EncounterSide(
+    val name: String,
+    val stage: String,
+    /** Villain health, or a main scheme's threat limit. Null when [starred]. */
+    val value: Int?,
+    val perPlayer: Boolean,
+    /**
+     * The card prints a star rather than a number, so the scenario decides it.
+     * Five cards do this — Juggernaut and Mojo among them — and no amount of
+     * card data will say what the number is, so the player types it.
+     */
+    val starred: Boolean = false,
+    /** Threat already on a scheme when it comes into play. Schemes only. */
+    val startingThreat: Int = 0,
+    val startingThreatPerPlayer: Boolean = false,
+    /** Threat added at the end of every round. Schemes only. */
+    val escalation: Int = 0,
+    val escalationPerPlayer: Boolean = false,
+) {
+    fun totalFor(players: Int): Int? = value?.timesPlayers(perPlayer, players)
+
+    fun startingThreatFor(players: Int): Int =
+        startingThreat.timesPlayers(startingThreatPerPlayer, players)
+
+    fun escalationFor(players: Int): Int = escalation.timesPlayers(escalationPerPlayer, players)
+
+    private fun Int.timesPlayers(scales: Boolean, players: Int): Int =
+        if (scales) this * players else this
+}
+
+/** The villain and the main scheme of one scenario, in printed order. */
+data class EncounterSetup(
+    val villain: List<EncounterSide> = emptyList(),
+    val scheme: List<EncounterSide> = emptyList(),
+    val players: Int = 1,
+) {
+    /** Nothing to count is not worth showing. */
+    val isUsable: Boolean get() = villain.isNotEmpty() || scheme.isNotEmpty()
+}
+
+/** Where the counters stand. Separate from the scenario, which cannot change. */
+data class EncounterProgress(
+    val villainIndex: Int = 0,
+    val damage: Int = 0,
+    val schemeIndex: Int = 0,
+    val threat: Int = 0,
+    val round: Int = 1,
+    /** Filled in by the player, for the stages that print a star. */
+    val manualVillainHealth: Int? = null,
+    val manualSchemeLimit: Int? = null,
+)
+
+/**
+ * A game being counted: the scenario's printed numbers, and where the table
+ * has got to.
+ *
+ * Immutable — every move returns a new one — so the whole thing can live in UI
+ * state and be compared, restored or thrown away without anything being able
+ * to mutate it from underneath.
+ *
+ * Deliberately only counters. It does not know that Ultron drones enter play
+ * or that a Crisis icon stops thwarting: a tracker that half-adjudicates rules
+ * is one that is wrong at somebody's table, and then the numbers it *is*
+ * keeping stop being trusted either.
+ */
+data class Encounter(
+    val setup: EncounterSetup = EncounterSetup(),
+    val progress: EncounterProgress = EncounterProgress(),
+) {
+
+    val villainSide: EncounterSide? get() = setup.villain.getOrNull(progress.villainIndex)
+
+    val schemeSide: EncounterSide? get() = setup.scheme.getOrNull(progress.schemeIndex)
+
+    /** The villain's health at this stage, or what the player typed for a star. */
+    val villainHealth: Int?
+        get() = villainSide?.totalFor(setup.players) ?: progress.manualVillainHealth
+
+    /** The threat this scheme advances at, or what the player typed for a star. */
+    val schemeLimit: Int?
+        get() = schemeSide?.totalFor(setup.players) ?: progress.manualSchemeLimit
+
+    val villainDefeated: Boolean get() = villainHealth?.let { progress.damage >= it } == true
+
+    val schemeComplete: Boolean get() = schemeLimit?.let { progress.threat >= it } == true
+
+    val isFinalVillainStage: Boolean get() = progress.villainIndex >= setup.villain.lastIndex
+
+    val isFinalSchemeStage: Boolean get() = progress.schemeIndex >= setup.scheme.lastIndex
+
+    /**
+     * Damage on the villain. A negative amount heals.
+     *
+     * Stopping at the stage's health rather than running past it: the number
+     * beside it is what somebody reads to know the villain is done, and a
+     * count of 53/51 tells them nothing they wanted.
+     */
+    fun damaged(amount: Int): Encounter {
+        val raised = (progress.damage + amount).coerceAtLeast(0)
+        return withProgress { copy(damage = villainHealth?.let(raised::coerceAtMost) ?: raised) }
+    }
+
+    /** Threat on the main scheme. A negative amount thwarts. */
+    fun threatened(amount: Int): Encounter {
+        val raised = (progress.threat + amount).coerceAtLeast(0)
+        return withProgress { copy(threat = schemeLimit?.let(raised::coerceAtMost) ?: raised) }
+    }
+
+    /**
+     * Flips the villain to its next stage, carrying no damage over.
+     *
+     * Not automatic on reaching the health: defeating a villain stage is a
+     * thing the table does, with a step to it and sometimes a choice, and a
+     * counter that jumped ahead on its own would be describing a board that
+     * does not exist yet.
+     */
+    fun villainAdvanced(): Encounter =
+        if (isFinalVillainStage) {
+            this
+        } else {
+            withProgress {
+                copy(
+                    villainIndex = villainIndex + 1,
+                    damage = 0,
+                    manualVillainHealth = null,
+                )
+            }
+        }
+
+    /** Advances the main scheme, starting the new one at its own printed threat. */
+    fun schemeAdvanced(): Encounter =
+        if (isFinalSchemeStage) {
+            this
+        } else {
+            val next = setup.scheme[progress.schemeIndex + 1]
+            withProgress {
+                copy(
+                    schemeIndex = schemeIndex + 1,
+                    threat = next.startingThreatFor(setup.players),
+                    manualSchemeLimit = null,
+                )
+            }
+        }
+
+    /**
+     * Ends the round: the acceleration goes on the main scheme.
+     *
+     * The one piece of arithmetic worth automating — it is per player, it
+     * happens every single round, and forgetting it is the commonest way a
+     * game ends up somewhere it should not be.
+     */
+    fun roundEnded(): Encounter {
+        val escalation = schemeSide?.escalationFor(setup.players) ?: 0
+        return threatened(escalation).withProgress { copy(round = round + 1) }
+    }
+
+    fun withManualVillainHealth(health: Int?): Encounter =
+        withProgress { copy(manualVillainHealth = health) }
+
+    fun withManualSchemeLimit(limit: Int?): Encounter =
+        withProgress { copy(manualSchemeLimit = limit) }
+
+    private inline fun withProgress(change: EncounterProgress.() -> EncounterProgress) =
+        copy(progress = progress.change())
+
+    companion object {
+        /** A scenario at the start of a game, with the scheme's printed threat on it. */
+        fun startOf(setup: EncounterSetup): Encounter = Encounter(
+            setup = setup,
+            progress = EncounterProgress(
+                threat = setup.scheme.firstOrNull()?.startingThreatFor(setup.players) ?: 0,
+            ),
+        )
+    }
+}

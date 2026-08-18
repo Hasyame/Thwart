@@ -128,6 +128,25 @@ interface CardDao {
     suspend fun queryCards(query: SupportSQLiteQuery): List<CardEntity>
 
     /** Distinct values for the filter sheet, in the current locale. */
+    /**
+     * The villain and main scheme sides of one scenario, in printed order.
+     *
+     * Two rows exist for most scheme stages — 1A carries the setup text and 1B
+     * the numbers — so the caller keeps the side that actually has a threat
+     * limit on it. Ordered by set position, which is the order the cards are
+     * stacked in the box.
+     */
+    @Query(
+        """
+        SELECT * FROM cards
+        WHERE locale = :locale
+          AND cardSetCode = :cardSetCode
+          AND typeCode IN ('villain', 'main_scheme')
+        ORDER BY setPosition
+        """,
+    )
+    suspend fun getScenarioSides(cardSetCode: String, locale: String): List<CardEntity>
+
     @Query("SELECT DISTINCT typeCode FROM cards WHERE locale = :locale ORDER BY typeCode")
     suspend fun distinctTypeCodes(locale: String): List<String>
 

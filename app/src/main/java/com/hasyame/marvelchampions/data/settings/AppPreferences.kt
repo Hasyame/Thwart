@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -35,6 +36,18 @@ class AppPreferences @Inject constructor(
     }
 
     val lastCardSync: Flow<Long?> = context.dataStore.data.map { it[KEY_LAST_SYNC] }
+
+    /**
+     * Whether a game in progress counts villain health and scheme threat.
+     *
+     * Off by default, and a choice rather than an improvement: plenty of people
+     * want the app to time the game and nothing else, and dice on the table
+     * work fine. Turning it on also keeps the screen awake, because a tracker
+     * that has locked itself is worse than no tracker.
+     */
+    val trackEncounter: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[KEY_TRACK_ENCOUNTER] ?: false
+    }
 
     /**
      * Ambient music opened from the play screen.
@@ -106,6 +119,10 @@ class AppPreferences @Inject constructor(
         }
     }
 
+    suspend fun setTrackEncounter(enabled: Boolean) {
+        context.dataStore.edit { preferences -> preferences[KEY_TRACK_ENCOUNTER] = enabled }
+    }
+
     companion object {
         /** The Marvel Champions ambient playlist on Spotify. */
         const val DEFAULT_MUSIC_URL: String =
@@ -120,5 +137,6 @@ class AppPreferences @Inject constructor(
         private val KEY_MUSIC_URL = stringPreferencesKey("music_url")
         private val KEY_THEME = stringPreferencesKey("theme_choice")
         private val KEY_PLAY_LOCATION = stringPreferencesKey("play_location")
+        private val KEY_TRACK_ENCOUNTER = booleanPreferencesKey("track_encounter")
     }
 }

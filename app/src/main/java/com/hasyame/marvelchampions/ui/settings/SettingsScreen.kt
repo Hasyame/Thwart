@@ -19,6 +19,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -151,6 +153,12 @@ fun SettingsScreen(
                 state = state,
                 onSync = viewModel::syncCards,
                 onCancel = viewModel::cancelSync,
+            )
+            HorizontalDivider()
+
+            EncounterTrackerSection(
+                state = state,
+                onTrackEncounterChange = viewModel::setTrackEncounter,
             )
             HorizontalDivider()
 
@@ -328,6 +336,42 @@ private fun AppLanguageSection() {
                 )
             }
         }
+    }
+}
+
+/**
+ * Counting health and threat during a game, which not everybody wants.
+ *
+ * Off by default. The app has always been a thing you consult before and after
+ * a game, and turning this on makes it something that sits on the table for the
+ * whole of one — a different bargain, and the player's to make.
+ */
+@Composable
+private fun EncounterTrackerSection(
+    state: SettingsUiState,
+    onTrackEncounterChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = stringResource(R.string.settings_tracker_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(R.string.settings_tracker_summary),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        Switch(
+            checked = state.trackEncounter,
+            onCheckedChange = onTrackEncounterChange,
+        )
     }
 }
 

@@ -9,7 +9,10 @@ import com.hasyame.marvelchampions.data.repository.PlayRepository
 import com.hasyame.marvelchampions.data.repository.RandomizerNames
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
 import com.hasyame.marvelchampions.data.repository.SchemeBriefing
+import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.domain.play.Encounter
+import com.hasyame.marvelchampions.domain.play.EncounterSetup
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
@@ -17,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -71,6 +75,20 @@ data class GameSessionUiState(
     val isLoading: Boolean = true,
     /** True from the moment a result is tapped until it has been filed. */
     val isFinishing: Boolean = false,
+    /** Whether this player asked for counters at all. A setting, not a mode. */
+    val trackEncounter: Boolean = false,
+    /** The scenario's printed numbers and where the counters stand. */
+    val encounter: Encounter = Encounter(),
+    /**
+     * Whether the screen is held awake for this game.
+     *
+     * On for every game the tracker runs in, because that is what a tracker is
+     * for, but escapable from the play screen without leaving the game — a
+     * phone that must not stay lit is a real situation and nobody should have
+     * to go to Settings mid-game for it. Not remembered between games on
+     * purpose: the reason it gets turned off is usually about tonight.
+     */
+    val keepAwake: Boolean = true,
 ) {
     /** A game needs somewhere to happen and someone to play it. */
     val canStart: Boolean get() = scenarioCode != null && heroes.isNotEmpty()
@@ -87,6 +105,7 @@ data class GameSessionUiState(
 class GameSessionViewModel @Inject constructor(
     private val randomizerRepository: RandomizerRepository,
     private val playRepository: PlayRepository,
+    private val encounterRepository: EncounterRepository,
     private val preferences: AppPreferences,
 ) : ViewModel() {
 
@@ -206,8 +225,20 @@ class GameSessionViewModel @Inject constructor(
         val scenario = current.scenarioCode ?: return
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
+            val tracking = preferences.trackEncounter.first()
             val briefing = randomizerRepository.schemeBriefing(scenario, locale)
-            state.value = state.value.copy(briefing = briefing)
+            // Read into locals before touching the state: the same stale-read
+            // trap the pools above are commented for.
+            val setup = if (tracking) {
+                encounterRepository.setupFor(scenario, current.heroes.size.coerceAtLeast(1))
+            } else {
+                EncounterSetup()
+            }
+            state.value = state.value.copy(
+                briefing = briefing,
+                trackEncounter = tracking,
+                encounter = Encounter.startOf(setup),
+            )
         }
     }
 
@@ -228,6 +259,32 @@ class GameSessionViewModel @Inject constructor(
             timer = TimerState().start(System.currentTimeMillis()),
             firstPlayerIndex = if (current.heroes.size > 1) current.heroes.indices.random() else null,
         )
+    }
+
+    fun damageVillain(amount: Int) = updateEncounter { damaged(amount) }
+
+    fun changeThreat(amount: Int) = updateEncounter { threatened(amount) }
+
+    /** The acceleration goes on the main scheme. */
+    fun endRound() = updateEncounter { roundEnded() }
+
+    fun advanceVillain() = updateEncounter { villainAdvanced() }
+
+    fun advanceScheme() = updateEncounter { schemeAdvanced() }
+
+    /** For the handful of cards that print a star where the number goes. */
+    fun setManualVillainHealth(health: Int?) =
+        updateEncounter { withManualVillainHealth(health) }
+
+    fun setManualSchemeLimit(limit: Int?) = updateEncounter { withManualSchemeLimit(limit) }
+
+    fun setKeepAwake(keep: Boolean) {
+        state.value = state.value.copy(keepAwake = keep)
+    }
+
+    private inline fun updateEncounter(change: Encounter.() -> Encounter) {
+        val current = state.value
+        state.value = current.copy(encounter = current.encounter.change())
     }
 
     /** Back to the choices, from the briefing. Nothing has been recorded yet. */

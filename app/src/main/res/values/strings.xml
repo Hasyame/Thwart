@@ -522,4 +522,13 @@
     <string name="campaign_share_no_app">No app on this device can share text.</string>
     <string name="campaign_share_in_progress">Campaign in progress</string>
     <string name="campaign_share_footer">Tracked with Thwart, a free companion app for Marvel Champions: https://github.com/Hasyame/Thwart</string>
+    <string name="settings_tracker_title">Track health and threat</string>
+    <string name="settings_tracker_summary">During a game, count the villain\'s health and the main scheme\'s threat from the printed cards, worked out for your player count. The screen stays awake while you play.</string>
+    <string name="session_round">Round %1$d</string>
+    <string name="session_damage">Damage on the villain</string>
+    <string name="session_threat">Threat on the main scheme</string>
+    <string name="session_flip_villain">Flip the villain to its next stage</string>
+    <string name="session_advance_scheme">Advance the main scheme</string>
+    <string name="session_end_round">End the round</string>
+    <string name="session_keep_awake">Keep the screen awake</string>
 </resources>

@@ -35,6 +35,8 @@ data class SettingsUiState(
     val syncState: CardSyncState = CardSyncState.Idle,
     val musicUrl: String = AppPreferences.DEFAULT_MUSIC_URL,
     val playLocation: String = "",
+    /** Counters during a game. Off unless the player asks for them. */
+    val trackEncounter: Boolean = false,
     val themeChoice: ThemeChoice = ThemeChoice.DARK,
     val bgg: BggAccountState = BggAccountState(),
     val bggVerifying: Boolean = false,
@@ -62,6 +64,7 @@ class SettingsViewModel @Inject constructor(
         preferences.musicUrl,
         preferences.themeChoice,
         preferences.playLocation,
+        preferences.trackEncounter,
     ) { values ->
         SettingsUiState(
             cardLocale = values[0] as CardLocale,
@@ -70,6 +73,7 @@ class SettingsViewModel @Inject constructor(
             musicUrl = values[3] as String,
             themeChoice = values[4] as ThemeChoice,
             playLocation = values[5] as String,
+            trackEncounter = values[6] as Boolean,
         )
     }
 
@@ -223,6 +227,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setPlayLocation(location: String) {
         viewModelScope.launch { preferences.setPlayLocation(location) }
+    }
+
+    fun setTrackEncounter(enabled: Boolean) {
+        viewModelScope.launch { preferences.setTrackEncounter(enabled) }
     }
 
     fun setMusicUrl(url: String) {
