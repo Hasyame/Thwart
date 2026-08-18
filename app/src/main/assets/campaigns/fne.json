@@ -623,94 +623,99 @@
       }
      },
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
       "id": "retires",
@@ -728,48 +733,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -778,8 +742,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -788,8 +799,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -798,8 +865,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -808,8 +931,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -818,8 +997,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -858,94 +1093,99 @@
    "onDefeat": {
     "prompts": [
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      }
     ],
     "effects": [
@@ -964,48 +1204,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -1014,8 +1213,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1024,8 +1270,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1034,8 +1336,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1044,8 +1402,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1054,8 +1468,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      }
     ],
@@ -1133,94 +1603,99 @@
       }
      },
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
       "id": "retires",
@@ -1238,48 +1713,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -1288,8 +1722,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1298,8 +1779,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1308,8 +1845,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1318,8 +1911,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1328,8 +1977,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1368,94 +2073,99 @@
    "onDefeat": {
     "prompts": [
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      }
     ],
     "effects": [
@@ -1474,48 +2184,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -1524,8 +2193,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1534,8 +2250,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1544,8 +2316,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1554,8 +2382,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1564,8 +2448,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      }
     ],
@@ -1643,94 +2583,99 @@
       }
      },
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
       "id": "retires",
@@ -1748,48 +2693,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -1798,8 +2702,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1808,8 +2759,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1818,8 +2825,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1828,8 +2891,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1838,8 +2957,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -1878,94 +3053,99 @@
    "onDefeat": {
     "prompts": [
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      }
     ],
     "effects": [
@@ -1984,48 +3164,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -2034,8 +3173,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2044,8 +3230,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2054,8 +3296,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2064,8 +3362,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2074,8 +3428,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      }
     ],
@@ -2153,94 +3563,99 @@
       }
      },
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
       "id": "retires",
@@ -2258,48 +3673,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -2308,8 +3682,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2318,8 +3739,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2328,8 +3805,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2338,8 +3871,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2348,8 +3937,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2388,94 +4033,99 @@
    "onDefeat": {
     "prompts": [
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      }
     ],
     "effects": [
@@ -2494,48 +4144,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -2544,8 +4153,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2554,8 +4210,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2564,8 +4276,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2574,8 +4342,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2584,8 +4408,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      }
     ],
@@ -2663,94 +4543,99 @@
       }
      },
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
       "id": "retires",
@@ -2768,48 +4653,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -2818,8 +4662,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2828,8 +4719,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2838,8 +4785,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2848,8 +4851,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2858,8 +4917,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -2898,94 +5013,99 @@
    "onDefeat": {
     "prompts": [
      {
-      "id": "env1",
-      "type": "choice",
+      "id": "drew_s1_musee",
+      "type": "boolean",
       "label": {
-       "fr": "Premier environnement pioché",
-       "en": "First environment drawn"
+       "fr": "Cambriolage du Musée d'Art a-t-il été pioché ?",
+       "en": "Was Art Museum Heist drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s1_musee"
+        },
+        {
+         "counter": "pressionMusee",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
-        }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
-        }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
-        }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      },
      {
-      "id": "env2",
-      "type": "choice",
+      "id": "drew_s2_poursuite",
+      "type": "boolean",
       "label": {
-       "fr": "Second environnement pioché (le même s'il n'en restait qu'un)",
-       "en": "Second environment drawn (the same one if only one was left)"
+       "fr": "La Poursuite a-t-il été pioché ?",
+       "en": "Was The Getaway drawn?"
       },
-      "options": [
-       {
-        "id": "s1_musee",
-        "label": {
-         "fr": "Cambriolage du Musée d'Art",
-         "en": "Art Museum Heist"
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s2_poursuite"
+        },
+        {
+         "counter": "pressionPoursuite",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s2_poursuite",
-        "label": {
-         "fr": "La Poursuite",
-         "en": "The Getaway"
+       ]
+      }
+     },
+     {
+      "id": "drew_s3_racket",
+      "type": "boolean",
+      "label": {
+       "fr": "Racket en Bande Organisée a-t-il été pioché ?",
+       "en": "Was Protection Racket drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s3_racket"
+        },
+        {
+         "counter": "pressionRacket",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s3_racket",
-        "label": {
-         "fr": "Racket en Bande Organisée",
-         "en": "Protection Racket"
+       ]
+      }
+     },
+     {
+      "id": "drew_s4_raft",
+      "type": "boolean",
+      "label": {
+       "fr": "L'Évasion du Raft a-t-il été pioché ?",
+       "en": "Was The Raft Breakout drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s4_raft"
+        },
+        {
+         "counter": "pressionRaft",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s4_raft",
-        "label": {
-         "fr": "L'Évasion du Raft",
-         "en": "The Raft Breakout"
+       ]
+      }
+     },
+     {
+      "id": "drew_s5_rotatives",
+      "type": "boolean",
+      "label": {
+       "fr": "Arrêtez les Rotatives ! a-t-il été pioché ?",
+       "en": "Was Stop the Presses drawn?"
+      },
+      "when": {
+       "all": [
+        {
+         "notFlag": "acheve.s5_rotatives"
+        },
+        {
+         "counter": "pressionRotatives",
+         "atMost": 2
         }
-       },
-       {
-        "id": "s5_rotatives",
-        "label": {
-         "fr": "Arrêtez les Rotatives !",
-         "en": "Stop the Presses"
-        }
-       }
-      ]
+       ]
+      }
      }
     ],
     "effects": [
@@ -3004,48 +5124,7 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env1",
-       "choiceIs": "s1_musee"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionPoursuite",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s2_poursuite"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRacket",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s3_racket"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRaft",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s4_raft"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "pressionRotatives",
-      "value": 1,
-      "max": 3,
-      "when": {
-       "choice": "env1",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s1_musee"
       }
      },
      {
@@ -3054,8 +5133,55 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s1_musee"
+       "all": [
+        {
+         "answer": "drew_s1_musee"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -3064,8 +5190,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s2_poursuite"
+       "answer": "drew_s2_poursuite"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionPoursuite",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s2_poursuite"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -3074,8 +5256,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s3_racket"
+       "answer": "drew_s3_racket"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRacket",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s3_racket"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -3084,8 +5322,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s4_raft"
+       "answer": "drew_s4_raft"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRaft",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s4_raft"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s5_rotatives"
+          },
+          {
+           "counter": "pressionRotatives",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      },
      {
@@ -3094,8 +5388,64 @@
       "value": 1,
       "max": 3,
       "when": {
-       "choice": "env2",
-       "choiceIs": "s5_rotatives"
+       "answer": "drew_s5_rotatives"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "pressionRotatives",
+      "value": 1,
+      "max": 3,
+      "when": {
+       "all": [
+        {
+         "answer": "drew_s5_rotatives"
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s1_musee"
+          },
+          {
+           "counter": "pressionMusee",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s2_poursuite"
+          },
+          {
+           "counter": "pressionPoursuite",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s3_racket"
+          },
+          {
+           "counter": "pressionRacket",
+           "atLeast": 3
+          }
+         ]
+        },
+        {
+         "any": [
+          {
+           "flag": "acheve.s4_raft"
+          },
+          {
+           "counter": "pressionRaft",
+           "atLeast": 3
+          }
+         ]
+        }
+       ]
       }
      }
     ],

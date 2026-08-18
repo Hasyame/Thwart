@@ -97,51 +97,55 @@ def progression_actions():
     return steps
 
 
+def unresolved(scenario_id, counter):
+    """A scenario still in the pool: neither finished nor pushed out."""
+    return {"all": [
+        {"notFlag": "acheve." + scenario_id},
+        {"counter": counter, "atMost": 2},
+    ]}
+
+
 def environment_draw():
     """The p.9 draw, run at the end of a game so it lands before the choice.
 
-    Two prompts rather than one: both drawn environments push their scenario,
-    and when only one is left the rule is to tick it twice — which falls out
-    for free if the player names it in both, so no third question is needed.
+    One question per environment still in the pool, and none at all for the
+    ones already finished or already lost — their cards have been removed from
+    the pile, so asking about them invites a wrong answer.
 
-    The scenario played afterwards is deliberately unconstrained. The villains
-    hit two places; the heroes go wherever they like, and the place they walk
-    past is the one that falls.
+    The rule that a lone remaining environment is ticked twice falls out of the
+    same conditions: when every other scenario is resolved, the one left takes
+    a second tick automatically rather than asking anybody.
+
+    The scenario played afterwards stays unconstrained. The villains hit two
+    places; the heroes go where they like, and the place they walk past falls.
     """
-    options = [
-        {"id": sid, "label": text(fr, en)}
-        for sid, fr, en, _ in SCENARIOS
-    ]
-    prompts = [
-        {
-            "id": "env1",
-            "type": "choice",
+    prompts, effects = [], []
+    for sid, name_fr, name_en, counter in SCENARIOS:
+        prompts.append({
+            "id": "drew_" + sid,
+            "type": "boolean",
             "label": text(
-                "Premier environnement pioché",
-                "First environment drawn",
+                "%s a-t-il été pioché ?" % name_fr,
+                "Was %s drawn?" % name_en,
             ),
-            "options": options,
-        },
-        {
-            "id": "env2",
-            "type": "choice",
-            "label": text(
-                "Second environnement pioché (le même s'il n'en restait qu'un)",
-                "Second environment drawn (the same one if only one was left)",
-            ),
-            "options": options,
-        },
-    ]
-    effects = []
-    for prompt in ("env1", "env2"):
-        for sid, _, _, counter in SCENARIOS:
-            effects.append({
-                "op": "addCounter",
-                "counter": counter,
-                "value": 1,
-                "max": 3,
-                "when": {"choice": prompt, "choiceIs": sid},
-            })
+            "when": unresolved(sid, counter),
+        })
+        effects.append({
+            "op": "addCounter", "counter": counter, "value": 1, "max": 3,
+            "when": {"answer": "drew_" + sid},
+        })
+        # Alone in the pile, so it is drawn and ticked twice.
+        others = [
+            {"any": [
+                {"flag": "acheve." + other},
+                {"counter": other_counter, "atLeast": 3},
+            ]}
+            for other, _, _, other_counter in SCENARIOS if other != sid
+        ]
+        effects.append({
+            "op": "addCounter", "counter": counter, "value": 1, "max": 3,
+            "when": {"all": [{"answer": "drew_" + sid}] + others},
+        })
     return prompts, effects
 
 
@@ -150,8 +154,7 @@ def pressure_report():
 
     The campaign's whole question is which place you can afford to walk past,
     and that is unanswerable if the ticks live only on a paper log. Two ticks
-    is the moment worth saying out loud: one more visit from the villains and
-    that scenario is gone.
+    is the moment worth saying out loud: one more visit and that place is gone.
     """
     steps = []
     for _, name_fr, name_en, counter in SCENARIOS:
