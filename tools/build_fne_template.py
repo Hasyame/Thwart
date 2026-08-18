@@ -12,11 +12,18 @@ each environment to its scenario's counter. A second draw picks the villain,
 `excluding` those already recorded - which is what villainDeckFromDraw and
 villainDecks are for.
 
-Blocker: DrawDefinition takes MarvelCDB codes and this pack has none published
-for its encounter side, so a drawn card would display as its raw id. Either
-wait for MarvelCDB, or carry a small local id-to-name table consulted before
-the card database. The second is the only one that automates anything this
-year.
+Blocker, and the decision taken: DrawDefinition takes MarvelCDB codes and this
+pack has none published for its encounter side, so a drawn card would display
+as its raw id. Rather than wait, carry a small local id-to-name table
+consulted before the card database.
+
+**French only.** The names come off the box in the house, which is the French
+one, and nobody here has the English printing to copy from. English readers
+get the French name and a line saying English is not available yet because
+Fear No Evil's cards are not in the card database - which is true, checkable,
+and better than a guessed translation on a card somebody is hunting for in a
+box. It stops mattering the day MarvelCDB publishes, when the table goes away
+and real card names arrive in both languages.
 
 Presentation, from the table's own words: after the draw, say plainly which
 two places the villains hit. Then ask which scenario to play - all unresolved
