@@ -2,7 +2,9 @@ package com.hasyame.marvelchampions.domain.campaign
 
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
+import com.hasyame.marvelchampions.domain.campaign.engine.CampaignState
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.Condition
 import com.hasyame.marvelchampions.domain.campaign.template.LocalizedText
 import com.hasyame.marvelchampions.domain.campaign.template.NextStep
 import com.hasyame.marvelchampions.domain.campaign.template.Outcome
@@ -136,5 +138,42 @@ class ScenarioChoiceTest {
         )
 
         assertTrue(CampaignEngine.choosableScenarios(template, state).isEmpty())
+    }
+
+    @Test
+    fun `a scenario pushed to its limit is no longer offered`() {
+        // Fear No Evil's villains push the places the heroes walk past. Three
+        // pushes and that place is gone, played or not — and offering it again
+        // would let a table undo the one decision the campaign asks of them.
+        val pressured = ScenarioTemplate(
+            id = "musee",
+            name = LocalizedText(fr = "musee"),
+            failedWhen = Condition(counter = "pressionMusee", atLeast = 3),
+            onVictory = Outcome(next = listOf(NextStep(choose = true))),
+        )
+        val template = CampaignTemplate(
+            id = "fne",
+            schemaVersion = 1,
+            name = LocalizedText(fr = "Peur de Rien"),
+            chooseFirstScenario = true,
+            finaleScenarioId = "caid",
+            scenarios = listOf(pressured, scenario("raft"), scenario("caid")),
+        )
+
+        val safe = CampaignState(counters = mapOf("pressionMusee" to 2))
+        assertTrue(
+            "two pushes is not gone yet",
+            CampaignEngine.choosableScenarios(template, safe).any { it.id == "musee" },
+        )
+
+        val lost = CampaignState(counters = mapOf("pressionMusee" to 3))
+        assertFalse(
+            "three pushes and it is lost",
+            CampaignEngine.choosableScenarios(template, lost).any { it.id == "musee" },
+        )
+        assertTrue(
+            "the others are untouched",
+            CampaignEngine.choosableScenarios(template, lost).any { it.id == "raft" },
+        )
     }
 }

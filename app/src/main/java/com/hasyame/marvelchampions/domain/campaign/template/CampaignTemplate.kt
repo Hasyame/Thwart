@@ -156,6 +156,17 @@ data class ScenarioTemplate(
     val onVictory: Outcome? = null,
     val onDefeat: Outcome? = null,
     /**
+     * When this scenario is lost without ever having been played.
+     *
+     * Fear No Evil pushes the scenarios nobody visits: three pushes and that
+     * place is gone, whether or not the heroes ever went there. It stops being
+     * offered, and its environment stays on the table as a penalty.
+     *
+     * Null everywhere else, where a scenario is only spent by playing it.
+     */
+    @SerialName("failedWhen") val failedWhen: Condition? = null,
+
+    /**
      * Bespoke mechanics that the declarative schema genuinely cannot express,
      * resolved against a registry of Kotlin handlers. A last resort: if the same
      * shape appears twice it belongs in the schema instead.

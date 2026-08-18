@@ -571,6 +571,10 @@
     "en": "The villain wins!"
    },
    "baseSetup": {},
+   "failedWhen": {
+    "counter": "pressionMusee",
+    "atLeast": 3
+   },
    "campaignSetup": [
     {
      "include": "campagne"
@@ -1077,6 +1081,10 @@
     "en": "The villain wins!"
    },
    "baseSetup": {},
+   "failedWhen": {
+    "counter": "pressionPoursuite",
+    "atLeast": 3
+   },
    "campaignSetup": [
     {
      "include": "campagne"
@@ -1583,6 +1591,10 @@
     "en": "The villain wins!"
    },
    "baseSetup": {},
+   "failedWhen": {
+    "counter": "pressionRacket",
+    "atLeast": 3
+   },
    "campaignSetup": [
     {
      "include": "campagne"
@@ -2089,6 +2101,10 @@
     "en": "The villain wins!"
    },
    "baseSetup": {},
+   "failedWhen": {
+    "counter": "pressionRaft",
+    "atLeast": 3
+   },
    "campaignSetup": [
     {
      "include": "campagne"
@@ -2595,6 +2611,10 @@
     "en": "The villain wins!"
    },
    "baseSetup": {},
+   "failedWhen": {
+    "counter": "pressionRotatives",
+    "atLeast": 3
+   },
    "campaignSetup": [
     {
      "include": "campagne"

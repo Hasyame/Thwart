@@ -317,6 +317,9 @@ def scenario(scenario_id, name_fr, name_en, counter):
         "victoryLabel": text("Le méchant est vaincu !", "The villain is beaten!"),
         "defeatLabel": text("Le méchant l'emporte !", "The villain wins!"),
         "baseSetup": {},
+        # Three pushes and this place is gone, played or not. The engine stops
+        # offering it and its environment stays on the table as a penalty.
+        "failedWhen": {"counter": counter, "atLeast": 3},
         "campaignSetup": [
             {"include": "campagne"},
             {

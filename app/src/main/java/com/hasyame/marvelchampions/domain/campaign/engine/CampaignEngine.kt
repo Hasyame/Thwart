@@ -616,7 +616,16 @@ class CampaignEngine(
         ): List<ScenarioTemplate> {
             val played = state.completedScenarios.map { it.scenarioId }.toSet()
             val remaining = template.scenarios.filterNot {
-                it.id in played || it.id == template.finaleScenarioId
+                it.id in played ||
+                    it.id == template.finaleScenarioId ||
+                    // Lost without being played: Fear No Evil's villains push
+                    // the places the heroes walk past, and a place pushed three
+                    // times is gone. Offering it again would let a table undo
+                    // the only decision the campaign asks them to make.
+                    ConditionEvaluator.evaluate(
+                        it.failedWhen,
+                        EvaluationContext(state = state, scenarioId = it.id),
+                    ) && it.failedWhen != null
             }
             return remaining.ifEmpty {
                 template.scenarios.filter { it.id == template.finaleScenarioId && it.id !in played }
