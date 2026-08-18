@@ -51,6 +51,28 @@ then the repo index republishes.
   reintroduce the signing block their scanner rejects, and every later build
   would fail. See SUBMITTING.md for the story.
 
+## Before pushing anything to the merge request
+
+Their CI runs `fdroid rewritemeta` and **fails if the file is not already in
+the exact form that tool would write**. Long values get folded at about 90
+columns with a six-space continuation, which is not how you would type them.
+Check it before pushing rather than finding out from a red pipeline:
+
+```bash
+pip install fdroidserver
+cd C:/DevProject/fdroiddata
+PYTHONUTF8=1 fdroid rewritemeta com.hasyame.marvelchampions
+git diff metadata/com.hasyame.marvelchampions.yml   # empty means it is canonical
+```
+
+**`PYTHONUTF8=1` is not optional on Windows.** Without it the tool writes the
+file in the console codepage and every accent in the French text is destroyed —
+silently, and it looks like a formatting change in the diff. `fdroid lint`
+is worth running the same way.
+
+If the pipeline has already failed, the job log prints the exact diff it wants.
+Copying that is faster and safer than guessing at the wrapping.
+
 ## What auto-update cannot do
 
 The bot reuses the **existing build recipe**. It only knows how to change the
