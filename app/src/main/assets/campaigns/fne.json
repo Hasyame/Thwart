@@ -102,6 +102,156 @@
    },
    {
     "text": {
+     "fr": "Cambriolage du Musée d'Art : 1 case cochée.",
+     "en": "Art Museum Heist: 1 box ticked."
+    },
+    "when": {
+     "counter": "pressionMusee",
+     "equals": 1
+    }
+   },
+   {
+    "text": {
+     "fr": "Cambriolage du Musée d'Art : 2 cases cochées — une de plus et il est perdu.",
+     "en": "Art Museum Heist: 2 boxes ticked — one more and it is lost."
+    },
+    "when": {
+     "counter": "pressionMusee",
+     "equals": 2
+    }
+   },
+   {
+    "text": {
+     "fr": "Cambriolage du Musée d'Art : 3 cases cochées — échoué, son environnement reste en jeu.",
+     "en": "Art Museum Heist: 3 boxes ticked — failed, its environment stays in play."
+    },
+    "when": {
+     "counter": "pressionMusee",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "La Poursuite : 1 case cochée.",
+     "en": "The Getaway: 1 box ticked."
+    },
+    "when": {
+     "counter": "pressionPoursuite",
+     "equals": 1
+    }
+   },
+   {
+    "text": {
+     "fr": "La Poursuite : 2 cases cochées — une de plus et il est perdu.",
+     "en": "The Getaway: 2 boxes ticked — one more and it is lost."
+    },
+    "when": {
+     "counter": "pressionPoursuite",
+     "equals": 2
+    }
+   },
+   {
+    "text": {
+     "fr": "La Poursuite : 3 cases cochées — échoué, son environnement reste en jeu.",
+     "en": "The Getaway: 3 boxes ticked — failed, its environment stays in play."
+    },
+    "when": {
+     "counter": "pressionPoursuite",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "Racket en Bande Organisée : 1 case cochée.",
+     "en": "Protection Racket: 1 box ticked."
+    },
+    "when": {
+     "counter": "pressionRacket",
+     "equals": 1
+    }
+   },
+   {
+    "text": {
+     "fr": "Racket en Bande Organisée : 2 cases cochées — une de plus et il est perdu.",
+     "en": "Protection Racket: 2 boxes ticked — one more and it is lost."
+    },
+    "when": {
+     "counter": "pressionRacket",
+     "equals": 2
+    }
+   },
+   {
+    "text": {
+     "fr": "Racket en Bande Organisée : 3 cases cochées — échoué, son environnement reste en jeu.",
+     "en": "Protection Racket: 3 boxes ticked — failed, its environment stays in play."
+    },
+    "when": {
+     "counter": "pressionRacket",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "L'Évasion du Raft : 1 case cochée.",
+     "en": "The Raft Breakout: 1 box ticked."
+    },
+    "when": {
+     "counter": "pressionRaft",
+     "equals": 1
+    }
+   },
+   {
+    "text": {
+     "fr": "L'Évasion du Raft : 2 cases cochées — une de plus et il est perdu.",
+     "en": "The Raft Breakout: 2 boxes ticked — one more and it is lost."
+    },
+    "when": {
+     "counter": "pressionRaft",
+     "equals": 2
+    }
+   },
+   {
+    "text": {
+     "fr": "L'Évasion du Raft : 3 cases cochées — échoué, son environnement reste en jeu.",
+     "en": "The Raft Breakout: 3 boxes ticked — failed, its environment stays in play."
+    },
+    "when": {
+     "counter": "pressionRaft",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "Arrêtez les Rotatives ! : 1 case cochée.",
+     "en": "Stop the Presses: 1 box ticked."
+    },
+    "when": {
+     "counter": "pressionRotatives",
+     "equals": 1
+    }
+   },
+   {
+    "text": {
+     "fr": "Arrêtez les Rotatives ! : 2 cases cochées — une de plus et il est perdu.",
+     "en": "Stop the Presses: 2 boxes ticked — one more and it is lost."
+    },
+    "when": {
+     "counter": "pressionRotatives",
+     "equals": 2
+    }
+   },
+   {
+    "text": {
+     "fr": "Arrêtez les Rotatives ! : 3 cases cochées — échoué, son environnement reste en jeu.",
+     "en": "Stop the Presses: 3 boxes ticked — failed, its environment stays in play."
+    },
+    "when": {
+     "counter": "pressionRotatives",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
      "fr": "Environnement pioché : Cambriolage du Musée d'Art",
      "en": "Environment drawn: Art Museum Heist"
     },

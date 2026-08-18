@@ -145,6 +145,40 @@ def environment_draw():
     return prompts, effects
 
 
+def pressure_report():
+    """Where each place stands, shown before the table commits to one.
+
+    The campaign's whole question is which place you can afford to walk past,
+    and that is unanswerable if the ticks live only on a paper log. Two ticks
+    is the moment worth saying out loud: one more visit from the villains and
+    that scenario is gone.
+    """
+    steps = []
+    for _, name_fr, name_en, counter in SCENARIOS:
+        steps.append({
+            "text": text(
+                "%s : 1 case cochée." % name_fr,
+                "%s: 1 box ticked." % name_en,
+            ),
+            "when": {"counter": counter, "equals": 1},
+        })
+        steps.append({
+            "text": text(
+                "%s : 2 cases cochées — une de plus et il est perdu." % name_fr,
+                "%s: 2 boxes ticked — one more and it is lost." % name_en,
+            ),
+            "when": {"counter": counter, "equals": 2},
+        })
+        steps.append({
+            "text": text(
+                "%s : 3 cases cochées — échoué, son environnement reste en jeu." % name_fr,
+                "%s: 3 boxes ticked — failed, its environment stays in play." % name_en,
+            ),
+            "when": {"counter": counter, "atLeast": 3},
+        })
+    return steps
+
+
 def shared_campaign_setup():
     """The p.9 sequence every scenario runs before it is played."""
     steps = [{
@@ -155,6 +189,7 @@ def shared_campaign_setup():
             "rest and draw two. If only one is left, it counts twice.",
         ),
     }]
+    steps += pressure_report()
     steps += progression_actions()
     steps += [
         {
