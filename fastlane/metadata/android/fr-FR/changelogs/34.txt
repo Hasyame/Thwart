@@ -1,0 +1,16 @@
+Plus lisible à la table.
+
+Les titres de cartes sont désormais entre guillemets partout où une étape de
+mise en place en nomme une. Une étape se lit en fouillant une pile, et un titre
+qui se fond dans la phrase est difficile à repérer — surtout ceux qui sont des
+mots ordinaires, comme l'attachement « Passe-Partout », ou celui qui commence
+face « En Tête » visible. Les sets de rencontre sont cités un par un plutôt
+qu'en bloc.
+
+Chaque campagne affiche maintenant une note avant de commencer, comme celle de
+Peur de Rien : qu'elle est non officielle et reconstituée pour l'application,
+que le livret et les cartes de la boîte restent nécessaires pour jouer, et ce
+que l'application prend en charge — la boutique et La Collection dans
+Convoitise Galactique, l'ordre des Cavaliers et le tirage de l'OVERSEER dans
+L'Ère d'Apocalypse, les améliorations TECH et les pions retard dans
+L'Ascension du Crâne Rouge, les Pierres d'Infinité dans L'Ombre du Titan Fou.

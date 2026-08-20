@@ -1,0 +1,15 @@
+Easier to read at the table.
+
+Card titles are now in quotes wherever a setup step names one. A step is read
+while hunting through a pile, and a title that runs into the sentence around it
+is hard to pick out — worst for the ones that are ordinary words, like an
+attachment called Passe-Partout, or the one that starts En Tête face up.
+Encounter sets are quoted one by one rather than as a list.
+
+Every campaign now carries a note before you start it, like the one Fear No
+Evil had: that it is unofficial and reconstructed for the app, that the box and
+its rulebook are still needed to play, and what the app takes off your hands —
+the market and The Collection in The Galaxy's Most Wanted, the Horsemen order
+and the OVERSEER draw in Age of Apocalypse, the TECH upgrades and delay
+counters in The Rise of Red Skull, the Infinity Stones in The Mad Titan's
+Shadow.
