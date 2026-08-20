@@ -62,6 +62,9 @@ fun StartCampaignScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     var chosenTemplateId by remember { mutableStateOf<String?>(null) }
+    // Answers to whatever the chosen campaign asks. Reset with the campaign,
+    // since another one's questions are not these.
+    var choices by remember { mutableStateOf(mapOf<String, String>()) }
     var name by remember { mutableStateOf("") }
     var difficulty by remember { mutableStateOf("") }
     var roster by remember { mutableStateOf(emptyList<String>()) }
@@ -115,7 +118,10 @@ fun StartCampaignScreen(
                     state.templates.forEach { candidate ->
                         FilterChip(
                             selected = template?.id == candidate.id,
-                            onClick = { chosenTemplateId = candidate.id },
+                            onClick = {
+                                chosenTemplateId = candidate.id
+                                choices = emptyMap()
+                            },
                             label = { Text(candidate.chooserName(state.localeCode)) },
                         )
                     }
@@ -200,6 +206,33 @@ fun StartCampaignScreen(
                 )
             }
 
+            // What the campaign itself asks, if anything. Fixed for the run,
+            // like the roster and the difficulty beside it.
+            template?.setupChoices?.forEach { choice ->
+                Section(choice.label.resolve(state.localeCode)) {
+                    val selected = choices[choice.id] ?: choice.options.firstOrNull()?.id
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        choice.options.forEach { option ->
+                            FilterChip(
+                                selected = selected == option.id,
+                                onClick = { choices = choices + (choice.id to option.id) },
+                                label = { Text(option.label.resolve(state.localeCode)) },
+                            )
+                        }
+                    }
+                    choice.options.firstOrNull { it.id == selected }
+                        ?.detail?.resolve(state.localeCode)
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                }
+            }
+
             Section(stringResource(R.string.campaign_difficulty)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     difficulties.forEach { value ->
@@ -219,7 +252,7 @@ fun StartCampaignScreen(
             Button(
                 onClick = {
                     template?.let {
-                        viewModel.start(it, effectiveDifficulty, roster, name, onStarted)
+                        viewModel.start(it, effectiveDifficulty, roster, name, choices, onStarted)
                     }
                 },
                 enabled = canStart,

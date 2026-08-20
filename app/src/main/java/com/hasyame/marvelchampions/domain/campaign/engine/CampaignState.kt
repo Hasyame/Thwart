@@ -32,6 +32,8 @@ data class CampaignState(
      * draws afresh rather than repeating the setup that just went wrong.
      */
     val draws: Map<String, Map<String, List<String>>> = emptyMap(),
+    /** What the table answered when the campaign was started, by choice id. */
+    val choices: Map<String, String> = emptyMap(),
 
     /** True while the campaign is waiting for the players to pick what to play. */
     val awaitingChoice: Boolean = false,

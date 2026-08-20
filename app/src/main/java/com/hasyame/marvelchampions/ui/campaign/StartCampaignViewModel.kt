@@ -86,6 +86,7 @@ class StartCampaignViewModel @Inject constructor(
         difficulty: String,
         deckIds: List<String>,
         name: String,
+        choices: Map<String, String>,
         onStarted: (String) -> Unit,
     ) {
         // Illegal decks cannot reach here through the UI; refusing again keeps
@@ -96,7 +97,9 @@ class StartCampaignViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            onStarted(campaignRepository.startRun(template, difficulty, roster, name))
+            onStarted(
+                campaignRepository.startRun(template, difficulty, roster, name, choices),
+            )
         }
     }
 }

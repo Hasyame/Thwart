@@ -131,6 +131,13 @@ class CampaignEngine(
             started = true,
             awaitingChoice = template.chooseFirstScenario,
             currentScenarioId = event.startScenarioId.takeUnless { template.chooseFirstScenario },
+            // Unanswered questions fall back to the campaign's own first
+            // option, so a run started before a question existed still folds.
+            choices = template.setupChoices.associate { choice ->
+                choice.id to (
+                    event.choices[choice.id] ?: choice.options.firstOrNull()?.id.orEmpty()
+                    )
+            },
         )
 
         for (counter in template.counters) {

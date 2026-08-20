@@ -194,6 +194,9 @@
     <string name="campaign_take_a_break">Take a break</string>
     <string name="campaign_retry">I can beat you! (retry)</string>
     <string name="campaign_continue">Continue</string>
+    <string name="campaign_continue_detail">The scenario is failed and leaves the campaign</string>
+    <string name="campaign_break_detail">Return to the app, campaign saved</string>
+    <string name="campaign_stop_detail">Lose the campaign and end it, keeping your stats</string>
     <string name="campaign_stop_campaign">Stop the campaign</string>
 
     <!-- Deck builder -->

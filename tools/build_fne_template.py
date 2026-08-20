@@ -89,6 +89,8 @@ def q_all(names):
 
 # Main scheme title, a note that is not part of the title, and the encounter
 # sets — each kept apart so the quotes land on the titles and nowhere else.
+NOTES_EN = {"": "", " (une par joueur)": " (one per player)"}
+
 SCENARIO_DECKS = {
     "s1_musee": (
         "Cambriolage du Musée d'Art",
@@ -118,6 +120,14 @@ SCENARIO_DECKS = {
 }
 
 # The piece of business each job runs beyond its decks.
+SCENARIO_EXTRA_EN = {
+    "s1_musee": "One of the four artworks, drawn by stage 1A, starts attached to the villain.",
+    "s2_poursuite": "The \"En Tête / Roue Contre Roue\" attachment starts \"En Tête\" face up.",
+    "s3_racket": "Each player takes a main scheme into their own play area.",
+    "s4_raft": "The villain gets the \"Passe-Partout\" attachment.",
+    "s5_rotatives": "Each player is dealt a random DAILY BUGLE support (3 Use tokens).",
+}
+
 SCENARIO_EXTRA = {
     "s1_musee": "Une des quatre œuvres d'art, tirée par le stade 1A, commence attachée au méchant.",
     "s2_poursuite": "L'attachement \"En Tête / Roue Contre Roue\" commence face \"En Tête\" visible.",
@@ -129,6 +139,27 @@ SCENARIO_EXTRA = {
 
 # Two lines apiece, setting the scene. Written for the app in the register the
 # other campaigns use — the book's own narration stays in the book.
+SCENARIO_FLAVOUR_EN = {
+    "s1_musee": (
+        "A silent alarm at the Art Museum, and a security desk that has stopped answering. The thieves did not bother to cover their tracks: it looks as though they wanted to be noticed."
+    ),
+    "s2_poursuite": (
+        "A yellow sports car running south through Hell's Kitchen, and the tunnel is not far off. Out of the city it will be gone for good — the road has to be cut."
+    ),
+    "s3_racket": (
+        "Men with bats are taking a corner shop apart while the owner hides behind his own counter. They are calling it a late payment."
+    ),
+    "s4_raft": (
+        "Someone walked through the gates of the Raft on a full access pass and is opening the cells one by one. The inmates you put there are coming for you."
+    ),
+    "s5_rotatives": (
+        "The Daily Bugle offices have been stormed and the editor is somewhere inside, tied up. Behind the door, somebody is enjoying themselves."
+    ),
+    "s6_caid": (
+        "The whole crime wave was staged, and the street blames you for it. Only one man could have run a campaign like that against you: Le Caïd."
+    ),
+}
+
 SCENARIO_FLAVOUR = {
     "s1_musee": (
         "Une alarme silencieuse au Musée d'Art, et un service de sécurité qui ne "
@@ -164,6 +195,29 @@ SCENARIO_FLAVOUR = {
 
 # Notes on each subordinate, from the pages that introduce them. What the
 # villain does at the table, in a line or two — not their card text.
+VILLAIN_TIPS_EN = {
+    "fne_villain_hammerhead": [
+        "Hammerhead plays to stun: his forced response stuns anyone he damages.",
+        "Tête la Première and the Sous-Chefs hit harder against a stunned hero.",
+    ],
+    "fne_villain_bullseye": [
+        "Every one of his boost cards gains an extra boost icon.",
+        "His encounter cards remove INDIVIDU allies and supports: lost for the campaign.",
+    ],
+    "fne_villain_electro": [
+        "She spends the Charge tokens on Charge Électrique for extra boosts.",
+        "Energy resources strip her charges, but open you to her treacheries.",
+    ],
+    "fne_villain_homme_pourpre": [
+        "Low stats, but every card of his deals out a facedown encounter card.",
+        "His INFLUENCÉ minions are Vulnerable: stun them or confuse them.",
+    ],
+    "fne_villain_mary_typhoide": [
+        "She flips at the end of every villain phase, alternating her two faces.",
+        "So neither her attack nor her scheme favours her two turns running.",
+    ],
+}
+
 VILLAIN_TIPS = {
     "fne_villain_hammerhead": [
         "Hammerhead veut sonner : sa Réponse forcée sonne tout personnage qu'il blesse.",
@@ -192,8 +246,11 @@ def villain_tips():
     """One block per subordinate, shown only for the one this job drew."""
     steps = []
     for code, _ in VILLAINS:
-        for line in VILLAIN_TIPS[code]:
-            steps.append({"text": text(line), "when": {"drawIs": "villain:" + code}})
+        for index, line in enumerate(VILLAIN_TIPS[code]):
+            steps.append({
+                "text": text(line, VILLAIN_TIPS_EN[code][index]),
+                "when": {"drawIs": "villain:" + code},
+            })
     return steps
 
 
@@ -209,11 +266,17 @@ def villain_setup():
         if code.endswith("mary_typhoide"):
             continue
         steps.append({
-            "text": text("Deck Méchant : %s (I) et (II)." % q(name)),
+            "text": text(
+                "Deck Méchant : %s (I) et (II)." % q(name),
+                "Villain deck: %s (I) and (II)." % q(name),
+            ),
             "when": {"all": [{"drawIs": "villain:" + code}, {"difficulty": "standard"}]},
         })
         steps.append({
-            "text": text("Deck Méchant : %s (II) et (III)." % q(name)),
+            "text": text(
+                "Deck Méchant : %s (II) et (III)." % q(name),
+                "Villain deck: %s (II) and (III)." % q(name),
+            ),
             "when": {"all": [{"drawIs": "villain:" + code}, {"difficulty": "expert"}]},
         })
 
@@ -222,6 +285,8 @@ def villain_setup():
         "text": text(
             "Révélez la manigance annexe \"Gagner la Confiance\" et l'environnement "
             "\"Psyché Perturbée\".",
+            "Reveal the \"Gagner la Confiance\" side scheme and the "
+            "\"Psyché Perturbée\" environment.",
         ),
         "when": {"drawIs": "villain:" + mary},
     })
@@ -233,6 +298,8 @@ def villain_setup():
             "text": text(
                 "Mise en place de \"Psyché Perturbée\" : commencez sur cette face, "
                 "tirée au hasard par l'application.",
+                "\"Psyché Perturbée\" setup: start on this face, drawn at random by "
+                "the app.",
             ),
             "draw": {
                 "id": "maryFace",
@@ -244,6 +311,8 @@ def villain_setup():
         "text": text(
             "Ce scénario se gagne en plaçant trois pions sur \"Psyché Perturbée\", pas en "
             "vainquant le méchant.",
+            "This scenario is won by placing three tokens on \"Psyché Perturbée\", not "
+            "by defeating the villain.",
         ),
         "when": {"drawIs": "villain:" + mary},
     })
@@ -262,12 +331,14 @@ def environment_board():
         lines.append({
             "text": text(
                 "Mettez en jeu %s, face ACHEVÉ, et résolvez sa Mise en place." % q(name_fr),
+                "Put %s into play, ACHEVÉ face up, and resolve its Setup." % q(name_fr),
             ),
             "when": {"flag": "acheve." + scenario_id},
         })
         lines.append({
             "text": text(
                 "Mettez en jeu %s, face ÉCHOUÉ, et résolvez sa Mise en place." % q(name_fr),
+                "Put %s into play, ÉCHOUÉ face up, and resolve its Setup." % q(name_fr),
             ),
             # Both routes to a failed job, the same condition the choice
             # list and Le Caïd read.
@@ -335,6 +406,7 @@ def shared_campaign_setup():
         {
             "text": text(
                 "Retirez \"Mary Typhoïde\" de vos decks : elle est perdue pour la campagne.",
+            "Remove \"Mary Typhoïde\" from your decks: she is lost for the campaign.",
             ),
             "when": {"flag": "maryVaincue"},
         },
@@ -359,6 +431,10 @@ def victory_outcome(scenario_id):
             "Vous avez battu {villain}. %s passe ACHEVÉ : mettez cet "
             "environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. "
             "Le Caïd sera un peu plus préparé à vous affronter."
+            % ("{card:%s}" % scenario_id),
+            "You beat {villain}. %s turns ACHEVÉ: put that environment into play "
+            "on its ACHEVÉ face in every later game. Le Caïd will be that bit "
+            "better prepared for you."
             % ("{card:%s}" % scenario_id),
         ),
         "prompts": [
@@ -433,6 +509,10 @@ def defeat_outcome(counter, scenario_id):
             "Si vous continuez, %s passe ÉCHOUÉ : elle sort de la campagne et "
             "son environnement reste sur la table, face ÉCHOUÉ."
             % ("{card:%s}" % scenario_id),
+            "{villain} got away. You can go straight back and try again. If you "
+            "continue, %s turns ÉCHOUÉ: it leaves the campaign and its "
+            "environment stays on the table, ÉCHOUÉ face up."
+            % ("{card:%s}" % scenario_id),
         ),
         # Recorded only if the players move on. Going back costs nothing, which
         # is exactly what the book allows.
@@ -452,8 +532,12 @@ def defeat_outcome(counter, scenario_id):
 def scenario(scenario_id, name_fr, name_en, counter):
     return {
         "id": scenario_id,
-        "name": text(name_fr, name_en),
-        "flavour": text(SCENARIO_FLAVOUR[scenario_id]),
+        # The scenario's name is the printed title of its main scheme and of
+        # the environment that carries it, so it stays French in both languages
+        # like every other card title here. name_en is kept for the day
+        # MarvelCDB publishes the pack and the real English title is known.
+        "name": text(name_fr),
+        "flavour": text(SCENARIO_FLAVOUR[scenario_id], SCENARIO_FLAVOUR_EN[scenario_id]),
         "pressureCounterId": counter,
         # Two ways a job fails: the villains push it to three, or the players
         # lose there and choose to move on rather than go back.
@@ -470,20 +554,36 @@ def scenario(scenario_id, name_fr, name_en, counter):
         "preSetup": [
             # Dealt when the campaign began and kept quiet until now; this is
             # where the players find out who is behind the job.
-            {"text": text("Méchant SUBORDONNÉ : {villain}.")},
+            {"text": text(
+                "Méchant SUBORDONNÉ : {villain}.",
+                "SUBORDINATE villain: {villain}.",
+            )},
+            # The environment of the job being played stays out of the game
+            # until the job resolves, but it wants to be within reach: it is
+            # turned to one face or the other the moment the scenario ends.
+            {"text": text(
+                "Gardez à portée l'environnement %s : vous le retournerez sur sa "
+                "face ACHEVÉ ou ÉCHOUÉ à la fin de la partie." % ("{card:%s}" % scenario_id),
+                "Keep the %s environment within reach: you turn it to its ACHIEVED "
+                "or FAILED face when the scenario ends." % ("{card:%s}" % scenario_id),
+            )},
             {"include": "mechant"},
             {"text": text(
                 "Deck Manigance Principale : %s%s."
                 % (q(SCENARIO_DECKS[scenario_id][0]), SCENARIO_DECKS[scenario_id][1]),
+                "Main scheme deck: %s%s."
+                % (q(SCENARIO_DECKS[scenario_id][0]), NOTES_EN[SCENARIO_DECKS[scenario_id][1]]),
             )},
             {"text": text(
                 "Deck Rencontre : %s, plus le set du méchant."
+                % q_all(SCENARIO_DECKS[scenario_id][2]),
+                "Encounter deck: %s, plus the villain's set."
                 % q_all(SCENARIO_DECKS[scenario_id][2]),
             )},
         ],
         # The mise en place itself.
         "campaignSetup": [
-            {"text": text(SCENARIO_EXTRA[scenario_id])},
+            {"text": text(SCENARIO_EXTRA[scenario_id], SCENARIO_EXTRA_EN[scenario_id])},
             {
                 "text": PRESSURE_SETUP[scenario_id],
                 "when": {"counter": counter, "atLeast": 1},
@@ -500,21 +600,31 @@ def scenario(scenario_id, name_fr, name_en, counter):
 def kingpin():
     return {
         "id": "s6_caid",
-        "name": text("Le Caïd", "Kingpin"),
-        "flavour": text(SCENARIO_FLAVOUR["s6_caid"]),
+        "name": text("Le Caïd"),
+        "flavour": text(SCENARIO_FLAVOUR["s6_caid"], SCENARIO_FLAVOUR_EN["s6_caid"]),
         "victoryLabel": text("Le Caïd est tombé !", "Kingpin has fallen!"),
         "defeatLabel": text("Le Caïd vous échappe.", "Kingpin gets away."),
         "baseSetup": {},
         "preSetup": [
-            {"text": text("Deck Méchant : \"Le Caïd\" (A1)."),
+            {"text": text("Deck Méchant : \"Le Caïd\" (A1).",
+                          "Villain deck: \"Le Caïd\" (A1)."),
              "when": {"difficulty": "standard"}},
-            {"text": text("Deck Méchant : \"Le Caïd\" (B1)."),
+            {"text": text("Deck Méchant : \"Le Caïd\" (B1).",
+                          "Villain deck: \"Le Caïd\" (B1)."),
              "when": {"difficulty": "expert"}},
-            {"text": text("Deck Manigance Principale : \"Le Gambit du Roi\", \"Fin de la Partie\".")},
-            {"text": text("Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".")},
-            {"text": text("Ce scénario n'utilise pas le set Standard."),
+            {"text": text(
+                "Deck Manigance Principale : \"Le Gambit du Roi\", \"Fin de la Partie\".",
+                "Main scheme deck: \"Le Gambit du Roi\", \"Fin de la Partie\".",
+            )},
+            {"text": text(
+                "Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
+                "Encounter deck: \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
+            )},
+            {"text": text("Ce scénario n'utilise pas le set Standard.",
+                          "This scenario uses no Standard set."),
              "when": {"difficulty": "standard"}},
-            {"text": text("Ce scénario utilise le set Expert à la place du Standard."),
+            {"text": text("Ce scénario utilise le set Expert à la place du Standard.",
+                          "This scenario uses the Expert set instead of Standard."),
              "when": {"difficulty": "expert"}},
         ],
         "campaignSetup": [
@@ -613,6 +723,37 @@ def build():
         "wip": True,
         "difficulties": ["standard", "expert"],
         "chooseFirstScenario": True,
+        # Page 8 prints an order for a table meeting these five for the first
+        # time, and says later campaigns may draw at random instead. Asked here
+        # because it governs the whole run, and answered once.
+        "setupChoices": [
+            {
+                "id": "villainOrder",
+                "label": text("Ordre des SUBORDONNÉS", "Order of the SUBORDINATES"),
+                "options": [
+                    {
+                        "id": "recommended",
+                        "label": text("Ordre recommandé", "Recommended order"),
+                        "detail": text(
+                            "Pour une première campagne : Hammerhead, Bullseye, "
+                            "Electro, puis L'Homme Pourpre et Mary Typhoïde.",
+                            "For a first campaign: Hammerhead, Bullseye, Electro, "
+                            "then L'Homme Pourpre and Mary Typhoïde.",
+                        ),
+                    },
+                    {
+                        "id": "random",
+                        "label": text("Au hasard", "At random"),
+                        "detail": text(
+                            "L'application tire le SUBORDONNÉ de chaque mission "
+                            "parmi ceux qui n'ont pas encore été affrontés.",
+                            "The app draws each mission's SUBORDINATE from those "
+                            "not yet faced.",
+                        ),
+                    },
+                ],
+            },
+        ],
         "finaleScenarioId": "s6_caid",
         "environmentDraw": {
             "id": "environments",

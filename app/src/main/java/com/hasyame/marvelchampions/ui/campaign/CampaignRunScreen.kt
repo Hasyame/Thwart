@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
@@ -812,25 +813,61 @@ private fun DefeatPage(
         }
         // Retrying settles nothing, so it comes first: the job is still
         // there to be won until the players decide otherwise.
+        // Each way out says what it costs. Three of these are hard to undo and
+        // one of them ends the campaign, so none of them should be a guess.
         Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.campaign_retry))
         }
-        OutlinedButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.campaign_continue))
-        }
-        OutlinedButton(onClick = onBreak, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.campaign_take_a_break))
-        }
+        WayOut(
+            label = stringResource(R.string.campaign_continue),
+            detail = stringResource(R.string.campaign_continue_detail),
+            onClick = onContinue,
+        )
+        WayOut(
+            label = stringResource(R.string.campaign_take_a_break),
+            detail = stringResource(R.string.campaign_break_detail),
+            onClick = onBreak,
+        )
         // Offered only at the last villain, who may be tried again as often as
         // a table can stand. Stopping there is a decision, so it is a button
         // rather than something the app concludes on their behalf.
         onConcede?.let { concede ->
-            OutlinedButton(onClick = concede, modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = stringResource(R.string.campaign_stop_campaign),
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
+            WayOut(
+                label = stringResource(R.string.campaign_stop_campaign),
+                detail = stringResource(R.string.campaign_stop_detail),
+                onClick = concede,
+                colour = MaterialTheme.colorScheme.error,
+            )
+        }
+    }
+}
+
+/**
+ * A way off this page, with what taking it does written underneath.
+ *
+ * The four ways out of a defeat are not interchangeable — one settles the job,
+ * one ends the campaign — and a row of bare verbs made a table guess which was
+ * which.
+ */
+@Composable
+private fun WayOut(
+    label: String,
+    detail: String,
+    onClick: () -> Unit,
+    colour: Color = MaterialTheme.colorScheme.onSurface,
+) {
+    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Column(
+            Modifier.fillMaxWidth().padding(vertical = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(text = label, color = colour)
+            Text(
+                text = detail,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }

@@ -261,6 +261,8 @@ class CampaignRepository @Inject constructor(
         difficulty: String,
         deckIds: List<String>,
         name: String = "",
+        /** Answers to the campaign's own questions, by choice id. */
+        choices: Map<String, String> = emptyMap(),
     ): String = withContext(ioDispatcher) {
         val heroes = deckIds.mapNotNull { deckId ->
             deckRepository.getDeck(deckId)?.let { deck ->
@@ -296,6 +298,7 @@ class CampaignRepository @Inject constructor(
                 heroes = heroes,
                 startScenarioId = template.startScenarioId
                     ?: template.scenarios.firstOrNull()?.id.orEmpty(),
+                choices = choices,
             ),
         )
         runId
@@ -646,32 +649,43 @@ class CampaignRepository @Inject constructor(
                 return@withContext false
             }
 
-            // Every scenario that can be played, the finale aside: it brings its
-            // own villain and is not one of the interchangeable jobs.
-            val needing = run.template.scenarios
-                .map { it.id }
-                .filterNot { it == run.template.finaleScenarioId }
-                .filter { CampaignEngine.drawnCards(run.state, it, VILLAIN_DRAW_ID).isEmpty() }
-            if (needing.isEmpty()) {
+            // Only the job about to be played, and only if it has no name
+            // against it yet. A name once noted is kept, which is why a job
+            // that is retried faces the same villain.
+            val scenarioId = run.state.currentScenarioId ?: return@withContext false
+            if (scenarioId == run.template.finaleScenarioId) {
+                // The last villain brings his own; he is not one of the five.
+                return@withContext false
+            }
+            if (CampaignEngine.drawnCards(run.state, scenarioId, VILLAIN_DRAW_ID).isNotEmpty()) {
                 return@withContext false
             }
 
-            // One each, all different, which is what the campaign log's column
-            // of villain names means.
-            val shuffled = pool.shuffled()
-            needing.forEachIndexed { index, scenarioId ->
-                val villain = shuffled.getOrNull(index) ?: return@forEachIndexed
-                append(
-                    runId,
-                    CampaignEvent.SetupDrawn(
-                        id = UUID.randomUUID().toString(),
-                        timestamp = System.currentTimeMillis(),
-                        scenarioId = scenarioId,
-                        drawId = VILLAIN_DRAW_ID,
-                        cardCodes = listOf(villain),
-                    ),
-                )
-            }
+            // Everyone already noted somewhere in the log is out of the running,
+            // which is what keeps the five distinct across a campaign.
+            val spent = run.template.scenarios
+                .mapNotNull {
+                    CampaignEngine.drawnCards(run.state, it.id, VILLAIN_DRAW_ID).firstOrNull()
+                }
+                .toSet()
+            val left = pool.filterNot { it in spent }.ifEmpty { pool }
+
+            // The recommended order is the pool's own order — the list the book
+            // prints for a table meeting these five for the first time. Any
+            // other answer means at random.
+            val recommended = run.state.choices[VILLAIN_ORDER_CHOICE] == VILLAIN_ORDER_RECOMMENDED
+            val villain = if (recommended) left.first() else left.random()
+
+            append(
+                runId,
+                CampaignEvent.SetupDrawn(
+                    id = UUID.randomUUID().toString(),
+                    timestamp = System.currentTimeMillis(),
+                    scenarioId = scenarioId,
+                    drawId = VILLAIN_DRAW_ID,
+                    cardCodes = listOf(villain),
+                ),
+            )
             true
         }
 
@@ -954,6 +968,12 @@ class CampaignRepository @Inject constructor(
 
         /** Draw id the villain assignment is stored under, per scenario. */
         const val VILLAIN_DRAW_ID = "villain"
+
+        /** The campaign question asking which order the subordinates come in. */
+        const val VILLAIN_ORDER_CHOICE: String = "villainOrder"
+
+        /** Its answer meaning "the order the book prints". */
+        const val VILLAIN_ORDER_RECOMMENDED: String = "recommended"
 
         /**
          * SQLite refuses more than 999 bound variables in one statement, and

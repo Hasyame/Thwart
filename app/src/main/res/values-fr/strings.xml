@@ -201,6 +201,9 @@
     <string name="campaign_take_a_break">Faire une pause</string>
     <string name="campaign_retry">Je peux le battre ! (rejouer)</string>
     <string name="campaign_continue">Continuer</string>
+    <string name="campaign_continue_detail">La mission est ÉCHOUÉ et sort de la campagne</string>
+    <string name="campaign_break_detail">Retour à l’application, campagne sauvegardée</string>
+    <string name="campaign_stop_detail">Perdre la campagne et l’arrêter, en gardant les stats</string>
     <string name="campaign_stop_campaign">Arrêter la campagne</string>
 
     <!-- Deck builder -->

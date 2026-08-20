@@ -55,6 +55,16 @@ data class CampaignTemplate(
     val chooseFirstScenario: Boolean = false,
 
     /**
+     * Questions the campaign puts before it starts, answered once.
+     *
+     * For anything fixed for a whole run, and so belonging beside the roster
+     * and the difficulty rather than inside a scenario. Fear No Evil asks which
+     * order its subordinates come in; the answer is read wherever the campaign
+     * needs it and never asked again.
+     */
+    val setupChoices: List<CampaignChoice> = emptyList(),
+
+    /**
      * A draw run before every choice, campaign-scoped rather than tied to a
      * scenario's setup.
      *
@@ -183,6 +193,27 @@ data class LocalizedText(
 }
 
 enum class CounterScope { CAMPAIGN, HERO }
+
+/**
+ * A question asked once, when a campaign is started.
+ *
+ * The first option is the default, so a table that does not care about the
+ * question gets the answer the campaign would recommend.
+ */
+@Serializable
+data class CampaignChoice(
+    val id: String,
+    val label: LocalizedText,
+    val options: List<CampaignChoiceOption> = emptyList(),
+)
+
+@Serializable
+data class CampaignChoiceOption(
+    val id: String,
+    val label: LocalizedText,
+    /** Shown under the option, for a choice whose consequence is not obvious. */
+    val detail: LocalizedText? = null,
+)
 
 @Serializable
 data class CounterDefinition(

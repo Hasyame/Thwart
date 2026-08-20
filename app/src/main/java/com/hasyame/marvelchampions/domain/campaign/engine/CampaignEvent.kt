@@ -27,6 +27,8 @@ sealed interface CampaignEvent {
         /** Deck ids attached as the hero roster, fixed for the whole campaign. */
         val heroes: List<CampaignHero>,
         val startScenarioId: String,
+        /** Answers to the campaign's own questions, by choice id. */
+        val choices: Map<String, String> = emptyMap(),
     ) : CampaignEvent
 
     /** A scenario result with the raw answers that produced it. */
