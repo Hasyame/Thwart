@@ -10,11 +10,13 @@ product and does not use their branding; the game is named here to say what the
 app works with, which is the only thing that naming it is for.
 
 Bilingual throughout — the interface and the card text are chosen separately, so
-you can read the app in French and the cards in English, or the reverse.
+you can read the app in French and the cards in English, or the reverse. Two
+campaigns are still being translated and say so in the app; they are marked
+**(WIP)** where you pick a campaign.
 
 ## Status
 
-In use, and being played with. Current release: **[v1.17.0](https://github.com/Hasyame/Thwart/releases/latest)**.
+In use, and being played with. Current release: **[v1.21.0](https://github.com/Hasyame/Thwart/releases/latest)**.
 
 Every feature planned for the app is now in, and the work from here is campaign
 content rather than machinery.
@@ -56,7 +58,13 @@ content rather than machinery.
   cards came with Deadpool.
 - **Decks.** Import from a MarvelCDB link or a share from the browser, build
   from scratch, edit, check legality as you go, see what a deck is made of, and
-  share a decklist as plain text. Legality follows the printed rules: the
+  share a decklist as plain text. A deck built from scratch opens with the
+  hero's own cards already in it, in their printed numbers — they were never a
+  choice, so starting empty only meant failing validation until you added by
+  hand what the rules had already decided. Every row carries a mark for its
+  type, a shape as well as a colour so the list can be skimmed without relying
+  on colour, and sorts by type, cost or name; a card with no printed cost sorts
+  last rather than as a zero. Legality follows the printed rules: the
   hero's own cards in their printed numbers, copies counted by title rather
   than by printing, unique cards counting the identity card and told apart only
   by a subtitle both of them carry, and the identities that rewrite the rules —
@@ -100,11 +108,22 @@ content rather than machinery.
   so a record can never drift from what was played. Counters, flags, card lists,
   a market, per-scenario questionnaires, and setup steps for one scenario that
   depend on what was recorded in the ones before it. **The Galaxy's Most Wanted**,
-  **Age of Apocalypse**, **The Mad Titan's Shadow**, **The Rise of Red Skull**
-  and **Fear No Evil** ship with the app. Fear No Evil is the odd one: it has no
-  scenario order at all. Two environments are drawn before every game and push
-  their scenarios along whether or not anybody goes there, the table picks which
-  to play, and a scenario pushed three times is lost without ever being played.
+  **Age of Apocalypse**, **The Mad Titan's Shadow**, **The Rise of Red Skull**,
+  **Fear No Evil** and **Sinister Motives** ship with the app.
+
+  Fear No Evil is the odd one: it has no scenario order at all. Two environments
+  are drawn before every game and push their scenarios along whether or not
+  anybody goes there, the table picks which to play, and a scenario pushed three
+  times is lost without ever being played. Losing a scenario does not fail it —
+  you can go straight back and try again, and it is choosing to move on that
+  turns its environment over to the failed face and takes the job out of the
+  campaign.
+
+  Sinister Motives brings its reputation track: the app puts the six printed
+  conditions after each scenario, does the adding, and shows only the boxes the
+  track has actually reached. It needed no engine work, which is worth saying
+  plainly — a campaign counter, six questions and setup steps gated on the
+  count are the whole of it.
 
   Where a campaign says each player *chooses* a card, that is compulsory: the
   questionnaire records one answer per player and will not file until everyone
@@ -154,11 +173,20 @@ content rather than machinery.
 
 ### Next
 
-- **Card links in the Fear No Evil template.** The campaign itself ships, but
-  MarvelCDB has published only the hero side of that pack, so its setup steps
-  name cards in words rather than linking them. When the encounter cards appear,
-  the steps gain the usual tappable chips and the environment draw becomes the
-  app's rather than the table's.
+- **English wording for Fear No Evil.** The campaign was written from the French
+  box, the only one to hand, so its prose is French while the rest of the app is
+  bilingual. Card names will stay French until MarvelCDB publishes that pack —
+  they cannot be guessed without risking a name that does not match the printed
+  card — but the story, the setup steps and the campaign's own terms are being
+  translated. The app says so before you start it.
+- **Card links in the Fear No Evil template.** MarvelCDB has published only the
+  hero side of that pack, so its setup steps name cards in words rather than
+  linking them. When the encounter cards appear, the steps gain the usual
+  tappable chips.
+- **Confirming the Sinister Motives reputation track.** The node each reward and
+  penalty hangs off was read from the printed track by position. Most land
+  squarely; four sit between two nodes and are marked in the template as
+  unconfirmed until they are checked against the component.
 - **Fear No Evil and Shadowland in the randomiser.** Nine scenarios the card
   database has not got. Civil War looked like the same problem and was not — the
   card database had it all along, under a set type nothing else uses — so these
