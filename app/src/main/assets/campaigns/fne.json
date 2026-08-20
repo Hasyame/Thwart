@@ -703,8 +703,8 @@
    ],
    "onVictory": {
     "message": {
-     "fr": "Vous avez battu {villain}. {card:s1_musee} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché.",
-     "en": "Vous avez battu {villain}. {card:s1_musee} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché."
+     "fr": "Vous avez battu {villain}. {card:s1_musee} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter.",
+     "en": "Vous avez battu {villain}. {card:s1_musee} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter."
     },
     "prompts": [
      {
@@ -803,8 +803,8 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s1_musee} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins.",
-     "en": "{villain} vous a échappé. {card:s1_musee} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins."
+     "fr": "{villain} vous a échappé. {card:s1_musee} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
+     "en": "{villain} vous a échappé. {card:s1_musee} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
     },
     "prompts": [
      {
@@ -914,8 +914,8 @@
    ],
    "onVictory": {
     "message": {
-     "fr": "Vous avez battu {villain}. {card:s2_poursuite} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché.",
-     "en": "Vous avez battu {villain}. {card:s2_poursuite} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché."
+     "fr": "Vous avez battu {villain}. {card:s2_poursuite} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter.",
+     "en": "Vous avez battu {villain}. {card:s2_poursuite} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter."
     },
     "prompts": [
      {
@@ -1014,8 +1014,8 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s2_poursuite} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins.",
-     "en": "{villain} vous a échappé. {card:s2_poursuite} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins."
+     "fr": "{villain} vous a échappé. {card:s2_poursuite} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
+     "en": "{villain} vous a échappé. {card:s2_poursuite} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
     },
     "prompts": [
      {
@@ -1125,8 +1125,8 @@
    ],
    "onVictory": {
     "message": {
-     "fr": "Vous avez battu {villain}. {card:s3_racket} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché.",
-     "en": "Vous avez battu {villain}. {card:s3_racket} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché."
+     "fr": "Vous avez battu {villain}. {card:s3_racket} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter.",
+     "en": "Vous avez battu {villain}. {card:s3_racket} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter."
     },
     "prompts": [
      {
@@ -1225,8 +1225,8 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s3_racket} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins.",
-     "en": "{villain} vous a échappé. {card:s3_racket} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins."
+     "fr": "{villain} vous a échappé. {card:s3_racket} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
+     "en": "{villain} vous a échappé. {card:s3_racket} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
     },
     "prompts": [
      {
@@ -1336,8 +1336,8 @@
    ],
    "onVictory": {
     "message": {
-     "fr": "Vous avez battu {villain}. {card:s4_raft} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché.",
-     "en": "Vous avez battu {villain}. {card:s4_raft} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché."
+     "fr": "Vous avez battu {villain}. {card:s4_raft} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter.",
+     "en": "Vous avez battu {villain}. {card:s4_raft} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter."
     },
     "prompts": [
      {
@@ -1436,8 +1436,8 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s4_raft} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins.",
-     "en": "{villain} vous a échappé. {card:s4_raft} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins."
+     "fr": "{villain} vous a échappé. {card:s4_raft} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
+     "en": "{villain} vous a échappé. {card:s4_raft} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
     },
     "prompts": [
      {
@@ -1547,8 +1547,8 @@
    ],
    "onVictory": {
     "message": {
-     "fr": "Vous avez battu {villain}. {card:s5_rotatives} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché.",
-     "en": "Vous avez battu {villain}. {card:s5_rotatives} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd n'en sera que mieux retranché."
+     "fr": "Vous avez battu {villain}. {card:s5_rotatives} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter.",
+     "en": "Vous avez battu {villain}. {card:s5_rotatives} passe ACHEVÉ : mettez cet environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. Le Caïd sera un peu plus préparé à vous affronter."
     },
     "prompts": [
      {
@@ -1647,8 +1647,8 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s5_rotatives} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins.",
-     "en": "{villain} vous a échappé. {card:s5_rotatives} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. Le Caïd sera moins bien retranché, mais c'est une mission de moins."
+     "fr": "{villain} vous a échappé. {card:s5_rotatives} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
+     "en": "{villain} vous a échappé. {card:s5_rotatives} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
     },
     "prompts": [
      {

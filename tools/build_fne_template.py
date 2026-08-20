@@ -357,7 +357,8 @@ def victory_outcome(scenario_id):
         "message": text(
             "Vous avez battu {villain}. %s passe ACHEVÉ : mettez cet "
             "environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. "
-            "Le Caïd n'en sera que mieux retranché." % ("{card:%s}" % scenario_id),
+            "Le Caïd sera un peu plus préparé à vous affronter."
+            % ("{card:%s}" % scenario_id),
         ),
         "prompts": [
             vp_prompt(),
@@ -429,7 +430,7 @@ def defeat_outcome(counter, scenario_id):
         "message": text(
             "{villain} vous a échappé. %s passe ÉCHOUÉ : cette mission sort de "
             "la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. "
-            "Le Caïd sera moins bien retranché, mais c'est une mission de moins."
+            "C'est une mission de moins avant Le Caïd."
             % ("{card:%s}" % scenario_id),
         ),
         "prompts": [vp_prompt()],
