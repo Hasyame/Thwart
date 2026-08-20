@@ -1,0 +1,34 @@
+Construction de decks, et Peur de Rien remise sur le livret.
+
+Un nouveau deck s'ouvre désormais avec les cartes du héros déjà dedans, dans
+leur nombre imprimé. Elles n'ont jamais été facultatives : un deck qui s'ouvrait
+vide échouait à la validation jusqu'à ce que vous ajoutiez à la main ce que les
+règles avaient déjà choisi.
+
+Chaque ligne de carte porte une marque de type — une forme autant qu'une
+couleur, pour que la liste reste lisible sans se fier à la couleur. Tri par
+type, par coût ou par nom ; les cartes sans coût imprimé passent en dernier
+plutôt que comme un zéro.
+
+Peur de Rien avait une impasse : perdre un scénario laissait une page affichant
+« Campagne terminée » et rien d'autre. Au-delà du correctif, trois règles sont
+désormais justes. Perdre un scénario ne le fait pas échouer — vous pouvez y
+retourner tout de suite, et c'est le choix de continuer qui retourne
+l'environnement sur sa face ÉCHOUÉ et sort la mission de la campagne. La
+rotation ne vous a jamais demandé de garder un des deux environnements piochés :
+elle en pioche deux et fait progresser les deux, et la page le dit au lieu de
+poser une question. Enfin, rejouer une mission affrontait à chaque fois un
+subordonné différent, parce que terminer un scénario effaçait le méchant que la
+campagne avait noté pour cette mission.
+
+Chaque scénario dit maintenant ce que sa fin a changé, en nommant le subordonné
+et l'environnement, avec rejouer, continuer, faire une pause et arrêter la
+campagne.
+
+Une campagne inachevée est marquée (WIP) dans la liste. C'est le cas de Peur de
+Rien et de Sinister Motives.
+
+Sinister Motives rejoint les campagnes, en anglais, avec sa piste de
+réputation : l'application pose les six conditions après chaque scénario, fait
+l'addition, et n'affiche que les cases atteintes. Elle pioche aussi pour vous la
+manigance Community Service et les attachements Osborn Tech.

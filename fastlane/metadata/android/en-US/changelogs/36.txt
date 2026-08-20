@@ -1,0 +1,30 @@
+Deckbuilding, and Fear No Evil put back on the book.
+
+A new deck now opens with the hero's own cards already in it, at their printed
+quantities. They were never optional, so a deck that opened empty just failed
+validation until you added by hand what the rules had already chosen.
+
+Every card row carries a mark for its type — shape as well as colour, so the
+list can be skimmed by someone who cannot rely on colour. Lists sort by type,
+cost or name; cards with no printed cost sort last rather than as zero.
+
+Fear No Evil had a dead end: losing a scenario left you on a page that said
+"Campaign complete" with nowhere to go. Beyond fixing that, three rules are now
+right. Losing a scenario does not fail it — you can go straight back and try
+again, and it is choosing to move on that turns the environment over to its
+ÉCHOUÉ face and takes the job out of the campaign. The rotation never asked you
+to keep one of the two environments it draws; it draws two and pushes both, and
+the page says so instead of asking. And retrying a job faced a different
+subordinate every time, because finishing a scenario dropped the villain the
+campaign had noted against it.
+
+Each scenario now says what its ending did, naming the subordinate and the
+environment, with a retry, continue, take a break and stop the campaign.
+
+An unfinished campaign is marked (WIP) in the chooser. Fear No Evil and
+Sinister Motives both are.
+
+Sinister Motives joins the campaigns, in English, with its reputation track:
+the app asks the six conditions after each scenario, does the adding, and shows
+only the track boxes you have reached. It also draws the Community Service side
+scheme and the Osborn Tech attachments for you.
