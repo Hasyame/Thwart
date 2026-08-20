@@ -6,6 +6,10 @@
   "fr": "L'Ombre du Titan Fou",
   "en": "The Mad Titan's Shadow"
  },
+ "notice": {
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ombre du Titan Fou restent nécessaires pour jouer.\n\nL'application fait pour vous les tirages que la campagne laisse au hasard et tient le registre : les Pierres d'Infinité obtenues, ce qui est passé dans votre pile de victoire, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "en": "Unofficial, reconstructed for the app: the rulebook and cards from The Mad Titan's Shadow box are still needed to play.\n\nThe app makes the campaign's random draws for you and keeps the log: the Infinity Stones earned, what went into your victory display, and in an expert campaign each hero's hit points between games."
+ },
  "packCode": "mts",
  "difficulties": [
   "standard",

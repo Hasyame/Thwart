@@ -58,7 +58,7 @@ PRESSURE_SETUP = {
         "Place 1 threat per ticked box on the main scheme (2 in Expert).",
     ),
     "s2_poursuite": text(
-        "Révélez le Camion-Citerne ; à 2 cases, 1 menace de plus dessus (2 en Expert).",
+        "Révélez le \"Camion-Citerne\" ; à 2 cases, 1 menace de plus dessus (2 en Expert).",
         "Reveal the Tanker Truck; at 2 boxes, 1 more threat on it (2 in Expert).",
     ),
     "s3_racket": text(
@@ -77,35 +77,52 @@ PRESSURE_SETUP = {
 
 # What each job puts on the table, from its own page: the main scheme deck and
 # the encounter sets. The chosen villain's own set joins them every time.
+def q(name):
+    """A card title as it reads mid-sentence, in quotes."""
+    return '"%s"' % name
+
+
+def q_all(names):
+    """A list of titles, each quoted, joined the way a deck list reads."""
+    return ", ".join(q(name) for name in names)
+
+
+# Main scheme title, a note that is not part of the title, and the encounter
+# sets — each kept apart so the quotes land on the titles and nowhere else.
 SCENARIO_DECKS = {
     "s1_musee": (
         "Cambriolage du Musée d'Art",
-        "Cambriolage du Musée d'Art, Policiers, Le Hibou, Standard",
+        "",
+        ["Cambriolage du Musée d'Art", "Policiers", "Le Hibou", "Standard"],
     ),
     "s2_poursuite": (
         "La Poursuite",
-        "La Poursuite, Policiers, Conduite, Standard",
+        "",
+        ["La Poursuite", "Policiers", "Conduite", "Standard"],
     ),
     "s3_racket": (
-        "Racket en Bande Organisée (une par joueur)",
-        "Racket en Bande Organisée, Désastres, Mafia des Survêtes, Standard",
+        "Racket en Bande Organisée",
+        " (une par joueur)",
+        ["Racket en Bande Organisée", "Désastres", "Mafia des Survêtes", "Standard"],
     ),
     "s4_raft": (
         "L'Évasion du Raft",
-        "L'Évasion du Raft, Le Hibou, Tombstone, Standard",
+        "",
+        ["L'Évasion du Raft", "Le Hibou", "Tombstone", "Standard"],
     ),
     "s5_rotatives": (
         "Arrêtez les Rotatives !",
-        "Arrêtez les Rotatives !, Tombstone, Mafia des Survêtes, Standard",
+        "",
+        ["Arrêtez les Rotatives !", "Tombstone", "Mafia des Survêtes", "Standard"],
     ),
 }
 
 # The piece of business each job runs beyond its decks.
 SCENARIO_EXTRA = {
     "s1_musee": "Une des quatre œuvres d'art, tirée par le stade 1A, commence attachée au méchant.",
-    "s2_poursuite": "L'attachement En Tête / Roue Contre Roue commence face En Tête visible.",
+    "s2_poursuite": "L'attachement \"En Tête / Roue Contre Roue\" commence face \"En Tête\" visible.",
     "s3_racket": "Chaque joueur prend une manigance principale dans sa propre zone de jeu.",
-    "s4_raft": "Le méchant reçoit l'attachement Passe-Partout.",
+    "s4_raft": "Le méchant reçoit l'attachement \"Passe-Partout\".",
     "s5_rotatives": "Chaque joueur reçoit au hasard un soutien DAILY BUGLE (3 jetons Endurance).",
 }
 
@@ -192,39 +209,39 @@ def villain_setup():
         if code.endswith("mary_typhoide"):
             continue
         steps.append({
-            "text": text("Deck Méchant : %s (I) et (II)." % name),
+            "text": text("Deck Méchant : %s (I) et (II)." % q(name)),
             "when": {"all": [{"drawIs": "villain:" + code}, {"difficulty": "standard"}]},
         })
         steps.append({
-            "text": text("Deck Méchant : %s (II) et (III)." % name),
+            "text": text("Deck Méchant : %s (II) et (III)." % q(name)),
             "when": {"all": [{"drawIs": "villain:" + code}, {"difficulty": "expert"}]},
         })
 
     mary = "fne_villain_mary_typhoide"
     steps.append({
         "text": text(
-            "Révélez la manigance annexe Gagner la Confiance et l'environnement "
-            "Psyché Perturbée.",
+            "Révélez la manigance annexe \"Gagner la Confiance\" et l'environnement "
+            "\"Psyché Perturbée\".",
         ),
         "when": {"drawIs": "villain:" + mary},
     })
     steps.append({
         "text": text(
-            "Mise en place de Psyché Perturbée : Mary Typhoïde (A) / Bloody Mary (A), "
+            "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (A) / \"Bloody Mary\" (A), "
             "face au hasard.",
         ),
         "when": {"all": [{"drawIs": "villain:" + mary}, {"difficulty": "standard"}]},
     })
     steps.append({
         "text": text(
-            "Mise en place de Psyché Perturbée : Mary Typhoïde (B) / Bloody Mary (B), "
+            "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (B) / \"Bloody Mary\" (B), "
             "face au hasard.",
         ),
         "when": {"all": [{"drawIs": "villain:" + mary}, {"difficulty": "expert"}]},
     })
     steps.append({
         "text": text(
-            "Ce scénario se gagne en plaçant trois pions sur Psyché Perturbée, pas en "
+            "Ce scénario se gagne en plaçant trois pions sur \"Psyché Perturbée\", pas en "
             "vainquant le méchant.",
         ),
         "when": {"drawIs": "villain:" + mary},
@@ -243,13 +260,13 @@ def environment_board():
     for scenario_id, name_fr, _, counter in SCENARIOS:
         lines.append({
             "text": text(
-                "Mettez en jeu %s, face ACHEVÉ, et résolvez sa Mise en place." % name_fr,
+                "Mettez en jeu %s, face ACHEVÉ, et résolvez sa Mise en place." % q(name_fr),
             ),
             "when": {"flag": "acheve." + scenario_id},
         })
         lines.append({
             "text": text(
-                "Mettez en jeu %s, face ÉCHOUÉ, et résolvez sa Mise en place." % name_fr,
+                "Mettez en jeu %s, face ÉCHOUÉ, et résolvez sa Mise en place." % q(name_fr),
             ),
             "when": {"counter": counter, "atLeast": 3},
         })
@@ -299,8 +316,8 @@ def shared_campaign_setup():
         # 13. She is out only while she is won and still standing.
         {
             "text": text(
-                "Mettez en jeu l'alliée de campagne Mary Typhoïde.",
-                "Put the campaign ally Typhoid Mary into play.",
+                "Mettez en jeu l'alliée de campagne \"Mary Typhoïde\".",
+                "Put the campaign ally \"Typhoid Mary\" into play.",
             ),
             "when": {"all": [
                 {"flag": "confianceGagnee"},
@@ -311,7 +328,7 @@ def shared_campaign_setup():
         # one that put her out.
         {
             "text": text(
-                "Retirez Mary Typhoïde de vos decks : elle est perdue pour la campagne.",
+                "Retirez \"Mary Typhoïde\" de vos decks : elle est perdue pour la campagne.",
             ),
             "when": {"flag": "maryVaincue"},
         },
@@ -343,8 +360,8 @@ def victory_outcome(scenario_id):
                 "id": "confiance",
                 "type": "boolean",
                 "label": text(
-                    "Psyché Perturbée est-elle en jeu avec au moins 2 pions dessus ?",
-                    "Is Disturbed Psyche in play with at least 2 tokens on it?",
+                    "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
+                    "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?",
                 ),
                 "when": {"all": [
                     {"drawIs": "villain:fne_villain_mary_typhoide"},
@@ -359,8 +376,8 @@ def victory_outcome(scenario_id):
                 "id": "mary",
                 "type": "boolean",
                 "label": text(
-                    "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
-                    "Is Typhoid Mary / Bloody Mary in the victory pile?",
+                    "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
+                    "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?",
                 ),
                 "when": {"all": [
                     {"any": [
@@ -421,10 +438,13 @@ def scenario(scenario_id, name_fr, name_en, counter):
             # where the players find out who is behind the job.
             {"text": text("Méchant SUBORDONNÉ : {villain}.")},
             {"include": "mechant"},
-            {"text": text("Deck Manigance Principale : %s." % SCENARIO_DECKS[scenario_id][0])},
+            {"text": text(
+                "Deck Manigance Principale : %s%s."
+                % (q(SCENARIO_DECKS[scenario_id][0]), SCENARIO_DECKS[scenario_id][1]),
+            )},
             {"text": text(
                 "Deck Rencontre : %s, plus le set du méchant."
-                % SCENARIO_DECKS[scenario_id][1],
+                % q_all(SCENARIO_DECKS[scenario_id][2]),
             )},
         ],
         # The mise en place itself.
@@ -452,12 +472,12 @@ def kingpin():
         "defeatLabel": text("Le Caïd vous échappe.", "Kingpin gets away."),
         "baseSetup": {},
         "preSetup": [
-            {"text": text("Deck Méchant : Le Caïd (A1)."),
+            {"text": text("Deck Méchant : \"Le Caïd\" (A1)."),
              "when": {"difficulty": "standard"}},
-            {"text": text("Deck Méchant : Le Caïd (B1)."),
+            {"text": text("Deck Méchant : \"Le Caïd\" (B1)."),
              "when": {"difficulty": "expert"}},
-            {"text": text("Deck Manigance Principale : Le Gambit du Roi, Fin de la Partie.")},
-            {"text": text("Deck Rencontre : Le Caïd, Tombstone, Mafia des Survêtes.")},
+            {"text": text("Deck Manigance Principale : \"Le Gambit du Roi\", \"Fin de la Partie\".")},
+            {"text": text("Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".")},
             {"text": text("Ce scénario n'utilise pas le set Standard."),
              "when": {"difficulty": "standard"}},
             {"text": text("Ce scénario utilise le set Expert à la place du Standard."),
@@ -480,8 +500,8 @@ def kingpin():
             },
             {
                 "text": text(
-                    "4 environnements ACHEVÉ ou plus : trouvez et révélez James Wesley.",
-                    "4+ ACHIEVED environments: find and reveal James Wesley.",
+                    "4 environnements ACHEVÉ ou plus : trouvez et révélez \"James Wesley\".",
+                    "4+ ACHIEVED environments: find and reveal \"James Wesley\".",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 4},
             },

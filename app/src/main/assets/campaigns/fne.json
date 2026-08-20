@@ -195,8 +195,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu Cambriolage du Musée d'Art, face ACHEVÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu Cambriolage du Musée d'Art, face ACHEVÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"Cambriolage du Musée d'Art\", face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"Cambriolage du Musée d'Art\", face ACHEVÉ, et résolvez sa Mise en place."
     },
     "when": {
      "flag": "acheve.s1_musee"
@@ -204,8 +204,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu Cambriolage du Musée d'Art, face ÉCHOUÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu Cambriolage du Musée d'Art, face ÉCHOUÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"Cambriolage du Musée d'Art\", face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"Cambriolage du Musée d'Art\", face ÉCHOUÉ, et résolvez sa Mise en place."
     },
     "when": {
      "counter": "pressionMusee",
@@ -214,8 +214,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu La Poursuite, face ACHEVÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu La Poursuite, face ACHEVÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"La Poursuite\", face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"La Poursuite\", face ACHEVÉ, et résolvez sa Mise en place."
     },
     "when": {
      "flag": "acheve.s2_poursuite"
@@ -223,8 +223,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu La Poursuite, face ÉCHOUÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu La Poursuite, face ÉCHOUÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"La Poursuite\", face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"La Poursuite\", face ÉCHOUÉ, et résolvez sa Mise en place."
     },
     "when": {
      "counter": "pressionPoursuite",
@@ -233,8 +233,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu Racket en Bande Organisée, face ACHEVÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu Racket en Bande Organisée, face ACHEVÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"Racket en Bande Organisée\", face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"Racket en Bande Organisée\", face ACHEVÉ, et résolvez sa Mise en place."
     },
     "when": {
      "flag": "acheve.s3_racket"
@@ -242,8 +242,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu Racket en Bande Organisée, face ÉCHOUÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu Racket en Bande Organisée, face ÉCHOUÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"Racket en Bande Organisée\", face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"Racket en Bande Organisée\", face ÉCHOUÉ, et résolvez sa Mise en place."
     },
     "when": {
      "counter": "pressionRacket",
@@ -252,8 +252,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu L'Évasion du Raft, face ACHEVÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu L'Évasion du Raft, face ACHEVÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"L'Évasion du Raft\", face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"L'Évasion du Raft\", face ACHEVÉ, et résolvez sa Mise en place."
     },
     "when": {
      "flag": "acheve.s4_raft"
@@ -261,8 +261,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu L'Évasion du Raft, face ÉCHOUÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu L'Évasion du Raft, face ÉCHOUÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"L'Évasion du Raft\", face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"L'Évasion du Raft\", face ÉCHOUÉ, et résolvez sa Mise en place."
     },
     "when": {
      "counter": "pressionRaft",
@@ -271,8 +271,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu Arrêtez les Rotatives !, face ACHEVÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu Arrêtez les Rotatives !, face ACHEVÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"Arrêtez les Rotatives !\", face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"Arrêtez les Rotatives !\", face ACHEVÉ, et résolvez sa Mise en place."
     },
     "when": {
      "flag": "acheve.s5_rotatives"
@@ -280,8 +280,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu Arrêtez les Rotatives !, face ÉCHOUÉ, et résolvez sa Mise en place.",
-     "en": "Mettez en jeu Arrêtez les Rotatives !, face ÉCHOUÉ, et résolvez sa Mise en place."
+     "fr": "Mettez en jeu \"Arrêtez les Rotatives !\", face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu \"Arrêtez les Rotatives !\", face ÉCHOUÉ, et résolvez sa Mise en place."
     },
     "when": {
      "counter": "pressionRotatives",
@@ -290,8 +290,8 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu l'alliée de campagne Mary Typhoïde.",
-     "en": "Put the campaign ally Typhoid Mary into play."
+     "fr": "Mettez en jeu l'alliée de campagne \"Mary Typhoïde\".",
+     "en": "Put the campaign ally \"Typhoid Mary\" into play."
     },
     "when": {
      "all": [
@@ -306,8 +306,8 @@
    },
    {
     "text": {
-     "fr": "Retirez Mary Typhoïde de vos decks : elle est perdue pour la campagne.",
-     "en": "Retirez Mary Typhoïde de vos decks : elle est perdue pour la campagne."
+     "fr": "Retirez \"Mary Typhoïde\" de vos decks : elle est perdue pour la campagne.",
+     "en": "Retirez \"Mary Typhoïde\" de vos decks : elle est perdue pour la campagne."
     },
     "when": {
      "flag": "maryVaincue"
@@ -317,8 +317,8 @@
   "mechant": [
    {
     "text": {
-     "fr": "Deck Méchant : Hammerhead (I) et (II).",
-     "en": "Deck Méchant : Hammerhead (I) et (II)."
+     "fr": "Deck Méchant : \"Hammerhead\" (I) et (II).",
+     "en": "Deck Méchant : \"Hammerhead\" (I) et (II)."
     },
     "when": {
      "all": [
@@ -333,8 +333,8 @@
    },
    {
     "text": {
-     "fr": "Deck Méchant : Hammerhead (II) et (III).",
-     "en": "Deck Méchant : Hammerhead (II) et (III)."
+     "fr": "Deck Méchant : \"Hammerhead\" (II) et (III).",
+     "en": "Deck Méchant : \"Hammerhead\" (II) et (III)."
     },
     "when": {
      "all": [
@@ -349,8 +349,8 @@
    },
    {
     "text": {
-     "fr": "Deck Méchant : Bullseye (I) et (II).",
-     "en": "Deck Méchant : Bullseye (I) et (II)."
+     "fr": "Deck Méchant : \"Bullseye\" (I) et (II).",
+     "en": "Deck Méchant : \"Bullseye\" (I) et (II)."
     },
     "when": {
      "all": [
@@ -365,8 +365,8 @@
    },
    {
     "text": {
-     "fr": "Deck Méchant : Bullseye (II) et (III).",
-     "en": "Deck Méchant : Bullseye (II) et (III)."
+     "fr": "Deck Méchant : \"Bullseye\" (II) et (III).",
+     "en": "Deck Méchant : \"Bullseye\" (II) et (III)."
     },
     "when": {
      "all": [
@@ -381,8 +381,8 @@
    },
    {
     "text": {
-     "fr": "Deck Méchant : Electro (I) et (II).",
-     "en": "Deck Méchant : Electro (I) et (II)."
+     "fr": "Deck Méchant : \"Electro\" (I) et (II).",
+     "en": "Deck Méchant : \"Electro\" (I) et (II)."
     },
     "when": {
      "all": [
@@ -397,8 +397,8 @@
    },
    {
     "text": {
-     "fr": "Deck Méchant : Electro (II) et (III).",
-     "en": "Deck Méchant : Electro (II) et (III)."
+     "fr": "Deck Méchant : \"Electro\" (II) et (III).",
+     "en": "Deck Méchant : \"Electro\" (II) et (III)."
     },
     "when": {
      "all": [
@@ -413,8 +413,8 @@
    },
    {
     "text": {
-     "fr": "Deck Méchant : L'Homme Pourpre (I) et (II).",
-     "en": "Deck Méchant : L'Homme Pourpre (I) et (II)."
+     "fr": "Deck Méchant : \"L'Homme Pourpre\" (I) et (II).",
+     "en": "Deck Méchant : \"L'Homme Pourpre\" (I) et (II)."
     },
     "when": {
      "all": [
@@ -429,8 +429,8 @@
    },
    {
     "text": {
-     "fr": "Deck Méchant : L'Homme Pourpre (II) et (III).",
-     "en": "Deck Méchant : L'Homme Pourpre (II) et (III)."
+     "fr": "Deck Méchant : \"L'Homme Pourpre\" (II) et (III).",
+     "en": "Deck Méchant : \"L'Homme Pourpre\" (II) et (III)."
     },
     "when": {
      "all": [
@@ -445,8 +445,8 @@
    },
    {
     "text": {
-     "fr": "Révélez la manigance annexe Gagner la Confiance et l'environnement Psyché Perturbée.",
-     "en": "Révélez la manigance annexe Gagner la Confiance et l'environnement Psyché Perturbée."
+     "fr": "Révélez la manigance annexe \"Gagner la Confiance\" et l'environnement \"Psyché Perturbée\".",
+     "en": "Révélez la manigance annexe \"Gagner la Confiance\" et l'environnement \"Psyché Perturbée\"."
     },
     "when": {
      "drawIs": "villain:fne_villain_mary_typhoide"
@@ -454,8 +454,8 @@
    },
    {
     "text": {
-     "fr": "Mise en place de Psyché Perturbée : Mary Typhoïde (A) / Bloody Mary (A), face au hasard.",
-     "en": "Mise en place de Psyché Perturbée : Mary Typhoïde (A) / Bloody Mary (A), face au hasard."
+     "fr": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (A) / \"Bloody Mary\" (A), face au hasard.",
+     "en": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (A) / \"Bloody Mary\" (A), face au hasard."
     },
     "when": {
      "all": [
@@ -470,8 +470,8 @@
    },
    {
     "text": {
-     "fr": "Mise en place de Psyché Perturbée : Mary Typhoïde (B) / Bloody Mary (B), face au hasard.",
-     "en": "Mise en place de Psyché Perturbée : Mary Typhoïde (B) / Bloody Mary (B), face au hasard."
+     "fr": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (B) / \"Bloody Mary\" (B), face au hasard.",
+     "en": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (B) / \"Bloody Mary\" (B), face au hasard."
     },
     "when": {
      "all": [
@@ -486,8 +486,8 @@
    },
    {
     "text": {
-     "fr": "Ce scénario se gagne en plaçant trois pions sur Psyché Perturbée, pas en vainquant le méchant.",
-     "en": "Ce scénario se gagne en plaçant trois pions sur Psyché Perturbée, pas en vainquant le méchant."
+     "fr": "Ce scénario se gagne en plaçant trois pions sur \"Psyché Perturbée\", pas en vainquant le méchant.",
+     "en": "Ce scénario se gagne en plaçant trois pions sur \"Psyché Perturbée\", pas en vainquant le méchant."
     },
     "when": {
      "drawIs": "villain:fne_villain_mary_typhoide"
@@ -624,14 +624,14 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : Cambriolage du Musée d'Art.",
-      "en": "Deck Manigance Principale : Cambriolage du Musée d'Art."
+      "fr": "Deck Manigance Principale : \"Cambriolage du Musée d'Art\".",
+      "en": "Deck Manigance Principale : \"Cambriolage du Musée d'Art\"."
      }
     },
     {
      "text": {
-      "fr": "Deck Rencontre : Cambriolage du Musée d'Art, Policiers, Le Hibou, Standard, plus le set du méchant.",
-      "en": "Deck Rencontre : Cambriolage du Musée d'Art, Policiers, Le Hibou, Standard, plus le set du méchant."
+      "fr": "Deck Rencontre : \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus le set du méchant.",
+      "en": "Deck Rencontre : \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus le set du méchant."
      }
     }
    ],
@@ -675,8 +675,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is Disturbed Psyche in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
       },
       "when": {
        "all": [
@@ -693,8 +693,8 @@
       "id": "mary",
       "type": "boolean",
       "label": {
-       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
-       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+       "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
       },
       "when": {
        "all": [
@@ -822,27 +822,27 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : La Poursuite.",
-      "en": "Deck Manigance Principale : La Poursuite."
+      "fr": "Deck Manigance Principale : \"La Poursuite\".",
+      "en": "Deck Manigance Principale : \"La Poursuite\"."
      }
     },
     {
      "text": {
-      "fr": "Deck Rencontre : La Poursuite, Policiers, Conduite, Standard, plus le set du méchant.",
-      "en": "Deck Rencontre : La Poursuite, Policiers, Conduite, Standard, plus le set du méchant."
+      "fr": "Deck Rencontre : \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus le set du méchant.",
+      "en": "Deck Rencontre : \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus le set du méchant."
      }
     }
    ],
    "campaignSetup": [
     {
      "text": {
-      "fr": "L'attachement En Tête / Roue Contre Roue commence face En Tête visible.",
-      "en": "L'attachement En Tête / Roue Contre Roue commence face En Tête visible."
+      "fr": "L'attachement \"En Tête / Roue Contre Roue\" commence face \"En Tête\" visible.",
+      "en": "L'attachement \"En Tête / Roue Contre Roue\" commence face \"En Tête\" visible."
      }
     },
     {
      "text": {
-      "fr": "Révélez le Camion-Citerne ; à 2 cases, 1 menace de plus dessus (2 en Expert).",
+      "fr": "Révélez le \"Camion-Citerne\" ; à 2 cases, 1 menace de plus dessus (2 en Expert).",
       "en": "Reveal the Tanker Truck; at 2 boxes, 1 more threat on it (2 in Expert)."
      },
      "when": {
@@ -873,8 +873,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is Disturbed Psyche in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
       },
       "when": {
        "all": [
@@ -891,8 +891,8 @@
       "id": "mary",
       "type": "boolean",
       "label": {
-       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
-       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+       "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
       },
       "when": {
        "all": [
@@ -1020,14 +1020,14 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : Racket en Bande Organisée (une par joueur).",
-      "en": "Deck Manigance Principale : Racket en Bande Organisée (une par joueur)."
+      "fr": "Deck Manigance Principale : \"Racket en Bande Organisée\" (une par joueur).",
+      "en": "Deck Manigance Principale : \"Racket en Bande Organisée\" (une par joueur)."
      }
     },
     {
      "text": {
-      "fr": "Deck Rencontre : Racket en Bande Organisée, Désastres, Mafia des Survêtes, Standard, plus le set du méchant.",
-      "en": "Deck Rencontre : Racket en Bande Organisée, Désastres, Mafia des Survêtes, Standard, plus le set du méchant."
+      "fr": "Deck Rencontre : \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
+      "en": "Deck Rencontre : \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant."
      }
     }
    ],
@@ -1071,8 +1071,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is Disturbed Psyche in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
       },
       "when": {
        "all": [
@@ -1089,8 +1089,8 @@
       "id": "mary",
       "type": "boolean",
       "label": {
-       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
-       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+       "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
       },
       "when": {
        "all": [
@@ -1218,22 +1218,22 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : L'Évasion du Raft.",
-      "en": "Deck Manigance Principale : L'Évasion du Raft."
+      "fr": "Deck Manigance Principale : \"L'Évasion du Raft\".",
+      "en": "Deck Manigance Principale : \"L'Évasion du Raft\"."
      }
     },
     {
      "text": {
-      "fr": "Deck Rencontre : L'Évasion du Raft, Le Hibou, Tombstone, Standard, plus le set du méchant.",
-      "en": "Deck Rencontre : L'Évasion du Raft, Le Hibou, Tombstone, Standard, plus le set du méchant."
+      "fr": "Deck Rencontre : \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus le set du méchant.",
+      "en": "Deck Rencontre : \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus le set du méchant."
      }
     }
    ],
    "campaignSetup": [
     {
      "text": {
-      "fr": "Le méchant reçoit l'attachement Passe-Partout.",
-      "en": "Le méchant reçoit l'attachement Passe-Partout."
+      "fr": "Le méchant reçoit l'attachement \"Passe-Partout\".",
+      "en": "Le méchant reçoit l'attachement \"Passe-Partout\"."
      }
     },
     {
@@ -1269,8 +1269,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is Disturbed Psyche in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
       },
       "when": {
        "all": [
@@ -1287,8 +1287,8 @@
       "id": "mary",
       "type": "boolean",
       "label": {
-       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
-       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+       "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
       },
       "when": {
        "all": [
@@ -1416,14 +1416,14 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : Arrêtez les Rotatives !.",
-      "en": "Deck Manigance Principale : Arrêtez les Rotatives !."
+      "fr": "Deck Manigance Principale : \"Arrêtez les Rotatives !\".",
+      "en": "Deck Manigance Principale : \"Arrêtez les Rotatives !\"."
      }
     },
     {
      "text": {
-      "fr": "Deck Rencontre : Arrêtez les Rotatives !, Tombstone, Mafia des Survêtes, Standard, plus le set du méchant.",
-      "en": "Deck Rencontre : Arrêtez les Rotatives !, Tombstone, Mafia des Survêtes, Standard, plus le set du méchant."
+      "fr": "Deck Rencontre : \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
+      "en": "Deck Rencontre : \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant."
      }
     }
    ],
@@ -1467,8 +1467,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "Psyché Perturbée est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is Disturbed Psyche in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
       },
       "when": {
        "all": [
@@ -1485,8 +1485,8 @@
       "id": "mary",
       "type": "boolean",
       "label": {
-       "fr": "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
-       "en": "Is Typhoid Mary / Bloody Mary in the victory pile?"
+       "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
       },
       "when": {
        "all": [
@@ -1600,8 +1600,8 @@
    "preSetup": [
     {
      "text": {
-      "fr": "Deck Méchant : Le Caïd (A1).",
-      "en": "Deck Méchant : Le Caïd (A1)."
+      "fr": "Deck Méchant : \"Le Caïd\" (A1).",
+      "en": "Deck Méchant : \"Le Caïd\" (A1)."
      },
      "when": {
       "difficulty": "standard"
@@ -1609,8 +1609,8 @@
     },
     {
      "text": {
-      "fr": "Deck Méchant : Le Caïd (B1).",
-      "en": "Deck Méchant : Le Caïd (B1)."
+      "fr": "Deck Méchant : \"Le Caïd\" (B1).",
+      "en": "Deck Méchant : \"Le Caïd\" (B1)."
      },
      "when": {
       "difficulty": "expert"
@@ -1618,14 +1618,14 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : Le Gambit du Roi, Fin de la Partie.",
-      "en": "Deck Manigance Principale : Le Gambit du Roi, Fin de la Partie."
+      "fr": "Deck Manigance Principale : \"Le Gambit du Roi\", \"Fin de la Partie\".",
+      "en": "Deck Manigance Principale : \"Le Gambit du Roi\", \"Fin de la Partie\"."
      }
     },
     {
      "text": {
-      "fr": "Deck Rencontre : Le Caïd, Tombstone, Mafia des Survêtes.",
-      "en": "Deck Rencontre : Le Caïd, Tombstone, Mafia des Survêtes."
+      "fr": "Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
+      "en": "Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\"."
      }
     },
     {
@@ -1669,8 +1669,8 @@
     },
     {
      "text": {
-      "fr": "4 environnements ACHEVÉ ou plus : trouvez et révélez James Wesley.",
-      "en": "4+ ACHIEVED environments: find and reveal James Wesley."
+      "fr": "4 environnements ACHEVÉ ou plus : trouvez et révélez \"James Wesley\".",
+      "en": "4+ ACHIEVED environments: find and reveal \"James Wesley\"."
      },
      "when": {
       "countTrue": "acheve",

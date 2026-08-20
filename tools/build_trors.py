@@ -489,6 +489,12 @@ template = {
     "id": "trors",
     "schemaVersion": 1,
     "name": t("L'Ascension du Crâne Rouge", "The Rise of Red Skull"),
+    # Shown before the campaign starts: what this is, what it still
+    # needs from you, and what the app takes off your hands.
+    "notice": t(
+        "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ascension du Crâne Rouge restent nécessaires pour jouer.\n\nL'application tient le registre à votre place : l'amélioration TECH de chaque joueur, les alliés libérés ou restés prisonniers, les améliorations Basic attachées, les pions retard, et en campagne experte les points de vie de chaque héros entre les parties.",
+        "Unofficial, reconstructed for the app: the rulebook and cards from The Rise of Red Skull box are still needed to play.\n\nThe app keeps the log for you: each player's TECH upgrade, the allies freed or left imprisoned, the Basic upgrades attached, the delay counters, and in an expert campaign each hero's hit points between games.",
+    ),
     "packCode": "trors",
     "difficulties": ["standard", "expert"],
     "counters": [

@@ -6,6 +6,10 @@
   "fr": "L'Ère d'Apocalypse",
   "en": "Age of Apocalypse"
  },
+ "notice": {
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ère d'Apocalypse restent nécessaires pour jouer.\n\nL'application tire pour vous l'ordre des quatre Cavaliers et l'OVERSEER de chaque partie, retient les MISSIONS déjà jouées et les OVERSEERS vaincus, et tient le registre : points de victoire, sort du Professeur, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Age of Apocalypse box are still needed to play.\n\nThe app draws the order of the four Horsemen and each game's OVERSEER for you, remembers which MISSIONS have been played and which OVERSEERS were defeated, and keeps the log: victory points, what became of the Professor, and in an expert campaign each hero's hit points between games."
+ },
  "packCode": "aoa",
  "difficulties": [
   "standard",

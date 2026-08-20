@@ -60,8 +60,10 @@ class CampaignQuestionLabelTest {
         )
         val run = run(state, mapOf("45168a" to "Sabotage the Sea Wall"))
 
+        // Quoted: the name is a card title being picked out of a pile, and a
+        // title that runs into the sentence around it is hard to spot.
         assertEquals(
-            "Was the MISSION Sabotage the Sea Wall defeated?",
+            "Was the MISSION \"Sabotage the Sea Wall\" defeated?",
             resolveDraws("Was the MISSION {mission} defeated?", run, "s1_unus"),
         )
     }

@@ -13,6 +13,10 @@
   "fr": "Convoitise Galactique",
   "en": "The Galaxy's Most Wanted"
  },
+ "notice": {
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Convoitise Galactique restent nécessaires pour jouer.\n\nL'application tient la boutique et le registre à votre place : vos crédits et vos achats, les cartes joueur placées dans La Collection, les Galactic Artifacts de votre pile de victoire, les jetons évasion, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "en": "Unofficial, reconstructed for the app: the rulebook and cards from The Galaxy's Most Wanted box are still needed to play.\n\nThe app runs the market and keeps the log for you: your credits and purchases, the player cards put into The Collection, the Galactic Artifacts in your victory display, the escape tokens, and in an expert campaign each hero's hit points between games."
+ },
  "packCode": "gmw",
  "difficulties": [
   "standard",

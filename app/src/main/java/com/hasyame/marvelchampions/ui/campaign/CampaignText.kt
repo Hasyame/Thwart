@@ -60,14 +60,25 @@ fun resolveDraws(text: String, run: CampaignRun, scenarioId: String?): String =
             // A card code, resolved through the card database so the name comes
             // out in the reader's language. Writing the name into the template
             // instead left English prose sitting beside a French card chip.
-            run.names.card(name)
+            run.names.card(name).quoted()
         } else {
             val drawn = run.state.draws[scenarioId].orEmpty()[name].orEmpty()
             if (drawn.isEmpty()) {
                 // Nothing drawn: drop the placeholder rather than print braces.
                 ""
             } else {
-                drawn.joinToString(", ") { run.names.card(it) }
+                drawn.joinToString(", ") { run.names.card(it).quoted() }
             }
         }
     }.replace("  ", " ").trim()
+
+/**
+ * A card name as it appears mid-sentence, in quotes.
+ *
+ * A setup step is read while hunting through a pile of cards, and a title
+ * running into the prose around it is genuinely hard to pick out — worse for
+ * the ones that are ordinary words, like an attachment called Passe-Partout.
+ * Quoting is done here rather than in the templates so every campaign gets it
+ * and no template can forget.
+ */
+private fun String.quoted(): String = if (isBlank()) this else "\"" + this + "\""
