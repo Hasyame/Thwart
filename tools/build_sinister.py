@@ -1,0 +1,469 @@
+# -*- coding: utf-8 -*-
+"""Builds the Sinister Motives campaign template.
+
+English first. Every string carries only an `en` value, and LocalizedText falls
+back to it, so a French player reads English here until the translation lands
+rather than reading a blank.
+
+THE REPUTATION TRACK
+
+This is the campaign's own machinery, and it turns out to need no engine work.
+A campaign counter holds the score. The six conditions on the printed track are
+six questions at the end of a scenario, and their answers add to that counter —
+the app does the adding, so nobody totals a column by hand. Each box on the
+track is a setup step gated on the counter having reached that node, which is
+exactly what a "Setup:" box means: it triggers at the start of every remaining
+scenario.
+
+Boxes that are not "Setup:" boxes resolve once, when the node is first marked.
+Those carry a flag and check it, so they stop offering themselves afterwards.
+
+WHAT THE APP DRAWS
+
+The Community Service side scheme and the Osborn Tech attachments are drawn at
+random by the rules, so the app draws them: `draw` picks, `excluding` keeps it
+off what is already recorded, and `addDrawnCard` files the result. The players
+are asked whether the side scheme ended in the victory display, never which one
+it was — the app dealt it and already knows.
+
+The one thing it cannot deal is the S.H.I.E.L.D. Tech reward: three at random
+*per player*, and draws are campaign-wide. That step records what each player
+took instead of dealing it.
+
+Card codes are MarvelCDB codes for pack 'sm', read from the bundled card
+database rather than transcribed.
+"""
+import io
+import json
+
+# --- villains, one stage per difficulty step --------------------------------
+SANDMAN = ["27061", "27062", "27063"]
+VENOM = ["27073", "27074", "27075"]
+MYSTERIO = ["27084", "27085", "27086"]
+VENOM_GOBLIN = ["27113", "27114", "27115"]
+
+# The Sinister Six share a scenario, so all six are the villain deck at once.
+SINISTER_SIX = ["27094", "27095", "27096", "27097", "27098", "27099"]
+
+# --- the cards the campaign instructions name -------------------------------
+PUBLIC_OUTCRY_STANDARD = "27174a"
+PUBLIC_OUTCRY_EXPERT = "27174b"
+SMEAR_CAMPAIGN = "27175"
+SNITCHES = "27181"
+VENOM_ALLY = "27190"
+LIGHT_AT_THE_END = "27102a"
+
+COMMUNITY_SERVICE = ["27176", "27177", "27178", "27179", "27180"]
+OSBORN_TECH = ["27147", "27148", "27149", "27150", "27151", "27152"]
+SHIELD_TECH = ["27182a", "27183a", "27184a", "27185a", "27186a", "27187a",
+               "27188a", "27189a"]
+
+# Minions carrying the names of the Sinister Six, for the finale.
+SINISTER_ASSAULT = ["27158", "27159", "27160", "27161", "27162", "27163"]
+
+
+def t(en):
+    """English only for now; French falls back to it until it is translated."""
+    return {"en": en}
+
+
+def at_least(node):
+    """True once the reputation track has reached this node."""
+    return {"counter": "reputation", "atLeast": node}
+
+
+def unmarked(node):
+    """A once-only box: the node is reached and the box has not fired yet."""
+    return {"all": [at_least(node), {"notFlag": "node%d" % node}]}
+
+
+# ---------------------------------------------------------------------------
+# THE REPUTATION TRACK
+#
+# Node numbers are read off the printed track on page 22: the labelled nodes
+# sit at 5, 10, 15, 20 and 25, evenly spaced, and each box connects to one of
+# them. The measured position of every box is noted beside it so this can be
+# checked against the physical track rather than taken on trust. The four
+# marked UNCONFIRMED fall between two nodes and are the ones worth verifying.
+# ---------------------------------------------------------------------------
+
+REWARDS = [
+    # node, once?, text                                             (measured)
+    (3, True,
+     "Deal 3 S.H.I.E.L.D. Tech upgrades at random to a player. They keep 1 for "
+     "the campaign; return the rest. Repeat for each player.",      # 2.47 UNCONFIRMED
+     "shieldTech"),
+    (5, False,
+     "Each player may take 1 additional mulligan during step 13 of setup.",  # 5.37
+     None),
+    (9, True,
+     "Each player adds the maximum copies of one aspect card of their choice "
+     "to their deck for the rest of the campaign.",                 # 8.93
+     "aspectAdvantage"),
+    (13, False,
+     "Each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced side.",  # 13.07
+     None),
+    (16, True,
+     "Each player chooses one card from their deck and records it.",  # 15.90
+     "planningAhead"),
+    (18, False,
+     "Each player searches their deck and discard pile for their recorded card "
+     "and adds it to hand. Shuffle.",                               # 18.03
+     None),
+    (21, False,
+     "Each player may search their collection for a Helicarrier support and put "
+     "it into play.",                                               # 21.07
+     None),
+    (24, False,
+     "Each player may search their collection for a Symbiote Suit upgrade and "
+     "put it into play.",                                           # 24.30
+     None),
+]
+
+PENALTIES = [
+    (1, True, "osborn", None),                                      # 1.33
+    (3, False, None,
+     "Shuffle every recorded Osborn Tech attachment into the encounter deck."),  # 2.90 UNCONFIRMED
+    (5, False, None, "Place 1 threat on the main scheme."),         # 5.00
+    (9, False, None,
+     # Two lines: the guard caps a setup step at a line, and a step long enough
+     # to be a paragraph is a rule copied out of the book.
+     "In player order, each player puts a minion from the encounter deck or "
+     "discard pile into play engaged with them. Shuffle.\n"
+     "Any player who does not takes 1 facedown encounter card."),   # 8.97
+    (13, True, "osborn", None),                                     # 13.03
+    (17, False, None,
+     "The first player searches the encounter deck and discard pile for a "
+     "scenario side scheme, reveals it, and places 1 threat on it. Shuffle."),  # 17.03
+    (21, True, "osborn", None),                                     # 21.00
+    (25, False, None, "Deal 1 facedown encounter card to each player."),  # 24.53 UNCONFIRMED
+]
+
+
+def osborn_draw(node):
+    """The app draws the attachment, because the rules say "at random".
+
+    Recorded into the campaign log by [addDrawnCard], and struck from the pool
+    by `excluding` so three marked nodes cannot produce the same card twice.
+    """
+    return {
+        "text": t("An Osborn Tech attachment is drawn and recorded."),
+        "when": unmarked(node),
+        "draw": {"id": "osborn%d" % node, "from": OSBORN_TECH,
+                 "excluding": "osbornTech"},
+        "action": {
+            "id": "recordOsborn%d" % node,
+            "label": t("Record it"),
+            "effects": [
+                {"op": "addDrawnCard", "cardList": "osbornTech",
+                 "from": "osborn%d" % node},
+                {"op": "setFlag", "flag": "node%d" % node, "boolValue": True},
+            ],
+        },
+    }
+
+
+def reputation_setup():
+    """Every marked node's box, rewards first, then penalties.
+
+    The rulebook works down the left side of the track and then the right, and
+    this keeps that order so a table can follow along on the printed track.
+    """
+    steps = []
+    for node, once, text, records in REWARDS:
+        step = {"text": t(text), "when": unmarked(node) if once else at_least(node)}
+        if once:
+            effects = [{"op": "setFlag", "flag": "node%d" % node, "boolValue": True}]
+            step["action"] = {"id": "reward%d" % node, "label": t("Done"),
+                              "effects": effects}
+        if records:
+            step["showCardList"] = records
+        steps.append(step)
+
+    for node, once, kind, text in PENALTIES:
+        if kind == "osborn":
+            steps.append(osborn_draw(node))
+        else:
+            step = {"text": t(text), "when": at_least(node)}
+            if node == 3:
+                # Names what was drawn, so nobody goes looking through the log.
+                step["showCardList"] = "osbornTech"
+            steps.append(step)
+    return steps
+
+
+# ---------------------------------------------------------------------------
+# THE END OF A SCENARIO
+# ---------------------------------------------------------------------------
+
+def reputation_prompts():
+    """The six conditions on the printed track, asked once per scenario."""
+    return [
+        {"id": "vp", "type": "number",
+         "label": t("How many victory points are in the victory display?")},
+        {"id": "noMinions", "type": "boolean",
+         "label": t("No minions in play?")},
+        {"id": "noSideSchemes", "type": "boolean",
+         "label": t("No side schemes in play?")},
+        {"id": "noThreat", "type": "boolean",
+         "label": t("No threat on the main scheme?")},
+        {"id": "fewAcceleration", "type": "boolean",
+         "label": t("Fewer than 1 acceleration tokens in play?")},
+        {"id": "noDefeated", "type": "boolean",
+         "label": t("No defeated identities?")},
+    ]
+
+
+def reputation_effects():
+    """The app does the adding, so nobody totals the column by hand."""
+    effects = [{"op": "addCounter", "counter": "reputation", "from": "vp"}]
+    for answer in ("noMinions", "noSideSchemes", "noThreat", "fewAcceleration",
+                   "noDefeated"):
+        effects.append({"op": "addCounter", "counter": "reputation", "value": 1,
+                        "when": {"answer": answer}})
+    return effects
+
+
+def service_prompt(draw_id):
+    """Whether the drawn side scheme was seen through, not which one it was.
+
+    The app dealt it, so asking which would be asking the player to read back
+    something already on the screen.
+    """
+    return {
+        "id": "serviceDone", "type": "boolean",
+        "label": t("Is the Community Service side scheme in the victory display?"),
+    }
+
+
+def hp_prompt():
+    return {
+        "id": "hpPerHero", "type": "perHeroNumber",
+        "label": t("Remaining hit points"),
+        "when": {"difficulty": "expert"},
+    }
+
+
+def victory(scenario_id, draw_id, goto, extra_prompts=(), extra_effects=()):
+    """The victory steps every scenario shares, plus whatever it adds."""
+    prompts = reputation_prompts() + [service_prompt(draw_id)]
+    prompts += list(extra_prompts)
+    prompts.append(hp_prompt())
+
+    effects = reputation_effects() + [
+        {"op": "addDrawnCard", "cardList": "communityService", "from": draw_id,
+         "when": {"answer": "serviceDone"}},
+        {"op": "setHeroCounter", "counter": "hp", "from": "hpPerHero",
+         "when": {"difficulty": "expert"}},
+    ]
+    effects += list(extra_effects)
+
+    return {"prompts": prompts, "effects": effects,
+            "next": [{"end": True} if goto is None else {"goto": goto}]}
+
+
+def common_setup(scenario_id, expert_outcry=False, ally=False, snitches=False):
+    """The campaign instructions shared by every scenario."""
+    draw_id = "service_" + scenario_id
+    steps = []
+
+    if ally:
+        steps.append({"text": t("Put the Venom ally into play under the first "
+                                "player's control."),
+                      "cards": [VENOM_ALLY]})
+
+    if expert_outcry:
+        # Scenario 1 is the only one that names a side of the environment.
+        steps.append({"text": t("Put Public Outcry into play, Standard Mode side up."),
+                      "cards": [PUBLIC_OUTCRY_STANDARD],
+                      "when": {"difficulty": "standard"}})
+        steps.append({"text": t("Put Public Outcry into play, Expert Mode side up."),
+                      "cards": [PUBLIC_OUTCRY_EXPERT],
+                      "when": {"difficulty": "expert"}})
+    else:
+        steps.append({"text": t("Put Public Outcry into play."),
+                      "cards": [PUBLIC_OUTCRY_STANDARD]})
+
+    shuffled = [SMEAR_CAMPAIGN] + ([SNITCHES] if snitches else [])
+    steps.append({"text": t("Shuffle these into the encounter deck."),
+                  "cards": shuffled})
+
+    # Drawn by the app, and never one already seen through.
+    steps.append({
+        "text": t("Shuffle this Community Service side scheme into the "
+                  "encounter deck."),
+        "draw": {"id": draw_id, "from": COMMUNITY_SERVICE,
+                 "excluding": "communityService"},
+    })
+    return draw_id, steps
+
+
+def scenario(scenario_id, name, villain, main_scheme, sets, goto,
+             expert_outcry=False, ally=False, snitches=False,
+             extra_setup=(), extra_prompts=(), extra_effects=(), flavour=None):
+    draw_id, steps = common_setup(scenario_id, expert_outcry, ally, snitches)
+    steps += list(extra_setup)
+    steps.append({"include": "reputation"})
+
+    if len(villain) == 6:
+        villain_deck = {"standard": villain, "expert": villain}
+    else:
+        villain_deck = {"standard": [villain[0], villain[1]],
+                        "expert": [villain[1], villain[2]]}
+
+    entry = {
+        "id": scenario_id,
+        "name": t(name),
+        "baseSetup": {
+            "villainDeck": villain_deck,
+            "mainScheme": main_scheme,
+            "encounterSets": sets,
+        },
+        "campaignSetup": steps,
+        "onVictory": victory(scenario_id, draw_id, goto, extra_prompts, extra_effects),
+        # A lost scenario is played again; only the finale on Expert ends it.
+        "onDefeat": {"next": [{"goto": scenario_id}]},
+    }
+    if flavour:
+        entry["flavour"] = t(flavour)
+    return entry
+
+
+def build():
+    scenarios = [
+        scenario(
+            "s1_sandman", "Sandman", SANDMAN, ["27064a"],
+            ["sandman", "city_in_chaos", "down_to_earth", "standard"],
+            goto="s2_venom", expert_outcry=True,
+            flavour="Sandman fills the streets with a tidal wall of dust, and "
+                    "the people caught in it are running out of time.",
+            extra_setup=[{
+                "text": t("Expert: place 2 additional sand counters on City "
+                          "Streets and resolve Surging Sands."),
+                "when": {"difficulty": "expert"},
+            }],
+        ),
+        scenario(
+            "s2_venom", "Venom", VENOM, ["27076a"],
+            ["venom", "down_to_earth", "symbiotic_strength", "standard"],
+            goto="s3_mysterio",
+            flavour="Venom comes at you blind with rage. The bell tower across "
+                    "the rooftops might be the only thing that slows him down.",
+            extra_effects=[],
+            extra_prompts=[],
+        ),
+        scenario(
+            "s3_mysterio", "Mysterio", MYSTERIO, ["27087a", "27088a"],
+            ["mysterio", "personal_nightmare", "whispers_of_paranoia", "standard"],
+            goto="s4_sinister_six", ally=True, snitches=True,
+            flavour="Deeper into Oscorp, a maze of mirrors turns your own fears "
+                    "back on you until you cannot tell them from the room.",
+            extra_prompts=[{
+                "id": "illusions", "type": "number",
+                "label": t("How many Illusion cards are in all player decks?"),
+            }],
+            extra_effects=[{
+                "op": "setCounter", "counter": "wakingNightmare", "from": "illusions",
+            }],
+        ),
+        scenario(
+            "s4_sinister_six", "The Sinister Six", SINISTER_SIX,
+            ["27100a", "27101a"],
+            ["sinister_six", "guerrilla_tactics", "standard"],
+            goto="s5_venom_goblin", ally=True, snitches=True,
+            flavour="The smoke clears on a silo, and all six of them step out "
+                    "of the dark at once.",
+            extra_setup=[{
+                "text": t("Place this much threat on Light at the End."),
+                "cards": [LIGHT_AT_THE_END],
+                "showCounter": "wakingNightmare",
+            }],
+            extra_prompts=[{
+                "id": "standing", "type": "cardSelect",
+                "label": t("Which villains were still in play?"),
+                "cards": SINISTER_SIX,
+            }],
+            extra_effects=[{
+                "op": "addCardsFromAnswer", "cardList": "lastOnesStanding",
+                "from": "standing",
+            }],
+        ),
+        scenario(
+            "s5_venom_goblin", "Venom Goblin", VENOM_GOBLIN,
+            ["27116a", "27117a", "27118a", "27119a"],
+            ["venom_goblin", "symbiotic_strength", "goblin_gear", "standard"],
+            goto=None,
+            flavour="Osborn has bound the symbiote to his will, and he is over "
+                    "the city now, making an army out of everyone below.",
+            extra_setup=[{
+                "text": t("Shuffle the Sinister Assault minion matching each "
+                          "villain left standing into the encounter deck."),
+                "cards": SINISTER_ASSAULT,
+                "showCardList": "lastOnesStanding",
+            }],
+        ),
+    ]
+
+    # Losing the finale on Expert loses the campaign; on Standard it is played
+    # again like any other scenario.
+    scenarios[-1]["onDefeat"] = {"next": [
+        {"end": True, "when": {"difficulty": "expert"}},
+        {"goto": "s5_venom_goblin"},
+    ]}
+
+    return {
+        "id": "sm",
+        "schemaVersion": 1,
+        "name": t("Sinister Motives"),
+        "packCode": "sm",
+        "notice": t(
+            "Unofficial, reconstructed for the app: the rulebook and cards from "
+            "the Sinister Motives box are still needed to play. This campaign's "
+            "text is English only for the moment; French is coming.\n\n"
+            "The app keeps the reputation track for you — it asks the six "
+            "conditions after each scenario, does the adding, and shows you only "
+            "the track boxes you have actually reached. It also draws the "
+            "Community Service side scheme and the Osborn Tech attachments, and "
+            "records what came up."
+        ),
+        "difficulties": ["standard", "expert"],
+        "counters": [
+            {"id": "reputation", "scope": "campaign", "initial": 0},
+            # The printed track holds Illusion cards from the Mysterio scenario
+            # until the Sinister Six scenario turns them into threat.
+            {"id": "wakingNightmare", "scope": "campaign", "initial": 0},
+            {
+                "id": "hp",
+                "scope": "hero",
+                "initial": 0,
+                "maxFrom": "heroCard.health",
+                "activeWhen": {"difficulty": "expert"},
+            },
+        ],
+        # One flag per once-only node, so a box that has fired stops offering.
+        "flagSets": [
+            {"id": "node%d" % node}
+            for node in sorted({n for n, once, _, _ in REWARDS if once} |
+                               {n for n, once, _, _ in PENALTIES if once})
+        ],
+        "cardLists": [
+            {"id": "communityService", "scope": "campaign"},
+            {"id": "osbornTech", "scope": "campaign"},
+            {"id": "lastOnesStanding", "scope": "campaign"},
+            {"id": "shieldTech", "scope": "campaign"},
+            {"id": "aspectAdvantage", "scope": "campaign"},
+            {"id": "planningAhead", "scope": "campaign"},
+        ],
+        "setupFragments": {"reputation": reputation_setup()},
+        "startScenarioId": "s1_sandman",
+        "scenarios": scenarios,
+    }
+
+
+if __name__ == "__main__":
+    path = "app/src/main/assets/campaigns/sm.json"
+    data = build()
+    text = json.dumps(data, ensure_ascii=False, indent=1)
+    io.open(path, "w", encoding="utf-8", newline="\n").write(text + "\n")
+    print("wrote %s, %d bytes, %d scenarios"
+          % (path, len(text), len(data["scenarios"])))

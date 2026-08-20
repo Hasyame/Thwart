@@ -1,0 +1,1546 @@
+{
+ "id": "sm",
+ "schemaVersion": 1,
+ "name": {
+  "en": "Sinister Motives"
+ },
+ "packCode": "sm",
+ "notice": {
+  "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Sinister Motives box are still needed to play. This campaign's text is English only for the moment; French is coming.\n\nThe app keeps the reputation track for you — it asks the six conditions after each scenario, does the adding, and shows you only the track boxes you have actually reached. It also draws the Community Service side scheme and the Osborn Tech attachments, and records what came up."
+ },
+ "difficulties": [
+  "standard",
+  "expert"
+ ],
+ "counters": [
+  {
+   "id": "reputation",
+   "scope": "campaign",
+   "initial": 0
+  },
+  {
+   "id": "wakingNightmare",
+   "scope": "campaign",
+   "initial": 0
+  },
+  {
+   "id": "hp",
+   "scope": "hero",
+   "initial": 0,
+   "maxFrom": "heroCard.health",
+   "activeWhen": {
+    "difficulty": "expert"
+   }
+  }
+ ],
+ "flagSets": [
+  {
+   "id": "node1"
+  },
+  {
+   "id": "node3"
+  },
+  {
+   "id": "node9"
+  },
+  {
+   "id": "node13"
+  },
+  {
+   "id": "node16"
+  },
+  {
+   "id": "node21"
+  }
+ ],
+ "cardLists": [
+  {
+   "id": "communityService",
+   "scope": "campaign"
+  },
+  {
+   "id": "osbornTech",
+   "scope": "campaign"
+  },
+  {
+   "id": "lastOnesStanding",
+   "scope": "campaign"
+  },
+  {
+   "id": "shieldTech",
+   "scope": "campaign"
+  },
+  {
+   "id": "aspectAdvantage",
+   "scope": "campaign"
+  },
+  {
+   "id": "planningAhead",
+   "scope": "campaign"
+  }
+ ],
+ "setupFragments": {
+  "reputation": [
+   {
+    "text": {
+     "en": "Deal 3 S.H.I.E.L.D. Tech upgrades at random to a player. They keep 1 for the campaign; return the rest. Repeat for each player."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 3
+      },
+      {
+       "notFlag": "node3"
+      }
+     ]
+    },
+    "action": {
+     "id": "reward3",
+     "label": {
+      "en": "Done"
+     },
+     "effects": [
+      {
+       "op": "setFlag",
+       "flag": "node3",
+       "boolValue": true
+      }
+     ]
+    },
+    "showCardList": "shieldTech"
+   },
+   {
+    "text": {
+     "en": "Each player may take 1 additional mulligan during step 13 of setup."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 5
+    }
+   },
+   {
+    "text": {
+     "en": "Each player adds the maximum copies of one aspect card of their choice to their deck for the rest of the campaign."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 9
+      },
+      {
+       "notFlag": "node9"
+      }
+     ]
+    },
+    "action": {
+     "id": "reward9",
+     "label": {
+      "en": "Done"
+     },
+     "effects": [
+      {
+       "op": "setFlag",
+       "flag": "node9",
+       "boolValue": true
+      }
+     ]
+    },
+    "showCardList": "aspectAdvantage"
+   },
+   {
+    "text": {
+     "en": "Each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced side."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 13
+    }
+   },
+   {
+    "text": {
+     "en": "Each player chooses one card from their deck and records it."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 16
+      },
+      {
+       "notFlag": "node16"
+      }
+     ]
+    },
+    "action": {
+     "id": "reward16",
+     "label": {
+      "en": "Done"
+     },
+     "effects": [
+      {
+       "op": "setFlag",
+       "flag": "node16",
+       "boolValue": true
+      }
+     ]
+    },
+    "showCardList": "planningAhead"
+   },
+   {
+    "text": {
+     "en": "Each player searches their deck and discard pile for their recorded card and adds it to hand. Shuffle."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 18
+    }
+   },
+   {
+    "text": {
+     "en": "Each player may search their collection for a Helicarrier support and put it into play."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 21
+    }
+   },
+   {
+    "text": {
+     "en": "Each player may search their collection for a Symbiote Suit upgrade and put it into play."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 24
+    }
+   },
+   {
+    "text": {
+     "en": "An Osborn Tech attachment is drawn and recorded."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 1
+      },
+      {
+       "notFlag": "node1"
+      }
+     ]
+    },
+    "draw": {
+     "id": "osborn1",
+     "from": [
+      "27147",
+      "27148",
+      "27149",
+      "27150",
+      "27151",
+      "27152"
+     ],
+     "excluding": "osbornTech"
+    },
+    "action": {
+     "id": "recordOsborn1",
+     "label": {
+      "en": "Record it"
+     },
+     "effects": [
+      {
+       "op": "addDrawnCard",
+       "cardList": "osbornTech",
+       "from": "osborn1"
+      },
+      {
+       "op": "setFlag",
+       "flag": "node1",
+       "boolValue": true
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "en": "Shuffle every recorded Osborn Tech attachment into the encounter deck."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 3
+    },
+    "showCardList": "osbornTech"
+   },
+   {
+    "text": {
+     "en": "Place 1 threat on the main scheme."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 5
+    }
+   },
+   {
+    "text": {
+     "en": "In player order, each player puts a minion from the encounter deck or discard pile into play engaged with them. Shuffle.\nAny player who does not takes 1 facedown encounter card."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 9
+    }
+   },
+   {
+    "text": {
+     "en": "An Osborn Tech attachment is drawn and recorded."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 13
+      },
+      {
+       "notFlag": "node13"
+      }
+     ]
+    },
+    "draw": {
+     "id": "osborn13",
+     "from": [
+      "27147",
+      "27148",
+      "27149",
+      "27150",
+      "27151",
+      "27152"
+     ],
+     "excluding": "osbornTech"
+    },
+    "action": {
+     "id": "recordOsborn13",
+     "label": {
+      "en": "Record it"
+     },
+     "effects": [
+      {
+       "op": "addDrawnCard",
+       "cardList": "osbornTech",
+       "from": "osborn13"
+      },
+      {
+       "op": "setFlag",
+       "flag": "node13",
+       "boolValue": true
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "en": "The first player searches the encounter deck and discard pile for a scenario side scheme, reveals it, and places 1 threat on it. Shuffle."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 17
+    }
+   },
+   {
+    "text": {
+     "en": "An Osborn Tech attachment is drawn and recorded."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 21
+      },
+      {
+       "notFlag": "node21"
+      }
+     ]
+    },
+    "draw": {
+     "id": "osborn21",
+     "from": [
+      "27147",
+      "27148",
+      "27149",
+      "27150",
+      "27151",
+      "27152"
+     ],
+     "excluding": "osbornTech"
+    },
+    "action": {
+     "id": "recordOsborn21",
+     "label": {
+      "en": "Record it"
+     },
+     "effects": [
+      {
+       "op": "addDrawnCard",
+       "cardList": "osbornTech",
+       "from": "osborn21"
+      },
+      {
+       "op": "setFlag",
+       "flag": "node21",
+       "boolValue": true
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "en": "Deal 1 facedown encounter card to each player."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 25
+    }
+   }
+  ]
+ },
+ "startScenarioId": "s1_sandman",
+ "scenarios": [
+  {
+   "id": "s1_sandman",
+   "name": {
+    "en": "Sandman"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "27061",
+      "27062"
+     ],
+     "expert": [
+      "27062",
+      "27063"
+     ]
+    },
+    "mainScheme": [
+     "27064a"
+    ],
+    "encounterSets": [
+     "sandman",
+     "city_in_chaos",
+     "down_to_earth",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "en": "Put Public Outcry into play, Standard Mode side up."
+     },
+     "cards": [
+      "27174a"
+     ],
+     "when": {
+      "difficulty": "standard"
+     }
+    },
+    {
+     "text": {
+      "en": "Put Public Outcry into play, Expert Mode side up."
+     },
+     "cards": [
+      "27174b"
+     ],
+     "when": {
+      "difficulty": "expert"
+     }
+    },
+    {
+     "text": {
+      "en": "Shuffle these into the encounter deck."
+     },
+     "cards": [
+      "27175"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle this Community Service side scheme into the encounter deck."
+     },
+     "draw": {
+      "id": "service_s1_sandman",
+      "from": [
+       "27176",
+       "27177",
+       "27178",
+       "27179",
+       "27180"
+      ],
+      "excluding": "communityService"
+     }
+    },
+    {
+     "text": {
+      "en": "Expert: place 2 additional sand counters on City Streets and resolve Surging Sands."
+     },
+     "when": {
+      "difficulty": "expert"
+     }
+    },
+    {
+     "include": "reputation"
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "en": "How many victory points are in the victory display?"
+      }
+     },
+     {
+      "id": "noMinions",
+      "type": "boolean",
+      "label": {
+       "en": "No minions in play?"
+      }
+     },
+     {
+      "id": "noSideSchemes",
+      "type": "boolean",
+      "label": {
+       "en": "No side schemes in play?"
+      }
+     },
+     {
+      "id": "noThreat",
+      "type": "boolean",
+      "label": {
+       "en": "No threat on the main scheme?"
+      }
+     },
+     {
+      "id": "fewAcceleration",
+      "type": "boolean",
+      "label": {
+       "en": "Fewer than 1 acceleration tokens in play?"
+      }
+     },
+     {
+      "id": "noDefeated",
+      "type": "boolean",
+      "label": {
+       "en": "No defeated identities?"
+      }
+     },
+     {
+      "id": "serviceDone",
+      "type": "boolean",
+      "label": {
+       "en": "Is the Community Service side scheme in the victory display?"
+      }
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "from": "vp"
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noMinions"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noSideSchemes"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noThreat"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "fewAcceleration"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noDefeated"
+      }
+     },
+     {
+      "op": "addDrawnCard",
+      "cardList": "communityService",
+      "from": "service_s1_sandman",
+      "when": {
+       "answer": "serviceDone"
+      }
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "goto": "s2_venom"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s1_sandman"
+     }
+    ]
+   },
+   "flavour": {
+    "en": "Sandman fills the streets with a tidal wall of dust, and the people caught in it are running out of time."
+   }
+  },
+  {
+   "id": "s2_venom",
+   "name": {
+    "en": "Venom"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "27073",
+      "27074"
+     ],
+     "expert": [
+      "27074",
+      "27075"
+     ]
+    },
+    "mainScheme": [
+     "27076a"
+    ],
+    "encounterSets": [
+     "venom",
+     "down_to_earth",
+     "symbiotic_strength",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "en": "Put Public Outcry into play."
+     },
+     "cards": [
+      "27174a"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle these into the encounter deck."
+     },
+     "cards": [
+      "27175"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle this Community Service side scheme into the encounter deck."
+     },
+     "draw": {
+      "id": "service_s2_venom",
+      "from": [
+       "27176",
+       "27177",
+       "27178",
+       "27179",
+       "27180"
+      ],
+      "excluding": "communityService"
+     }
+    },
+    {
+     "include": "reputation"
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "en": "How many victory points are in the victory display?"
+      }
+     },
+     {
+      "id": "noMinions",
+      "type": "boolean",
+      "label": {
+       "en": "No minions in play?"
+      }
+     },
+     {
+      "id": "noSideSchemes",
+      "type": "boolean",
+      "label": {
+       "en": "No side schemes in play?"
+      }
+     },
+     {
+      "id": "noThreat",
+      "type": "boolean",
+      "label": {
+       "en": "No threat on the main scheme?"
+      }
+     },
+     {
+      "id": "fewAcceleration",
+      "type": "boolean",
+      "label": {
+       "en": "Fewer than 1 acceleration tokens in play?"
+      }
+     },
+     {
+      "id": "noDefeated",
+      "type": "boolean",
+      "label": {
+       "en": "No defeated identities?"
+      }
+     },
+     {
+      "id": "serviceDone",
+      "type": "boolean",
+      "label": {
+       "en": "Is the Community Service side scheme in the victory display?"
+      }
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "from": "vp"
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noMinions"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noSideSchemes"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noThreat"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "fewAcceleration"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noDefeated"
+      }
+     },
+     {
+      "op": "addDrawnCard",
+      "cardList": "communityService",
+      "from": "service_s2_venom",
+      "when": {
+       "answer": "serviceDone"
+      }
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "goto": "s3_mysterio"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s2_venom"
+     }
+    ]
+   },
+   "flavour": {
+    "en": "Venom comes at you blind with rage. The bell tower across the rooftops might be the only thing that slows him down."
+   }
+  },
+  {
+   "id": "s3_mysterio",
+   "name": {
+    "en": "Mysterio"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "27084",
+      "27085"
+     ],
+     "expert": [
+      "27085",
+      "27086"
+     ]
+    },
+    "mainScheme": [
+     "27087a",
+     "27088a"
+    ],
+    "encounterSets": [
+     "mysterio",
+     "personal_nightmare",
+     "whispers_of_paranoia",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "en": "Put the Venom ally into play under the first player's control."
+     },
+     "cards": [
+      "27190"
+     ]
+    },
+    {
+     "text": {
+      "en": "Put Public Outcry into play."
+     },
+     "cards": [
+      "27174a"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle these into the encounter deck."
+     },
+     "cards": [
+      "27175",
+      "27181"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle this Community Service side scheme into the encounter deck."
+     },
+     "draw": {
+      "id": "service_s3_mysterio",
+      "from": [
+       "27176",
+       "27177",
+       "27178",
+       "27179",
+       "27180"
+      ],
+      "excluding": "communityService"
+     }
+    },
+    {
+     "include": "reputation"
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "en": "How many victory points are in the victory display?"
+      }
+     },
+     {
+      "id": "noMinions",
+      "type": "boolean",
+      "label": {
+       "en": "No minions in play?"
+      }
+     },
+     {
+      "id": "noSideSchemes",
+      "type": "boolean",
+      "label": {
+       "en": "No side schemes in play?"
+      }
+     },
+     {
+      "id": "noThreat",
+      "type": "boolean",
+      "label": {
+       "en": "No threat on the main scheme?"
+      }
+     },
+     {
+      "id": "fewAcceleration",
+      "type": "boolean",
+      "label": {
+       "en": "Fewer than 1 acceleration tokens in play?"
+      }
+     },
+     {
+      "id": "noDefeated",
+      "type": "boolean",
+      "label": {
+       "en": "No defeated identities?"
+      }
+     },
+     {
+      "id": "serviceDone",
+      "type": "boolean",
+      "label": {
+       "en": "Is the Community Service side scheme in the victory display?"
+      }
+     },
+     {
+      "id": "illusions",
+      "type": "number",
+      "label": {
+       "en": "How many Illusion cards are in all player decks?"
+      }
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "from": "vp"
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noMinions"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noSideSchemes"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noThreat"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "fewAcceleration"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noDefeated"
+      }
+     },
+     {
+      "op": "addDrawnCard",
+      "cardList": "communityService",
+      "from": "service_s3_mysterio",
+      "when": {
+       "answer": "serviceDone"
+      }
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     },
+     {
+      "op": "setCounter",
+      "counter": "wakingNightmare",
+      "from": "illusions"
+     }
+    ],
+    "next": [
+     {
+      "goto": "s4_sinister_six"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s3_mysterio"
+     }
+    ]
+   },
+   "flavour": {
+    "en": "Deeper into Oscorp, a maze of mirrors turns your own fears back on you until you cannot tell them from the room."
+   }
+  },
+  {
+   "id": "s4_sinister_six",
+   "name": {
+    "en": "The Sinister Six"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "27094",
+      "27095",
+      "27096",
+      "27097",
+      "27098",
+      "27099"
+     ],
+     "expert": [
+      "27094",
+      "27095",
+      "27096",
+      "27097",
+      "27098",
+      "27099"
+     ]
+    },
+    "mainScheme": [
+     "27100a",
+     "27101a"
+    ],
+    "encounterSets": [
+     "sinister_six",
+     "guerrilla_tactics",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "en": "Put the Venom ally into play under the first player's control."
+     },
+     "cards": [
+      "27190"
+     ]
+    },
+    {
+     "text": {
+      "en": "Put Public Outcry into play."
+     },
+     "cards": [
+      "27174a"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle these into the encounter deck."
+     },
+     "cards": [
+      "27175",
+      "27181"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle this Community Service side scheme into the encounter deck."
+     },
+     "draw": {
+      "id": "service_s4_sinister_six",
+      "from": [
+       "27176",
+       "27177",
+       "27178",
+       "27179",
+       "27180"
+      ],
+      "excluding": "communityService"
+     }
+    },
+    {
+     "text": {
+      "en": "Place this much threat on Light at the End."
+     },
+     "cards": [
+      "27102a"
+     ],
+     "showCounter": "wakingNightmare"
+    },
+    {
+     "include": "reputation"
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "en": "How many victory points are in the victory display?"
+      }
+     },
+     {
+      "id": "noMinions",
+      "type": "boolean",
+      "label": {
+       "en": "No minions in play?"
+      }
+     },
+     {
+      "id": "noSideSchemes",
+      "type": "boolean",
+      "label": {
+       "en": "No side schemes in play?"
+      }
+     },
+     {
+      "id": "noThreat",
+      "type": "boolean",
+      "label": {
+       "en": "No threat on the main scheme?"
+      }
+     },
+     {
+      "id": "fewAcceleration",
+      "type": "boolean",
+      "label": {
+       "en": "Fewer than 1 acceleration tokens in play?"
+      }
+     },
+     {
+      "id": "noDefeated",
+      "type": "boolean",
+      "label": {
+       "en": "No defeated identities?"
+      }
+     },
+     {
+      "id": "serviceDone",
+      "type": "boolean",
+      "label": {
+       "en": "Is the Community Service side scheme in the victory display?"
+      }
+     },
+     {
+      "id": "standing",
+      "type": "cardSelect",
+      "label": {
+       "en": "Which villains were still in play?"
+      },
+      "cards": [
+       "27094",
+       "27095",
+       "27096",
+       "27097",
+       "27098",
+       "27099"
+      ]
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "from": "vp"
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noMinions"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noSideSchemes"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noThreat"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "fewAcceleration"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noDefeated"
+      }
+     },
+     {
+      "op": "addDrawnCard",
+      "cardList": "communityService",
+      "from": "service_s4_sinister_six",
+      "when": {
+       "answer": "serviceDone"
+      }
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "cardList": "lastOnesStanding",
+      "from": "standing"
+     }
+    ],
+    "next": [
+     {
+      "goto": "s5_venom_goblin"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s4_sinister_six"
+     }
+    ]
+   },
+   "flavour": {
+    "en": "The smoke clears on a silo, and all six of them step out of the dark at once."
+   }
+  },
+  {
+   "id": "s5_venom_goblin",
+   "name": {
+    "en": "Venom Goblin"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "27113",
+      "27114"
+     ],
+     "expert": [
+      "27114",
+      "27115"
+     ]
+    },
+    "mainScheme": [
+     "27116a",
+     "27117a",
+     "27118a",
+     "27119a"
+    ],
+    "encounterSets": [
+     "venom_goblin",
+     "symbiotic_strength",
+     "goblin_gear",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "en": "Put Public Outcry into play."
+     },
+     "cards": [
+      "27174a"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle these into the encounter deck."
+     },
+     "cards": [
+      "27175"
+     ]
+    },
+    {
+     "text": {
+      "en": "Shuffle this Community Service side scheme into the encounter deck."
+     },
+     "draw": {
+      "id": "service_s5_venom_goblin",
+      "from": [
+       "27176",
+       "27177",
+       "27178",
+       "27179",
+       "27180"
+      ],
+      "excluding": "communityService"
+     }
+    },
+    {
+     "text": {
+      "en": "Shuffle the Sinister Assault minion matching each villain left standing into the encounter deck."
+     },
+     "cards": [
+      "27158",
+      "27159",
+      "27160",
+      "27161",
+      "27162",
+      "27163"
+     ],
+     "showCardList": "lastOnesStanding"
+    },
+    {
+     "include": "reputation"
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "en": "How many victory points are in the victory display?"
+      }
+     },
+     {
+      "id": "noMinions",
+      "type": "boolean",
+      "label": {
+       "en": "No minions in play?"
+      }
+     },
+     {
+      "id": "noSideSchemes",
+      "type": "boolean",
+      "label": {
+       "en": "No side schemes in play?"
+      }
+     },
+     {
+      "id": "noThreat",
+      "type": "boolean",
+      "label": {
+       "en": "No threat on the main scheme?"
+      }
+     },
+     {
+      "id": "fewAcceleration",
+      "type": "boolean",
+      "label": {
+       "en": "Fewer than 1 acceleration tokens in play?"
+      }
+     },
+     {
+      "id": "noDefeated",
+      "type": "boolean",
+      "label": {
+       "en": "No defeated identities?"
+      }
+     },
+     {
+      "id": "serviceDone",
+      "type": "boolean",
+      "label": {
+       "en": "Is the Community Service side scheme in the victory display?"
+      }
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "from": "vp"
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noMinions"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noSideSchemes"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noThreat"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "fewAcceleration"
+      }
+     },
+     {
+      "op": "addCounter",
+      "counter": "reputation",
+      "value": 1,
+      "when": {
+       "answer": "noDefeated"
+      }
+     },
+     {
+      "op": "addDrawnCard",
+      "cardList": "communityService",
+      "from": "service_s5_venom_goblin",
+      "when": {
+       "answer": "serviceDone"
+      }
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "end": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "end": true,
+      "when": {
+       "difficulty": "expert"
+      }
+     },
+     {
+      "goto": "s5_venom_goblin"
+     }
+    ]
+   },
+   "flavour": {
+    "en": "Osborn has bound the symbiote to his will, and he is over the city now, making an army out of everyone below."
+   }
+  }
+ ]
+}
