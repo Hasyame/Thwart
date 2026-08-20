@@ -261,8 +261,8 @@ class FearNoEvilCampaignTest {
         events = events + finish("s2_poursuite", "confiance" to true, "mary" to false)
         state = engine.fold(template, events)
         assertTrue(
-            "she does not join the first player",
-            setupLines(state, "s1_musee").any { it.contains("premier joueur") },
+            "she is not put into play as the campaign ally",
+            setupLines(state, "s1_musee").any { it.contains("alliée de campagne") },
         )
         // Never asked to be won twice, but her survival now is.
         assertFalse(promptIds(state, "s1_musee").contains("confiance"))
@@ -279,7 +279,7 @@ class FearNoEvilCampaignTest {
         )
         assertFalse(
             "she is still being put into play after being lost",
-            lines.any { it.contains("premier joueur") },
+            lines.any { it.contains("alliée de campagne") },
         )
         assertFalse(promptIds(state, "s3_racket").contains("mary"))
     }

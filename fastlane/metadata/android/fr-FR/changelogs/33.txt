@@ -12,13 +12,19 @@ déclenchait jamais : le marqueur compté était écrit là où rien ne le lisai
 Avant chaque partie, les méchants frappent deux lieux et la table en garde un,
 sur une page qui montre où en est chaque mission.
 
+La mise en place nomme désormais chaque environnement résolu et sa face, au
+lieu de dire « l'environnement de chaque scénario résolu » et de vous laisser
+retrouver lesquels. La pioche était fausse aussi : un environnement déjà pioché
+était écarté des suivantes, alors que le livret remélange à chaque fois tout ce
+qui reste.
+
 La mise en place suit l'ordre dans lequel on la fait : les decks à sortir, la
 mise en place elle-même, puis les conseils sur le SUBORDONNÉ tiré. Chaque
 mission s'ouvre sur quelques lignes.
 
 Mary Typhoïde est suivie correctement. Deux pions sur Psyché Perturbée la
-rallient, elle rejoint le premier joueur ensuite, et si elle finit dans la
-pile de victoire elle quitte les decks définitivement. Les questions ne sont
+rallient, elle entre en jeu comme alliée de campagne ensuite, et si elle finit
+dans la pile de victoire elle quitte les decks définitivement. Les questions ne sont
 posées qu'aux tables qui l'ont réellement croisée.
 
 Les textes de cette campagne sont pour l'instant uniquement en français ;

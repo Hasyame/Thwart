@@ -715,13 +715,11 @@ class CampaignRepository @Inject constructor(
                 return@withContext false
             }
 
-            // A kept environment is out of the pile. If that empties it while
-            // jobs are still standing, the pile is re-formed from what is left:
-            // the rotation must always deal something.
-            val pool = standing.filterNot { it in run.state.environmentsUsed }
-                .ifEmpty { standing }
-
-            val offered = if (pool.size == 1) pool else pool.shuffled().take(2)
+            // Every environment still standing goes back in, whether or not it
+            // was drawn before: the book shuffles the remaining environments
+            // and draws two, and the only thing that takes one out of the pile
+            // for good is its scenario being seen through or pushed over.
+            val offered = if (standing.size == 1) standing else standing.shuffled().take(2)
             append(
                 runId,
                 CampaignEvent.EnvironmentsOffered(

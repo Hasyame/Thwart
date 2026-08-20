@@ -167,40 +167,6 @@
   "campagne": [
    {
     "text": {
-     "fr": "Mettez en jeu l'environnement de chaque scénario résolu, face ACHEVÉ ou ÉCHOUÉ, et résolvez sa Mise en place.",
-     "en": "Put each resolved scenario's environment into play, ACHIEVED or FAILED face up, and resolve its Setup."
-    },
-    "when": {
-     "any": [
-      {
-       "countTrue": "acheve",
-       "countAtLeast": 1
-      },
-      {
-       "counter": "pressionMusee",
-       "atLeast": 3
-      },
-      {
-       "counter": "pressionPoursuite",
-       "atLeast": 3
-      },
-      {
-       "counter": "pressionRacket",
-       "atLeast": 3
-      },
-      {
-       "counter": "pressionRaft",
-       "atLeast": 3
-      },
-      {
-       "counter": "pressionRotatives",
-       "atLeast": 3
-      }
-     ]
-    }
-   },
-   {
-    "text": {
      "fr": "Retirez de vos decks les alliés et soutiens inscrits comme retirés de la campagne, puis complétez jusqu'à la taille légale.",
      "en": "Remove from your decks the allies and supports recorded as removed from the campaign, then top up to the legal deck size."
     },
@@ -211,8 +177,121 @@
    },
    {
     "text": {
-     "fr": "Mettez en jeu l'alliée de campagne Mary Typhoïde chez le premier joueur.",
-     "en": "Mettez en jeu l'alliée de campagne Mary Typhoïde chez le premier joueur."
+     "fr": "Expert : reprenez les points de vie enregistrés au scénario précédent.",
+     "en": "Expert: set each hit point total to the value recorded last scenario."
+    },
+    "when": {
+     "difficulty": "expert"
+    }
+   },
+   {
+    "text": {
+     "fr": "Expert : chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
+     "en": "Expert: each player may take a facedown encounter card to heal for their REC."
+    },
+    "when": {
+     "difficulty": "expert"
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu Cambriolage du Musée d'Art, face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu Cambriolage du Musée d'Art, face ACHEVÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "flag": "acheve.s1_musee"
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu Cambriolage du Musée d'Art, face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu Cambriolage du Musée d'Art, face ÉCHOUÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "counter": "pressionMusee",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu La Poursuite, face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu La Poursuite, face ACHEVÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "flag": "acheve.s2_poursuite"
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu La Poursuite, face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu La Poursuite, face ÉCHOUÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "counter": "pressionPoursuite",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu Racket en Bande Organisée, face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu Racket en Bande Organisée, face ACHEVÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "flag": "acheve.s3_racket"
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu Racket en Bande Organisée, face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu Racket en Bande Organisée, face ÉCHOUÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "counter": "pressionRacket",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu L'Évasion du Raft, face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu L'Évasion du Raft, face ACHEVÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "flag": "acheve.s4_raft"
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu L'Évasion du Raft, face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu L'Évasion du Raft, face ÉCHOUÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "counter": "pressionRaft",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu Arrêtez les Rotatives !, face ACHEVÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu Arrêtez les Rotatives !, face ACHEVÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "flag": "acheve.s5_rotatives"
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu Arrêtez les Rotatives !, face ÉCHOUÉ, et résolvez sa Mise en place.",
+     "en": "Mettez en jeu Arrêtez les Rotatives !, face ÉCHOUÉ, et résolvez sa Mise en place."
+    },
+    "when": {
+     "counter": "pressionRotatives",
+     "atLeast": 3
+    }
+   },
+   {
+    "text": {
+     "fr": "Mettez en jeu l'alliée de campagne Mary Typhoïde.",
+     "en": "Put the campaign ally Typhoid Mary into play."
     },
     "when": {
      "all": [
@@ -232,24 +311,6 @@
     },
     "when": {
      "flag": "maryVaincue"
-    }
-   },
-   {
-    "text": {
-     "fr": "Expert : reprenez les points de vie enregistrés au scénario précédent.",
-     "en": "Expert: set each hit point total to the value recorded last scenario."
-    },
-    "when": {
-     "difficulty": "expert"
-    }
-   },
-   {
-    "text": {
-     "fr": "Expert : chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
-     "en": "Expert: each player may take a facedown encounter card to heal for their REC."
-    },
-    "when": {
-     "difficulty": "expert"
     }
    }
   ],

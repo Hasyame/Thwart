@@ -232,27 +232,42 @@ def villain_setup():
     return steps
 
 
+def environment_board():
+    """One line per resolved job: which environment, and which face up.
+
+    The app knows both — a job seen through is ACHEVE, a job the villains pushed
+    to three is ECHOUE and was never played — so it says so rather than leaving
+    the table to reconstruct it from the log.
+    """
+    lines = []
+    for scenario_id, name_fr, _, counter in SCENARIOS:
+        lines.append({
+            "text": text(
+                "Mettez en jeu %s, face ACHEVÉ, et résolvez sa Mise en place." % name_fr,
+            ),
+            "when": {"flag": "acheve." + scenario_id},
+        })
+        lines.append({
+            "text": text(
+                "Mettez en jeu %s, face ÉCHOUÉ, et résolvez sa Mise en place." % name_fr,
+            ),
+            "when": {"counter": counter, "atLeast": 3},
+        })
+    return lines
+
+
+
 def shared_campaign_setup():
     """The p.9 sequence every scenario runs, minus the draw the app now does.
 
-    The environments were drawn before this screen, on the choice page, so what
-    is left is what carries: the resolved environments on the table, the allies
-    struck off, the campaign ally, and the two Expert lines.
+    Steps 1 to 7 happen before this screen — the app draws the environments and
+    pushes their scenarios on the choice page, and the villain was dealt when
+    the campaign began. What is left is the book's order from step 8: the allies
+    struck off, the two Expert lines, every settled environment face up, and the
+    campaign ally.
     """
     return [
-        {
-            "text": text(
-                "Mettez en jeu l'environnement de chaque scénario résolu, face ACHEVÉ "
-                "ou ÉCHOUÉ, et résolvez sa Mise en place.",
-                "Put each resolved scenario's environment into play, ACHIEVED or "
-                "FAILED face up, and resolve its Setup.",
-            ),
-            "when": {"any": [
-                {"countTrue": "acheve", "countAtLeast": 1},
-            ] + [
-                {"counter": counter, "atLeast": 3} for _, _, _, counter in SCENARIOS
-            ]},
-        },
+        # 8. Strike off what the campaign has taken, and fill the deck back up.
         {
             "text": text(
                 "Retirez de vos decks les alliés et soutiens inscrits comme retirés "
@@ -262,23 +277,7 @@ def shared_campaign_setup():
             ),
             "when": {"cardList": "alliesRetires", "minSize": 1},
         },
-        {
-            "text": text(
-                "Mettez en jeu l'alliée de campagne Mary Typhoïde chez le premier joueur.",
-            ),
-            "when": {"all": [
-                {"flag": "confianceGagnee"},
-                {"notFlag": "maryVaincue"},
-            ]},
-        },
-        # Once she is gone she stays gone, and the line saying so replaces the
-        # one that put her out.
-        {
-            "text": text(
-                "Retirez Mary Typhoïde de vos decks : elle est perdue pour la campagne.",
-            ),
-            "when": {"flag": "maryVaincue"},
-        },
+        # 10 and 11. Expert carries damage between games.
         {
             "text": text(
                 "Expert : reprenez les points de vie enregistrés au scénario précédent.",
@@ -294,6 +293,27 @@ def shared_campaign_setup():
                 "their REC.",
             ),
             "when": {"difficulty": "expert"},
+        },
+        # 12. Every settled job's environment, named and face up.
+    ] + environment_board() + [
+        # 13. She is out only while she is won and still standing.
+        {
+            "text": text(
+                "Mettez en jeu l'alliée de campagne Mary Typhoïde.",
+                "Put the campaign ally Typhoid Mary into play.",
+            ),
+            "when": {"all": [
+                {"flag": "confianceGagnee"},
+                {"notFlag": "maryVaincue"},
+            ]},
+        },
+        # Once she is gone she stays gone, and the line saying so replaces the
+        # one that put her out.
+        {
+            "text": text(
+                "Retirez Mary Typhoïde de vos decks : elle est perdue pour la campagne.",
+            ),
+            "when": {"flag": "maryVaincue"},
         },
     ]
 
