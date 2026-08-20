@@ -564,8 +564,11 @@ def scenario(scenario_id, name_fr, name_en, counter):
             {"text": text(
                 "Gardez à portée l'environnement %s : vous le retournerez sur sa "
                 "face ACHEVÉ ou ÉCHOUÉ à la fin de la partie." % ("{card:%s}" % scenario_id),
-                "Keep the %s environment within reach: you turn it to its ACHIEVED "
-                "or FAILED face when the scenario ends." % ("{card:%s}" % scenario_id),
+                # The faces keep their printed names in both languages: the card
+                # in the player's hand came out of the French box and says
+                # ACHEVÉ on one side and ÉCHOUÉ on the other.
+                "Keep the %s environment within reach: you turn it to its ACHEVÉ "
+                "or ÉCHOUÉ face when the scenario ends." % ("{card:%s}" % scenario_id),
             )},
             {"include": "mechant"},
             {"text": text(
@@ -638,14 +641,14 @@ def kingpin():
             {
                 "text": text(
                     "3 environnements ACHEVÉ ou plus : carte Tenace à chaque sbire en jeu.",
-                    "3+ ACHIEVED environments: a Tough status card on each minion in play.",
+                    "3+ ACHEVÉ environments: a Tough status card on each minion in play.",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 3},
             },
             {
                 "text": text(
                     "4 environnements ACHEVÉ ou plus : trouvez et révélez \"James Wesley\".",
-                    "4+ ACHIEVED environments: find and reveal \"James Wesley\".",
+                    "4+ ACHEVÉ environments: find and reveal \"James Wesley\".",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 4},
             },

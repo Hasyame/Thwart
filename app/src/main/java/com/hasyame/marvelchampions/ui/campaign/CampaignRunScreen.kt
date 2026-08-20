@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
@@ -78,6 +79,11 @@ fun CampaignRunScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // Told rather than read: the outcome lines are built in the view model,
+    // which has no composition to ask.
+    val appLanguage = campaignTextLocale
+    LaunchedEffect(appLanguage) { viewModel.onAppLanguage(appLanguage) }
+
     LaunchedEffect(runId) { viewModel.load(runId) }
 
     LaunchedEffect(state.run?.timer?.isRunning) {
@@ -96,7 +102,7 @@ fun CampaignRunScreen(
             colors = comicTopBarColors(),
                 title = {
                     Text(
-                        scenario?.name?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
+                        scenario?.name?.resolve(campaignTextLocale)?.takeIf { it.isNotBlank() }
                             ?: run?.entity?.name.orEmpty(),
                     )
                 },
@@ -209,6 +215,20 @@ fun CampaignRunScreen(
     }
 }
 
+/**
+ * The language the app is being displayed in.
+ *
+ * What a campaign template says follows this, not the card language: those are
+ * two settings on purpose, and a French card list is a normal thing to read
+ * with an English app. Card names are unaffected — they come from the card
+ * database, in the card language, wherever they are shown.
+ *
+ * Read from the configuration rather than from settings so it is whatever the
+ * app is really showing, including "follow the phone".
+ */
+private val campaignTextLocale: String
+    @Composable get() = LocalConfiguration.current.locales[0].language
+
 /** Ticks a job carries before the villains have taken it for good. */
 private const val FALLEN_PRESSURE = 3
 
@@ -237,7 +257,7 @@ private fun BriefingPage(
         // The story sits in a caption box, which is both what a comic does with
         // narration and what makes it readable: italic body text straight on
         // the halftone had the dots showing through every line.
-        scenario.flavour?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }?.let {
+        scenario.flavour?.resolve(campaignTextLocale)?.takeIf { it.isNotBlank() }?.let {
             ComicPanel(Modifier.fillMaxWidth()) {
                 Text(
                     text = it,
@@ -418,13 +438,13 @@ private fun SetupPanel(
                     // that read it saying everything. Rendering its empty
                     // text would put a bullet with nothing after it on the
                     // briefing.
-                    .filter { it.text.resolve(run.localeCode).isNotBlank() }
+                    .filter { it.text.resolve(campaignTextLocale).isNotBlank() }
                     .forEach { step ->
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
                                 campaignText(
                                     "• " + resolveDraws(
-                                        step.text.resolve(run.localeCode),
+                                        step.text.resolve(campaignTextLocale),
                                         run,
                                         run.state.currentScenarioId,
                                     ),
@@ -534,7 +554,7 @@ private fun SetupPanel(
                                                 enabled = enabled,
                                             ) {
                                                 Text(
-                                                    action.label.resolve(run.localeCode) +
+                                                    action.label.resolve(campaignTextLocale) +
                                                         " — " + hero.name,
                                                 )
                                             }
@@ -544,7 +564,7 @@ private fun SetupPanel(
                                     OutlinedButton(
                                         onClick = { onSetupAction(action.id, null) },
                                         enabled = enabled,
-                                    ) { Text(action.label.resolve(run.localeCode)) }
+                                    ) { Text(action.label.resolve(campaignTextLocale)) }
                                 }
                             }
                         }
@@ -571,7 +591,7 @@ private fun PlayingPage(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = scenario?.name?.resolve(run.localeCode).orEmpty(),
+            text = scenario?.name?.resolve(campaignTextLocale).orEmpty(),
             style = MaterialTheme.typography.headlineSmall,
         )
         Text(
@@ -596,7 +616,7 @@ private fun PlayingPage(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                scenario?.victoryLabel?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
+                scenario?.victoryLabel?.resolve(campaignTextLocale)?.takeIf { it.isNotBlank() }
                     ?: stringResource(R.string.campaign_victory),
             )
         }
@@ -606,7 +626,7 @@ private fun PlayingPage(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                scenario?.defeatLabel?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
+                scenario?.defeatLabel?.resolve(campaignTextLocale)?.takeIf { it.isNotBlank() }
                     ?: stringResource(R.string.campaign_defeat),
             )
         }
@@ -965,7 +985,7 @@ private fun EnvironmentPage(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = scenario?.name?.resolve(run.localeCode).orEmpty()
+                        text = scenario?.name?.resolve(campaignTextLocale).orEmpty()
                             .ifBlank { run.names.card(environmentId) },
                         style = MaterialTheme.typography.titleMedium,
                     )
@@ -1012,7 +1032,7 @@ private fun EnvironmentPage(
                 // three is how it got there — with the face it turned over set
                 // apart, because that is the line worth spotting at a glance.
                 text = buildAnnotatedString {
-                    append(scenario.name?.resolve(run.localeCode).orEmpty())
+                    append(scenario.name?.resolve(campaignTextLocale).orEmpty())
                     append("   ")
                     append(standing)
                     val tag = when {
@@ -1079,7 +1099,7 @@ private fun CampaignLostPage(
         )
         fallen.forEach { scenario ->
             Text(
-                text = "• " + scenario.name?.resolve(run.localeCode).orEmpty(),
+                text = "• " + scenario.name?.resolve(campaignTextLocale).orEmpty(),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.error,
             )
@@ -1106,7 +1126,7 @@ private fun ChoosePage(
         CampaignEngine.ENVIRONMENT_DRAW_SCENARIO,
         "r${run.state.completedScenarios.size}",
     ).mapNotNull { id ->
-        run.template.scenarios.firstOrNull { it.id == id }?.name?.resolve(run.localeCode)
+        run.template.scenarios.firstOrNull { it.id == id }?.name?.resolve(campaignTextLocale)
     }
 
     Column(
@@ -1148,7 +1168,7 @@ private fun ChoosePage(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = scenario.name?.resolve(run.localeCode).orEmpty().ifBlank { scenario.id },
+                        text = scenario.name?.resolve(campaignTextLocale).orEmpty().ifBlank { scenario.id },
                         style = MaterialTheme.typography.titleMedium,
                     )
                     if (pressure > 0) {
@@ -1169,7 +1189,7 @@ private fun ChoosePage(
                             },
                         )
                     }
-                    scenario.flavour?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }?.let {
+                    scenario.flavour?.resolve(campaignTextLocale)?.takeIf { it.isNotBlank() }?.let {
                         Text(it, style = MaterialTheme.typography.bodySmall)
                     }
                 }

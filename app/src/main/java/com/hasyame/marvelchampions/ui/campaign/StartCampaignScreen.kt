@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,20 @@ import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.chooserName
+
+/**
+ * The language the app is being displayed in.
+ *
+ * What a campaign template says follows this, not the card language: those are
+ * two settings on purpose, and a French card list is a normal thing to read
+ * with an English app. Card names are unaffected — they come from the card
+ * database, in the card language, wherever they are shown.
+ *
+ * Read from the configuration rather than from settings so it is whatever the
+ * app is really showing, including "follow the phone".
+ */
+private val campaignTextLocale: String
+    @Composable get() = LocalConfiguration.current.locales[0].language
 
 /** Maximum players a campaign supports. */
 private const val MAX_PLAYERS = 4
@@ -122,14 +137,14 @@ fun StartCampaignScreen(
                                 chosenTemplateId = candidate.id
                                 choices = emptyMap()
                             },
-                            label = { Text(candidate.chooserName(state.localeCode)) },
+                            label = { Text(candidate.chooserName(campaignTextLocale)) },
                         )
                     }
                 }
             }
 
             // Only a campaign that has something to say shows this.
-            template?.notice?.resolve(state.localeCode)?.takeIf { it.isNotBlank() }?.let { notice ->
+            template?.notice?.resolve(campaignTextLocale)?.takeIf { it.isNotBlank() }?.let { notice ->
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -150,7 +165,7 @@ fun StartCampaignScreen(
                     value = name,
                     onValueChange = { name = it },
                     singleLine = true,
-                    placeholder = { Text(template?.name?.resolve(state.localeCode).orEmpty()) },
+                    placeholder = { Text(template?.name?.resolve(campaignTextLocale).orEmpty()) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -209,19 +224,19 @@ fun StartCampaignScreen(
             // What the campaign itself asks, if anything. Fixed for the run,
             // like the roster and the difficulty beside it.
             template?.setupChoices?.forEach { choice ->
-                Section(choice.label.resolve(state.localeCode)) {
+                Section(choice.label.resolve(campaignTextLocale)) {
                     val selected = choices[choice.id] ?: choice.options.firstOrNull()?.id
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         choice.options.forEach { option ->
                             FilterChip(
                                 selected = selected == option.id,
                                 onClick = { choices = choices + (choice.id to option.id) },
-                                label = { Text(option.label.resolve(state.localeCode)) },
+                                label = { Text(option.label.resolve(campaignTextLocale)) },
                             )
                         }
                     }
                     choice.options.firstOrNull { it.id == selected }
-                        ?.detail?.resolve(state.localeCode)
+                        ?.detail?.resolve(campaignTextLocale)
                         ?.takeIf { it.isNotBlank() }
                         ?.let {
                             Text(

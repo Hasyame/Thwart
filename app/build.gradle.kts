@@ -227,6 +227,23 @@ tasks.register("fetchCardSeed") {
             URI(url).toURL().openStream().use { input ->
                 destination.outputStream().use { output -> input.copyTo(output) }
             }
+            // MarvelCDB nests each card's linked card inside it as well as
+            // listing it separately. CardDto does not model the nested copy —
+            // every linked card is its own entry — so it is dead weight in an
+            // asset the app ships and parses on first launch.
+            if (fileName.startsWith("cards_")) {
+                val before = destination.length()
+                @Suppress("UNCHECKED_CAST")
+                val cards = groovy.json.JsonSlurper().parse(destination)
+                    as List<Map<String, Any?>>
+                destination.writeText(
+                    groovy.json.JsonOutput.toJson(cards.map { it - "linked_card" }),
+                )
+                logger.lifecycle(
+                    "fetchCardSeed: slimmed ${destination.name} " +
+                        "($before -> ${destination.length()} bytes)",
+                )
+            }
             logger.lifecycle(
                 "fetchCardSeed: wrote ${destination.name} (${destination.length()} bytes)",
             )

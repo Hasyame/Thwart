@@ -95,6 +95,18 @@ class CampaignRunViewModel @Inject constructor(
 
     private var runId: String? = null
 
+    /**
+     * The language the app is being shown in, told to us by the screen.
+     *
+     * A campaign's own words follow the app's language, not the card language,
+     * and a view model has no composition to read the configuration from.
+     */
+    private var textLocale: String? = null
+
+    fun onAppLanguage(code: String) {
+        textLocale = code
+    }
+
     fun load(id: String) {
         if (runId == id) {
             return
@@ -389,7 +401,8 @@ class CampaignRunViewModel @Inject constructor(
     ): String? {
         val scenario = run.template.scenarios.firstOrNull { it.id == scenarioId } ?: return null
         val outcome = if (victory) scenario.onVictory else scenario.onDefeat
-        val text = outcome?.message?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
+        val text = outcome?.message?.resolve(textLocale ?: run.localeCode)
+            ?.takeIf { it.isNotBlank() }
             ?: return null
         return resolveDraws(text, run, scenarioId)
     }

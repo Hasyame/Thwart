@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,6 +43,20 @@ import com.hasyame.marvelchampions.domain.campaign.engine.ConditionEvaluator
 import com.hasyame.marvelchampions.domain.campaign.engine.EvaluationContext
 import com.hasyame.marvelchampions.domain.campaign.template.PromptType
 import com.hasyame.marvelchampions.domain.campaign.template.ScenarioTemplate
+
+/**
+ * The language the app is being displayed in.
+ *
+ * What a campaign template says follows this, not the card language: those are
+ * two settings on purpose, and a French card list is a normal thing to read
+ * with an English app. Card names are unaffected — they come from the card
+ * database, in the card language, wherever they are shown.
+ *
+ * Read from the configuration rather than from settings so it is whatever the
+ * app is really showing, including "follow the phone".
+ */
+private val campaignTextLocale: String
+    @Composable get() = LocalConfiguration.current.locales[0].language
 
 /**
  * Page 3. The post-victory questionnaire, entirely driven by the template.
@@ -136,7 +151,7 @@ fun QuestionsPage(
             // The card the app drew, named, so the question is about the thing
             // on the table rather than a generic one.
             val plainLabel = resolveDraws(
-                prompt.label?.resolve(run.localeCode).orEmpty().ifBlank { prompt.id },
+                prompt.label?.resolve(campaignTextLocale).orEmpty().ifBlank { prompt.id },
                 run,
                 run.state.currentScenarioId,
             )
@@ -331,7 +346,7 @@ fun QuestionsPage(
                                         onClick = { choices[prompt.id] = option.id },
                                         label = {
                                             Text(
-                                                option.label?.resolve(run.localeCode).orEmpty()
+                                                option.label?.resolve(campaignTextLocale).orEmpty()
                                                     .ifBlank { option.id },
                                             )
                                         },

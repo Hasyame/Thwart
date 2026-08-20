@@ -732,7 +732,7 @@
     {
      "text": {
       "fr": "Gardez à portée l'environnement {card:s1_musee} : vous le retournerez sur sa face ACHEVÉ ou ÉCHOUÉ à la fin de la partie.",
-      "en": "Keep the {card:s1_musee} environment within reach: you turn it to its ACHIEVED or FAILED face when the scenario ends."
+      "en": "Keep the {card:s1_musee} environment within reach: you turn it to its ACHEVÉ or ÉCHOUÉ face when the scenario ends."
      }
     },
     {
@@ -958,7 +958,7 @@
     {
      "text": {
       "fr": "Gardez à portée l'environnement {card:s2_poursuite} : vous le retournerez sur sa face ACHEVÉ ou ÉCHOUÉ à la fin de la partie.",
-      "en": "Keep the {card:s2_poursuite} environment within reach: you turn it to its ACHIEVED or FAILED face when the scenario ends."
+      "en": "Keep the {card:s2_poursuite} environment within reach: you turn it to its ACHEVÉ or ÉCHOUÉ face when the scenario ends."
      }
     },
     {
@@ -1184,7 +1184,7 @@
     {
      "text": {
       "fr": "Gardez à portée l'environnement {card:s3_racket} : vous le retournerez sur sa face ACHEVÉ ou ÉCHOUÉ à la fin de la partie.",
-      "en": "Keep the {card:s3_racket} environment within reach: you turn it to its ACHIEVED or FAILED face when the scenario ends."
+      "en": "Keep the {card:s3_racket} environment within reach: you turn it to its ACHEVÉ or ÉCHOUÉ face when the scenario ends."
      }
     },
     {
@@ -1410,7 +1410,7 @@
     {
      "text": {
       "fr": "Gardez à portée l'environnement {card:s4_raft} : vous le retournerez sur sa face ACHEVÉ ou ÉCHOUÉ à la fin de la partie.",
-      "en": "Keep the {card:s4_raft} environment within reach: you turn it to its ACHIEVED or FAILED face when the scenario ends."
+      "en": "Keep the {card:s4_raft} environment within reach: you turn it to its ACHEVÉ or ÉCHOUÉ face when the scenario ends."
      }
     },
     {
@@ -1636,7 +1636,7 @@
     {
      "text": {
       "fr": "Gardez à portée l'environnement {card:s5_rotatives} : vous le retournerez sur sa face ACHEVÉ ou ÉCHOUÉ à la fin de la partie.",
-      "en": "Keep the {card:s5_rotatives} environment within reach: you turn it to its ACHIEVED or FAILED face when the scenario ends."
+      "en": "Keep the {card:s5_rotatives} environment within reach: you turn it to its ACHEVÉ or ÉCHOUÉ face when the scenario ends."
      }
     },
     {
@@ -1903,7 +1903,7 @@
     {
      "text": {
       "fr": "3 environnements ACHEVÉ ou plus : carte Tenace à chaque sbire en jeu.",
-      "en": "3+ ACHIEVED environments: a Tough status card on each minion in play."
+      "en": "3+ ACHEVÉ environments: a Tough status card on each minion in play."
      },
      "when": {
       "countTrue": "acheve",
@@ -1913,7 +1913,7 @@
     {
      "text": {
       "fr": "4 environnements ACHEVÉ ou plus : trouvez et révélez \"James Wesley\".",
-      "en": "4+ ACHIEVED environments: find and reveal \"James Wesley\"."
+      "en": "4+ ACHEVÉ environments: find and reveal \"James Wesley\"."
      },
      "when": {
       "countTrue": "acheve",
