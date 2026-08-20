@@ -109,6 +109,14 @@ data class CampaignTemplate(
      * like every other string in a template; nothing is quoted from a book.
      */
     @SerialName("notice") val notice: LocalizedText? = null,
+
+    /**
+     * True while the campaign is still being built.
+     *
+     * Marked in the chooser so a release can go out with a campaign half done
+     * without anybody starting it expecting the whole thing.
+     */
+    @SerialName("wip") val wip: Boolean = false,
 ) {
 
     /**
@@ -140,6 +148,15 @@ data class CampaignTemplate(
  * text out of the templates — must see all three, and a list added later is a
  * list those checks silently stop covering unless they read it from here.
  */
+/**
+ * The campaign's name as the chooser shows it, flagged while it is unfinished.
+ *
+ * Appended rather than written into the name so it disappears by flipping one
+ * field, and so no translation has to carry it.
+ */
+fun CampaignTemplate.chooserName(locale: String): String =
+    name.resolve(locale) + if (wip) " (WIP)" else ""
+
 fun ScenarioTemplate.setupSections(): List<Pair<String, List<SetupStep>>> = listOf(
     "preSetup" to preSetup,
     "campaignSetup" to campaignSetup,

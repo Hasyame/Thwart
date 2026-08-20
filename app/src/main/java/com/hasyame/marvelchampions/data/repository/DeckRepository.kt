@@ -140,6 +140,15 @@ class DeckRepository @Inject constructor(
         heroCode: String,
         heroName: String,
         aspects: List<String>,
+        /**
+         * Cards the deck starts with, by code and quantity.
+         *
+         * A hero's own cards are not a choice — the deck must hold all of them
+         * in exactly those numbers — so a new deck starts with them in it
+         * rather than opening empty and failing validation until the player
+         * adds by hand what was never optional.
+         */
+        slots: Map<String, Int> = emptyMap(),
     ): String = withContext(ioDispatcher) {
         val id = "$LOCAL_ID_PREFIX${UUID.randomUUID()}"
         savedDeckDao.upsert(
@@ -152,7 +161,7 @@ class DeckRepository @Inject constructor(
                 heroCode = heroCode,
                 heroName = heroName,
                 aspects = aspects.joinToString(","),
-                slots = "",
+                slots = slots.entries.joinToString(",") { "${it.key}=${it.value}" },
                 ignoreDeckLimitSlots = "",
                 descriptionMd = null,
                 version = null,

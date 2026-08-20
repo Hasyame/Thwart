@@ -29,6 +29,7 @@ data class DeckEditorUiState(
     val validation: DeckValidation = DeckValidation(),
     val query: String = "",
     val ownedOnly: Boolean = true,
+    val sort: DeckSort = DeckSort.TYPE,
     val isLoading: Boolean = true,
 ) {
     /**
@@ -84,6 +85,10 @@ class DeckEditorViewModel @Inject constructor(
     fun setQuery(value: String) {
         state.value = state.value.copy(query = value)
         query.value = value
+    }
+
+    fun setSort(sort: DeckSort) {
+        state.value = state.value.copy(sort = sort)
     }
 
     fun setOwnedOnly(ownedOnly: Boolean) {

@@ -98,6 +98,9 @@ class NewDeckViewModel @Inject constructor(
                 heroCode = hero.card.code,
                 heroName = hero.card.name,
                 aspects = current.chosenAspects,
+                // The hero's signature cards, in their printed numbers. They
+                // are required, so the deck opens with them already in it.
+                slots = current.rules?.requiredCards.orEmpty(),
             )
             state.value = state.value.copy(createdDeckId = id)
         }

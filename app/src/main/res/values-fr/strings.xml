@@ -217,6 +217,10 @@
     <string name="decks_tab_add">Ajouter des cartes</string>
     <string name="decks_editor_empty">Aucune carte pour l\'instant. Utilisez l\'onglet « Ajouter des cartes ».</string>
     <string name="decks_add_card">Ajouter un exemplaire</string>
+    <string name="decks_sort">Trier</string>
+    <string name="decks_sort_type">Type</string>
+    <string name="decks_sort_cost">Coût</string>
+    <string name="decks_sort_name">Nom</string>
     <string name="decks_remove_card">Retirer un exemplaire</string>
     <string name="decks_limit">limite %1$d</string>
     <plurals name="decks_card_total">

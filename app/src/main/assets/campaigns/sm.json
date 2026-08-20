@@ -5,6 +5,7 @@
   "en": "Sinister Motives"
  },
  "packCode": "sm",
+ "wip": true,
  "notice": {
   "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Sinister Motives box are still needed to play. This campaign's text is English only for the moment; French is coming.\n\nThe app keeps the reputation track for you — it asks the six conditions after each scenario, does the adding, and shows you only the track boxes you have actually reached. It also draws the Community Service side scheme and the Osborn Tech attachments, and records what came up."
  },

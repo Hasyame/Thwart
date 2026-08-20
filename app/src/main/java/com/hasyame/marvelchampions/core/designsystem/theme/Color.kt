@@ -94,3 +94,15 @@ val AspectJustice = Color(0xFFD4A017)
 val AspectLeadership = Color(0xFF2E6DA4)
 val AspectProtection = Color(0xFF3E8E5A)
 val AspectBasic = Color(0xFF7A7A7A)
+
+// --- card types -------------------------------------------------------------
+// A deck list is skimmed, not read, so each type carries a colour as well as a
+// shape. Picked to stay apart on the dark panels rather than to match the
+// printed cards, whose aspect colours mean something else entirely.
+val TypeAlly = Color(0xFF5B9BD5)
+val TypeEvent = Color(0xFFE08A3C)
+val TypeSupport = Color(0xFF5FAE72)
+val TypeUpgrade = Color(0xFFA07CC9)
+val TypeResource = Color(0xFFD3AF37)
+val TypeObligation = Color(0xFFD65A5A)
+val TypeOther = Color(0xFF9A8C8C)

@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.chooserName
 
 /** Maximum players a campaign supports. */
 private const val MAX_PLAYERS = 4
@@ -115,7 +116,7 @@ fun StartCampaignScreen(
                         FilterChip(
                             selected = template?.id == candidate.id,
                             onClick = { chosenTemplateId = candidate.id },
-                            label = { Text(candidate.name.resolve(state.localeCode)) },
+                            label = { Text(candidate.chooserName(state.localeCode)) },
                         )
                     }
                 }

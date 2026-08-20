@@ -416,6 +416,9 @@ def build():
         "schemaVersion": 1,
         "name": t("Sinister Motives"),
         "packCode": "sm",
+        # Marked in the chooser until the reputation node numbers are confirmed
+        # against the printed track and the French translation lands.
+        "wip": True,
         "notice": t(
             "Unofficial, reconstructed for the app: the rulebook and cards from "
             "the Sinister Motives box are still needed to play. This campaign's "

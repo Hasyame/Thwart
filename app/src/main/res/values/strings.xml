@@ -209,6 +209,10 @@
     <string name="decks_tab_add">Add cards</string>
     <string name="decks_editor_empty">No card yet. Use the “Add cards” tab.</string>
     <string name="decks_add_card">Add a copy</string>
+    <string name="decks_sort">Sort</string>
+    <string name="decks_sort_type">Type</string>
+    <string name="decks_sort_cost">Cost</string>
+    <string name="decks_sort_name">Name</string>
     <string name="decks_remove_card">Remove a copy</string>
     <string name="decks_limit">limit %1$d</string>
     <plurals name="decks_card_total">

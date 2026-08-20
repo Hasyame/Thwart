@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.core.designsystem.component.CardTypeBadge
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckProblem
@@ -154,8 +155,13 @@ private fun DeckContentsTab(state: DeckEditorUiState, viewModel: DeckEditorViewM
         }
         return
     }
-    LazyColumn(Modifier.fillMaxSize()) {
-        items(state.deckCards, key = { it.code }) { card ->
+    val cards = remember(state.deckCards, state.sort) {
+        state.deckCards.sortedWith(state.sort.comparator)
+    }
+    Column(Modifier.fillMaxSize()) {
+        SortRow(state.sort, viewModel::setSort)
+        LazyColumn(Modifier.fillMaxSize()) {
+        items(cards, key = { it.code }) { card ->
             CardRow(
                 card = card,
                 quantity = state.slots[card.code] ?: 0,
@@ -163,6 +169,7 @@ private fun DeckContentsTab(state: DeckEditorUiState, viewModel: DeckEditorViewM
                 onAdd = { viewModel.addCard(card.code) },
                 onRemove = { viewModel.removeCard(card.code) },
             )
+        }
         }
     }
 }
@@ -189,8 +196,12 @@ private fun AddCardsTab(state: DeckEditorUiState, viewModel: DeckEditorViewModel
             label = { Text(stringResource(R.string.cards_filter_owned_only)) },
             modifier = Modifier.padding(horizontal = 16.dp),
         )
+        SortRow(state.sort, viewModel::setSort)
+        val candidates = remember(state.candidates, state.sort) {
+            state.candidates.sortedWith(state.sort.comparator)
+        }
         LazyColumn(Modifier.fillMaxSize()) {
-            items(state.candidates, key = { it.code }) { card ->
+            items(candidates, key = { it.code }) { card ->
                 CardRow(
                     card = card,
                     quantity = state.slots[card.code] ?: 0,
@@ -199,6 +210,38 @@ private fun AddCardsTab(state: DeckEditorUiState, viewModel: DeckEditorViewModel
                     onRemove = { viewModel.removeCard(card.code) },
                 )
             }
+        }
+    }
+}
+
+/** Which order the list is in. The same control serves both tabs. */
+@Composable
+private fun SortRow(sort: DeckSort, onSort: (DeckSort) -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.decks_sort),
+            style = MaterialTheme.typography.labelMedium,
+        )
+        DeckSort.entries.forEach { option ->
+            FilterChip(
+                selected = sort == option,
+                onClick = { onSort(option) },
+                label = {
+                    Text(
+                        stringResource(
+                            when (option) {
+                                DeckSort.TYPE -> R.string.decks_sort_type
+                                DeckSort.COST -> R.string.decks_sort_cost
+                                DeckSort.NAME -> R.string.decks_sort_name
+                            },
+                        ),
+                    )
+                },
+            )
         }
     }
 }
@@ -212,6 +255,7 @@ private fun CardRow(
     onRemove: () -> Unit,
 ) {
     ListItem(
+        leadingContent = { CardTypeBadge(card.typeCode) },
         headlineContent = {
             Text(if (quantity > 0) "$quantity× ${card.name}" else card.name)
         },
