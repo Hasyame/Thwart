@@ -1,0 +1,27 @@
+Fear No Evil in English, and it asks how you want to play it.
+
+The campaign is translated. The story, the setup steps, the questions and the
+notes on each subordinate are all in English now. Card names stay French: this
+pack is not on MarvelCDB, so an English title would be a guess, and a guess
+printed next to the card in your hand is worse than the French name. The app
+says as much before you start.
+
+That uncovered a wider bug. Everything a campaign said was being shown in the
+card language rather than the app language, so an English app with French cards
+read all six campaigns in French. Campaign text now follows the app.
+
+Before a Fear No Evil campaign starts, the app asks whether you want the villain
+order the book recommends for a first campaign, or a random one. The subordinate
+for a mission is now chosen as you pick that mission, and the name sticks, so
+retrying a mission faces the same villain.
+
+Each way out of a defeat says what it costs: retry, continue and fail the
+mission, take a break, or stop the campaign and keep the stats. The pre-setup
+also names the environment card for the mission you are about to play, since you
+turn it over the moment the scenario ends.
+
+The web companion is gone. It did nothing the app does not.
+
+The bundled card data is smaller. MarvelCDB sends each card's linked card nested
+inside it as well as separately, and the app never read the nested copy, so it is
+dropped as the data is fetched. That is 1.6 MB less to read on a first run.

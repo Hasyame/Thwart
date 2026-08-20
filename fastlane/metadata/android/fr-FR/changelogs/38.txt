@@ -1,0 +1,30 @@
+Peur de Rien en anglais, et une question avant de commencer.
+
+La campagne est traduite : l'histoire, les étapes de mise en place, les
+questions et les conseils sur chaque subordonné sont désormais en anglais. Les
+noms de cartes restent en français, car cette extension n'est pas sur MarvelCDB
+et un titre anglais serait une supposition, ce qui est pire que le nom français
+à côté de la carte que vous tenez. L'application le dit avant de commencer.
+
+Cela a révélé un bug plus large : tout ce que disait une campagne s'affichait
+dans la langue des cartes et non dans celle de l'application. Un joueur en
+anglais avec des cartes françaises lisait donc les six campagnes en français.
+Le texte des campagnes suit maintenant l'application.
+
+Avant une campagne Peur de Rien, l'application demande si vous voulez l'ordre
+des méchants recommandé par le livret pour une première campagne, ou un ordre
+aléatoire. Le subordonné d'une mission est choisi au moment où vous choisissez
+la mission, et le nom est conservé : rejouer une mission affronte le même
+méchant.
+
+Chaque sortie d'une défaite indique ce qu'elle coûte : rejouer, continuer et
+échouer la mission, faire une pause, ou arrêter la campagne en gardant les
+statistiques. La préparation nomme aussi la carte Environnement de la mission
+que vous allez jouer, puisque vous la retournez dès la fin du scénario.
+
+Le compagnon web est supprimé : il ne faisait rien que l'application ne fasse.
+
+Les données de cartes embarquées sont plus légères. MarvelCDB renvoie la carte
+liée à l'intérieur de chaque carte en plus de la lister séparément, et
+l'application n'a jamais lu cette copie : elle est retirée au téléchargement.
+Cela fait 1,6 Mo de moins à lire au premier lancement.
