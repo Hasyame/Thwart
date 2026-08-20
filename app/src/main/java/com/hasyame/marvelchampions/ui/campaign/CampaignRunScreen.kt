@@ -160,6 +160,7 @@ fun CampaignRunScreen(
                         run = run,
                         summary = state.summary,
                         onNext = viewModel::continueToNextScenario,
+                        onConcede = viewModel::concedeCampaign,
                         onMarket = { viewModel.goTo(RunPage.MARKET) },
                         onBreak = onBack,
                         onForget = { viewModel.forgetCampaign(onBack) },
@@ -167,17 +168,9 @@ fun CampaignRunScreen(
 
                     RunPage.DEFEAT -> DefeatPage(
                         summary = state.summary,
-                        onRestart = viewModel::replayScenario,
+                        onContinue = viewModel::continueToNextScenario,
                         onBreak = onBack,
-                        // Only the last villain can be retried for ever, so
-                        // only there is stopping a decision worth offering.
-                        onConcede = if (
-                            run.state.currentScenarioId == run.template.finaleScenarioId
-                        ) {
-                            viewModel::concedeCampaign
-                        } else {
-                            null
-                        },
+                        onConcede = viewModel::concedeCampaign,
                     )
 
                     RunPage.CHOICE -> ChoosePage(
@@ -617,6 +610,7 @@ private fun ResultPage(
     run: CampaignRun,
     summary: ScenarioOutcomeSummary?,
     onNext: () -> Unit,
+    onConcede: (() -> Unit)? = null,
     onMarket: () -> Unit,
     onBreak: () -> Unit,
     onForget: () -> Unit,
@@ -716,6 +710,7 @@ private fun ResultPage(
                         Text("${hero.name}: +${gained[hero.id] ?: 0}")
                     }
                 }
+                summary?.outcomeMessage?.let { Text(campaignText(it)) }
             }
         }
 
@@ -756,6 +751,18 @@ private fun ResultPage(
                 Text(stringResource(R.string.campaign_need_to_buy))
             }
         }
+        // Stopping is a decision after any scenario, won or lost, so long as
+        // there is still a campaign left to stop.
+        if (summary?.campaignFinished != true) {
+            onConcede?.let { concede ->
+                OutlinedButton(onClick = concede, modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(R.string.campaign_stop_campaign),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
+        }
         OutlinedButton(onClick = onBreak, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.campaign_take_a_break))
         }
@@ -766,7 +773,7 @@ private fun ResultPage(
 @Composable
 private fun DefeatPage(
     summary: ScenarioOutcomeSummary?,
-    onRestart: () -> Unit,
+    onContinue: () -> Unit,
     onBreak: () -> Unit,
     onConcede: (() -> Unit)? = null,
 ) {
@@ -779,16 +786,23 @@ private fun DefeatPage(
             style = MaterialTheme.typography.headlineMedium,
         )
         ComicPanel(Modifier.fillMaxWidth()) {
-            Text(
-                text = stringResource(
-                    R.string.campaign_defeat_time,
-                    TimerState.format(summary?.elapsedMillis ?: 0),
-                ),
-                modifier = Modifier.padding(16.dp),
-            )
+            Column(
+                Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    stringResource(
+                        R.string.campaign_defeat_time,
+                        TimerState.format(summary?.elapsedMillis ?: 0),
+                    ),
+                )
+                // What the loss did to the campaign, in the campaign's own
+                // terms: which villain, which environment, what it costs.
+                summary?.outcomeMessage?.let { Text(campaignText(it)) }
+            }
         }
-        Button(onClick = onRestart, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.campaign_all_day))
+        Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.campaign_continue))
         }
         OutlinedButton(onClick = onBreak, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.campaign_take_a_break))
@@ -799,7 +813,7 @@ private fun DefeatPage(
         onConcede?.let { concede ->
             OutlinedButton(onClick = concede, modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = stringResource(R.string.campaign_concede),
+                    text = stringResource(R.string.campaign_stop_campaign),
                     color = MaterialTheme.colorScheme.error,
                 )
             }

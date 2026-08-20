@@ -268,7 +268,12 @@ def environment_board():
             "text": text(
                 "Mettez en jeu %s, face ÉCHOUÉ, et résolvez sa Mise en place." % q(name_fr),
             ),
-            "when": {"counter": counter, "atLeast": 3},
+            # Two ways to fail a job: the villains push it to three, or the
+            # players go there and lose.
+            "when": {"any": [
+                {"counter": counter, "atLeast": 3},
+                {"flag": "echoue." + scenario_id},
+            ]},
         })
     return lines
 
@@ -349,6 +354,11 @@ def vp_prompt():
 def victory_outcome(scenario_id):
     """The bookkeeping after any of the five interchangeable scenarios."""
     return {
+        "message": text(
+            "Vous avez battu {villain}. %s passe ACHEVÉ : mettez cet "
+            "environnement en jeu sur sa face ACHEVÉ à chaque partie suivante. "
+            "Le Caïd n'en sera que mieux retranché." % ("{card:%s}" % scenario_id),
+        ),
         "prompts": [
             vp_prompt(),
             # Two tokens on Psyche Perturbee wins her over, which only the
@@ -408,10 +418,23 @@ def victory_outcome(scenario_id):
     }
 
 
-def defeat_outcome(counter):
+def defeat_outcome(counter, scenario_id):
+    """A job that was played and lost is settled: its environment is ECHOUE.
+
+    Leaving it unresolved was the bug behind the dead end — the campaign moved
+    on to the next choice while the job itself turned over nothing, so the
+    defeat page had neither news nor anywhere to send the players.
+    """
     return {
+        "message": text(
+            "{villain} vous a échappé. %s passe ÉCHOUÉ : cette mission sort de "
+            "la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. "
+            "Le Caïd sera moins bien retranché, mais c'est une mission de moins."
+            % ("{card:%s}" % scenario_id),
+        ),
         "prompts": [vp_prompt()],
         "effects": [
+            {"op": "setFlag", "flag": "echoue." + scenario_id, "boolValue": True},
             # Standard lets a lost place be tried again; only Expert pushes it.
             {"op": "addCounter", "counter": counter, "value": 1, "max": 3,
              "when": {"difficulty": "expert"}},
@@ -459,7 +482,7 @@ def scenario(scenario_id, name_fr, name_en, counter):
         # Read once the table is set: how this subordinate plays.
         "information": [{"include": "conseils"}],
         "onVictory": victory_outcome(scenario_id),
-        "onDefeat": defeat_outcome(counter),
+        "onDefeat": defeat_outcome(counter, scenario_id),
     }
 
 
@@ -566,6 +589,9 @@ def build():
         "schemaVersion": 1,
         "name": text("Peur de Rien", "Fear No Evil"),
         "packCode": "fne",
+        # Marked in the chooser while the campaign is still being corrected
+        # against the book and played through at a real table.
+        "wip": True,
         "difficulties": ["standard", "expert"],
         "chooseFirstScenario": True,
         "finaleScenarioId": "s6_caid",
@@ -601,6 +627,7 @@ def build():
         "counters": counters,
         "flagSets": [
             {"id": "acheve", "scope": "perScenario"},
+            {"id": "echoue", "scope": "perScenario"},
             {"id": "confianceGagnee", "scope": "campaign"},
             {"id": "maryVaincue", "scope": "campaign"},
         ],

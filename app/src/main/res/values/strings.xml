@@ -192,6 +192,8 @@
     <string name="campaign_unknown_prompt">Unsupported question type “%1$s” in the template.</string>
     <string name="campaign_defeat_recorded">Defeat recorded</string>
     <string name="campaign_take_a_break">Take a break</string>
+    <string name="campaign_continue">Continue</string>
+    <string name="campaign_stop_campaign">Stop the campaign</string>
 
     <!-- Deck builder -->
     <string name="decks_new">New deck</string>
@@ -273,7 +275,6 @@
     </plurals>
     <string name="campaign_go_to_next">Go to %1$s</string>
     <string name="campaign_need_to_buy">Need to buy anything?</string>
-    <string name="campaign_all_day">I can do this all day! (restart)</string>
     <string name="campaign_defeat_time">You held out for %1$s.</string>
     <plurals name="campaign_credits_available">
         <item quantity="one">%1$d unit available</item>
@@ -540,5 +541,4 @@
     <string name="campaign_lost_title">Campaign abandoned</string>
     <string name="campaign_lost_message">You chose to stop here rather than face Kingpin again. The campaign ends here.</string>
     <string name="campaign_lost_leave">Close the campaign</string>
-    <string name="campaign_concede">Give up: the campaign is lost</string>
 </resources>

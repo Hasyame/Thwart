@@ -434,6 +434,15 @@ data class ActionCost(
 
 @Serializable
 data class Outcome(
+    /**
+     * What this scenario's ending means, in the campaign's own terms.
+     *
+     * Placeholders are resolved like any other campaign text, so a line can
+     * name the villain that was drawn and the card the scenario turns over.
+     * Without it every scenario ends on the same generic congratulation and
+     * the campaign log advances invisibly.
+     */
+    val message: LocalizedText? = null,
     val prompts: List<Prompt> = emptyList(),
     val effects: List<Effect> = emptyList(),
     /** Guarded and evaluated in order; the first match wins. */

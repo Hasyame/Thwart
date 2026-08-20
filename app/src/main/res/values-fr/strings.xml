@@ -199,6 +199,8 @@
     <string name="campaign_unknown_prompt">Type de question « %1$s » non pris en charge dans le modèle.</string>
     <string name="campaign_defeat_recorded">Défaite enregistrée</string>
     <string name="campaign_take_a_break">Faire une pause</string>
+    <string name="campaign_continue">Continuer</string>
+    <string name="campaign_stop_campaign">Arrêter la campagne</string>
 
     <!-- Deck builder -->
     <string name="decks_new">Nouveau deck</string>
@@ -289,7 +291,6 @@
     </plurals>
     <string name="campaign_go_to_next">Aller à %1$s</string>
     <string name="campaign_need_to_buy">Besoin d\'acheter quelque chose ?</string>
-    <string name="campaign_all_day">Je peux faire ça toute la journée ! (recommencer)</string>
     <string name="campaign_defeat_time">Vous avez tenu %1$s.</string>
     <plurals name="campaign_credits_available">
         <item quantity="one">%1$d crédit disponible</item>
@@ -560,5 +561,4 @@
     <string name="campaign_lost_title">Campagne abandonnée</string>
     <string name="campaign_lost_message">Vous avez choisi d’en rester là face au Caïd. La campagne s’arrête ici.</string>
     <string name="campaign_lost_leave">Fermer la campagne</string>
-    <string name="campaign_concede">Abandonner : la campagne est perdue</string>
 </resources>

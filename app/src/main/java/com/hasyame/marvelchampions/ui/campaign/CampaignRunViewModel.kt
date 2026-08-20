@@ -62,6 +62,8 @@ data class ScenarioOutcomeSummary(
     val creditsGained: Map<String, Int> = emptyMap(),
     val nextScenarioName: String? = null,
     val campaignFinished: Boolean = false,
+    /** The scenario's own closing line, placeholders already resolved. */
+    val outcomeMessage: String? = null,
 )
 
 data class CampaignRunUiState(
@@ -70,7 +72,6 @@ data class CampaignRunUiState(
     val elapsedMillis: Long = 0,
     val isLoading: Boolean = true,
     val summary: ScenarioOutcomeSummary? = null,
-    /** Ambient playlist offered on the play page. */
     /**
      * True while a scenario result is being filed.
      *
@@ -263,7 +264,14 @@ class CampaignRunViewModel @Inject constructor(
             state.value = state.value.copy(
                 page = RunPage.DEFEAT,
                 isSubmitting = false,
-                summary = ScenarioOutcomeSummary(victory = false, elapsedMillis = elapsed, victoryPoints = null),
+                summary = ScenarioOutcomeSummary(
+                    victory = false,
+                    elapsedMillis = elapsed,
+                    victoryPoints = null,
+                    // Resolved against the run as it was, because the draws
+                    // belonging to a scenario do not outlive it.
+                    outcomeMessage = outcomeMessage(run, scenarioId, victory = false),
+                ),
             )
         }
     }
@@ -341,6 +349,7 @@ class CampaignRunViewModel @Inject constructor(
                                 ?.name?.resolve(reloaded.localeCode)
                         },
                     campaignFinished = finished,
+                    outcomeMessage = outcomeMessage(run, scenarioId, victory = true),
                 ),
             )
         }
@@ -356,6 +365,25 @@ class CampaignRunViewModel @Inject constructor(
     }
 
     /** "I can do this all day" — same scenario, clock from zero. */
+
+    /**
+     * The closing line of the scenario just played, placeholders resolved.
+     *
+     * Read from the run as it stood before the result was filed: a scenario's
+     * draws are cleared when it finishes, and the line usually names one.
+     */
+    private fun outcomeMessage(
+        run: CampaignRun,
+        scenarioId: String,
+        victory: Boolean,
+    ): String? {
+        val scenario = run.template.scenarios.firstOrNull { it.id == scenarioId } ?: return null
+        val outcome = if (victory) scenario.onVictory else scenario.onDefeat
+        val text = outcome?.message?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }
+            ?: return null
+        return resolveDraws(text, run, scenarioId)
+    }
+
     fun replayScenario() {
         state.value = state.value.copy(summary = null, page = RunPage.BRIEFING)
     }
