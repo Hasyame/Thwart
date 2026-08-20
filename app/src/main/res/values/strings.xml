@@ -296,16 +296,9 @@
         <item quantity="other">%1$d players</item>
     </plurals>
     <string name="campaign_empty">No campaign yet. Start one with the button below.</string>
-    <string name="campaign_music">Music</string>
-    <string name="campaign_music_unavailable">No app can open that playlist link.</string>
     <string name="settings_play_location">Where you play</string>
     <string name="settings_play_location_summary">Sent with a game to BoardGameGeek, which records it as free text. Left empty, nothing is sent.</string>
     <string name="settings_play_location_label">Location</string>
-    <string name="settings_music">Ambient music</string>
-    <string name="settings_music_summary">Opened from the play screen. It plays in Spotify or your browser, so it keeps going while you use the timer.</string>
-    <string name="settings_music_url">Playlist link</string>
-    <string name="settings_music_default">Use the default playlist</string>
-    <string name="settings_music_browse">Browse Melodice</string>
     <string name="campaign_no_scenario">This campaign has no current scenario. It may already be finished.</string>
     <string name="campaign_scenario_incomplete">Scenario “%1$s” has no victory questionnaire yet in the campaign template.</string>
     <string name="decks_campaign_cards">Campaign cards</string>

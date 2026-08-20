@@ -50,18 +50,6 @@ class AppPreferences @Inject constructor(
     }
 
     /**
-     * Ambient music opened from the play screen.
-     *
-     * A link rather than in-app playback: Spotify needs its own SDK and a
-     * signed-in account to play inside another app, and Melodice's playlists
-     * are YouTube. Handing the URL to whichever app owns it is both simpler and
-     * the only version that respects the user's subscription.
-     */
-    val musicUrl: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[KEY_MUSIC_URL] ?: DEFAULT_MUSIC_URL
-    }
-
-    /**
      * Where games get played, as free text.
      *
      * BoardGameGeek's location on a play is a string a person wrote — "Home",
@@ -109,32 +97,13 @@ class AppPreferences @Inject constructor(
 
     suspend fun currentPlayLocation(): String = playLocation.first()
 
-    suspend fun setMusicUrl(url: String) {
-        context.dataStore.edit { preferences ->
-            if (url.isBlank()) {
-                preferences.remove(KEY_MUSIC_URL)
-            } else {
-                preferences[KEY_MUSIC_URL] = url.trim()
-            }
-        }
-    }
-
     suspend fun setTrackEncounter(enabled: Boolean) {
         context.dataStore.edit { preferences -> preferences[KEY_TRACK_ENCOUNTER] = enabled }
     }
 
     companion object {
-        /** The Marvel Champions ambient playlist on Spotify. */
-        const val DEFAULT_MUSIC_URL: String =
-            "https://open.spotify.com/playlist/70oaFf8tEpbWCNcXdDVSfH"
-
-        /** Curated ambient playlists for the game, to pick a different one from. */
-        const val MELODICE_URL: String =
-            "https://melodice.org/playlist/marvel-champions-the-card-game-2019/"
-
         private val KEY_CARD_LOCALE = stringPreferencesKey("card_locale")
         private val KEY_LAST_SYNC = longPreferencesKey("last_card_sync")
-        private val KEY_MUSIC_URL = stringPreferencesKey("music_url")
         private val KEY_THEME = stringPreferencesKey("theme_choice")
         private val KEY_PLAY_LOCATION = stringPreferencesKey("play_location")
         private val KEY_TRACK_ENCOUNTER = booleanPreferencesKey("track_encounter")

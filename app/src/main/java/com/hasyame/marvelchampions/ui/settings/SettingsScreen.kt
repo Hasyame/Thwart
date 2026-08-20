@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -39,11 +38,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
-import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.data.sync.CardSyncState
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
-import com.hasyame.marvelchampions.ui.util.openExternalUrl
 import com.hasyame.marvelchampions.ui.util.CONTACT_ADDRESS
 import com.hasyame.marvelchampions.data.diagnostics.CrashLog
 import com.hasyame.marvelchampions.ui.util.sendContactEmail
@@ -167,7 +164,6 @@ fun SettingsScreen(
                 onPlayLocationChange = viewModel::setPlayLocation,
             )
             HorizontalDivider()
-            MusicSection(state = state, onMusicUrlChange = viewModel::setMusicUrl)
             HorizontalDivider()
 
             val imageProgress by viewModel.imagePrefetchProgress.collectAsStateWithLifecycle()
@@ -266,14 +262,6 @@ fun SettingsScreen(
     }
 }
 
-/**
- * The playlist the play screen opens.
- *
- * A link rather than in-app playback: Spotify would need its own SDK and a
- * signed-in session to play inside another app, and Melodice's playlists are
- * YouTube. Handing the URL over keeps the user's own subscription and app in
- * charge.
- */
 /**
  * Where games get played, sent with a play to BoardGameGeek.
  *
@@ -401,47 +389,6 @@ private fun PlayLocationSection(
             label = { Text(stringResource(R.string.settings_play_location_label)) },
             modifier = Modifier.fillMaxWidth(),
         )
-    }
-}
-
-@Composable
-private fun MusicSection(
-    state: SettingsUiState,
-    onMusicUrlChange: (String) -> Unit,
-) {
-    val context = LocalContext.current
-    var draft by remember(state.musicUrl) { mutableStateOf(state.musicUrl) }
-
-    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = stringResource(R.string.settings_music),
-            style = MaterialTheme.typography.titleSmall,
-        )
-        Text(
-            text = stringResource(R.string.settings_music_summary),
-            style = MaterialTheme.typography.bodySmall,
-        )
-        OutlinedTextField(
-            value = draft,
-            onValueChange = {
-                draft = it
-                onMusicUrlChange(it)
-            },
-            singleLine = true,
-            label = { Text(stringResource(R.string.settings_music_url)) },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextButton(
-                onClick = {
-                    draft = AppPreferences.DEFAULT_MUSIC_URL
-                    onMusicUrlChange(AppPreferences.DEFAULT_MUSIC_URL)
-                },
-            ) { Text(stringResource(R.string.settings_music_default)) }
-            TextButton(
-                onClick = { openExternalUrl(context, AppPreferences.MELODICE_URL) },
-            ) { Text(stringResource(R.string.settings_music_browse)) }
-        }
     }
 }
 

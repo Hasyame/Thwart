@@ -316,16 +316,9 @@
         <item quantity="other">%1$d joueurs</item>
     </plurals>
     <string name="campaign_empty">Aucune campagne. Démarrez-en une avec le bouton ci-dessous.</string>
-    <string name="campaign_music">Musique</string>
-    <string name="campaign_music_unavailable">Aucune application ne peut ouvrir ce lien.</string>
     <string name="settings_play_location">Où vous jouez</string>
     <string name="settings_play_location_summary">Envoyé avec une partie à BoardGameGeek, qui le note en texte libre. Laissé vide, rien n\'est envoyé.</string>
     <string name="settings_play_location_label">Lieu</string>
-    <string name="settings_music">Musique d\'ambiance</string>
-    <string name="settings_music_summary">Ouverte depuis l\'écran de jeu. Elle se lance dans Spotify ou votre navigateur, et continue pendant que vous utilisez le minuteur.</string>
-    <string name="settings_music_url">Lien de la playlist</string>
-    <string name="settings_music_default">Utiliser la playlist par défaut</string>
-    <string name="settings_music_browse">Parcourir Melodice</string>
     <string name="campaign_no_scenario">Cette campagne n\'a pas de scénario en cours. Elle est peut-être déjà terminée.</string>
     <string name="campaign_scenario_incomplete">Le scénario « %1$s » n\'a pas encore de questionnaire de victoire dans le modèle de campagne.</string>
     <string name="decks_campaign_cards">Cartes de campagne</string>

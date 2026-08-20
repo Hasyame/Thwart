@@ -1,0 +1,16 @@
+Les liens de musique d'ambiance sont retirés.
+
+L'écran de jeu avait un bouton Musique qui ouvrait une playlist Spotify
+préconfigurée, et les réglages proposaient un champ pour votre propre lien
+ainsi qu'un raccourci vers Melodice. Tout a été retiré : le bouton, le réglage
+et le lien enregistré.
+
+Livrer ces liens préconfigurés revenait à ce qu'une application libre vous
+oriente d'emblée vers des services non libres, ce que F-Droid signale à juste
+titre. La fonction ne faisait qu'ouvrir une URL dans une autre application —
+vous pouvez le faire depuis votre lecteur de musique, et elle continuera de
+jouer par-dessus le minuteur exactement comme avant. Cela ne valait pas de
+porter une étiquette d'anti-fonctionnalité.
+
+Rien d'autre ne change. L'application interroge toujours MarvelCDB pour les
+cartes, et BoardGameGeek uniquement si vous le configurez vous-même.

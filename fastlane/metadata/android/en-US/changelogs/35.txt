@@ -1,0 +1,15 @@
+The ambient music links are gone.
+
+The play screen had a Music button that opened a preconfigured Spotify
+playlist, and Settings had a field for your own playlist link plus a shortcut
+to Melodice. All of it has been removed: the button, the setting, and the
+stored link.
+
+Shipping those links preconfigured meant a libre app pointing you at non-libre
+services out of the box, which F-Droid quite reasonably flags. The feature only
+ever opened a URL in another app — you can do that from your music app
+directly, and it will keep playing over the timer exactly as before. It was not
+worth carrying an anti-feature label for.
+
+Nothing else changes. The app still talks to MarvelCDB for card data, and to
+BoardGameGeek only if you set that up yourself.

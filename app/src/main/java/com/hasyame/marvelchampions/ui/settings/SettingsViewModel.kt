@@ -33,7 +33,6 @@ data class SettingsUiState(
     val cardLocale: CardLocale = CardLocale.FRENCH,
     val lastCardSync: Long? = null,
     val syncState: CardSyncState = CardSyncState.Idle,
-    val musicUrl: String = AppPreferences.DEFAULT_MUSIC_URL,
     val playLocation: String = "",
     /** Counters during a game. Off unless the player asks for them. */
     val trackEncounter: Boolean = false,
@@ -61,7 +60,6 @@ class SettingsViewModel @Inject constructor(
         preferences.cardLocale,
         preferences.lastCardSync,
         syncManager.observeState(),
-        preferences.musicUrl,
         preferences.themeChoice,
         preferences.playLocation,
         preferences.trackEncounter,
@@ -70,10 +68,9 @@ class SettingsViewModel @Inject constructor(
             cardLocale = values[0] as CardLocale,
             lastCardSync = values[1] as Long?,
             syncState = values[2] as CardSyncState,
-            musicUrl = values[3] as String,
-            themeChoice = values[4] as ThemeChoice,
-            playLocation = values[5] as String,
-            trackEncounter = values[6] as Boolean,
+            themeChoice = values[3] as ThemeChoice,
+            playLocation = values[4] as String,
+            trackEncounter = values[5] as Boolean,
         )
     }
 
@@ -231,10 +228,6 @@ class SettingsViewModel @Inject constructor(
 
     fun setTrackEncounter(enabled: Boolean) {
         viewModelScope.launch { preferences.setTrackEncounter(enabled) }
-    }
-
-    fun setMusicUrl(url: String) {
-        viewModelScope.launch { preferences.setMusicUrl(url) }
     }
 
     fun syncCards() = syncManager.start()
