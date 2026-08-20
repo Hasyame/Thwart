@@ -24,11 +24,17 @@ private val KEYWORDS = listOf(
     "ACHEVÉ", "ÉCHOUÉ", "ACHIEVED", "FAILED",
 )
 
-// `(?U)` is what makes `\b` understand accented letters. Without it É is
-// not a word character, so there is no boundary in front of it and ÉCHOUÉ
-// never matched however often it appeared.
-private val KEYWORD_PATTERN =
-    Regex("(?U)" + KEYWORDS.joinToString("|") { "\\b$it\\b" })
+// Bounded by lookarounds rather than by `\b`, and deliberately not by
+// the `(?U)` flag: that is a JVM inline flag, Android matches with ICU,
+// and an unknown flag throws as the pattern compiles. Being a top-level
+// val, that landed the first time any campaign text was drawn — the
+// moment a scenario was chosen — while the JVM-run tests stayed green.
+/** The pattern itself, so a test can assert what it is made of. */
+internal val KEYWORD_PATTERN_FOR_TEST: Regex get() = KEYWORD_PATTERN
+
+private val KEYWORD_PATTERN = Regex(
+    KEYWORDS.joinToString("|") { """(?<!\p{L})$it(?!\p{L})""" },
+)
 
 private val KEYWORD_STYLE = SpanStyle(
     fontWeight = FontWeight.Bold,

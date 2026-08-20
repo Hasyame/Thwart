@@ -1,0 +1,11 @@
+Corrige un plantage au choix d'un scénario.
+
+La 1.21.0 mettait ACHEVÉ et ÉCHOUÉ en gras italique partout où ils
+apparaissent, et le motif qui les repère utilisait une option propre à la JVM.
+Android utilise un autre moteur d'expressions régulières, qui l'a refusée :
+l'application plantait donc dès le premier texte de campagne affiché, c'est-à-
+dire au moment de choisir un scénario.
+
+Les tests s'exécutent sur la JVM et ne voyaient rien, d'où la sortie du bug.
+Ils vérifient désormais que le motif ne contient pas cette option, et qu'un
+mot-clé accentué est bien reconnu.

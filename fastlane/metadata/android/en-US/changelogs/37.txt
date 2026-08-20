@@ -1,0 +1,11 @@
+Fixes a crash when choosing a scenario.
+
+1.21.0 set ACHIEVED and FAILED apart in bold italic wherever they appear, and
+the pattern that finds them used a flag that only exists on the JVM. Android
+matches with a different regex engine, which rejected it — so the app crashed
+the first time it drew any campaign text, which is the moment you pick a
+scenario.
+
+The unit tests run on the JVM and were perfectly happy, which is why this got
+out. They now assert the pattern carries no such flag, and that an accented
+keyword is actually found.
