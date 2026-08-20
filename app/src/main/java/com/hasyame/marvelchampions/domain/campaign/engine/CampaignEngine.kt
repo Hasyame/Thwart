@@ -1,6 +1,7 @@
 package com.hasyame.marvelchampions.domain.campaign.engine
 
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.allSetupSteps
 import com.hasyame.marvelchampions.domain.campaign.template.CounterScope
 import com.hasyame.marvelchampions.domain.campaign.template.DrawDefinition
 import com.hasyame.marvelchampions.domain.campaign.template.Effect
@@ -63,6 +64,22 @@ class CampaignEngine(
                     if (event.id in refunded) state else applyPurchase(state, event)
 
                 is CampaignEvent.SetupActionTaken -> applySetupAction(template, state, event, heroStats)
+
+                // Moving on from a result the players could have reconsidered.
+                // Fear No Evil's lost jobs settle here rather than when the
+                // defeat is filed, because until this the table may go back.
+                is CampaignEvent.OutcomeContinued -> {
+                    val scenario = template.scenarios.firstOrNull { it.id == event.scenarioId }
+                    val outcome = if (event.victory) scenario?.onVictory else scenario?.onDefeat
+                    applyEffects(
+                        template,
+                        state,
+                        outcome?.onContinue.orEmpty(),
+                        event.scenarioId,
+                        AnswerSet(),
+                        heroStats,
+                    )
+                }
                 is CampaignEvent.SetupDrawn -> applyDraw(template, state, event)
                 // The kept card replaces the offer, so everything downstream —
                 // conditions, effects, the chips on the briefing — reads one
@@ -78,11 +95,11 @@ class CampaignEngine(
                 )
                 is CampaignEvent.EnvironmentsOffered -> applyEnvironmentOffer(template, state, event)
 
-                // The kept one leaves the pile; the other stays in it. The
-                // pressure was applied when they were dealt, so nothing about
-                // the board changes here.
+                // The rotation has been read. The pressure was applied when the
+                // two were dealt, so nothing about the board changes here —
+                // this only clears the offer so the next reload does not deal
+                // another pair.
                 is CampaignEvent.EnvironmentChosen -> state.copy(
-                    environmentsUsed = state.environmentsUsed + event.environmentId,
                     environmentOffer = emptyList(),
                     environmentPicked = true,
                 )
@@ -180,9 +197,12 @@ class CampaignEngine(
                 timestamp = event.timestamp,
             ),
             totalPlayTimeMillis = next.totalPlayTimeMillis + event.elapsedMillis,
-            // Dropped once the scenario is behind us: a replay after a defeat is
-            // a fresh setup, and should not repeat the draw that just went badly.
-            draws = next.draws - event.scenarioId,
+            // A replay is a fresh setup, so the scenario's own setup draws go.
+            // What the campaign assigned from outside that setup does not: Fear
+            // No Evil notes which subordinate is behind a job before it is ever
+            // played, and the book keeps that name once noted. Dropping the lot
+            // dealt a different villain every time a job was retried.
+            draws = next.draws.replayed(template, event.scenarioId),
             currentScenarioId = advanced.scenarioId,
             finished = advanced.finished,
             awaitingChoice = advanced.awaitingChoice,
@@ -697,21 +717,25 @@ class CampaignEngine(
             template: CampaignTemplate,
             state: CampaignState,
         ): List<ScenarioTemplate> {
-            val played = state.completedScenarios.map { it.scenarioId }.toSet()
+            // Resolved, not merely played. Fear No Evil says a lost scenario
+            // has not failed and may be attempted again — only winning it or
+            // letting the villains push it to its limit settles it. Treating
+            // any completed scenario as done took a defeat and quietly struck
+            // the job off, which is neither the rule nor what a table expects.
+            val won = state.completedScenarios.filter { it.victory }.map { it.scenarioId }.toSet()
             val remaining = template.scenarios.filterNot {
-                it.id in played ||
+                it.id in won ||
                     it.id == template.finaleScenarioId ||
-                    // Lost without being played: Fear No Evil's villains push
-                    // the places the heroes walk past, and a place pushed three
-                    // times is gone. Offering it again would let a table undo
-                    // the only decision the campaign asks them to make.
+                    // Lost without ever being played: a place pushed three times
+                    // is gone. Offering it again would let a table undo the one
+                    // decision the campaign asks of them.
                     ConditionEvaluator.evaluate(
                         it.failedWhen,
                         EvaluationContext(state = state, scenarioId = it.id),
                     ) && it.failedWhen != null
             }
             return remaining.ifEmpty {
-                template.scenarios.filter { it.id == template.finaleScenarioId && it.id !in played }
+                template.scenarios.filter { it.id == template.finaleScenarioId && it.id !in won }
             }
         }
 
@@ -735,4 +759,22 @@ class CampaignEngine(
         /** Counter a market purchase spends when the template does not say. */
         const val MARKET_COUNTER_FALLBACK: String = "credits"
     }
+}
+
+/**
+ * This scenario's draws as a replay should find them.
+ *
+ * Setup draws are made again — that is what a fresh setup means — while
+ * anything the campaign assigned outside the scenario's setup survives.
+ */
+private fun Map<String, Map<String, List<String>>>.replayed(
+    template: CampaignTemplate,
+    scenarioId: String,
+): Map<String, Map<String, List<String>>> {
+    val setupDrawIds = template.scenarios.firstOrNull { it.id == scenarioId }
+        ?.allSetupSteps().orEmpty()
+        .mapNotNull { it.draw?.id }
+        .toSet()
+    val kept = this[scenarioId].orEmpty().filterKeys { it !in setupDrawIds }
+    return if (kept.isEmpty()) this - scenarioId else this + (scenarioId to kept)
 }

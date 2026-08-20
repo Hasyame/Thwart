@@ -445,6 +445,15 @@ data class Outcome(
     val message: LocalizedText? = null,
     val prompts: List<Prompt> = emptyList(),
     val effects: List<Effect> = emptyList(),
+    /**
+     * Applied when the players move on from this outcome, not when it is filed.
+     *
+     * The difference matters wherever a result can be reconsidered. Fear No
+     * Evil lets a lost job be attempted again, so losing settles nothing; it is
+     * choosing to continue that turns the environment over and takes the job
+     * out of the campaign.
+     */
+    val onContinue: List<Effect> = emptyList(),
     /** Guarded and evaluated in order; the first match wins. */
     val next: List<NextStep> = emptyList(),
 )

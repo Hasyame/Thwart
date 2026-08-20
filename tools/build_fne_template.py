@@ -225,20 +225,21 @@ def villain_setup():
         ),
         "when": {"drawIs": "villain:" + mary},
     })
-    steps.append({
-        "text": text(
-            "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (A) / \"Bloody Mary\" (A), "
-            "face au hasard.",
-        ),
-        "when": {"all": [{"drawIs": "villain:" + mary}, {"difficulty": "standard"}]},
-    })
-    steps.append({
-        "text": text(
-            "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (B) / \"Bloody Mary\" (B), "
-            "face au hasard.",
-        ),
-        "when": {"all": [{"drawIs": "villain:" + mary}, {"difficulty": "expert"}]},
-    })
+    # The book turns this face at random, so the app turns it. Two draws
+    # rather than one: the stage differs by difficulty, and a draw's pool is
+    # fixed when the template is written.
+    for difficulty, stage in (("standard", "a"), ("expert", "b")):
+        steps.append({
+            "text": text(
+                "Mise en place de \"Psyché Perturbée\" : commencez sur cette face, "
+                "tirée au hasard par l'application.",
+            ),
+            "draw": {
+                "id": "maryFace",
+                "from": ["fne_face_mary_" + stage, "fne_face_bloody_" + stage],
+            },
+            "when": {"all": [{"drawIs": "villain:" + mary}, {"difficulty": difficulty}]},
+        })
     steps.append({
         "text": text(
             "Ce scénario se gagne en plaçant trois pions sur \"Psyché Perturbée\", pas en "
@@ -268,8 +269,8 @@ def environment_board():
             "text": text(
                 "Mettez en jeu %s, face ÉCHOUÉ, et résolvez sa Mise en place." % q(name_fr),
             ),
-            # Two ways to fail a job: the villains push it to three, or the
-            # players go there and lose.
+            # Both routes to a failed job, the same condition the choice
+            # list and Le Caïd read.
             "when": {"any": [
                 {"counter": counter, "atLeast": 3},
                 {"flag": "echoue." + scenario_id},
@@ -420,22 +421,26 @@ def victory_outcome(scenario_id):
 
 
 def defeat_outcome(counter, scenario_id):
-    """A job that was played and lost is settled: its environment is ECHOUE.
+    """A lost job is not a failed one.
 
-    Leaving it unresolved was the bug behind the dead end — the campaign moved
-    on to the next choice while the job itself turned over nothing, so the
-    defeat page had neither news nor anywhere to send the players.
+    The book is explicit that losing does not fail a scenario and that it can be
+    played again, so nothing about the environment is recorded here. Only three
+    ticks fails a job, and that is counted from the draw, not from this page.
     """
     return {
         "message": text(
-            "{villain} vous a échappé. %s passe ÉCHOUÉ : cette mission sort de "
-            "la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. "
-            "C'est une mission de moins avant Le Caïd."
+            "{villain} vous a échappé. Vous pouvez y retourner tout de suite. "
+            "Si vous continuez, %s passe ÉCHOUÉ : elle sort de la campagne et "
+            "son environnement reste sur la table, face ÉCHOUÉ."
             % ("{card:%s}" % scenario_id),
         ),
+        # Recorded only if the players move on. Going back costs nothing, which
+        # is exactly what the book allows.
+        "onContinue": [
+            {"op": "setFlag", "flag": "echoue." + scenario_id, "boolValue": True},
+        ],
         "prompts": [vp_prompt()],
         "effects": [
-            {"op": "setFlag", "flag": "echoue." + scenario_id, "boolValue": True},
             # Standard lets a lost place be tried again; only Expert pushes it.
             {"op": "addCounter", "counter": counter, "value": 1, "max": 3,
              "when": {"difficulty": "expert"}},
@@ -450,7 +455,12 @@ def scenario(scenario_id, name_fr, name_en, counter):
         "name": text(name_fr, name_en),
         "flavour": text(SCENARIO_FLAVOUR[scenario_id]),
         "pressureCounterId": counter,
-        "failedWhen": {"counter": counter, "atLeast": 3},
+        # Two ways a job fails: the villains push it to three, or the players
+        # lose there and choose to move on rather than go back.
+        "failedWhen": {"any": [
+            {"counter": counter, "atLeast": 3},
+            {"flag": "echoue." + scenario_id},
+        ]},
         "victoryLabel": text("Le méchant est vaincu !", "The villain is beaten!"),
         "defeatLabel": text("Le méchant l'emporte !", "The villain wins!"),
         "baseSetup": {},
@@ -571,6 +581,14 @@ def build():
         local_names[sid] = text(name_fr)
     for code, name_fr in VILLAINS:
         local_names[code] = text(name_fr)
+    # The two faces of Psyche Perturbee, which the app turns at random.
+    for face, face_name in (
+        ("fne_face_mary_a", "Mary Typhoïde (A)"),
+        ("fne_face_bloody_a", "Bloody Mary (A)"),
+        ("fne_face_mary_b", "Mary Typhoïde (B)"),
+        ("fne_face_bloody_b", "Bloody Mary (B)"),
+    ):
+        local_names[face] = text(face_name)
 
     template = {
         "_note": [
@@ -607,12 +625,27 @@ def build():
         # what it needs from them, and the one rule worth knowing up front.
         "notice": text(
             "Campagne non officielle, reconstituée pour l'application : le livret "
-            "et les cartes de la boîte Peur de Rien restent nécessaires pour jouer. "
-            "Les textes de cette campagne sont pour l'instant uniquement en français.\n\n"
+            "et les cartes de la boîte Peur de Rien restent nécessaires pour jouer."
+            "\n\n"
             "L'application tire pour vous les environnements et le SUBORDONNÉ de "
             "chaque mission, et tient le compte de la pression. Une mission qui "
-            "atteint trois marqueurs est perdue : elle sort de la campagne, et Le "
-            "Caïd n'en sera que plus coriace le moment venu.",
+            "atteint trois marqueurs est perdue : elle sort de la campagne. Le "
+            "Caïd sera d'autant mieux préparé que vous aurez achevé de missions."
+            "\n\n"
+            "Les noms de cartes viennent de la boîte française, la seule dont "
+            "dispose le développeur. La traduction anglaise du reste est en cours.",
+
+            "Unofficial, reconstructed for the app: the rulebook and cards from "
+            "the Fear No Evil box are still needed to play."
+            "\n\n"
+            "The app draws the environments and each mission's SUBORDINATE for "
+            "you, and keeps count of the pressure. A mission that reaches three "
+            "marks is lost and leaves the campaign. Kingpin is the better "
+            "prepared for every mission you achieve, not for the ones you lose."
+            "\n\n"
+            "Card names and the campaign's own terms come from the French box, "
+            "the only one the developer has, so they may not match the official "
+            "English printing. English wording for the rest is on its way.",
         ),
         "villainPool": VILLAIN_CODES,
         # Three ticks fails that job, not the campaign — the book's rule, and

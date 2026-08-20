@@ -44,6 +44,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -159,7 +163,7 @@ fun CampaignRunScreen(
                     RunPage.RESULT -> ResultPage(
                         run = run,
                         summary = state.summary,
-                        onNext = viewModel::continueToNextScenario,
+                        onNext = viewModel::continueFromOutcome,
                         onConcede = viewModel::concedeCampaign,
                         onMarket = { viewModel.goTo(RunPage.MARKET) },
                         onBreak = onBack,
@@ -168,7 +172,8 @@ fun CampaignRunScreen(
 
                     RunPage.DEFEAT -> DefeatPage(
                         summary = state.summary,
-                        onContinue = viewModel::continueToNextScenario,
+                        onRetry = viewModel::retryScenario,
+                        onContinue = viewModel::continueFromOutcome,
                         onBreak = onBack,
                         onConcede = viewModel::concedeCampaign,
                     )
@@ -181,7 +186,7 @@ fun CampaignRunScreen(
 
                     RunPage.ENVIRONMENT -> EnvironmentPage(
                         run = run,
-                        onChoose = viewModel::chooseEnvironment,
+                        onContinue = viewModel::acknowledgeEnvironments,
                         onBreak = onBack,
                     )
 
@@ -202,6 +207,9 @@ fun CampaignRunScreen(
         }
     }
 }
+
+/** Ticks a job carries before the villains have taken it for good. */
+private const val FALLEN_PRESSURE = 3
 
 /** Page 1. Title, story, what to put on the table. */
 @Composable
@@ -773,6 +781,7 @@ private fun ResultPage(
 @Composable
 private fun DefeatPage(
     summary: ScenarioOutcomeSummary?,
+    onRetry: () -> Unit,
     onContinue: () -> Unit,
     onBreak: () -> Unit,
     onConcede: (() -> Unit)? = null,
@@ -801,7 +810,12 @@ private fun DefeatPage(
                 summary?.outcomeMessage?.let { Text(campaignText(it)) }
             }
         }
-        Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
+        // Retrying settles nothing, so it comes first: the job is still
+        // there to be won until the players decide otherwise.
+        Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.campaign_retry))
+        }
+        OutlinedButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.campaign_continue))
         }
         OutlinedButton(onClick = onBreak, modifier = Modifier.fillMaxWidth()) {
@@ -873,15 +887,19 @@ private fun Int?.orEmpty0(): Int = this ?: 0
  * The rotation opens here: two places the villains hit, and the players keep
  * one of them.
  *
- * Both were pushed the moment they were dealt — the board below already counts
- * it — so what the choice decides is which of the two leaves the pile for good.
- * When only one is left it is dealt alone and takes the pressure twice, which
- * is how a campaign that has run long closes in on itself.
+ * Both were pushed the moment they were dealt, and that is the whole of it —
+ * the rules draw two and tick the jobs they name. Nothing is kept here. An
+ * environment leaves the pile by its job being won or pushed over, and the one
+ * that ends up on the table is the one belonging to the job the players go on
+ * to choose.
+ *
+ * When only one is left in the pile it is dealt alone and takes the tick twice,
+ * which is how a campaign that has run long closes in on itself.
  */
 @Composable
 private fun EnvironmentPage(
     run: CampaignRun,
-    onChoose: (String) -> Unit,
+    onContinue: () -> Unit,
     onBreak: () -> Unit,
 ) {
     val offered = run.state.environmentOffer
@@ -906,10 +924,7 @@ private fun EnvironmentPage(
             val scenario = run.template.scenarios.firstOrNull { it.id == environmentId }
             ComicPanel(Modifier.fillMaxWidth()) {
                 Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable { onChoose(environmentId) }
-                        .padding(16.dp),
+                    Modifier.fillMaxWidth().padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
@@ -918,12 +933,22 @@ private fun EnvironmentPage(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        text = stringResource(R.string.campaign_environment_keep),
+                        text = stringResource(
+                            if (lone) {
+                                R.string.campaign_environment_pushed_twice
+                            } else {
+                                R.string.campaign_environment_pushed
+                            },
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
+        }
+
+        Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.campaign_continue))
         }
 
         // The whole board, so the choice is made against what it costs rather
@@ -936,17 +961,41 @@ private fun EnvironmentPage(
         run.template.scenarios.forEach { scenario ->
             val counterId = scenario.pressureCounterId ?: return@forEach
             val pressure = run.state.counter(counterId)
-            val played = run.state.completedScenarios.any { it.scenarioId == scenario.id }
+            // Won is ACHIEVED, pushed over is FAILED, and anything else is
+            // still in the pile however often it has been played and lost.
+            val won = run.state.completedScenarios.any {
+                it.scenarioId == scenario.id && it.victory
+            }
+            val fallen = pressure >= FALLEN_PRESSURE
+            val achieved = stringResource(R.string.campaign_environment_achieved)
+            val failed = stringResource(R.string.campaign_environment_failed)
+            val standing = stringResource(R.string.campaign_pressure, pressure)
             Text(
-                text = scenario.name?.resolve(run.localeCode).orEmpty() + "   " +
-                    if (played) {
-                        stringResource(R.string.campaign_pressure_done)
-                    } else {
-                        stringResource(R.string.campaign_pressure, pressure)
-                    },
+                // The count stays visible on a job that has fallen — three of
+                // three is how it got there — with the face it turned over set
+                // apart, because that is the line worth spotting at a glance.
+                text = buildAnnotatedString {
+                    append(scenario.name?.resolve(run.localeCode).orEmpty())
+                    append("   ")
+                    append(standing)
+                    val tag = when {
+                        won -> achieved
+                        fallen -> failed
+                        else -> null
+                    }
+                    if (tag != null) {
+                        append("   ")
+                        withStyle(
+                            SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                fontStyle = FontStyle.Italic,
+                            ),
+                        ) { append(tag) }
+                    }
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = when {
-                    played -> MaterialTheme.colorScheme.onSurfaceVariant
+                    won || fallen -> MaterialTheme.colorScheme.onSurfaceVariant
                     pressure >= 2 -> MaterialTheme.colorScheme.error
                     else -> MaterialTheme.colorScheme.onSurface
                 },

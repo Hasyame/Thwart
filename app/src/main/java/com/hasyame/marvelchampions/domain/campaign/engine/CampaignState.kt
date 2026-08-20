@@ -46,7 +46,6 @@ data class CampaignState(
     val environmentOffer: List<String> = emptyList(),
 
     /** Environments the players have kept, and which never come up again. */
-    val environmentsUsed: List<String> = emptyList(),
 
     /**
      * True once this rotation's environment has been kept.

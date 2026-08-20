@@ -64,6 +64,8 @@ data class ScenarioOutcomeSummary(
     val campaignFinished: Boolean = false,
     /** The scenario's own closing line, placeholders already resolved. */
     val outcomeMessage: String? = null,
+    /** The scenario this result belongs to, which the run may have left. */
+    val scenarioId: String? = null,
 )
 
 data class CampaignRunUiState(
@@ -171,11 +173,17 @@ class CampaignRunViewModel @Inject constructor(
         }
     }
 
-    /** Keeps one of the dealt environments and moves on to the scenario choice. */
-    fun chooseEnvironment(environmentId: String) {
+    /**
+     * Files the rotation's draw so it is not dealt again.
+     *
+     * Nothing is chosen here — the rules draw two and tick the jobs they name.
+     * This only records that the table has read it, which is what stops the
+     * next reload dealing another pair.
+     */
+    fun acknowledgeEnvironments() {
         val id = runId ?: return
         viewModelScope.launch {
-            repository.chooseEnvironment(id, environmentId)
+            repository.acknowledgeEnvironments(id)
             reload()
             state.value = state.value.copy(page = pageFor(state.value.run))
         }
@@ -271,6 +279,7 @@ class CampaignRunViewModel @Inject constructor(
                     // Resolved against the run as it was, because the draws
                     // belonging to a scenario do not outlive it.
                     outcomeMessage = outcomeMessage(run, scenarioId, victory = false),
+                    scenarioId = scenarioId,
                 ),
             )
         }
@@ -350,6 +359,7 @@ class CampaignRunViewModel @Inject constructor(
                         },
                     campaignFinished = finished,
                     outcomeMessage = outcomeMessage(run, scenarioId, victory = true),
+                    scenarioId = scenarioId,
                 ),
             )
         }
@@ -384,14 +394,35 @@ class CampaignRunViewModel @Inject constructor(
         return resolveDraws(text, run, scenarioId)
     }
 
-    fun replayScenario() {
-        state.value = state.value.copy(summary = null, page = RunPage.BRIEFING)
+    /**
+     * Goes back to the scenario just lost, without settling anything.
+     *
+     * Fear No Evil says a lost job has not failed and may be played again, so
+     * retrying costs the campaign nothing: the environment turns over only
+     * when the players decide to move on instead.
+     */
+    fun retryScenario() {
+        val id = runId ?: return
+        val scenarioId = state.value.summary?.scenarioId ?: return
+        viewModelScope.launch {
+            repository.chooseScenario(id, scenarioId)
+            reload()
+            state.value = state.value.copy(summary = null, page = RunPage.BRIEFING)
+        }
     }
 
-    fun continueToNextScenario() {
-        // Not straight to a briefing: a campaign that deals environments starts
-        // its next rotation here, and one may already have fallen.
-        state.value = state.value.copy(summary = null, page = pageFor(state.value.run))
+    /** Moves on from a result, applying whatever that decision costs. */
+    fun continueFromOutcome() {
+        val id = runId ?: return
+        val summary = state.value.summary
+        val scenarioId = summary?.scenarioId
+        viewModelScope.launch {
+            if (scenarioId != null) {
+                repository.continueFromOutcome(id, scenarioId, summary.victory)
+                reload()
+            }
+            state.value = state.value.copy(summary = null, page = pageFor(state.value.run))
+        }
     }
 
     fun purchase(heroId: String, cardCode: String, cost: Int, cardListId: String) {

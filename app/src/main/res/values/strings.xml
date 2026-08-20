@@ -192,6 +192,7 @@
     <string name="campaign_unknown_prompt">Unsupported question type “%1$s” in the template.</string>
     <string name="campaign_defeat_recorded">Defeat recorded</string>
     <string name="campaign_take_a_break">Take a break</string>
+    <string name="campaign_retry">I can beat you! (retry)</string>
     <string name="campaign_continue">Continue</string>
     <string name="campaign_stop_campaign">Stop the campaign</string>
 
@@ -533,11 +534,13 @@
     <string name="campaign_villains_struck">This round the villains strike: %1$s</string>
     <string name="campaign_pressure">Pressure %1$d / 3</string>
     <string name="campaign_pressure_critical">Pressure %1$d / 3 — one more and it falls</string>
-    <string name="campaign_environment_title">The villains strike two places. Keep one.</string>
+    <string name="campaign_environment_title">The villains push two places.</string>
     <string name="campaign_environment_last">One place left. It takes the hit twice.</string>
-    <string name="campaign_environment_keep">Keep this one</string>
+    <string name="campaign_environment_achieved">ACHIEVED</string>
+    <string name="campaign_environment_failed">FAILED</string>
+    <string name="campaign_environment_pushed">Pushed one step</string>
+    <string name="campaign_environment_pushed_twice">Alone in the pile — pushed two steps</string>
     <string name="campaign_pressure_board">Where every place stands</string>
-    <string name="campaign_pressure_done">settled</string>
     <string name="campaign_lost_title">Campaign abandoned</string>
     <string name="campaign_lost_message">You chose to stop here rather than face Kingpin again. The campaign ends here.</string>
     <string name="campaign_lost_leave">Close the campaign</string>

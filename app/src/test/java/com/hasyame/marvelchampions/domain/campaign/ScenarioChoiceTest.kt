@@ -95,15 +95,17 @@ class ScenarioChoiceTest {
     }
 
     @Test
-    fun `losing spends the scenario too`() {
-        // This campaign does not replay a defeat: it carries the failure
-        // forward instead, so a lost scenario is as spent as a won one.
+    fun `losing leaves the scenario on the table`() {
+        // Fear No Evil is explicit that losing does not fail a scenario and
+        // that it can be played again. A defeat that struck the job off took
+        // that decision away from the table.
         val state = engine.fold(
             template,
             listOf(started(), chose("raft", 1), played("raft", 2, victory = false)),
         )
 
-        assertEquals(listOf("racket"), CampaignEngine.choosableScenarios(template, state).map { it.id })
+        val ids = CampaignEngine.choosableScenarios(template, state).map { it.id }
+        assertTrue("a lost scenario must still be choosable: $ids", "raft" in ids)
     }
 
     @Test

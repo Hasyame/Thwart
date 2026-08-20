@@ -199,6 +199,7 @@
     <string name="campaign_unknown_prompt">Type de question « %1$s » non pris en charge dans le modèle.</string>
     <string name="campaign_defeat_recorded">Défaite enregistrée</string>
     <string name="campaign_take_a_break">Faire une pause</string>
+    <string name="campaign_retry">Je peux le battre ! (rejouer)</string>
     <string name="campaign_continue">Continuer</string>
     <string name="campaign_stop_campaign">Arrêter la campagne</string>
 
@@ -553,11 +554,13 @@
     <string name="campaign_villains_struck">Ce tour, les vilains frappent : %1$s</string>
     <string name="campaign_pressure">Menace %1$d / 3</string>
     <string name="campaign_pressure_critical">Menace %1$d / 3 — une de plus et il tombe</string>
-    <string name="campaign_environment_title">Les vilains frappent deux lieux. Gardez-en un.</string>
+    <string name="campaign_environment_title">Les vilains font progresser deux lieux.</string>
     <string name="campaign_environment_last">Un seul lieu restant. Il encaisse deux fois.</string>
-    <string name="campaign_environment_keep">Garder celui-ci</string>
+    <string name="campaign_environment_achieved">ACHEVÉ</string>
+    <string name="campaign_environment_failed">ÉCHOUÉ</string>
+    <string name="campaign_environment_pushed">Progresse d’une case</string>
+    <string name="campaign_environment_pushed_twice">Seul dans la pile — progresse de deux cases</string>
     <string name="campaign_pressure_board">Où en est chaque lieu</string>
-    <string name="campaign_pressure_done">réglé</string>
     <string name="campaign_lost_title">Campagne abandonnée</string>
     <string name="campaign_lost_message">Vous avez choisi d’en rester là face au Caïd. La campagne s’arrête ici.</string>
     <string name="campaign_lost_leave">Fermer la campagne</string>

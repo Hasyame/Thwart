@@ -128,7 +128,6 @@ class EnvironmentDrawTest {
             listOf(start(), offer(listOf("musee", "raft"), 1), keep("musee", 2)),
         )
 
-        assertEquals(listOf("musee"), state.environmentsUsed)
         // Nothing is on the table any more: the next rotation deals afresh.
         assertEquals(emptyList<String>(), state.environmentOffer)
     }

@@ -732,14 +732,41 @@ class CampaignRepository @Inject constructor(
         }
 
     /** Records the environment the players kept; it never comes up again. */
-    suspend fun chooseEnvironment(runId: String, environmentId: String) =
+    /**
+     * Files the rotation's draw, so the next reload does not deal another pair.
+     *
+     * The event still carries an environment id for the sake of logs written
+     * when the app believed one was kept. Nothing reads it: the rules draw two
+     * and tick the jobs they name, and no environment is chosen here.
+     */
+    suspend fun acknowledgeEnvironments(runId: String) =
         withContext(ioDispatcher) {
             append(
                 runId,
                 CampaignEvent.EnvironmentChosen(
                     id = UUID.randomUUID().toString(),
                     timestamp = System.currentTimeMillis(),
-                    environmentId = environmentId,
+                    environmentId = "",
+                ),
+            )
+        }
+
+    /**
+     * Records that the players moved on from a result rather than retrying it.
+     *
+     * Fear No Evil's lost jobs turn their environment over here, which is why
+     * this is separate from filing the defeat: until it is recorded the table
+     * can still go back and play the job again.
+     */
+    suspend fun continueFromOutcome(runId: String, scenarioId: String, victory: Boolean) =
+        withContext(ioDispatcher) {
+            append(
+                runId,
+                CampaignEvent.OutcomeContinued(
+                    id = UUID.randomUUID().toString(),
+                    timestamp = System.currentTimeMillis(),
+                    scenarioId = scenarioId,
+                    victory = victory,
                 ),
             )
         }

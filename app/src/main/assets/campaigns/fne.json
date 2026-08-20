@@ -84,11 +84,27 @@
   "fne_villain_mary_typhoide": {
    "fr": "Mary Typhoïde",
    "en": "Mary Typhoïde"
+  },
+  "fne_face_mary_a": {
+   "fr": "Mary Typhoïde (A)",
+   "en": "Mary Typhoïde (A)"
+  },
+  "fne_face_bloody_a": {
+   "fr": "Bloody Mary (A)",
+   "en": "Bloody Mary (A)"
+  },
+  "fne_face_mary_b": {
+   "fr": "Mary Typhoïde (B)",
+   "en": "Mary Typhoïde (B)"
+  },
+  "fne_face_bloody_b": {
+   "fr": "Bloody Mary (B)",
+   "en": "Bloody Mary (B)"
   }
  },
  "notice": {
-  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Peur de Rien restent nécessaires pour jouer. Les textes de cette campagne sont pour l'instant uniquement en français.\n\nL'application tire pour vous les environnements et le SUBORDONNÉ de chaque mission, et tient le compte de la pression. Une mission qui atteint trois marqueurs est perdue : elle sort de la campagne, et Le Caïd n'en sera que plus coriace le moment venu.",
-  "en": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Peur de Rien restent nécessaires pour jouer. Les textes de cette campagne sont pour l'instant uniquement en français.\n\nL'application tire pour vous les environnements et le SUBORDONNÉ de chaque mission, et tient le compte de la pression. Une mission qui atteint trois marqueurs est perdue : elle sort de la campagne, et Le Caïd n'en sera que plus coriace le moment venu."
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Peur de Rien restent nécessaires pour jouer.\n\nL'application tire pour vous les environnements et le SUBORDONNÉ de chaque mission, et tient le compte de la pression. Une mission qui atteint trois marqueurs est perdue : elle sort de la campagne. Le Caïd sera d'autant mieux préparé que vous aurez achevé de missions.\n\nLes noms de cartes viennent de la boîte française, la seule dont dispose le développeur. La traduction anglaise du reste est en cours.",
+  "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Fear No Evil box are still needed to play.\n\nThe app draws the environments and each mission's SUBORDINATE for you, and keeps count of the pressure. A mission that reaches three marks is lost and leaves the campaign. Kingpin is the better prepared for every mission you achieve, not for the ones you lose.\n\nCard names and the campaign's own terms come from the French box, the only one the developer has, so they may not match the official English printing. English wording for the rest is on its way."
  },
  "villainPool": [
   "fne_villain_hammerhead",
@@ -494,8 +510,15 @@
    },
    {
     "text": {
-     "fr": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (A) / \"Bloody Mary\" (A), face au hasard.",
-     "en": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (A) / \"Bloody Mary\" (A), face au hasard."
+     "fr": "Mise en place de \"Psyché Perturbée\" : commencez sur cette face, tirée au hasard par l'application.",
+     "en": "Mise en place de \"Psyché Perturbée\" : commencez sur cette face, tirée au hasard par l'application."
+    },
+    "draw": {
+     "id": "maryFace",
+     "from": [
+      "fne_face_mary_a",
+      "fne_face_bloody_a"
+     ]
     },
     "when": {
      "all": [
@@ -510,8 +533,15 @@
    },
    {
     "text": {
-     "fr": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (B) / \"Bloody Mary\" (B), face au hasard.",
-     "en": "Mise en place de \"Psyché Perturbée\" : \"Mary Typhoïde\" (B) / \"Bloody Mary\" (B), face au hasard."
+     "fr": "Mise en place de \"Psyché Perturbée\" : commencez sur cette face, tirée au hasard par l'application.",
+     "en": "Mise en place de \"Psyché Perturbée\" : commencez sur cette face, tirée au hasard par l'application."
+    },
+    "draw": {
+     "id": "maryFace",
+     "from": [
+      "fne_face_mary_b",
+      "fne_face_bloody_b"
+     ]
     },
     "when": {
      "all": [
@@ -640,8 +670,15 @@
    },
    "pressureCounterId": "pressionMusee",
    "failedWhen": {
-    "counter": "pressionMusee",
-    "atLeast": 3
+    "any": [
+     {
+      "counter": "pressionMusee",
+      "atLeast": 3
+     },
+     {
+      "flag": "echoue.s1_musee"
+     }
+    ]
    },
    "victoryLabel": {
     "fr": "Le méchant est vaincu !",
@@ -803,9 +840,16 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s1_musee} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
-     "en": "{villain} vous a échappé. {card:s1_musee} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
+     "fr": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s1_musee} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ.",
+     "en": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s1_musee} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ."
     },
+    "onContinue": [
+     {
+      "op": "setFlag",
+      "flag": "echoue.s1_musee",
+      "boolValue": true
+     }
+    ],
     "prompts": [
      {
       "id": "vp",
@@ -817,11 +861,6 @@
      }
     ],
     "effects": [
-     {
-      "op": "setFlag",
-      "flag": "echoue.s1_musee",
-      "boolValue": true
-     },
      {
       "op": "addCounter",
       "counter": "pressionMusee",
@@ -851,8 +890,15 @@
    },
    "pressureCounterId": "pressionPoursuite",
    "failedWhen": {
-    "counter": "pressionPoursuite",
-    "atLeast": 3
+    "any": [
+     {
+      "counter": "pressionPoursuite",
+      "atLeast": 3
+     },
+     {
+      "flag": "echoue.s2_poursuite"
+     }
+    ]
    },
    "victoryLabel": {
     "fr": "Le méchant est vaincu !",
@@ -1014,9 +1060,16 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s2_poursuite} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
-     "en": "{villain} vous a échappé. {card:s2_poursuite} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
+     "fr": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s2_poursuite} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ.",
+     "en": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s2_poursuite} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ."
     },
+    "onContinue": [
+     {
+      "op": "setFlag",
+      "flag": "echoue.s2_poursuite",
+      "boolValue": true
+     }
+    ],
     "prompts": [
      {
       "id": "vp",
@@ -1028,11 +1081,6 @@
      }
     ],
     "effects": [
-     {
-      "op": "setFlag",
-      "flag": "echoue.s2_poursuite",
-      "boolValue": true
-     },
      {
       "op": "addCounter",
       "counter": "pressionPoursuite",
@@ -1062,8 +1110,15 @@
    },
    "pressureCounterId": "pressionRacket",
    "failedWhen": {
-    "counter": "pressionRacket",
-    "atLeast": 3
+    "any": [
+     {
+      "counter": "pressionRacket",
+      "atLeast": 3
+     },
+     {
+      "flag": "echoue.s3_racket"
+     }
+    ]
    },
    "victoryLabel": {
     "fr": "Le méchant est vaincu !",
@@ -1225,9 +1280,16 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s3_racket} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
-     "en": "{villain} vous a échappé. {card:s3_racket} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
+     "fr": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s3_racket} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ.",
+     "en": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s3_racket} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ."
     },
+    "onContinue": [
+     {
+      "op": "setFlag",
+      "flag": "echoue.s3_racket",
+      "boolValue": true
+     }
+    ],
     "prompts": [
      {
       "id": "vp",
@@ -1239,11 +1301,6 @@
      }
     ],
     "effects": [
-     {
-      "op": "setFlag",
-      "flag": "echoue.s3_racket",
-      "boolValue": true
-     },
      {
       "op": "addCounter",
       "counter": "pressionRacket",
@@ -1273,8 +1330,15 @@
    },
    "pressureCounterId": "pressionRaft",
    "failedWhen": {
-    "counter": "pressionRaft",
-    "atLeast": 3
+    "any": [
+     {
+      "counter": "pressionRaft",
+      "atLeast": 3
+     },
+     {
+      "flag": "echoue.s4_raft"
+     }
+    ]
    },
    "victoryLabel": {
     "fr": "Le méchant est vaincu !",
@@ -1436,9 +1500,16 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s4_raft} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
-     "en": "{villain} vous a échappé. {card:s4_raft} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
+     "fr": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s4_raft} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ.",
+     "en": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s4_raft} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ."
     },
+    "onContinue": [
+     {
+      "op": "setFlag",
+      "flag": "echoue.s4_raft",
+      "boolValue": true
+     }
+    ],
     "prompts": [
      {
       "id": "vp",
@@ -1450,11 +1521,6 @@
      }
     ],
     "effects": [
-     {
-      "op": "setFlag",
-      "flag": "echoue.s4_raft",
-      "boolValue": true
-     },
      {
       "op": "addCounter",
       "counter": "pressionRaft",
@@ -1484,8 +1550,15 @@
    },
    "pressureCounterId": "pressionRotatives",
    "failedWhen": {
-    "counter": "pressionRotatives",
-    "atLeast": 3
+    "any": [
+     {
+      "counter": "pressionRotatives",
+      "atLeast": 3
+     },
+     {
+      "flag": "echoue.s5_rotatives"
+     }
+    ]
    },
    "victoryLabel": {
     "fr": "Le méchant est vaincu !",
@@ -1647,9 +1720,16 @@
    },
    "onDefeat": {
     "message": {
-     "fr": "{villain} vous a échappé. {card:s5_rotatives} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd.",
-     "en": "{villain} vous a échappé. {card:s5_rotatives} passe ÉCHOUÉ : cette mission sort de la campagne, et son environnement entre en jeu sur sa face ÉCHOUÉ. C'est une mission de moins avant Le Caïd."
+     "fr": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s5_rotatives} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ.",
+     "en": "{villain} vous a échappé. Vous pouvez y retourner tout de suite. Si vous continuez, {card:s5_rotatives} passe ÉCHOUÉ : elle sort de la campagne et son environnement reste sur la table, face ÉCHOUÉ."
     },
+    "onContinue": [
+     {
+      "op": "setFlag",
+      "flag": "echoue.s5_rotatives",
+      "boolValue": true
+     }
+    ],
     "prompts": [
      {
       "id": "vp",
@@ -1661,11 +1741,6 @@
      }
     ],
     "effects": [
-     {
-      "op": "setFlag",
-      "flag": "echoue.s5_rotatives",
-      "boolValue": true
-     },
      {
       "op": "addCounter",
       "counter": "pressionRotatives",

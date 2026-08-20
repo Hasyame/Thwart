@@ -62,6 +62,21 @@ sealed interface CampaignEvent {
         val purchaseEventId: String,
     ) : CampaignEvent
 
+    /**
+     * The players moved on from a scenario's result rather than reconsidering.
+     *
+     * Only meaningful where an outcome carries [Outcome.onContinue]: a defeat
+     * that can be retried settles nothing until this is recorded.
+     */
+    @Serializable
+    @SerialName("continued")
+    data class OutcomeContinued(
+        override val id: String,
+        override val timestamp: Long,
+        val scenarioId: String,
+        val victory: Boolean,
+    ) : CampaignEvent
+
     /** A setup step the player chose to take. */
     @Serializable
     @SerialName("setup_action")

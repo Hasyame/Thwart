@@ -16,9 +16,19 @@ import com.hasyame.marvelchampions.data.repository.CampaignRun
  * control. Reading them as ordinary words loses that, so they are set in bold
  * italic the way the campaign sets them.
  */
-private val KEYWORDS = listOf("MISSION", "OVERSEER", "PRELATE")
+private val KEYWORDS = listOf(
+    "MISSION", "OVERSEER", "PRELATE",
+    // The two faces of a Fear No Evil environment. These are the words a
+    // table scans a setup step for — which card, and which way up — so they
+    // are set apart wherever they appear, not only on the pressure board.
+    "ACHEVÉ", "ÉCHOUÉ", "ACHIEVED", "FAILED",
+)
 
-private val KEYWORD_PATTERN = Regex(KEYWORDS.joinToString("|") { "\\b$it\\b" })
+// `(?U)` is what makes `\b` understand accented letters. Without it É is
+// not a word character, so there is no boundary in front of it and ÉCHOUÉ
+// never matched however often it appeared.
+private val KEYWORD_PATTERN =
+    Regex("(?U)" + KEYWORDS.joinToString("|") { "\\b$it\\b" })
 
 private val KEYWORD_STYLE = SpanStyle(
     fontWeight = FontWeight.Bold,
