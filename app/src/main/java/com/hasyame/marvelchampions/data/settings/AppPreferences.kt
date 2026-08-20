@@ -1,6 +1,7 @@
 package com.hasyame.marvelchampions.data.settings
 
 import android.content.Context
+import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -17,7 +18,35 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+/**
+ * Settings that belonged to features the app no longer has.
+ *
+ * A key nothing reads is invisible but not gone. Removing the ambient-music
+ * links in 1.20.0 left behind whatever playlist URL the player had typed,
+ * sitting in the settings file for the life of the install. Dropping a key
+ * here is the whole cost of retiring a setting properly.
+ */
+private val RETIRED_KEYS = listOf(
+    stringPreferencesKey("music_url"),
+)
+
+/** Clears [RETIRED_KEYS] the first time the store is opened after an update. */
+private val dropRetiredKeys = object : DataMigration<Preferences> {
+    override suspend fun shouldMigrate(currentData: Preferences): Boolean =
+        RETIRED_KEYS.any { currentData.contains(it) }
+
+    override suspend fun migrate(currentData: Preferences): Preferences =
+        currentData.toMutablePreferences()
+            .apply { RETIRED_KEYS.forEach { remove(it) } }
+            .toPreferences()
+
+    override suspend fun cleanUp() = Unit
+}
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    name = "settings",
+    produceMigrations = { listOf(dropRetiredKeys) },
+)
 
 /**
  * User preferences.
