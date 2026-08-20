@@ -1,44 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Writes app/src/main/assets/campaigns/fne.json.
+"""Writes app/src/main/assets/campaigns/fne.json — the Peur de Rien campaign.
 
-STILL TO DO, and the reason is here so it is not re-argued:
+Fear No Evil has no scenario order. Before every game the villains push two
+places whether or not the heroes go there; three pushes and a place is gone.
+The table then plays any scenario still standing, and a subordinate villain is
+drawn for it.
 
-The app must **draw**, not ask. Today it asks the table which environments
-they drew, which is backwards - this app exists to automate what the rules
-leave to chance. Use DrawDefinition, whose fields were written for exactly
-this: `from` the five environments, `count` 2, `excluding` a list of resolved
-scenarios so a card that left the pile is never drawn, and `counts` mapping
-each environment to its scenario's counter. A second draw picks the villain,
-`excluding` those already recorded - which is what villainDeckFromDraw and
-villainDecks are for.
+The app does the drawing. This is a companion, and where the rules say draw at
+random it draws — the environments before the choice, the villain after it —
+rather than asking the table what they drew.
 
-Blocker, and the decision taken: DrawDefinition takes MarvelCDB codes and this
-pack has none published for its encounter side, so a drawn card would display
-as its raw id. Rather than wait, carry a small local id-to-name table
-consulted before the card database.
+No MarvelCDB codes: the encounter side of this pack is not published, so the
+environments and villains are named from a local table (localCardNames),
+French, off the box in the house. The card database wins wherever it has an
+entry, so this drops away on its own the day those cards appear.
 
-**French only.** The names come off the box in the house, which is the French
-one, and nobody here has the English printing to copy from. English readers
-get the French name and a line saying English is not available yet because
-Fear No Evil's cards are not in the card database - which is true, checkable,
-and better than a guessed translation on a card somebody is hunting for in a
-box. It stops mattering the day MarvelCDB publishes, when the table goes away
-and real card names arrive in both languages.
-
-Presentation: after the draw, say plainly which two places the villains hit.
-Then ask which scenario to play - **all unresolved ones, not only the two
-drawn**. This was raised twice and settled on the book: p.9 step 4 is "un des
-scenarios qui n'a ete ni Acheve ni Echoue", any of them, and that is the rule
-to follow over any looser wording. The villains hit two places; the heroes go
-where they like, and the place they walk past is the one that falls.
-
-When one environment is left there is nothing to show and nothing to ask: it
-is drawn and ticked twice on its own.
-
-
-Written as a script rather than by hand because the file repeats itself five
-times over — every interchangeable scenario shares the same victory bookkeeping
-— and five hand-copied blocks are five chances for them to drift apart.
+Generated rather than hand-written because the five interchangeable scenarios
+share their whole victory bookkeeping, and five copies are five chances to
+drift apart.
 """
 import io
 import json
@@ -47,12 +26,11 @@ import os
 FR, EN = "fr", "en"
 
 
-def text(fr, en):
-    return {FR: fr, EN: en}
+def text(fr, en=None):
+    return {FR: fr, EN: en if en is not None else fr}
 
 
-# The five interchangeable scenarios: id, names, and the counter that records
-# how far the villains have pushed it while the heroes were elsewhere.
+# id, French name, English name, pressure counter.
 SCENARIOS = [
     ("s1_musee", "Cambriolage du Musée d'Art", "Art Museum Heist", "pressionMusee"),
     ("s2_poursuite", "La Poursuite", "The Getaway", "pressionPoursuite"),
@@ -61,28 +39,35 @@ SCENARIOS = [
     ("s5_rotatives", "Arrêtez les Rotatives !", "Stop the Presses", "pressionRotatives"),
 ]
 
-# What each scenario suffers per tick already on it, from its own campaign
-# setup. Mechanics only: what to place and where, never the book's prose.
+# Subordinate villains, as local pseudo-codes since the cards are not published.
+VILLAINS = [
+    ("fne_villain_hammerhead", "Hammerhead"),
+    ("fne_villain_bullseye", "Bullseye"),
+    ("fne_villain_electro", "Electro"),
+    ("fne_villain_homme_pourpre", "L'Homme Pourpre"),
+    ("fne_villain_mary_typhoide", "Mary Typhoïde"),
+]
+
+VILLAIN_CODES = [code for code, _ in VILLAINS]
+
+# What a scenario suffers per tick already on it, applied from its own setup.
+# Mechanics only — what to place and where, never the book's prose.
 PRESSURE_SETUP = {
     "s1_musee": text(
         "Placez 1 menace par case cochée sur la manigance principale (2 en Expert).",
         "Place 1 threat per ticked box on the main scheme (2 in Expert).",
     ),
     "s2_poursuite": text(
-        "Trouvez et révélez le Camion-Citerne. À 2 cases cochées, placez 1 menace "
-        "supplémentaire dessus (2 en Expert).",
-        "Find and reveal the Tanker Truck. At 2 ticked boxes, place 1 extra threat "
-        "on it (2 in Expert).",
+        "Révélez le Camion-Citerne ; à 2 cases, 1 menace de plus dessus (2 en Expert).",
+        "Reveal the Tanker Truck; at 2 boxes, 1 more threat on it (2 in Expert).",
     ),
     "s3_racket": text(
         "Placez 1 menace par case cochée sur chaque manigance principale (2 en Expert).",
         "Place 1 threat per ticked box on every main scheme (2 in Expert).",
     ),
     "s4_raft": text(
-        "Donnez une carte d'état Tenace à chaque sbire PRISONNIER. À 2 cases cochées, "
-        "donnez-leur aussi une carte de boost face cachée.",
-        "Give each PRISONER minion a Tough status card. At 2 ticked boxes, also give "
-        "each one a facedown boost card.",
+        "Carte Tenace à chaque sbire PRISONNIER ; à 2 cases, aussi un boost face cachée.",
+        "Tough on each PRISONER minion; at 2 boxes, a facedown boost as well.",
     ),
     "s5_rotatives": text(
         "Retirez 1 jeton Endurance par case cochée de chaque soutien DAILY BUGLE.",
@@ -90,146 +75,171 @@ PRESSURE_SETUP = {
     ),
 }
 
-VILLAINS = [
-    ("hammerhead", "Hammerhead", "Hammerhead"),
-    ("bullseye", "Bullseye", "Bullseye"),
-    ("electro", "Electro", "Electro"),
-    ("homme_pourpre", "L'Homme Pourpre", "Purple Man"),
-    ("mary_typhoide", "Mary Typhoïde", "Typhoid Mary"),
-]
+# What each job puts on the table, from its own page: the main scheme deck and
+# the encounter sets. The chosen villain's own set joins them every time.
+SCENARIO_DECKS = {
+    "s1_musee": (
+        "Cambriolage du Musée d'Art",
+        "Cambriolage du Musée d'Art, Policiers, Le Hibou, Standard",
+    ),
+    "s2_poursuite": (
+        "La Poursuite",
+        "La Poursuite, Policiers, Conduite, Standard",
+    ),
+    "s3_racket": (
+        "Racket en Bande Organisée (une par joueur)",
+        "Racket en Bande Organisée, Désastres, Mafia des Survêtes, Standard",
+    ),
+    "s4_raft": (
+        "L'Évasion du Raft",
+        "L'Évasion du Raft, Le Hibou, Tombstone, Standard",
+    ),
+    "s5_rotatives": (
+        "Arrêtez les Rotatives !",
+        "Arrêtez les Rotatives !, Tombstone, Mafia des Survêtes, Standard",
+    ),
+}
+
+# The piece of business each job runs beyond its decks.
+SCENARIO_EXTRA = {
+    "s1_musee": "Une des quatre œuvres d'art, tirée par le stade 1A, commence attachée au méchant.",
+    "s2_poursuite": "L'attachement En Tête / Roue Contre Roue commence face En Tête visible.",
+    "s3_racket": "Chaque joueur prend une manigance principale dans sa propre zone de jeu.",
+    "s4_raft": "Le méchant reçoit l'attachement Passe-Partout.",
+    "s5_rotatives": "Chaque joueur reçoit au hasard un soutien DAILY BUGLE (3 jetons Endurance).",
+}
 
 
-def progression_actions():
-    """One button per scenario, for the two environments drawn this game.
+# Two lines apiece, setting the scene. Written for the app in the register the
+# other campaigns use — the book's own narration stays in the book.
+SCENARIO_FLAVOUR = {
+    "s1_musee": (
+        "Une alarme silencieuse au Musée d'Art, et un service de sécurité qui ne "
+        "répond plus. Les voleurs n'ont pas pris la peine de couvrir leurs traces : "
+        "on dirait qu'ils voulaient être remarqués."
+    ),
+    "s2_poursuite": (
+        "Une voiture de sport jaune file vers le sud à travers Hell's Kitchen, et le "
+        "tunnel n'est plus très loin. Sortie de la ville, elle sera introuvable — il "
+        "faut lui couper la route."
+    ),
+    "s3_racket": (
+        "Des voyous armés de battes mettent une boutique de quartier en pièces pendant "
+        "que le propriétaire se cache derrière son comptoir. Ils appellent ça des "
+        "pénalités de retard."
+    ),
+    "s4_raft": (
+        "Quelqu'un a franchi les grilles du Raft avec un passe d'accès intégral et "
+        "ouvre les cellules une à une. Les détenus que vous avez mis là se retournent "
+        "contre vous."
+    ),
+    "s5_rotatives": (
+        "Les bureaux du Daily Bugle sont pris d'assaut et le rédacteur en chef est "
+        "quelque part à l'intérieur, ligoté. Derrière la porte, quelqu'un s'amuse."
+    ),
+    "s6_caid": (
+        "Toute cette vague de crimes était orchestrée, et la rue vous en tient pour "
+        "responsables. Une seule personne pouvait monter une campagne pareille contre "
+        "vous : Le Caïd."
+    ),
+}
 
-    KNOWN WRONG, and the reason is written down so the fix is not re-derived:
-    page 9 runs draw -> progress -> choose, in that order, and this runs after
-    the choice with five unbounded buttons. It must become part of the previous
-    game's outcome so the ticks land before the table picks, exactly two
-    environments are drawn (or one, ticked twice), and only environments still
-    in the pool are offered.
 
-    What is *not* wrong: the scenario played is not restricted to the two drawn.
-    The villains push two places; the heroes may go anywhere unresolved.
-    """
+# Notes on each subordinate, from the pages that introduce them. What the
+# villain does at the table, in a line or two — not their card text.
+VILLAIN_TIPS = {
+    "fne_villain_hammerhead": [
+        "Hammerhead veut sonner : sa Réponse forcée sonne tout personnage qu'il blesse.",
+        "Tête la Première et les Sous-Chefs frappent plus fort sur un héros sonné.",
+    ],
+    "fne_villain_bullseye": [
+        "Toutes ses cartes de boost gagnent une icône de boost supplémentaire.",
+        "Ses cartes Rencontre retirent alliés et soutiens INDIVIDU : perdus pour la campagne.",
+    ],
+    "fne_villain_electro": [
+        "Elle dépense les jetons Charge de Charge Électrique pour des boosts en plus.",
+        "Les ressources Énergie retirent ses charges, mais exposent à ses traîtrises.",
+    ],
+    "fne_villain_homme_pourpre": [
+        "Statistiques basses, mais chaque carte attribue une Rencontre face cachée.",
+        "Ses sbires INFLUENCÉ sont Vulnérables : sonnez-les ou désorientez-les.",
+    ],
+    "fne_villain_mary_typhoide": [
+        "Elle se retourne à la fin de chaque phase du Méchant, alternant ses deux faces.",
+        "Ni son attaque ni sa manigance ne sont donc à son avantage deux tours de suite.",
+    ],
+}
+
+
+def villain_tips():
+    """One block per subordinate, shown only for the one this job drew."""
     steps = []
-    for scenario_id, name_fr, name_en, counter in SCENARIOS:
-        steps.append({
-            "text": text(
-                "Environnement pioché : %s" % name_fr,
-                "Environment drawn: %s" % name_en,
-            ),
-            "when": {"all": [
-                {"counter": c, "atMost": 0} for _, _, _, c in SCENARIOS
-            ]},
-            "action": {
-                "id": "progress_" + scenario_id,
-                "label": text("Faire progresser", "Advance"),
-                "repeatable": True,
-                "effects": [{"op": "addCounter", "counter": counter, "value": 1}],
-            },
-        })
+    for code, _ in VILLAINS:
+        for line in VILLAIN_TIPS[code]:
+            steps.append({"text": text(line), "when": {"drawIs": "villain:" + code}})
     return steps
 
 
-def unresolved(scenario_id, counter):
-    """A scenario still in the pool: neither finished nor pushed out."""
-    return {"all": [
-        {"notFlag": "acheve." + scenario_id},
-        {"counter": counter, "atMost": 2},
-    ]}
+def villain_setup():
+    """The subordinate's own setup, keyed on which one this job drew.
 
-
-def environment_draw():
-    """The p.9 draw, run at the end of a game so it lands before the choice.
-
-    One question per environment still in the pool, and none at all for the
-    ones already finished or already lost — their cards have been removed from
-    the pile, so asking about them invites a wrong answer.
-
-    The rule that a lone remaining environment is ticked twice falls out of the
-    same conditions: when every other scenario is resolved, the one left takes
-    a second tick automatically rather than asking anybody.
-
-    The scenario played afterwards stays unconstrained. The villains hit two
-    places; the heroes go where they like, and the place they walk past falls.
-    """
-    prompts, effects = [], []
-    for sid, name_fr, name_en, counter in SCENARIOS:
-        prompts.append({
-            "id": "drew_" + sid,
-            "type": "boolean",
-            "label": text(
-                "%s a-t-il été pioché ?" % name_fr,
-                "Was %s drawn?" % name_en,
-            ),
-            "when": unresolved(sid, counter),
-        })
-        effects.append({
-            "op": "addCounter", "counter": counter, "value": 1, "max": 3,
-            "when": {"answer": "drew_" + sid},
-        })
-        # Alone in the pile, so it is drawn and ticked twice.
-        others = [
-            {"any": [
-                {"flag": "acheve." + other},
-                {"counter": other_counter, "atLeast": 3},
-            ]}
-            for other, _, _, other_counter in SCENARIOS if other != sid
-        ]
-        effects.append({
-            "op": "addCounter", "counter": counter, "value": 1, "max": 3,
-            "when": {"all": [{"answer": "drew_" + sid}] + others},
-        })
-    return prompts, effects
-
-
-def pressure_report():
-    """Where each place stands, shown before the table commits to one.
-
-    The campaign's whole question is which place you can afford to walk past,
-    and that is unanswerable if the ticks live only on a paper log. Two ticks
-    is the moment worth saying out loud: one more visit and that place is gone.
+    Four of the five are the same shape: two stages, a harder pair on Expert.
+    Mary Typhoide is not — she arrives through her environment, and her job is
+    won on tokens rather than on her health.
     """
     steps = []
-    for _, name_fr, name_en, counter in SCENARIOS:
+    for code, name in VILLAINS:
+        if code.endswith("mary_typhoide"):
+            continue
         steps.append({
-            "text": text(
-                "%s : 1 case cochée." % name_fr,
-                "%s: 1 box ticked." % name_en,
-            ),
-            "when": {"counter": counter, "equals": 1},
+            "text": text("Deck Méchant : %s (I) et (II)." % name),
+            "when": {"all": [{"drawIs": "villain:" + code}, {"difficulty": "standard"}]},
         })
         steps.append({
-            "text": text(
-                "%s : 2 cases cochées — une de plus et il est perdu." % name_fr,
-                "%s: 2 boxes ticked — one more and it is lost." % name_en,
-            ),
-            "when": {"counter": counter, "equals": 2},
+            "text": text("Deck Méchant : %s (II) et (III)." % name),
+            "when": {"all": [{"drawIs": "villain:" + code}, {"difficulty": "expert"}]},
         })
-        steps.append({
-            "text": text(
-                "%s : 3 cases cochées — échoué, son environnement reste en jeu." % name_fr,
-                "%s: 3 boxes ticked — failed, its environment stays in play." % name_en,
-            ),
-            "when": {"counter": counter, "atLeast": 3},
-        })
+
+    mary = "fne_villain_mary_typhoide"
+    steps.append({
+        "text": text(
+            "Révélez la manigance annexe Gagner la Confiance et l'environnement "
+            "Psyché Perturbée.",
+        ),
+        "when": {"drawIs": "villain:" + mary},
+    })
+    steps.append({
+        "text": text(
+            "Mise en place de Psyché Perturbée : Mary Typhoïde (A) / Bloody Mary (A), "
+            "face au hasard.",
+        ),
+        "when": {"all": [{"drawIs": "villain:" + mary}, {"difficulty": "standard"}]},
+    })
+    steps.append({
+        "text": text(
+            "Mise en place de Psyché Perturbée : Mary Typhoïde (B) / Bloody Mary (B), "
+            "face au hasard.",
+        ),
+        "when": {"all": [{"drawIs": "villain:" + mary}, {"difficulty": "expert"}]},
+    })
+    steps.append({
+        "text": text(
+            "Ce scénario se gagne en plaçant trois pions sur Psyché Perturbée, pas en "
+            "vainquant le méchant.",
+        ),
+        "when": {"drawIs": "villain:" + mary},
+    })
     return steps
 
 
 def shared_campaign_setup():
-    """The p.9 sequence every scenario runs before it is played."""
-    steps = [{
-        "text": text(
-            "Retirez les environnements des scénarios achevés ou échoués, mélangez "
-            "le reste et piochez-en deux. S'il n'en reste qu'un, il compte double.",
-            "Remove the environments of finished or failed scenarios, shuffle the "
-            "rest and draw two. If only one is left, it counts twice.",
-        ),
-    }]
-    steps += pressure_report()
-    steps += progression_actions()
-    steps += [
+    """The p.9 sequence every scenario runs, minus the draw the app now does.
+
+    The environments were drawn before this screen, on the choice page, so what
+    is left is what carries: the resolved environments on the table, the allies
+    struck off, the campaign ally, and the two Expert lines.
+    """
+    return [
         {
             "text": text(
                 "Mettez en jeu l'environnement de chaque scénario résolu, face ACHEVÉ "
@@ -254,20 +264,25 @@ def shared_campaign_setup():
         },
         {
             "text": text(
-                "Mettez en jeu l'alliée de campagne Mary Typhoïde.",
-                "Put the campaign ally Typhoid Mary into play.",
+                "Mettez en jeu l'alliée de campagne Mary Typhoïde chez le premier joueur.",
             ),
             "when": {"all": [
                 {"flag": "confianceGagnee"},
                 {"notFlag": "maryVaincue"},
             ]},
         },
+        # Once she is gone she stays gone, and the line saying so replaces the
+        # one that put her out.
         {
             "text": text(
-                "Campagne Expert : reprenez les points de vie enregistrés au "
-                "scénario précédent.",
-                "Expert campaign: set each hit point total to the value recorded "
-                "last scenario.",
+                "Retirez Mary Typhoïde de vos decks : elle est perdue pour la campagne.",
+            ),
+            "when": {"flag": "maryVaincue"},
+        },
+        {
+            "text": text(
+                "Expert : reprenez les points de vie enregistrés au scénario précédent.",
+                "Expert: set each hit point total to the value recorded last scenario.",
             ),
             "when": {"difficulty": "expert"},
         },
@@ -281,29 +296,45 @@ def shared_campaign_setup():
             "when": {"difficulty": "expert"},
         },
     ]
-    return steps
+
+
+def vp_prompt():
+    return {
+        "id": "vp",
+        "type": "number",
+        "label": text(
+            "Combien de points de victoire avez-vous accumulés ?",
+            "How many victory points did you gather?",
+        ),
+    }
 
 
 def victory_outcome(scenario_id):
-    """The same bookkeeping after every interchangeable scenario."""
+    """The bookkeeping after any of the five interchangeable scenarios."""
     return {
         "prompts": [
-            {
-                "id": "vp",
-                "type": "number",
-                "label": text(
-                    "Combien de points de victoire avez-vous accumulés ?",
-                    "How many victory points did you gather?",
-                ),
-            },
+            vp_prompt(),
+            # Two tokens on Psyche Perturbee wins her over, which only the
+            # job she is behind can put on the table — and only once. She
+            # is dealt to a single scenario, so this is asked there and nowhere
+            # else — a table that never faces her is never asked about a card
+            # they have not seen.
             {
                 "id": "confiance",
                 "type": "boolean",
                 "label": text(
-                    "Psyché Perturbée est-elle en jeu avec au moins 2 menaces dessus ?",
-                    "Is Disturbed Psyche in play with at least 2 threat on it?",
+                    "Psyché Perturbée est-elle en jeu avec au moins 2 pions dessus ?",
+                    "Is Disturbed Psyche in play with at least 2 tokens on it?",
                 ),
+                "when": {"all": [
+                    {"drawIs": "villain:fne_villain_mary_typhoide"},
+                    {"notFlag": "confianceGagnee"},
+                ]},
             },
+            # Either side can put her down, so the victory pile is the thing to
+            # look at rather than who did it. Asked only of a table that has
+            # actually met her — facing her, or fighting alongside her — and
+            # only until the game she does not come back from.
             {
                 "id": "mary",
                 "type": "boolean",
@@ -311,8 +342,14 @@ def victory_outcome(scenario_id):
                     "Mary Typhoïde / Bloody Mary est-elle dans la pile de victoire ?",
                     "Is Typhoid Mary / Bloody Mary in the victory pile?",
                 ),
+                "when": {"all": [
+                    {"any": [
+                        {"drawIs": "villain:fne_villain_mary_typhoide"},
+                        {"flag": "confianceGagnee"},
+                    ]},
+                    {"notFlag": "maryVaincue"},
+                ]},
             },
-        ] + environment_draw()[0] + [
             {
                 "id": "retires",
                 "type": "deckCardSelect",
@@ -322,7 +359,7 @@ def victory_outcome(scenario_id):
                 ),
             },
         ],
-        "effects": environment_draw()[1] + [
+        "effects": [
             {"op": "setFlag", "flag": "confianceGagnee", "boolValue": True,
              "when": {"answer": "confiance"}},
             {"op": "setFlag", "flag": "maryVaincue", "boolValue": True,
@@ -334,16 +371,14 @@ def victory_outcome(scenario_id):
     }
 
 
-def defeat_outcome(scenario_id, counter):
-    prompts, effects = environment_draw()
+def defeat_outcome(counter):
     return {
-        "prompts": prompts,
+        "prompts": [vp_prompt()],
         "effects": [
-            # Standard lets a lost scenario be played again; only Expert pushes
-            # it further along the track.
+            # Standard lets a lost place be tried again; only Expert pushes it.
             {"op": "addCounter", "counter": counter, "value": 1, "max": 3,
              "when": {"difficulty": "expert"}},
-        ] + effects,
+        ],
         "next": [{"choose": True}],
     }
 
@@ -352,29 +387,39 @@ def scenario(scenario_id, name_fr, name_en, counter):
     return {
         "id": scenario_id,
         "name": text(name_fr, name_en),
+        "flavour": text(SCENARIO_FLAVOUR[scenario_id]),
+        "pressureCounterId": counter,
+        "failedWhen": {"counter": counter, "atLeast": 3},
         "victoryLabel": text("Le méchant est vaincu !", "The villain is beaten!"),
         "defeatLabel": text("Le méchant l'emporte !", "The villain wins!"),
         "baseSetup": {},
-        # Three pushes and this place is gone, played or not. The engine stops
-        # offering it and its environment stays on the table as a penalty.
-        "failedWhen": {"counter": counter, "atLeast": 3},
+        # Read in the order it is done at the table: who you are facing, the
+        # three decks, then the setup, then the notes on the subordinate.
+        # What to find and put out, before anything is laid down.
+        "preSetup": [
+            # Dealt when the campaign began and kept quiet until now; this is
+            # where the players find out who is behind the job.
+            {"text": text("Méchant SUBORDONNÉ : {villain}.")},
+            {"include": "mechant"},
+            {"text": text("Deck Manigance Principale : %s." % SCENARIO_DECKS[scenario_id][0])},
+            {"text": text(
+                "Deck Rencontre : %s, plus le set du méchant."
+                % SCENARIO_DECKS[scenario_id][1],
+            )},
+        ],
+        # The mise en place itself.
         "campaignSetup": [
-            {"include": "campagne"},
-            {
-                "text": text(
-                    "Méchant SUBORDONNÉ : celui déjà inscrit pour ce scénario, "
-                    "sinon un jamais affronté, sinon un au hasard.",
-                    "SUBORDINATE villain: the one already recorded for this "
-                    "scenario, otherwise one never faced, otherwise one at random.",
-                ),
-            },
+            {"text": text(SCENARIO_EXTRA[scenario_id])},
             {
                 "text": PRESSURE_SETUP[scenario_id],
                 "when": {"counter": counter, "atLeast": 1},
             },
+            {"include": "campagne"},
         ],
+        # Read once the table is set: how this subordinate plays.
+        "information": [{"include": "conseils"}],
         "onVictory": victory_outcome(scenario_id),
-        "onDefeat": defeat_outcome(scenario_id, counter),
+        "onDefeat": defeat_outcome(counter),
     }
 
 
@@ -382,77 +427,55 @@ def kingpin():
     return {
         "id": "s6_caid",
         "name": text("Le Caïd", "Kingpin"),
+        "flavour": text(SCENARIO_FLAVOUR["s6_caid"]),
         "victoryLabel": text("Le Caïd est tombé !", "Kingpin has fallen!"),
         "defeatLabel": text("Le Caïd vous échappe.", "Kingpin gets away."),
         "baseSetup": {},
+        "preSetup": [
+            {"text": text("Deck Méchant : Le Caïd (A1)."),
+             "when": {"difficulty": "standard"}},
+            {"text": text("Deck Méchant : Le Caïd (B1)."),
+             "when": {"difficulty": "expert"}},
+            {"text": text("Deck Manigance Principale : Le Gambit du Roi, Fin de la Partie.")},
+            {"text": text("Deck Rencontre : Le Caïd, Tombstone, Mafia des Survêtes.")},
+            {"text": text("Ce scénario n'utilise pas le set Standard."),
+             "when": {"difficulty": "standard"}},
+            {"text": text("Ce scénario utilise le set Expert à la place du Standard."),
+             "when": {"difficulty": "expert"}},
+        ],
         "campaignSetup": [
             {"include": "campagne"},
+            {"text": text(
+                "Révélez votre sbire Némésis mis de côté. S'il double un personnage "
+                "en jeu, prenez un sbire SUBORDONNÉ à la place.",
+                "Reveal your set-aside nemesis minion. If it doubles a character in "
+                "play, take a SUBORDINATE minion instead.",
+            )},
             {
                 "text": text(
-                    "Ce scénario n'utilise pas le set Standard. En Expert, il utilise "
-                    "le set Expert.",
-                    "This scenario does not use the Standard set. In Expert it uses "
-                    "the Expert set.",
-                ),
-            },
-            {
-                "text": text(
-                    "Révélez votre sbire Némésis mis de côté. S'il double un personnage "
-                    "en jeu, prenez un sbire SUBORDONNÉ à la place.",
-                    "Reveal your set-aside nemesis minion. If it doubles a character in "
-                    "play, take a SUBORDINATE minion instead.",
-                ),
-            },
-            {
-                "text": text(
-                    "3 environnements ACHEVÉ ou plus : donnez une carte d'état Tenace à "
-                    "chaque sbire en jeu.",
-                    "3 or more ACHIEVED environments: give each minion in play a Tough "
-                    "status card.",
+                    "3 environnements ACHEVÉ ou plus : carte Tenace à chaque sbire en jeu.",
+                    "3+ ACHIEVED environments: a Tough status card on each minion in play.",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 3},
             },
             {
                 "text": text(
                     "4 environnements ACHEVÉ ou plus : trouvez et révélez James Wesley.",
-                    "4 or more ACHIEVED environments: find and reveal James Wesley.",
+                    "4+ ACHIEVED environments: find and reveal James Wesley.",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 4},
             },
         ],
         "onVictory": {
-            "prompts": [{
-                "id": "vp",
-                "type": "number",
-                "label": text(
-                    "Combien de points de victoire avez-vous accumulés ?",
-                    "How many victory points did you gather?",
-                ),
-            }],
+            "prompts": [vp_prompt()],
             "effects": [{"op": "setFlag", "flag": "acheve.s6_caid", "boolValue": True}],
             "next": [{"end": True}],
         },
+        # The last villain may be faced again as often as a table can stand.
+        # Stopping there is a decision, offered as a button on the defeat page
+        # rather than concluded by the app.
         "onDefeat": {
-            "prompts": [{
-                "id": "retourne",
-                "type": "boolean",
-                "label": text(
-                    "Expert : avez-vous retourné un environnement ACHEVÉ sur sa face "
-                    "ÉCHOUÉ pour rejouer ?",
-                    "Expert: did you flip an ACHIEVED environment to its FAILED face "
-                    "to replay?",
-                ),
-                "when": {"difficulty": "expert"},
-            }],
-            "next": [
-                # Expert with nothing left to flip is the one place the campaign
-                # can be lost outright.
-                {"end": True, "when": {"all": [
-                    {"difficulty": "expert"},
-                    {"notAnswer": "retourne"},
-                ]}},
-                {"goto": "s6_caid"},
-            ],
+            "next": [{"goto": "s6_caid"}],
         },
     }
 
@@ -464,11 +487,9 @@ def build():
             "scope": "campaign",
             "initial": 0,
             "min": 0,
-            # Three ticks and the scenario has failed. The book says that is the
+            # Three pushes and the place is gone. The book is clear this is the
             # scenario, not the campaign: "Si un scénario a 3 coches à sa droite,
-            # il a Échoué", and p.8 adds that losing a scenario is not losing the
-            # campaign. The penalty is its environment entering play ÉCHOUÉ for
-            # the rest of the run, and a harder Caïd at the end.
+            # il a Échoué", and p.8 that losing a scenario is not losing the run.
             "max": 3,
         }
         for _, _, _, counter in SCENARIOS
@@ -481,20 +502,25 @@ def build():
         "activeWhen": {"difficulty": "expert"},
     })
 
+    local_names = {}
+    for sid, name_fr, _, _ in SCENARIOS:
+        local_names[sid] = text(name_fr)
+    for code, name_fr in VILLAINS:
+        local_names[code] = text(name_fr)
+
     template = {
         "_note": [
             "Peur de Rien / Fear No Evil. Mechanics only: what to place, what to",
-            "record, and what carries to the next game. No rules text and nothing",
-            "reproduced from the campaign book — this file cannot be played from.",
+            "record, what carries. No rules text, nothing from the campaign book.",
             "",
-            "Unlike every other campaign here there is no scenario order. Two",
-            "environments are drawn before each game and push their scenarios",
-            "along whether or not anybody goes there; the table then picks which",
-            "one to actually play. Three ticks and that scenario is lost.",
+            "No scenario order. The app draws two environments before each choice",
+            "and pushes them; the table plays any scenario still standing; the app",
+            "draws the subordinate villain. Three pushes fails a scenario.",
             "",
-            "Card codes are absent on purpose: MarvelCDB has published only the",
-            "hero side of this pack, so there is nothing stable to point at yet.",
-            "Setup steps name the cards in words until it does.",
+            "Card codes are absent - the encounter side is not on MarvelCDB - so",
+            "environments and villains are named locally, in French, until it is.",
+            "",
+            "Generated by tools/build_fne_template.py. Do not edit by hand.",
         ],
         "id": "fne",
         "schemaVersion": 1,
@@ -503,14 +529,49 @@ def build():
         "difficulties": ["standard", "expert"],
         "chooseFirstScenario": True,
         "finaleScenarioId": "s6_caid",
+        "environmentDraw": {
+            "id": "environments",
+            "from": [sid for sid, _, _, _ in SCENARIOS],
+            "count": 2,
+            "counts": {sid: counter for sid, _, _, counter in SCENARIOS},
+        },
+        "localCardNames": local_names,
+        # Shown before the campaign starts. What the app does for the table,
+        # what it needs from them, and the one rule worth knowing up front.
+        "notice": text(
+            "Campagne non officielle, reconstituée pour l'application : le livret "
+            "et les cartes de la boîte Peur de Rien restent nécessaires pour jouer. "
+            "Les textes de cette campagne sont pour l'instant uniquement en français.\n\n"
+            "L'application tire pour vous les environnements et le SUBORDONNÉ de "
+            "chaque mission, et tient le compte de la pression. Une mission qui "
+            "atteint trois marqueurs est perdue : elle sort de la campagne, et Le "
+            "Caïd n'en sera que plus coriace le moment venu.",
+        ),
+        "villainPool": VILLAIN_CODES,
+        # Three ticks fails that job, not the campaign — the book's rule, and
+        # the only one that can be survived. Ending the run there instead is
+        # arithmetically impossible: two ticks are dealt every rotation into a
+        # pile that shrinks as jobs are settled, so whichever job is left
+        # standing always reaches three. Simulated three thousand times with
+        # perfect play, it was lost three thousand times.
+        #
+        # A fallen job still costs: it stops being playable, and Le Caïd is
+        # harder for every one the players failed to reach.
+        "losesWhenScenarioFails": False,
         "counters": counters,
         "flagSets": [
             {"id": "acheve", "scope": "perScenario"},
             {"id": "confianceGagnee", "scope": "campaign"},
             {"id": "maryVaincue", "scope": "campaign"},
         ],
-        "cardLists": [{"id": "alliesRetires", "scope": "campaign"}],
-        "setupFragments": {"campagne": shared_campaign_setup()},
+        "cardLists": [
+            {"id": "alliesRetires", "scope": "campaign"},
+        ],
+        "setupFragments": {
+            "campagne": shared_campaign_setup(),
+            "mechant": villain_setup(),
+            "conseils": villain_tips(),
+        },
         "scenarios": [scenario(*s) for s in SCENARIOS] + [kingpin()],
     }
 
@@ -518,8 +579,7 @@ def build():
     with io.open(path, "w", encoding="utf-8", newline="\n") as out:
         json.dump(template, out, ensure_ascii=False, indent=1)
         out.write("\n")
-    print("wrote", path, os.path.getsize(path), "bytes")
-    print("scenarios:", len(template["scenarios"]))
+    print("wrote", path, os.path.getsize(path), "bytes,", len(template["scenarios"]), "scenarios")
 
 
 build()

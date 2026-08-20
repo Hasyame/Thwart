@@ -263,8 +263,9 @@
     <string name="campaign_lets_go">C\'est parti !</string>
     <string name="campaign_im_ready">Je suis prêt</string>
     <string name="campaign_not_ready">Pas encore prêt</string>
-    <string name="campaign_pre_setup">Mise en place</string>
-    <string name="campaign_setup_label">Mise en place de campagne</string>
+    <string name="campaign_pre_setup">Préparation</string>
+    <string name="campaign_setup_label">Mise en place</string>
+    <string name="campaign_information">Subordonnés et conseils de jeu</string>
     <string name="campaign_scheme_setup">Mise en place de la manigance principale</string>
     <string name="campaign_villain_deck_label">Deck du méchant</string>
     <string name="campaign_main_scheme_label">Deck manigance principale</string>
@@ -551,4 +552,16 @@
     <string name="session_advance_scheme">Faire avancer la manigance principale</string>
     <string name="session_end_round">Terminer le round</string>
     <string name="session_keep_awake">Garder l\'écran allumé</string>
+    <string name="campaign_villains_struck">Ce tour, les vilains frappent : %1$s</string>
+    <string name="campaign_pressure">Menace %1$d / 3</string>
+    <string name="campaign_pressure_critical">Menace %1$d / 3 — une de plus et il tombe</string>
+    <string name="campaign_environment_title">Les vilains frappent deux lieux. Gardez-en un.</string>
+    <string name="campaign_environment_last">Un seul lieu restant. Il encaisse deux fois.</string>
+    <string name="campaign_environment_keep">Garder celui-ci</string>
+    <string name="campaign_pressure_board">Où en est chaque lieu</string>
+    <string name="campaign_pressure_done">réglé</string>
+    <string name="campaign_lost_title">Campagne abandonnée</string>
+    <string name="campaign_lost_message">Vous avez choisi d’en rester là face au Caïd. La campagne s’arrête ici.</string>
+    <string name="campaign_lost_leave">Fermer la campagne</string>
+    <string name="campaign_concede">Abandonner : la campagne est perdue</string>
 </resources>

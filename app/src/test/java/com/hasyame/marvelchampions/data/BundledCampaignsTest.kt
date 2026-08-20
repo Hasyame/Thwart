@@ -3,6 +3,7 @@ package com.hasyame.marvelchampions.data
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.allSetupSteps
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidator
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
@@ -182,7 +183,7 @@ class BundledCampaignsTest {
         // book must not be able to play from the app alone.
         templates().forEach { (name, template) ->
             template.scenarios.forEach { scenario ->
-                scenario.campaignSetup.forEach { step ->
+                scenario.allSetupSteps().forEach { step ->
                     listOfNotNull(step.text.fr, step.text.en).forEach { text ->
                         // Per line, not per step: a step may lay out a short
                         // table — the four difficulty modes, say — and that is
@@ -209,7 +210,7 @@ class BundledCampaignsTest {
         val codePattern = Regex("""\b\d{5}[a-z]?\b""")
         templates().forEach { (name, template) ->
             template.scenarios.forEach { scenario ->
-                val texts = scenario.campaignSetup.flatMap {
+                val texts = scenario.allSetupSteps().flatMap {
                     listOfNotNull(it.text.fr, it.text.en)
                 } + scenario.onVictory?.prompts.orEmpty().flatMap {
                     listOfNotNull(it.label?.fr, it.label?.en)

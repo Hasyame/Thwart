@@ -438,11 +438,19 @@ class CampaignRepository @Inject constructor(
             .toMap()
             .filterKeys { it in setCodes }
 
+        // Names the card database has no entry for - Fear No Evil's encounter
+        // side is not published - fall back to the template's own table. The
+        // database wins wherever it has the card, so this drops away on its own
+        // the day those cards appear.
+        val localNames = template.localCardNames
+            .mapValues { (_, name) -> name.resolve(locale.code) }
+            .filterValues { it.isNotBlank() }
+
         return CampaignCardNames(
             // The stage is part of the identity, not decoration: Drang I, II
             // and III are all called "Drang", so a villain deck would otherwise
             // read "Drang, Drang".
-            cards = resolved.associate { (code, card) ->
+            cards = localNames + resolved.associate { (code, card) ->
                 code to card.stage?.takeIf { it.isNotBlank() }
                     ?.let { stage -> "${card.name} ($stage)" }
                     .orEmpty()
@@ -621,6 +629,122 @@ class CampaignRepository @Inject constructor(
             drawn
         }
 
+
+    /**
+     * Deals one villain to each scenario, once, when the campaign begins.
+     *
+     * Fear No Evil fixes who is behind which job before the first game and the
+     * players find out only when they arrive. Dealt here rather than at setup
+     * so backing out of a briefing cannot reroll it, and stored per scenario so
+     * `{villain}` and the villain deck both read it as an ordinary draw.
+     */
+    suspend fun ensureVillainAssignment(runId: String, locale: CardLocale): Boolean =
+        withContext(ioDispatcher) {
+            val run = load(runId, locale) ?: return@withContext false
+            val pool = run.template.villainPool
+            if (pool.isEmpty()) {
+                return@withContext false
+            }
+
+            // Every scenario that can be played, the finale aside: it brings its
+            // own villain and is not one of the interchangeable jobs.
+            val needing = run.template.scenarios
+                .map { it.id }
+                .filterNot { it == run.template.finaleScenarioId }
+                .filter { CampaignEngine.drawnCards(run.state, it, VILLAIN_DRAW_ID).isEmpty() }
+            if (needing.isEmpty()) {
+                return@withContext false
+            }
+
+            // One each, all different, which is what the campaign log's column
+            // of villain names means.
+            val shuffled = pool.shuffled()
+            needing.forEachIndexed { index, scenarioId ->
+                val villain = shuffled.getOrNull(index) ?: return@forEachIndexed
+                append(
+                    runId,
+                    CampaignEvent.SetupDrawn(
+                        id = UUID.randomUUID().toString(),
+                        timestamp = System.currentTimeMillis(),
+                        scenarioId = scenarioId,
+                        drawId = VILLAIN_DRAW_ID,
+                        cardCodes = listOf(villain),
+                    ),
+                )
+            }
+            true
+        }
+
+    /**
+     * Deals the rotation's environments, when a campaign works that way and is
+     * waiting on the players.
+     *
+     * Two off the top of what is left, or the last one on its own — which then
+     * takes double the pressure. The app deals them; asking the table what they
+     * drew is the work a companion exists to remove.
+     */
+    suspend fun ensureEnvironmentOffer(runId: String, locale: CardLocale): Boolean =
+        withContext(ioDispatcher) {
+            val run = load(runId, locale) ?: return@withContext false
+            val definition = run.template.environmentDraw ?: return@withContext false
+            if (!run.state.awaitingChoice || run.state.campaignLost) {
+                return@withContext false
+            }
+            // Something is already on the table, waiting to be kept.
+            if (run.state.environmentOffer.isNotEmpty()) {
+                return@withContext false
+            }
+            // Already dealt and kept this rotation. Without this the empty
+            // table read as "nothing dealt yet" and every reload dealt another
+            // pair, pushing the city over on its own.
+            if (run.state.environmentPicked) {
+                return@withContext false
+            }
+
+            // Only places still in play. The book's first step is to take the
+            // environments of finished and fallen jobs out of the pile, and
+            // without it the villains kept hitting jobs the players had already
+            // put to bed — pressure that did nothing, on a card that could
+            // still reach three and end the campaign from beyond the grave.
+            val live = CampaignEngine.choosableScenarios(run.template, run.state)
+                .map { it.id }
+                .filterNot { it == run.template.finaleScenarioId }
+                .toSet()
+            val standing = definition.from.filter { it in live }
+            if (standing.isEmpty()) {
+                return@withContext false
+            }
+
+            // A kept environment is out of the pile. If that empties it while
+            // jobs are still standing, the pile is re-formed from what is left:
+            // the rotation must always deal something.
+            val pool = standing.filterNot { it in run.state.environmentsUsed }
+                .ifEmpty { standing }
+
+            val offered = if (pool.size == 1) pool else pool.shuffled().take(2)
+            append(
+                runId,
+                CampaignEvent.EnvironmentsOffered(
+                    id = UUID.randomUUID().toString(),
+                    timestamp = System.currentTimeMillis(),
+                    offered = offered,
+                ),
+            )
+            true
+        }
+
+    /** Records the environment the players kept; it never comes up again. */
+    suspend fun chooseEnvironment(runId: String, environmentId: String) =
+        withContext(ioDispatcher) {
+            append(
+                runId,
+                CampaignEvent.EnvironmentChosen(
+                    id = UUID.randomUUID().toString(),
+                    timestamp = System.currentTimeMillis(),
+                    environmentId = environmentId,
+                ),
+            )
+        }
 
     /** Records the scenario the players chose to play next. */
     suspend fun chooseScenario(runId: String, scenarioId: String) = withContext(ioDispatcher) {
@@ -802,6 +926,9 @@ class CampaignRepository @Inject constructor(
 
     private companion object {
         const val CAMPAIGN_ASSET_DIR = "campaigns"
+
+        /** Draw id the villain assignment is stored under, per scenario. */
+        const val VILLAIN_DRAW_ID = "villain"
 
         /**
          * SQLite refuses more than 999 bound variables in one statement, and

@@ -76,6 +76,20 @@ class CampaignEngine(
                             )
                         ),
                 )
+                is CampaignEvent.EnvironmentsOffered -> applyEnvironmentOffer(template, state, event)
+
+                // The kept one leaves the pile; the other stays in it. The
+                // pressure was applied when they were dealt, so nothing about
+                // the board changes here.
+                is CampaignEvent.EnvironmentChosen -> state.copy(
+                    environmentsUsed = state.environmentsUsed + event.environmentId,
+                    environmentOffer = emptyList(),
+                    environmentPicked = true,
+                )
+
+                is CampaignEvent.CampaignConceded ->
+                    state.copy(campaignLost = true, finished = true, awaitingChoice = false)
+
                 is CampaignEvent.ScenarioChosen ->
                     state.copy(currentScenarioId = event.scenarioId, awaitingChoice = false)
 
@@ -172,6 +186,8 @@ class CampaignEngine(
             currentScenarioId = advanced.scenarioId,
             finished = advanced.finished,
             awaitingChoice = advanced.awaitingChoice,
+            // A new rotation: the villains get to pick their next two places.
+            environmentPicked = false,
         )
     }
 
@@ -187,10 +203,16 @@ class CampaignEngine(
         state: CampaignState,
         event: CampaignEvent.SetupDrawn,
     ): CampaignState {
-        val counts = template.scenarios
-            .flatMap { it.campaignSetup }
-            .mapNotNull { it.draw }
-            .firstOrNull { it.id == event.drawId }
+        // The environment draw is campaign-scoped and keys its rounds by their
+        // own ids, so its counts are found on the template rather than in any
+        // scenario's setup.
+        val counts = (
+            template.scenarios
+                .flatMap { it.campaignSetup }
+                .mapNotNull { it.draw }
+                .firstOrNull { it.id == event.drawId }
+                ?: template.environmentDraw?.takeIf { event.scenarioId == ENVIRONMENT_DRAW_SCENARIO }
+            )
             ?.counts
             .orEmpty()
 
@@ -207,6 +229,55 @@ class CampaignEngine(
                     (state.draws[event.scenarioId].orEmpty() + (event.drawId to event.cardCodes))
                 ),
         )
+    }
+
+    /**
+     * Deals the rotation's environments and pushes the places they name.
+     *
+     * Two dealt, one tick each. One dealt — the last place still in the pile —
+     * takes two, which is the rule for a lone environment and the reason the
+     * end of a campaign closes in fast.
+     *
+     * A place pushed to its limit is out of the campaign: it stops being
+     * choosable, and the last villain is harder for every job left unfinished.
+     * A template may instead end the run there, but Fear No Evil does not —
+     * two ticks land every rotation into a pile that shrinks as jobs are
+     * settled, so ending on the first fall makes the campaign unwinnable.
+     */
+    private fun applyEnvironmentOffer(
+        template: CampaignTemplate,
+        state: CampaignState,
+        event: CampaignEvent.EnvironmentsOffered,
+    ): CampaignState {
+        val counts = template.environmentDraw?.counts.orEmpty()
+        val perEnvironment = if (event.offered.size == 1) 2 else 1
+
+        var counters = state.counters
+        for (environment in event.offered) {
+            val counterId = counts[environment] ?: continue
+            counters = counters + (
+                counterId to clamp((counters[counterId] ?: 0) + perEnvironment, template, counterId)
+                )
+        }
+
+        val pushed = state.copy(counters = counters, environmentOffer = event.offered)
+        if (!template.losesWhenScenarioFails) {
+            return pushed
+        }
+
+        // Only a job still in play can fall. One the players already saw
+        // through is settled, whatever number is left beside its name — and
+        // ending a campaign over a finished job is a defeat nobody could have
+        // prevented.
+        val settled = pushed.completedScenarios.map { it.scenarioId }.toSet()
+        val fallen = template.scenarios.any { scenario ->
+            scenario.id !in settled && scenario.failedWhen != null &&
+                ConditionEvaluator.evaluate(
+                    scenario.failedWhen,
+                    EvaluationContext(state = pushed, scenarioId = scenario.id),
+                )
+        }
+        return if (fallen) pushed.copy(campaignLost = true, finished = true) else pushed
     }
 
     private data class Advance(
@@ -333,9 +404,21 @@ class CampaignEngine(
                     effect.from != null -> answers.booleans[effect.from] == true
                     else -> true
                 }
-                val key = scenarioId ?: ""
-                val existing = state.flags[flagId].orEmpty()
-                state.copy(flags = state.flags + (flagId to (existing + (key to value))))
+                // Split the same way conditions read it: `set.key` names its
+                // own key, a bare id is keyed by the scope its set declares.
+                // A campaign-scoped flag keyed by scenario reads back only in
+                // the scenario that set it, which is not what campaign means.
+                val parts = flagId.split('.', limit = 2)
+                val setId = parts.first()
+                val key = when {
+                    parts.size == 2 -> parts[1]
+                    template.flagSets.firstOrNull { it.id == setId }?.scope == PER_SCENARIO ->
+                        scenarioId ?: ""
+
+                    else -> ""
+                }
+                val existing = state.flags[setId].orEmpty()
+                state.copy(flags = state.flags + (setId to (existing + (key to value))))
             }
 
             EffectOp.ADD_CARD -> {
@@ -635,6 +718,16 @@ class CampaignEngine(
         /** What a scenario has already drawn, in the order drawn. */
         fun drawnCards(state: CampaignState, scenarioId: String?, drawId: String): List<String> =
             state.draws[scenarioId].orEmpty()[drawId].orEmpty()
+        /**
+         * The sentinel the campaign-scoped environment draw records under, so
+         * it is never confused with a real scenario's draws and never cleared
+         * when a scenario finishes.
+         */
+        const val ENVIRONMENT_DRAW_SCENARIO: String = "__environments__"
+
+        /** Flag-set scope that keys each flag by the scenario that set it. */
+        private const val PER_SCENARIO = "perScenario"
+
         /** Prompt id the engine treats as "was this hero eliminated". */
         const val ELIMINATED_PROMPT_ID: String = "eliminated"
         const val HERO_HEALTH_REFERENCE: String = "heroCard.health"

@@ -251,6 +251,7 @@
     <string name="campaign_not_ready">I\'m not ready yet</string>
     <string name="campaign_pre_setup">Pre-setup</string>
     <string name="campaign_setup_label">Campaign setup</string>
+    <string name="campaign_information">Subordinates and play tips</string>
     <string name="campaign_scheme_setup">Main scheme setup</string>
     <string name="campaign_villain_deck_label">Villain deck</string>
     <string name="campaign_main_scheme_label">Main scheme deck</string>
@@ -531,4 +532,16 @@
     <string name="session_advance_scheme">Advance the main scheme</string>
     <string name="session_end_round">End the round</string>
     <string name="session_keep_awake">Keep the screen awake</string>
+    <string name="campaign_villains_struck">This round the villains strike: %1$s</string>
+    <string name="campaign_pressure">Pressure %1$d / 3</string>
+    <string name="campaign_pressure_critical">Pressure %1$d / 3 — one more and it falls</string>
+    <string name="campaign_environment_title">The villains strike two places. Keep one.</string>
+    <string name="campaign_environment_last">One place left. It takes the hit twice.</string>
+    <string name="campaign_environment_keep">Keep this one</string>
+    <string name="campaign_pressure_board">Where every place stands</string>
+    <string name="campaign_pressure_done">settled</string>
+    <string name="campaign_lost_title">Campaign abandoned</string>
+    <string name="campaign_lost_message">You chose to stop here rather than face Kingpin again. The campaign ends here.</string>
+    <string name="campaign_lost_leave">Close the campaign</string>
+    <string name="campaign_concede">Give up: the campaign is lost</string>
 </resources>

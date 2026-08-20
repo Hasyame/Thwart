@@ -62,6 +62,7 @@ import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.campaign.template.CounterScope
 import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import com.hasyame.marvelchampions.domain.campaign.template.ScenarioTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.SetupStep
 import com.hasyame.marvelchampions.ui.util.openExternalUrl
 import kotlinx.coroutines.delay
 
@@ -172,12 +173,32 @@ fun CampaignRunScreen(
                         summary = state.summary,
                         onRestart = viewModel::replayScenario,
                         onBreak = onBack,
+                        // Only the last villain can be retried for ever, so
+                        // only there is stopping a decision worth offering.
+                        onConcede = if (
+                            run.state.currentScenarioId == run.template.finaleScenarioId
+                        ) {
+                            viewModel::concedeCampaign
+                        } else {
+                            null
+                        },
                     )
 
                     RunPage.CHOICE -> ChoosePage(
                         run = run,
                         onChoose = viewModel::chooseScenario,
                         onBreak = onBack,
+                    )
+
+                    RunPage.ENVIRONMENT -> EnvironmentPage(
+                        run = run,
+                        onChoose = viewModel::chooseEnvironment,
+                        onBreak = onBack,
+                    )
+
+                    RunPage.CAMPAIGN_LOST -> CampaignLostPage(
+                        run = run,
+                        onLeave = onBack,
                     )
 
                     RunPage.MARKET -> MarketPage(
@@ -229,7 +250,17 @@ private fun BriefingPage(
             }
         }
 
-        scenario.baseSetup?.let { setup ->
+        // Card chips only. A campaign whose cards are in no database — Fear
+        // No Evil — fills none of them, and an empty titled box is worse than
+        // no box, so the whole panel goes.
+        scenario.baseSetup
+            ?.takeIf { setup ->
+                setup.villainStages(run.state.difficulty, null).isNotEmpty() ||
+                    setup.mainScheme.isNotEmpty() ||
+                    setup.encounterSets.isNotEmpty() ||
+                    setup.modularSets.isNotEmpty()
+            }
+            ?.let { setup ->
             ComicPanel(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
@@ -274,154 +305,35 @@ private fun BriefingPage(
             }
         }
 
-        if (scenario.campaignSetup.isNotEmpty()) {
-            val context = EvaluationContext(run.state, scenario.id)
-            ComicPanel(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        text = stringResource(R.string.campaign_setup_label),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    scenario.campaignSetup
-                        .filter { ConditionEvaluator.evaluate(it.condition, context) }
-                        // A step can exist only to carry a draw, with the steps
-                        // that read it saying everything. Rendering its empty
-                        // text would put a bullet with nothing after it on the
-                        // briefing.
-                        .filter { it.text.resolve(run.localeCode).isNotBlank() }
-                        .forEach { step ->
-                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(
-                                    campaignText(
-                                        "• " + resolveDraws(
-                                            step.text.resolve(run.localeCode),
-                                            run,
-                                            run.state.currentScenarioId,
-                                        ),
-                                    ),
-                                )
+        SetupPanel(
+            title = stringResource(R.string.campaign_pre_setup),
+            steps = scenario.preSetup,
+            run = run,
+            scenarioId = scenario.id,
+            onCardClick = onCardClick,
+            onSetupAction = onSetupAction,
+            onKeepCard = onKeepCard,
+        )
 
-                                // Values the campaign log carries forward from
-                                // earlier scenarios, so the step can be
-                                // followed without leafing back through it.
-                                step.showCounter?.let { counterId ->
-                                    val perHero = run.template.counters
-                                        .firstOrNull { it.id == counterId }
-                                        ?.counterScope == CounterScope.HERO
-                                    Text(
-                                        text = if (perHero) {
-                                            run.state.heroes.joinToString("   ") {
-                                                "${it.name} ${run.state.heroCounter(counterId, it.id)}"
-                                            }
-                                        } else {
-                                            // The number alone. Prefixing it with
-                                            // the counter's id put "pincerThreat"
-                                            // in front of a player who has no
-                                            // reason to know the app calls it that;
-                                            // the step's own text says what it is.
-                                            run.state.counter(counterId).toString()
-                                        },
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                                step.showCardList?.let { listId ->
-                                    val recorded = run.state.cardLists[listId].orEmpty()
-                                    Text(
-                                        // Entries may be card codes or free
-                                        // text; a code resolves to its name,
-                                        // anything else shows as typed.
-                                        text = recorded.takeIf { it.isNotEmpty() }
-                                            ?.joinToString(", ") { run.names.card(it) }
-                                            ?: stringResource(R.string.campaign_nothing_recorded),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                                step.showHeroesWith?.let { counterId ->
-                                    val holders = run.state.heroes
-                                        .filter { run.state.heroCounter(counterId, it.id) > 0 }
-                                    Text(
-                                        text = holders.takeIf { it.isNotEmpty() }
-                                            ?.joinToString(", ") { it.name }
-                                            ?: stringResource(R.string.campaign_nobody),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
+        SetupPanel(
+            title = stringResource(R.string.campaign_setup_label),
+            steps = scenario.campaignSetup,
+            run = run,
+            scenarioId = scenario.id,
+            onCardClick = onCardClick,
+            onSetupAction = onSetupAction,
+            onKeepCard = onKeepCard,
+        )
 
-                                // A drawn step shows what came up and nothing
-                                // else. Listing the whole pool beside it would
-                                // put the player back to picking one, which is
-                                // the job the app just did for them.
-                                val chips = step.draw?.let {
-                                    CampaignEngine.drawnCards(
-                                        run.state,
-                                        run.state.currentScenarioId,
-                                        it.id,
-                                    )
-                                } ?: step.cards
-
-                                // An offer still waiting on the table: tapping a
-                                // card keeps it and returns the others to the
-                                // pool. Once kept there is only one chip left,
-                                // so this reads as an ordinary reference again.
-                                val undecided = step.draw?.offer.orEmpty0() > 0 && chips.size > 1
-
-                                if (chips.isNotEmpty()) {
-                                    if (undecided) {
-                                        Text(
-                                            text = stringResource(R.string.campaign_choose_one),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.primary,
-                                        )
-                                    }
-                                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        chips.forEach { code ->
-                                            AssistChip(
-                                                onClick = {
-                                                    if (undecided) {
-                                                        onKeepCard(step.draw!!.id, code)
-                                                    } else {
-                                                        onCardClick(code)
-                                                    }
-                                                },
-                                                label = { Text(run.names.card(code)) },
-                                            )
-                                        }
-                                    }
-                                }
-                                step.action?.let { action ->
-                                    val enabled =
-                                        ConditionEvaluator.evaluate(action.enabledWhen, context)
-                                    if (action.perHero) {
-                                        FlowRow(
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        ) {
-                                            run.state.heroes.forEach { hero ->
-                                                OutlinedButton(
-                                                    onClick = { onSetupAction(action.id, hero.id) },
-                                                    enabled = enabled,
-                                                ) {
-                                                    Text(
-                                                        action.label.resolve(run.localeCode) +
-                                                            " — " + hero.name,
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        OutlinedButton(
-                                            onClick = { onSetupAction(action.id, null) },
-                                            enabled = enabled,
-                                        ) { Text(action.label.resolve(run.localeCode)) }
-                                    }
-                                }
-                            }
-                        }
-                }
-            }
-        }
+        SetupPanel(
+            title = stringResource(R.string.campaign_information),
+            steps = scenario.information,
+            run = run,
+            scenarioId = scenario.id,
+            onCardClick = onCardClick,
+            onSetupAction = onSetupAction,
+            onKeepCard = onKeepCard,
+        )
 
         // Last, because that is the order it is done in: gather the cards, apply
         // whatever the campaign changes, then follow the setup printed on the
@@ -471,6 +383,176 @@ private fun CardChips(
             }
         }
     }
+}
+
+
+/**
+ * One titled panel of setup steps.
+ *
+ * The briefing is three of these: what goes on the table before the game,
+ * the setup itself, and anything worth knowing once it is laid out. They
+ * render identically, so they are one composable — a step that carries a
+ * counter, a draw or a button behaves the same wherever it is listed.
+ */
+@Composable
+private fun SetupPanel(
+    title: String,
+    steps: List<SetupStep>,
+    run: CampaignRun,
+    scenarioId: String?,
+    onCardClick: (String) -> Unit,
+    onSetupAction: (String, String?) -> Unit,
+    onKeepCard: (String, String) -> Unit,
+) {
+    if (steps.isEmpty()) {
+        return
+    }
+        val context = EvaluationContext(run.state, scenarioId)
+        ComicPanel(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                steps
+                    .filter { ConditionEvaluator.evaluate(it.condition, context) }
+                    // A step can exist only to carry a draw, with the steps
+                    // that read it saying everything. Rendering its empty
+                    // text would put a bullet with nothing after it on the
+                    // briefing.
+                    .filter { it.text.resolve(run.localeCode).isNotBlank() }
+                    .forEach { step ->
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                campaignText(
+                                    "• " + resolveDraws(
+                                        step.text.resolve(run.localeCode),
+                                        run,
+                                        run.state.currentScenarioId,
+                                    ),
+                                ),
+                            )
+
+                            // Values the campaign log carries forward from
+                            // earlier scenarios, so the step can be
+                            // followed without leafing back through it.
+                            step.showCounter?.let { counterId ->
+                                val perHero = run.template.counters
+                                    .firstOrNull { it.id == counterId }
+                                    ?.counterScope == CounterScope.HERO
+                                Text(
+                                    text = if (perHero) {
+                                        run.state.heroes.joinToString("   ") {
+                                            "${it.name} ${run.state.heroCounter(counterId, it.id)}"
+                                        }
+                                    } else {
+                                        // The number alone. Prefixing it with
+                                        // the counter's id put "pincerThreat"
+                                        // in front of a player who has no
+                                        // reason to know the app calls it that;
+                                        // the step's own text says what it is.
+                                        run.state.counter(counterId).toString()
+                                    },
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                            step.showCardList?.let { listId ->
+                                val recorded = run.state.cardLists[listId].orEmpty()
+                                Text(
+                                    // Entries may be card codes or free
+                                    // text; a code resolves to its name,
+                                    // anything else shows as typed.
+                                    text = recorded.takeIf { it.isNotEmpty() }
+                                        ?.joinToString(", ") { run.names.card(it) }
+                                        ?: stringResource(R.string.campaign_nothing_recorded),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                            step.showHeroesWith?.let { counterId ->
+                                val holders = run.state.heroes
+                                    .filter { run.state.heroCounter(counterId, it.id) > 0 }
+                                Text(
+                                    text = holders.takeIf { it.isNotEmpty() }
+                                        ?.joinToString(", ") { it.name }
+                                        ?: stringResource(R.string.campaign_nobody),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+
+                            // A drawn step shows what came up and nothing
+                            // else. Listing the whole pool beside it would
+                            // put the player back to picking one, which is
+                            // the job the app just did for them.
+                            val chips = step.draw?.let {
+                                CampaignEngine.drawnCards(
+                                    run.state,
+                                    run.state.currentScenarioId,
+                                    it.id,
+                                )
+                            } ?: step.cards
+
+                            // An offer still waiting on the table: tapping a
+                            // card keeps it and returns the others to the
+                            // pool. Once kept there is only one chip left,
+                            // so this reads as an ordinary reference again.
+                            val undecided = step.draw?.offer.orEmpty0() > 0 && chips.size > 1
+
+                            if (chips.isNotEmpty()) {
+                                if (undecided) {
+                                    Text(
+                                        text = stringResource(R.string.campaign_choose_one),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    chips.forEach { code ->
+                                        AssistChip(
+                                            onClick = {
+                                                if (undecided) {
+                                                    onKeepCard(step.draw!!.id, code)
+                                                } else {
+                                                    onCardClick(code)
+                                                }
+                                            },
+                                            label = { Text(run.names.card(code)) },
+                                        )
+                                    }
+                                }
+                            }
+                            step.action?.let { action ->
+                                val enabled =
+                                    ConditionEvaluator.evaluate(action.enabledWhen, context)
+                                if (action.perHero) {
+                                    FlowRow(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    ) {
+                                        run.state.heroes.forEach { hero ->
+                                            OutlinedButton(
+                                                onClick = { onSetupAction(action.id, hero.id) },
+                                                enabled = enabled,
+                                            ) {
+                                                Text(
+                                                    action.label.resolve(run.localeCode) +
+                                                        " — " + hero.name,
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    OutlinedButton(
+                                        onClick = { onSetupAction(action.id, null) },
+                                        enabled = enabled,
+                                    ) { Text(action.label.resolve(run.localeCode)) }
+                                }
+                            }
+                        }
+                    }
+            }
+        }
 }
 
 /** Page 2. The clock, and the two ways a scenario ends. */
@@ -709,6 +791,7 @@ private fun DefeatPage(
     summary: ScenarioOutcomeSummary?,
     onRestart: () -> Unit,
     onBreak: () -> Unit,
+    onConcede: (() -> Unit)? = null,
 ) {
     Column(
         Modifier.fillMaxSize().padding(24.dp),
@@ -732,6 +815,17 @@ private fun DefeatPage(
         }
         OutlinedButton(onClick = onBreak, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.campaign_take_a_break))
+        }
+        // Offered only at the last villain, who may be tried again as often as
+        // a table can stand. Stopping there is a decision, so it is a button
+        // rather than something the app concludes on their behalf.
+        onConcede?.let { concede ->
+            OutlinedButton(onClick = concede, modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(R.string.campaign_concede),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
         }
     }
 }
@@ -784,6 +878,141 @@ private fun Int?.orEmpty0(): Int = this ?: 0
  * it is all that is left — a campaign that let you open on its last scenario
  * would not be a campaign.
  */
+/**
+ * The rotation opens here: two places the villains hit, and the players keep
+ * one of them.
+ *
+ * Both were pushed the moment they were dealt — the board below already counts
+ * it — so what the choice decides is which of the two leaves the pile for good.
+ * When only one is left it is dealt alone and takes the pressure twice, which
+ * is how a campaign that has run long closes in on itself.
+ */
+@Composable
+private fun EnvironmentPage(
+    run: CampaignRun,
+    onChoose: (String) -> Unit,
+    onBreak: () -> Unit,
+) {
+    val offered = run.state.environmentOffer
+    val lone = offered.size == 1
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = stringResource(
+                if (lone) R.string.campaign_environment_last else R.string.campaign_environment_title,
+            ),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        offered.forEach { environmentId ->
+            val scenario = run.template.scenarios.firstOrNull { it.id == environmentId }
+            ComicPanel(Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onChoose(environmentId) }
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = scenario?.name?.resolve(run.localeCode).orEmpty()
+                            .ifBlank { run.names.card(environmentId) },
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = stringResource(R.string.campaign_environment_keep),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
+        // The whole board, so the choice is made against what it costs rather
+        // than against two names in isolation.
+        HorizontalDivider()
+        Text(
+            text = stringResource(R.string.campaign_pressure_board),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        run.template.scenarios.forEach { scenario ->
+            val counterId = scenario.pressureCounterId ?: return@forEach
+            val pressure = run.state.counter(counterId)
+            val played = run.state.completedScenarios.any { it.scenarioId == scenario.id }
+            Text(
+                text = scenario.name?.resolve(run.localeCode).orEmpty() + "   " +
+                    if (played) {
+                        stringResource(R.string.campaign_pressure_done)
+                    } else {
+                        stringResource(R.string.campaign_pressure, pressure)
+                    },
+                style = MaterialTheme.typography.bodyMedium,
+                color = when {
+                    played -> MaterialTheme.colorScheme.onSurfaceVariant
+                    pressure >= 2 -> MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.onSurface
+                },
+            )
+        }
+
+        OutlinedButton(onClick = onBreak, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.campaign_take_a_break))
+        }
+    }
+}
+
+/**
+ * A place fell, and the campaign fell with it.
+ *
+ * No replay offered: the run is over and already recorded as a defeat. The
+ * screen says which place went, because that is the thing the table will argue
+ * about afterwards.
+ */
+@Composable
+private fun CampaignLostPage(
+    run: CampaignRun,
+    onLeave: () -> Unit,
+) {
+    val fallen = run.template.scenarios.filter { scenario ->
+        scenario.pressureCounterId?.let { run.state.counter(it) >= 3 } == true
+    }
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.campaign_lost_title),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.error,
+        )
+        Text(
+            text = stringResource(R.string.campaign_lost_message),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        fallen.forEach { scenario ->
+            Text(
+                text = "• " + scenario.name?.resolve(run.localeCode).orEmpty(),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+        Button(onClick = onLeave, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.campaign_lost_leave))
+        }
+    }
+}
+
 @Composable
 private fun ChoosePage(
     run: CampaignRun,
@@ -791,6 +1020,17 @@ private fun ChoosePage(
     onBreak: () -> Unit,
 ) {
     val choices = CampaignEngine.choosableScenarios(run.template, run.state)
+
+    // Which places the villains pushed this round, drawn by the app before the
+    // table decides. Named from the scenarios themselves, so the header reads
+    // in whatever language the campaign does.
+    val struckThisRound = CampaignEngine.drawnCards(
+        run.state,
+        CampaignEngine.ENVIRONMENT_DRAW_SCENARIO,
+        "r${run.state.completedScenarios.size}",
+    ).mapNotNull { id ->
+        run.template.scenarios.firstOrNull { it.id == id }?.name?.resolve(run.localeCode)
+    }
 
     Column(
         Modifier
@@ -805,7 +1045,23 @@ private fun ChoosePage(
             color = MaterialTheme.colorScheme.primary,
         )
 
+        if (struckThisRound.isNotEmpty()) {
+            Text(
+                text = stringResource(
+                    R.string.campaign_villains_struck,
+                    struckThisRound.joinToString(" · "),
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
         choices.forEach { scenario ->
+            // How close this place is to falling, so the table can weigh where
+            // to spend its one game. Zero shows nothing; three cannot be chosen
+            // because a failed scenario is no longer offered.
+            val pressure = scenario.pressureCounterId?.let { run.state.counter(it) } ?: 0
+
             ComicPanel(Modifier.fillMaxWidth()) {
                 Column(
                     Modifier
@@ -818,6 +1074,24 @@ private fun ChoosePage(
                         text = scenario.name?.resolve(run.localeCode).orEmpty().ifBlank { scenario.id },
                         style = MaterialTheme.typography.titleMedium,
                     )
+                    if (pressure > 0) {
+                        Text(
+                            text = stringResource(
+                                if (pressure >= 2) {
+                                    R.string.campaign_pressure_critical
+                                } else {
+                                    R.string.campaign_pressure
+                                },
+                                pressure,
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (pressure >= 2) {
+                                MaterialTheme.colorScheme.error
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        )
+                    }
                     scenario.flavour?.resolve(run.localeCode)?.takeIf { it.isNotBlank() }?.let {
                         Text(it, style = MaterialTheme.typography.bodySmall)
                     }

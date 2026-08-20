@@ -107,6 +107,45 @@ sealed interface CampaignEvent {
         val cardCode: String,
     ) : CampaignEvent
 
+    /**
+     * The environments the app dealt at the start of a rotation.
+     *
+     * Recorded rather than re-rolled, so reopening the app does not deal a new
+     * pair over the one on the table. Both entries take the pressure; a lone
+     * entry — the last place still in the pile — takes it twice.
+     */
+    @Serializable
+    @SerialName("environments_offered")
+    data class EnvironmentsOffered(
+        override val id: String,
+        override val timestamp: Long,
+        val offered: List<String>,
+    ) : CampaignEvent
+
+    /** The environment the players kept, which leaves the pile for good. */
+    @Serializable
+    @SerialName("environment_chosen")
+    data class EnvironmentChosen(
+        override val id: String,
+        override val timestamp: Long,
+        val environmentId: String,
+    ) : CampaignEvent
+
+    /**
+     * The players called it: the campaign is over and lost.
+     *
+     * Only offered after a defeat against the last villain, where the rules let
+     * a table try again as often as they like. Stopping there is a decision,
+     * not a rule, so it is recorded as one rather than inferred from a state
+     * the app went looking for.
+     */
+    @Serializable
+    @SerialName("campaign_conceded")
+    data class CampaignConceded(
+        override val id: String,
+        override val timestamp: Long,
+    ) : CampaignEvent
+
     /** The scenario the players chose to play next. */
     @Serializable
     @SerialName("scenario_chosen")

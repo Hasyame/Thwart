@@ -40,6 +40,17 @@ enum class RunPage {
 
     /** Choosing which scenario to play next. */
     CHOICE,
+
+    /**
+     * Keeping one of the environments the villains hit this rotation.
+     *
+     * Only campaigns that deal environments reach this; the rest go straight to
+     * the scenario choice.
+     */
+    ENVIRONMENT,
+
+    /** A place fell and took the campaign with it. */
+    CAMPAIGN_LOST,
 }
 
 /** What one scenario awarded, for the result page. */
@@ -96,15 +107,7 @@ class CampaignRunViewModel @Inject constructor(
             reload()
             // A run reopened with the timer already going belongs on the play
             // page, not back at the briefing.
-            val running = state.value.run?.timer?.isRunning == true
-            val awaiting = state.value.run?.state?.awaitingChoice == true
-            state.value = state.value.copy(
-                page = when {
-                    awaiting -> RunPage.CHOICE
-                    running -> RunPage.PLAYING
-                    else -> RunPage.BRIEFING
-                },
-            )
+            state.value = state.value.copy(page = pageFor(state.value.run))
         }
     }
 
@@ -114,12 +117,73 @@ class CampaignRunViewModel @Inject constructor(
         // Before the run is read, so the briefing shows its drawn cards on the
         // first frame rather than filling them in a moment later.
         repository.ensureSetupDraws(id, locale)
+        // Who is behind which job, settled once at the start of the campaign
+        // and kept quiet until the players get there.
+        repository.ensureVillainAssignment(id, locale)
+        // The rotation's environments, dealt before the players choose so the
+        // pressure is already on the board when they weigh where to go.
+        repository.ensureEnvironmentOffer(id, locale)
         val run = repository.load(id, locale)
+        // A campaign lost to a fallen place ends outside the victory path, so
+        // it is filed here instead. Without this the run stayed open in the
+        // list and the defeat was never recorded.
+        if (run?.state?.campaignLost == true) {
+            repository.markFinished(id, true)
+        }
         state.value = state.value.copy(
             run = run,
             elapsedMillis = run?.timer?.elapsedAt(System.currentTimeMillis()) ?: 0,
             isLoading = false,
         )
+    }
+
+    /**
+     * Which page a run belongs on, from its state alone.
+     *
+     * One place rather than a decision repeated at each transition: a campaign
+     * that can end between two taps has too many ways to be got wrong.
+     */
+    private fun pageFor(run: CampaignRun?): RunPage {
+        val campaign = run?.state ?: return RunPage.BRIEFING
+        return when {
+            campaign.campaignLost -> RunPage.CAMPAIGN_LOST
+            campaign.awaitingChoice && campaign.environmentOffer.isNotEmpty() -> RunPage.ENVIRONMENT
+            campaign.awaitingChoice -> RunPage.CHOICE
+            run.timer.isRunning -> RunPage.PLAYING
+            else -> RunPage.BRIEFING
+        }
+    }
+
+    /**
+     * The players stop at the last villain and take the loss.
+     *
+     * The rules let a table retry the finale for as long as they can stand it,
+     * so ending there is theirs to decide — and once decided it is a defeat,
+     * recorded like any other.
+     */
+    fun concedeCampaign() {
+        val id = runId ?: return
+        viewModelScope.launch {
+            repository.append(
+                id,
+                CampaignEvent.CampaignConceded(
+                    id = repository.newEventId(),
+                    timestamp = System.currentTimeMillis(),
+                ),
+            )
+            reload()
+            state.value = state.value.copy(page = pageFor(state.value.run))
+        }
+    }
+
+    /** Keeps one of the dealt environments and moves on to the scenario choice. */
+    fun chooseEnvironment(environmentId: String) {
+        val id = runId ?: return
+        viewModelScope.launch {
+            repository.chooseEnvironment(id, environmentId)
+            reload()
+            state.value = state.value.copy(page = pageFor(state.value.run))
+        }
     }
 
     fun tick() {
@@ -303,7 +367,9 @@ class CampaignRunViewModel @Inject constructor(
     }
 
     fun continueToNextScenario() {
-        state.value = state.value.copy(summary = null, page = RunPage.BRIEFING)
+        // Not straight to a briefing: a campaign that deals environments starts
+        // its next rotation here, and one may already have fallen.
+        state.value = state.value.copy(summary = null, page = pageFor(state.value.run))
     }
 
     fun purchase(heroId: String, cardCode: String, cost: Int, cardListId: String) {

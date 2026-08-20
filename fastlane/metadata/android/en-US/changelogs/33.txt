@@ -1,0 +1,25 @@
+Fear No Evil, finished properly.
+
+The campaign could not be won. A job pushed three times ended the whole run,
+and two pushes land every game into a pile that shrinks as jobs are settled —
+so whichever job was left standing always got there first. Simulated three
+thousand times with perfect play, it was lost three thousand times. It now
+works the way the book says: a job pushed that far is out of the campaign, the
+others carry on, and Kingpin is harder at the end for every one you failed to
+reach. That last part never fired at all before — the flag it counted was
+written where nothing read it.
+
+Before each game the villains strike two places and the table keeps one, on a
+page that shows where every job stands.
+
+The briefing is now in the order you work through it: the decks to find, the
+setup itself, then notes on the subordinate you drew. Each job opens with a
+few lines of its own.
+
+Typhoid Mary is followed properly. Two tokens on Disturbed Psyche wins her
+over, she joins the first player from then on, and if she ends up in the
+victory pile she leaves the decks for good. The questions are only put to
+tables that have actually met her.
+
+This campaign's text is French only for the moment; the app says so before you
+start it.

@@ -36,6 +36,37 @@ data class CampaignState(
     /** True while the campaign is waiting for the players to pick what to play. */
     val awaitingChoice: Boolean = false,
 
+    /**
+     * Environments the app has dealt this rotation, waiting on the players.
+     *
+     * Fear No Evil opens each rotation by dealing two places the villains have
+     * hit. Both take the pressure; the players keep one, which is then out of
+     * the pile for good. Empty when nothing is on the table.
+     */
+    val environmentOffer: List<String> = emptyList(),
+
+    /** Environments the players have kept, and which never come up again. */
+    val environmentsUsed: List<String> = emptyList(),
+
+    /**
+     * True once this rotation's environment has been kept.
+     *
+     * A rotation deals its environments exactly once. Without this the app
+     * looked at an empty table, decided nothing had been dealt yet, and dealt
+     * again — every reload pushing two more places until one fell and took the
+     * campaign with it. Cleared when a scenario finishes and the next rotation
+     * begins.
+     */
+    val environmentPicked: Boolean = false,
+
+    /**
+     * True when a place fell and took the campaign with it.
+     *
+     * Distinct from [finished], which only says the campaign is over: a run
+     * that ended this way is a defeat and is recorded as one.
+     */
+    val campaignLost: Boolean = false,
+
     val currentScenarioId: String? = null,
     val completedScenarios: List<ScenarioResult> = emptyList(),
     val setupActionsTaken: Map<String, Set<String>> = emptyMap(),

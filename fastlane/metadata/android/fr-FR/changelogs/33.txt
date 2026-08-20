@@ -1,0 +1,25 @@
+Peur de Rien, enfin terminée.
+
+La campagne ne pouvait pas être gagnée. Une mission poussée trois fois mettait
+fin à toute la partie, et deux poussées tombent à chaque partie dans une pile
+qui rétrécit à mesure que les missions sont réglées — la dernière debout y
+arrivait donc toujours en premier. Simulée trois mille fois avec un jeu
+parfait, elle a été perdue trois mille fois. Elle suit maintenant le livret :
+une mission poussée jusque-là sort de la campagne, les autres continuent, et
+Le Caïd est d'autant plus coriace à la fin. Cette dernière partie ne se
+déclenchait jamais : le marqueur compté était écrit là où rien ne le lisait.
+
+Avant chaque partie, les méchants frappent deux lieux et la table en garde un,
+sur une page qui montre où en est chaque mission.
+
+La mise en place suit l'ordre dans lequel on la fait : les decks à sortir, la
+mise en place elle-même, puis les conseils sur le SUBORDONNÉ tiré. Chaque
+mission s'ouvre sur quelques lignes.
+
+Mary Typhoïde est suivie correctement. Deux pions sur Psyché Perturbée la
+rallient, elle rejoint le premier joueur ensuite, et si elle finit dans la
+pile de victoire elle quitte les decks définitivement. Les questions ne sont
+posées qu'aux tables qui l'ont réellement croisée.
+
+Les textes de cette campagne sont pour l'instant uniquement en français ;
+l'application le dit avant de commencer.

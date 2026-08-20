@@ -29,11 +29,11 @@ object TemplateValidator {
         // every other rule runs on the expanded form, so a step hidden inside a
         // fragment is held to exactly the same standard as one written inline.
         input.scenarios.forEach { scenario ->
-            scenario.campaignSetup.forEachIndexed { index, step ->
+            scenario.eachStep { section, index, step ->
                 step.include?.let { fragment ->
                     if (fragment !in input.setupFragments) {
                         errors += TemplateError(
-                            "scenarios.${scenario.id}.campaignSetup[$index].include",
+                            "scenarios.${scenario.id}.$section[$index].include",
                             "unknown setup fragment '$fragment'",
                         )
                     }
@@ -98,18 +98,18 @@ object TemplateValidator {
 
         template.scenarios.forEach { scenario ->
             val path = "scenarios.${scenario.id}"
-            scenario.campaignSetup.forEachIndexed { index, step ->
-                validateCondition(step.condition, "$path.campaignSetup[$index].when", counterIds, flagSetIds, cardListIds, errors)
+            scenario.eachStep { section, index, step ->
+                validateCondition(step.condition, "$path.$section[$index].when", counterIds, flagSetIds, cardListIds, errors)
                 step.draw?.let { draw ->
                     if (draw.from.isEmpty()) {
                         errors += TemplateError(
-                            "$path.campaignSetup[$index].draw",
+                            "$path.$section[$index].draw",
                             "a draw needs cards to choose from",
                         )
                     }
                     if (draw.excluding != null && draw.excluding !in cardListIds) {
                         errors += TemplateError(
-                            "$path.campaignSetup[$index].draw.excluding",
+                            "$path.$section[$index].draw.excluding",
                             "unknown card list '${draw.excluding}'",
                         )
                     }
@@ -118,7 +118,7 @@ object TemplateValidator {
                     action.cost?.let { cost ->
                         if (cost.counterId !in counterIds) {
                             errors += TemplateError(
-                                "$path.campaignSetup[$index].action.cost",
+                                "$path.$section[$index].action.cost",
                                 "unknown counter '${cost.counterId}'",
                             )
                         }
@@ -126,13 +126,13 @@ object TemplateValidator {
                     action.effects.forEachIndexed { effectIndex, effect ->
                         validateEffect(
                             effect,
-                            "$path.campaignSetup[$index].action.effects[$effectIndex]",
+                            "$path.$section[$index].action.effects[$effectIndex]",
                             counterIds, flagSetIds, cardListIds, errors,
                         )
                     }
                 }
             }
-            val drawIds = scenario.campaignSetup.mapNotNull { it.draw?.id }.toSet()
+            val drawIds = scenario.allSetupSteps().mapNotNull { it.draw?.id }.toSet()
             validateOutcome(scenario.onVictory, "$path.onVictory", counterIds, flagSetIds, cardListIds, scenarioIds, drawIds, errors)
             validateOutcome(scenario.onDefeat, "$path.onDefeat", counterIds, flagSetIds, cardListIds, scenarioIds, drawIds, errors)
         }
@@ -300,4 +300,14 @@ object TemplateValidator {
 
     private fun <T, K> List<T>.duplicates(key: (T) -> K): List<K> =
         groupBy(key).filterValues { it.size > 1 }.keys.toList()
+}
+
+/**
+ * Every step of every setup list, with the list it came from so an error can
+ * point at where it is actually written.
+ */
+private inline fun ScenarioTemplate.eachStep(action: (String, Int, SetupStep) -> Unit) {
+    setupSections().forEach { (section, steps) ->
+        steps.forEachIndexed { index, step -> action(section, index, step) }
+    }
 }

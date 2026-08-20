@@ -53,6 +53,62 @@ data class CampaignTemplate(
     val finaleScenarioId: String? = null,
     /** True when the campaign asks which scenario to play first. */
     val chooseFirstScenario: Boolean = false,
+
+    /**
+     * A draw run before every choice, campaign-scoped rather than tied to a
+     * scenario's setup.
+     *
+     * Fear No Evil's villains push the places the heroes are not: two
+     * environments are drawn before each game and their scenarios advance,
+     * whether or not anybody plays them. `from` names the scenario ids, `count`
+     * is two, and `counts` maps each to the pressure counter it feeds. The app
+     * draws it — this is the campaign automating the thing the rules leave to a
+     * shuffle, not a question put to the table.
+     */
+    @SerialName("environmentDraw") val environmentDraw: DrawDefinition? = null,
+
+    /**
+     * Names for cards the card database does not carry, keyed by the same id a
+     * draw uses.
+     *
+     * Fear No Evil's encounter side is not on MarvelCDB, so a drawn environment
+     * or villain would otherwise show its raw id. These are French — they come
+     * off the box, and there is no English printing here to copy — and the
+     * English slot carries the French name too rather than a guess. The card
+     * database wins wherever it has an entry, so this quietly stops mattering
+     * the day the cards are published.
+     */
+    @SerialName("localCardNames") val localCardNames: Map<String, LocalizedText> = emptyMap(),
+
+    /**
+     * Villains dealt one per scenario when the campaign starts, and kept quiet
+     * until that scenario is set up.
+     *
+     * Fear No Evil fixes which subordinate is behind which job before the first
+     * game, and the players find out only when they get there. Dealing it at
+     * setup time instead would let a table reroll it by backing out.
+     */
+    @SerialName("villainPool") val villainPool: List<String> = emptyList(),
+
+    /**
+     * True when a scenario reaching its [ScenarioTemplate.failedWhen] ends the
+     * whole campaign in defeat.
+     *
+     * No bundled campaign sets this. A failed scenario is a setback everywhere,
+     * including Fear No Evil, where the fallen job is simply out and the last
+     * villain is harder for it — ending the run on the first fall makes that
+     * campaign unwinnable, since ticks land faster than jobs can be settled.
+     */
+    @SerialName("losesWhenScenarioFails") val losesWhenScenarioFails: Boolean = false,
+
+    /**
+     * A short note shown before the campaign is started.
+     *
+     * For anything a table should know up front that is not a setup step —
+     * Fear No Evil says its text is French-only for now. Written for this app,
+     * like every other string in a template; nothing is quoted from a book.
+     */
+    @SerialName("notice") val notice: LocalizedText? = null,
 ) {
 
     /**
@@ -65,14 +121,33 @@ data class CampaignTemplate(
      */
     fun expanded(): CampaignTemplate = copy(
         scenarios = scenarios.map { scenario ->
+            fun expand(steps: List<SetupStep>) = steps.flatMap { step ->
+                step.include?.let { setupFragments[it] } ?: listOf(step)
+            }
             scenario.copy(
-                campaignSetup = scenario.campaignSetup.flatMap { step ->
-                    step.include?.let { setupFragments[it] } ?: listOf(step)
-                },
+                preSetup = expand(scenario.preSetup),
+                campaignSetup = expand(scenario.campaignSetup),
+                information = expand(scenario.information),
             )
         },
     )
 }
+
+/**
+ * Every setup list a scenario has, paired with the name it goes by in the JSON.
+ *
+ * Anything that checks setup steps — the validator, the tests that keep rules
+ * text out of the templates — must see all three, and a list added later is a
+ * list those checks silently stop covering unless they read it from here.
+ */
+fun ScenarioTemplate.setupSections(): List<Pair<String, List<SetupStep>>> = listOf(
+    "preSetup" to preSetup,
+    "campaignSetup" to campaignSetup,
+    "information" to information,
+)
+
+/** Every setup step in a scenario, in the order the briefing shows them. */
+fun ScenarioTemplate.allSetupSteps(): List<SetupStep> = setupSections().flatMap { it.second }
 
 /**
  * Content is French first. English can be added later, and a missing string
@@ -152,7 +227,23 @@ data class ScenarioTemplate(
     val victoryLabel: LocalizedText? = null,
     val defeatLabel: LocalizedText? = null,
     val baseSetup: BaseSetup? = null,
+
+    /**
+     * What goes on the table before the setup proper: which decks to find, and
+     * anything dealt for this scenario.
+     *
+     * [baseSetup] covers the same ground for campaigns whose cards the database
+     * carries, as card chips. This is for the ones it does not — Fear No Evil
+     * names its decks in text because none of them exist on MarvelCDB.
+     */
+    val preSetup: List<SetupStep> = emptyList(),
     val campaignSetup: List<SetupStep> = emptyList(),
+
+    /**
+     * Notes worth reading once the table is laid out, and no part of laying it
+     * out — how the villain behaves, what to watch for.
+     */
+    val information: List<SetupStep> = emptyList(),
     val onVictory: Outcome? = null,
     val onDefeat: Outcome? = null,
     /**
@@ -165,6 +256,15 @@ data class ScenarioTemplate(
      * Null everywhere else, where a scenario is only spent by playing it.
      */
     @SerialName("failedWhen") val failedWhen: Condition? = null,
+
+    /**
+     * The counter that measures how close this place is to falling, shown on
+     * the choice screen so the table can weigh where to go.
+     *
+     * Null for campaigns that do not push their scenarios; the choice screen
+     * shows nothing for those.
+     */
+    @SerialName("pressureCounterId") val pressureCounterId: String? = null,
 
     /**
      * Bespoke mechanics that the declarative schema genuinely cannot express,
