@@ -101,11 +101,30 @@ object TemplateValidator {
             scenario.eachStep { section, index, step ->
                 validateCondition(step.condition, "$path.$section[$index].when", counterIds, flagSetIds, cardListIds, errors)
                 step.draw?.let { draw ->
-                    if (draw.from.isEmpty()) {
+                    // A draw with a pool per hero carries its candidates in
+                    // perHeroPools instead, keyed by the marker each player
+                    // recorded, so a shared `from` would have nothing to say.
+                    if (draw.from.isEmpty() && draw.perHeroPools.isEmpty()) {
                         errors += TemplateError(
                             "$path.$section[$index].draw",
                             "a draw needs cards to choose from",
                         )
+                    }
+                    draw.perHeroPoolList?.let {
+                        if (it !in cardListIds) {
+                            errors += TemplateError(
+                                "$path.$section[$index].draw.perHeroPoolList",
+                                "no card list with id '$it'",
+                            )
+                        }
+                    }
+                    draw.excludingPerHero?.let {
+                        if (it !in cardListIds) {
+                            errors += TemplateError(
+                                "$path.$section[$index].draw.excludingPerHero",
+                                "no card list with id '$it'",
+                            )
+                        }
                     }
                     if (draw.excluding != null && draw.excluding !in cardListIds) {
                         errors += TemplateError(

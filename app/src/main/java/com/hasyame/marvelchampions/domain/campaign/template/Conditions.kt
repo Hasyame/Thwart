@@ -141,6 +141,15 @@ enum class EffectOp(val token: String) {
     ADD_CARD("addcard"),
     ADD_CARDS_FROM_ANSWER("addcardsfromanswer"),
     /**
+     * Replaces a card list with what was answered, rather than adding to it.
+     *
+     * Mutant Genesis records which Future Past cards are still in circulation
+     * at the end of each scenario; the ones that reached the victory display
+     * are gone for good. That is a list that shrinks, and adding to it would
+     * shuffle a destroyed Sentinel back in next game.
+     */
+    SET_CARDS_FROM_ANSWER("setcardsfromanswer"),
+    /**
      * Adds whatever a setup draw came up with to a card list, which is how a
      * randomly chosen card gets struck from the campaign log without asking the
      * player to tell the app what it already picked.

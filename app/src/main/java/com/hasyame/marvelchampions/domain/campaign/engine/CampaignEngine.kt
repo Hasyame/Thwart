@@ -483,6 +483,15 @@ class CampaignEngine(
                 )
             }
 
+            EffectOp.SET_CARDS_FROM_ANSWER -> {
+                if (!ConditionEvaluator.evaluate(effect.condition, baseContext)) {
+                    return state
+                }
+                val listId = effect.cardList ?: return state
+                val answered = answers.cardLists[effect.from].orEmpty()
+                state.copy(cardLists = state.cardLists + (listId to answered))
+            }
+
             EffectOp.ADD_DRAWN_CARD -> {
                 if (!ConditionEvaluator.evaluate(effect.condition, baseContext)) {
                     return state
