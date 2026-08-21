@@ -8,6 +8,12 @@ import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.campaign.engine.AnswerSet
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
+import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.repository.EncounterRepository
+import com.hasyame.marvelchampions.domain.play.Encounter
+import com.hasyame.marvelchampions.domain.play.EncounterSetup
+import kotlinx.coroutines.flow.first
+import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -82,12 +88,19 @@ data class CampaignRunUiState(
      * unchanged and a second tap filed the whole lot again.
      */
     val isSubmitting: Boolean = false,
+
+    /** Counting villain health and scheme threat, if the setting asks for it. */
+    val trackEncounter: Boolean = false,
+    val encounter: Encounter = Encounter.startOf(EncounterSetup()),
+    val keepAwake: Boolean = true,
 )
 
 @HiltViewModel
 class CampaignRunViewModel @Inject constructor(
     private val repository: CampaignRepository,
     private val preferences: AppPreferences,
+    private val encounterRepository: EncounterRepository,
+    private val cardDao: CardDao,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(CampaignRunUiState())
@@ -210,6 +223,52 @@ class CampaignRunViewModel @Inject constructor(
         state.value = state.value.copy(page = page)
     }
 
+    /**
+     * Builds the tracker for the scenario about to be played.
+     *
+     * The set is read off the villain rather than declared in the template:
+     * every campaign already names its villain by card code, and the card
+     * knows which set it belongs to, so this works for all seven without
+     * touching any of them. A scenario whose cards are in no database — Fear
+     * No Evil — simply produces nothing usable and the panel stays away.
+     */
+    private suspend fun buildEncounter(run: CampaignRun): EncounterSetup {
+        if (!preferences.trackEncounter.first()) {
+            return EncounterSetup()
+        }
+        val scenario = run.template.scenarios
+            .firstOrNull { it.id == run.state.currentScenarioId }
+            ?: return EncounterSetup()
+        val villain = scenario.baseSetup
+            ?.villainStages(run.state.difficulty, null)
+            ?.firstOrNull()
+            ?: return EncounterSetup()
+        val locale = preferences.currentCardLocale()
+        val setCode = cardDao.getCardsByCodes(listOf(villain))
+            .firstOrNull { it.locale == locale.code }
+            ?.cardSetCode
+            ?: return EncounterSetup()
+        return encounterRepository.setupFor(setCode, run.state.heroes.size.coerceAtLeast(1))
+    }
+
+    private fun updateEncounter(transform: Encounter.() -> Encounter) {
+        state.value = state.value.copy(encounter = state.value.encounter.transform())
+    }
+
+    fun damageVillain(amount: Int) = updateEncounter { damaged(amount) }
+
+    fun changeThreat(amount: Int) = updateEncounter { threatened(amount) }
+
+    fun advanceVillain() = updateEncounter { villainAdvanced() }
+
+    fun advanceScheme() = updateEncounter { schemeAdvanced() }
+
+    fun endRound() = updateEncounter { roundEnded() }
+
+    fun setKeepAwake(value: Boolean) {
+        state.value = state.value.copy(keepAwake = value)
+    }
+
     /** "I'm ready" — starts the clock and moves to the play page. */
     fun beginScenario() {
         val id = runId ?: return
@@ -221,7 +280,15 @@ class CampaignRunViewModel @Inject constructor(
                 run.state.currentScenarioId,
             )
             reload()
-            state.value = state.value.copy(page = RunPage.PLAYING)
+            // Built here rather than on load: this is the moment the table is
+            // laid out, so the stages and the player count are settled.
+            val run = state.value.run
+            val setup = if (run != null) buildEncounter(run) else EncounterSetup()
+            state.value = state.value.copy(
+                page = RunPage.PLAYING,
+                trackEncounter = setup.isUsable,
+                encounter = Encounter.startOf(setup),
+            )
         }
     }
 

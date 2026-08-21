@@ -674,7 +674,17 @@ private fun PlayingPhase(
                 if (state.keepAwake) {
                     KeepScreenOn()
                 }
-                EncounterPanel(state = state, viewModel = viewModel)
+                EncounterPanel(
+                    encounter = state.encounter,
+                    enabled = !state.isFinishing,
+                    keepAwake = state.keepAwake,
+                    onDamageVillain = viewModel::damageVillain,
+                    onChangeThreat = viewModel::changeThreat,
+                    onAdvanceVillain = viewModel::advanceVillain,
+                    onAdvanceScheme = viewModel::advanceScheme,
+                    onEndRound = viewModel::endRound,
+                    onKeepAwake = viewModel::setKeepAwake,
+                )
             }
 
             // Both go dead the instant either is tapped, and say why. Without
@@ -719,153 +729,6 @@ private fun PlayingPhase(
 }
 
 /** The game's own names for its four difficulties. */
-/**
- * Villain health and scheme threat, counted for the number of people playing.
- *
- * Only counters, deliberately. It does not know that a Crisis icon stops
- * thwarting or that a minion just entered play — a tracker that
- * half-adjudicates rules is wrong at somebody's table, and then the numbers it
- * *is* keeping stop being trusted either.
- */
-@Composable
-private fun EncounterPanel(
-    state: GameSessionUiState,
-    viewModel: GameSessionViewModel,
-) {
-    val encounter = state.encounter
-
-    ComicPanel(Modifier.fillMaxWidth()) {
-        Column(
-            Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.session_round, encounter.progress.round),
-                style = MaterialTheme.typography.titleSmall,
-            )
-
-            encounter.villainSide?.let { villain ->
-                CounterRow(
-                    title = "${villain.name} ${villain.stage}".trim(),
-                    value = encounter.progress.damage,
-                    total = encounter.villainHealth,
-                    unit = stringResource(R.string.session_damage),
-                    unknown = villain.starred,
-                    enabled = !state.isFinishing,
-                    onChange = viewModel::damageVillain,
-                    reached = encounter.villainDefeated,
-                    advanceLabel = stringResource(R.string.session_flip_villain),
-                    onAdvance = if (encounter.isFinalVillainStage) null else viewModel::advanceVillain,
-                )
-            }
-
-            encounter.schemeSide?.let { scheme ->
-                HorizontalDivider()
-                CounterRow(
-                    title = scheme.name,
-                    value = encounter.progress.threat,
-                    total = encounter.schemeLimit,
-                    unit = stringResource(R.string.session_threat),
-                    unknown = scheme.starred,
-                    enabled = !state.isFinishing,
-                    onChange = viewModel::changeThreat,
-                    reached = encounter.schemeComplete,
-                    advanceLabel = stringResource(R.string.session_advance_scheme),
-                    onAdvance = if (encounter.isFinalSchemeStage) null else viewModel::advanceScheme,
-                )
-            }
-
-            // The one piece of arithmetic worth automating: it is per player,
-            // it happens every round, and forgetting it is the commonest way a
-            // game drifts from where it should be.
-            Button(
-                onClick = viewModel::endRound,
-                enabled = !state.isFinishing,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.session_end_round)) }
-
-            Row(
-                Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.session_keep_awake),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(1f),
-                )
-                Switch(checked = state.keepAwake, onCheckedChange = viewModel::setKeepAwake)
-            }
-        }
-    }
-}
-
-/**
- * Steps the buttons offer.
- *
- * One for chip damage and the usual thwart, five because a hero hitting for
- * five is an ordinary turn and tapping +1 five times at a table is not.
- */
-private val COUNTER_STEPS = listOf(-5, -1, 1, 5)
-
-/** One counter: what it is, where it stands, and the buttons that move it. */
-@Composable
-private fun CounterRow(
-    title: String,
-    value: Int,
-    total: Int?,
-    unit: String,
-    /** The card prints a star where the number goes, so nobody knows it yet. */
-    unknown: Boolean,
-    enabled: Boolean,
-    onChange: (Int) -> Unit,
-    reached: Boolean,
-    advanceLabel: String,
-    onAdvance: (() -> Unit)?,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(text = title, style = MaterialTheme.typography.titleSmall)
-        Text(
-            // Three different things, and they must not look alike: a number to
-            // count towards, a star meaning the scenario decides it, and no
-            // limit at all — a stage like The Brotherhood Strikes! that ends
-            // some other way, where a target would be a lie.
-            text = when {
-                total != null -> "$value / $total"
-                unknown -> "$value / ★"
-                else -> "$value"
-            },
-            style = MaterialTheme.typography.headlineMedium,
-            color = if (reached) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurface
-            },
-        )
-        Text(
-            text = unit,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            COUNTER_STEPS.forEach { step ->
-                OutlinedButton(
-                    onClick = { onChange(step) },
-                    enabled = enabled,
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
-                ) { Text(if (step > 0) "+$step" else "$step") }
-            }
-        }
-        if (reached && onAdvance != null) {
-            Button(
-                onClick = onAdvance,
-                enabled = enabled,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(advanceLabel) }
-        }
-    }
-}
 
 private fun Difficulty.labelRes(): Int = when (this) {
     Difficulty.STANDARD_I -> R.string.difficulty_standard_i

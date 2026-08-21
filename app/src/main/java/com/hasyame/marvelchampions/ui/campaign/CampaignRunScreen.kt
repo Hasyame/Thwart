@@ -53,6 +53,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hasyame.marvelchampions.domain.play.Encounter
+import com.hasyame.marvelchampions.domain.play.EncounterSetup
+import com.hasyame.marvelchampions.ui.plays.EncounterPanel
+import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
@@ -157,6 +161,15 @@ fun CampaignRunScreen(
                         onDefeat = viewModel::declareDefeat,
                         onPause = viewModel::pauseTimer,
                         onResume = viewModel::resumeTimer,
+                        trackEncounter = state.trackEncounter,
+                        encounter = state.encounter,
+                        keepAwake = state.keepAwake,
+                        onDamageVillain = viewModel::damageVillain,
+                        onChangeThreat = viewModel::changeThreat,
+                        onAdvanceVillain = viewModel::advanceVillain,
+                        onAdvanceScheme = viewModel::advanceScheme,
+                        onEndRound = viewModel::endRound,
+                        onKeepAwake = viewModel::setKeepAwake,
                     )
 
                     RunPage.QUESTIONS -> QuestionsPage(
@@ -628,9 +641,20 @@ private fun PlayingPage(
     onDefeat: () -> Unit,
     onPause: () -> Unit,
     onResume: () -> Unit,
+    trackEncounter: Boolean = false,
+    encounter: Encounter = Encounter.startOf(EncounterSetup()),
+    keepAwake: Boolean = true,
+    onDamageVillain: (Int) -> Unit = {},
+    onChangeThreat: (Int) -> Unit = {},
+    onAdvanceVillain: () -> Unit = {},
+    onAdvanceScheme: () -> Unit = {},
+    onEndRound: () -> Unit = {},
+    onKeepAwake: (Boolean) -> Unit = {},
 ) {
     Column(
-        Modifier.fillMaxSize().padding(24.dp),
+        // Scrollable since the tracker joined it: the clock and two buttons
+        // fit any screen, the counters do not.
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -651,6 +675,23 @@ private fun PlayingPage(
                         R.string.campaign_play
                     },
                 ),
+            )
+        }
+
+        if (trackEncounter) {
+            if (keepAwake) {
+                KeepScreenOn()
+            }
+            EncounterPanel(
+                encounter = encounter,
+                enabled = !isSubmitting,
+                keepAwake = keepAwake,
+                onDamageVillain = onDamageVillain,
+                onChangeThreat = onChangeThreat,
+                onAdvanceVillain = onAdvanceVillain,
+                onAdvanceScheme = onAdvanceScheme,
+                onEndRound = onEndRound,
+                onKeepAwake = onKeepAwake,
             )
         }
 
