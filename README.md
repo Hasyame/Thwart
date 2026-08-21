@@ -17,6 +17,7 @@ app in French with English cards, or the other way round.
 - [Install it](#install-it)
 - [What it does](#what-it-does)
 - [What is still to come](#what-is-still-to-come)
+- [Supporting it](#supporting-it)
 - [Versioning](#versioning)
 - [Build it yourself](#build-it-yourself)
 - [Card data](#card-data)
@@ -180,8 +181,8 @@ rather than machinery.
   lists, a market, per-scenario questionnaires, and setup steps for one scenario
   that depend on what was recorded in the ones before it. **The Galaxy's Most
   Wanted**, **Age of Apocalypse**, **The Mad Titan's Shadow**, **The Rise of Red
-  Skull**, **Fear No Evil**, **Sinister Motives** and **Mutant Genesis** ship
-  with the app.
+  Skull**, **Fear No Evil**, **Sinister Motives**, **Mutant Genesis** and
+  **NeXt Evolution** ship with the app.
 
   Fear No Evil is the odd one, because it has no scenario order at all. Two
   environments are drawn before every game and push their scenarios along
@@ -209,6 +210,14 @@ rather than machinery.
   "use it or lose it" rule the book is after. The log also carries which
   campaign side schemes were beaten, which Future Past cards are still in
   circulation, and who was rescued.
+
+  NeXt Evolution turns on a choice rather than a draw. Six player side schemes,
+  one picked each scenario out of those left, and the encounter card paired
+  with it joins the deck for the rest of the campaign whether or not you beat
+  it. Beat it and you keep its environment for every scenario after. Fail and
+  that reward is gone for good. The app offers what is still available and
+  records what you take, because the rules say the table chooses and that is
+  the only real decision the campaign gives you.
 
   Where a campaign says each player *chooses* a card, that is compulsory. The
   questionnaire records one answer per player and will not file until everyone
@@ -269,6 +278,22 @@ Campaigns are added after they have been played, so the mechanics in a template
 come from experience rather than from a reading of the book. That is the whole
 roadmap. No further app features are planned, and anything else will come from
 something going wrong at a real table.
+
+## Supporting it
+
+There is a Patreon page: <https://www.patreon.com/cw/thwart>
+
+It is mostly there for later, for once I consider the app properly finished,
+and for anyone who simply wants to make a donation. Thwart is free, and it
+stays free. Nothing on that page buys a feature, and there is no version of
+this app that costs money.
+
+That said, if you want to help now, you are very welcome. I will listen to you
+faster than to anyone else, because you have put your hand up and told me you
+care what happens to it, and I will credit you in the app.
+
+What actually helps, in order: telling me what is broken, testing a build
+before it goes out, and money. The first two are worth more than the third.
 
 ## Versioning
 
