@@ -51,6 +51,7 @@ object ConditionEvaluator {
         condition.cardList?.let { listId ->
             val recorded = state.cardLists[listId].orEmpty()
             condition.contains?.let { if (it !in recorded) return false }
+            condition.notContains?.let { if (it in recorded) return false }
             condition.minSize?.let { if (recorded.size < it) return false }
         }
 

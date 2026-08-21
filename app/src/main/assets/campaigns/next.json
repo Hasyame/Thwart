@@ -1,0 +1,2516 @@
+{
+  "id": "next",
+  "schemaVersion": 1,
+  "name": {
+    "en": "NeXt Evolution",
+    "fr": "Next Evolution"
+  },
+  "packCode": "next_evol",
+  "notice": {
+    "en": "Unofficial, reconstructed for the app: the rulebook and cards from the NeXt Evolution box are still needed to play.\n\nThe app keeps the campaign log for you. Which player side schemes you have already chosen, which environments you earned by beating them, the encounter cards they dragged into the deck for good, which Marauders were routed, and how much damage Hope Summers is carrying.\n\nThe side scheme each scenario is a choice, not a draw, so the app offers the ones you have not used and records what you pick rather than picking for you.\n\nExpert is the expert campaign: the harder villain stages, and hit points that carry from one scenario to the next.",
+    "fr": "Non officiel, reconstitué pour l'application : le livret et les cartes de la boîte Next Evolution restent nécessaires pour jouer.\n\nL'application tient le journal de campagne pour vous. Quelles manigances annexes joueur vous avez déjà choisies, quels environnements vous avez acquis en les vainquant, les cartes Rencontre qu'elles ont ajoutées définitivement au deck, quels Maraudeurs ont été mis en déroute, et combien de dégâts Hope Summers porte encore.\n\nLa manigance annexe de chaque scénario est un choix, pas un tirage : l'application propose celles que vous n'avez pas encore utilisées et note celle que vous prenez, au lieu de choisir à votre place.\n\nExpert correspond à la campagne experte : les stades de méchant les plus durs, et des points de vie qui se reportent d'un scénario au suivant."
+  },
+  "difficulties": [
+    "standard",
+    "expert"
+  ],
+  "counters": [
+    {
+      "id": "hp",
+      "scope": "hero",
+      "initial": 0,
+      "maxFrom": "heroCard.health"
+    },
+    {
+      "id": "morlocksSaved",
+      "scope": "campaign",
+      "initial": 0
+    },
+    {
+      "id": "hopeDamage",
+      "scope": "campaign",
+      "initial": 0
+    }
+  ],
+  "flagSets": [],
+  "cardLists": [
+    {
+      "id": "chosenSchemes",
+      "scope": "campaign"
+    },
+    {
+      "id": "schemeEncounters",
+      "scope": "campaign"
+    },
+    {
+      "id": "thisScenarioScheme",
+      "scope": "scenario"
+    },
+    {
+      "id": "earnedEnvironments",
+      "scope": "campaign"
+    },
+    {
+      "id": "maraudersDefeated",
+      "scope": "campaign"
+    }
+  ],
+  "startScenarioId": "s1_morlock_siege",
+  "scenarios": [
+    {
+      "id": "s1_morlock_siege",
+      "name": {
+        "en": "Morlock Siege",
+        "fr": "Le Siège des Morlocks"
+      },
+      "flavour": {
+        "en": "The Marauders came for the Morlocks in the tunnels under the city, and Hope Summers was already down there when they arrived.",
+        "fr": "Les Maraudeurs sont venus chercher les Morlocks dans les tunnels sous la ville, et Hope Summers était déjà en bas quand ils sont arrivés."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "40070a",
+            "40071a",
+            "40072a",
+            "40073a",
+            "40074a",
+            "40075a",
+            "40076a"
+          ],
+          "expert": [
+            "40070b",
+            "40071b",
+            "40072b",
+            "40073b",
+            "40074b",
+            "40075b",
+            "40076b"
+          ]
+        },
+        "mainScheme": [
+          "40077a"
+        ],
+        "encounterSets": [
+          "morlock_siege",
+          "military_grade",
+          "mutant_slayers",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Hope Summers cannot be in any player's deck for this campaign.",
+            "fr": "Hope Summers ne peut être dans le deck d'aucun joueur pendant cette campagne."
+          },
+          "cards": [
+            "40204"
+          ]
+        },
+        {
+          "text": {
+            "en": "Choose one campaign player side scheme you have not chosen before, and put it into play.",
+            "fr": "Choisissez une manigance annexe joueur de campagne que vous n'avez pas encore choisie, et mettez-la en jeu."
+          },
+          "showCardList": "chosenSchemes"
+        },
+        {
+          "text": {
+            "en": "Assemble the Team",
+            "fr": "Réunir l'Équipe"
+          },
+          "cards": [
+            "40190a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40190a"
+          },
+          "action": {
+            "id": "choose_40190a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40190a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40199"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40190a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Establish Safehouse",
+            "fr": "Établir un Refuge"
+          },
+          "cards": [
+            "40191a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40191a"
+          },
+          "action": {
+            "id": "choose_40191a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40191a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40201"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40191a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Gear Up",
+            "fr": "S'Armer Jusqu'aux Dents"
+          },
+          "cards": [
+            "40192a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40192a"
+          },
+          "action": {
+            "id": "choose_40192a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40192a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40203"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40192a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Mission Prep",
+            "fr": "Préparer la Mission"
+          },
+          "cards": [
+            "40193a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40193a"
+          },
+          "action": {
+            "id": "choose_40193a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40193a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40200"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40193a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Practice Maneuvers",
+            "fr": "Entraînement aux Manœuvres"
+          },
+          "cards": [
+            "40194a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40194a"
+          },
+          "action": {
+            "id": "choose_40194a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40194a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40198"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40194a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Prepare Defenses",
+            "fr": "Préparer les Défenses"
+          },
+          "cards": [
+            "40195a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40195a"
+          },
+          "action": {
+            "id": "choose_40195a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40195a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40202"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40195a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck. They stay there for the rest of the campaign.",
+            "fr": "Mélangez celles-ci dans le deck Rencontre. Elles y restent pour tout le reste de la campagne."
+          },
+          "showCardList": "schemeEncounters",
+          "when": {
+            "cardList": "schemeEncounters",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Defeat 3 of the 7 Marauders to win.",
+            "fr": "Vainquez 3 des 7 Maraudeurs pour gagner."
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "routed",
+            "type": "cardSelect",
+            "cards": [
+              "40070a",
+              "40071a",
+              "40072a",
+              "40073a",
+              "40074a",
+              "40075a",
+              "40076a"
+            ],
+            "label": {
+              "en": "Which Marauders ended the game under Routed? They are out of the game from here.",
+              "fr": "Quels Maraudeurs ont fini la partie sous Déroute ? Ils quittent la partie à partir de maintenant."
+            }
+          },
+          {
+            "id": "morlocks",
+            "type": "number",
+            "label": {
+              "en": "How many Morlock allies are still in play?",
+              "fr": "Combien d'alliés Morlocks sont encore en jeu ?"
+            }
+          },
+          {
+            "id": "schemeBeaten",
+            "type": "boolean",
+            "label": {
+              "en": "Did you defeat the campaign player side scheme you chose?",
+              "fr": "Avez-vous vaincu la manigance annexe joueur de campagne que vous aviez choisie ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "maraudersDefeated",
+            "from": "routed"
+          },
+          {
+            "op": "setCounter",
+            "counter": "morlocksSaved",
+            "from": "morlocks"
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40190b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40190a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40191b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40191a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40192b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40192a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40193b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40193a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40194b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40194a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40195b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40195a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s2_on_the_run"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s1_morlock_siege"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s2_on_the_run",
+      "name": {
+        "en": "On the Run",
+        "fr": "En Fuite"
+      },
+      "flavour": {
+        "en": "The Marauders took Hope with them when they fell back, and they are handing her to the Nasty Boys.",
+        "fr": "Les Maraudeurs ont emmené Hope en battant en retraite, et ils s'apprêtent à la livrer aux Mauvais Garçons."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "40070a",
+            "40071a",
+            "40072a",
+            "40073a",
+            "40074a",
+            "40075a",
+            "40076a"
+          ],
+          "expert": [
+            "40070b",
+            "40071b",
+            "40072b",
+            "40073b",
+            "40074b",
+            "40075b",
+            "40076b"
+          ]
+        },
+        "mainScheme": [
+          "40103a"
+        ],
+        "encounterSets": [
+          "on_the_run",
+          "military_grade",
+          "mutant_slayers",
+          "nasty_boys",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Remove these Marauders from the game before resolving the main scheme's setup.\nMinions of the same name stay in the encounter deck.",
+            "fr": "Retirez ces Maraudeurs de la partie avant de résoudre la mise en place de la manigance principale.\nLes sbires du même nom restent dans le deck Rencontre."
+          },
+          "showCardList": "maraudersDefeated",
+          "when": {
+            "cardList": "maraudersDefeated",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "One Marauder is drawn to carry Hope. Defeat that villain twice to win.",
+            "fr": "Un Maraudeur est tiré pour emmener Hope. Vainquez ce méchant deux fois pour gagner."
+          },
+          "draw": {
+            "id": "captor",
+            "from": [
+              "40070a",
+              "40071a",
+              "40072a",
+              "40073a",
+              "40074a",
+              "40075a",
+              "40076a"
+            ],
+            "excluding": "maraudersDefeated"
+          }
+        },
+        {
+          "text": {
+            "en": "For each Morlock saved last scenario, choose a player to search their deck for 1 card, add it to hand, then shuffle.",
+            "fr": "Pour chaque Morlock sauvé au scénario précédent, choisissez un joueur qui cherche 1 carte dans son deck, l'ajoute à sa main, puis mélange."
+          },
+          "when": {
+            "counter": "morlocksSaved",
+            "atLeast": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Put these earned campaign environments into play, in any order.",
+            "fr": "Mettez en jeu ces environnements de campagne acquis, dans l'ordre de votre choix."
+          },
+          "showCardList": "earnedEnvironments",
+          "when": {
+            "cardList": "earnedEnvironments",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Give each enemy a tough status card, because an earned environment is in play.",
+            "fr": "Donnez une carte état Coriace à chaque ennemi, car un environnement acquis est en jeu."
+          },
+          "when": {
+            "cardList": "earnedEnvironments",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Choose one campaign player side scheme you have not chosen before, and put it into play.",
+            "fr": "Choisissez une manigance annexe joueur de campagne que vous n'avez pas encore choisie, et mettez-la en jeu."
+          },
+          "showCardList": "chosenSchemes"
+        },
+        {
+          "text": {
+            "en": "Assemble the Team",
+            "fr": "Réunir l'Équipe"
+          },
+          "cards": [
+            "40190a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40190a"
+          },
+          "action": {
+            "id": "choose_40190a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40190a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40199"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40190a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Establish Safehouse",
+            "fr": "Établir un Refuge"
+          },
+          "cards": [
+            "40191a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40191a"
+          },
+          "action": {
+            "id": "choose_40191a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40191a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40201"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40191a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Gear Up",
+            "fr": "S'Armer Jusqu'aux Dents"
+          },
+          "cards": [
+            "40192a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40192a"
+          },
+          "action": {
+            "id": "choose_40192a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40192a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40203"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40192a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Mission Prep",
+            "fr": "Préparer la Mission"
+          },
+          "cards": [
+            "40193a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40193a"
+          },
+          "action": {
+            "id": "choose_40193a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40193a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40200"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40193a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Practice Maneuvers",
+            "fr": "Entraînement aux Manœuvres"
+          },
+          "cards": [
+            "40194a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40194a"
+          },
+          "action": {
+            "id": "choose_40194a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40194a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40198"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40194a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Prepare Defenses",
+            "fr": "Préparer les Défenses"
+          },
+          "cards": [
+            "40195a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40195a"
+          },
+          "action": {
+            "id": "choose_40195a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40195a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40202"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40195a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck. They stay there for the rest of the campaign.",
+            "fr": "Mélangez celles-ci dans le deck Rencontre. Elles y restent pour tout le reste de la campagne."
+          },
+          "showCardList": "schemeEncounters",
+          "when": {
+            "cardList": "schemeEncounters",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may place 1 acceleration token on the main scheme to heal to full.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut placer 1 jeton d'accélération sur la manigance principale pour se soigner complètement.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "schemeBeaten",
+            "type": "boolean",
+            "label": {
+              "en": "Did you defeat the campaign player side scheme you chose?",
+              "fr": "Avez-vous vaincu la manigance annexe joueur de campagne que vous aviez choisie ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40190b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40190a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40191b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40191a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40192b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40192a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40193b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40193a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40194b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40194a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40195b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40195a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s3_juggernaut"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s2_on_the_run"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s3_juggernaut",
+      "name": {
+        "en": "Juggernaut",
+        "fr": "Le Fléau"
+      },
+      "flavour": {
+        "en": "Hope's captor gave up the address, an orphanage in Omaha. The door comes off its hinges before you reach it.",
+        "fr": "Le ravisseur de Hope a lâché l'adresse, un orphelinat à Omaha. La porte sort de ses gonds avant même que vous l'atteigniez."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "40118",
+            "40119"
+          ],
+          "expert": [
+            "40119",
+            "40120"
+          ]
+        },
+        "mainScheme": [
+          "40121a"
+        ],
+        "encounterSets": [
+          "juggernaut",
+          "hope_summers",
+          "black_tom_cassidy",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put these earned campaign environments into play, in any order.",
+            "fr": "Mettez en jeu ces environnements de campagne acquis, dans l'ordre de votre choix."
+          },
+          "showCardList": "earnedEnvironments",
+          "when": {
+            "cardList": "earnedEnvironments",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Place 1 momentum counter on Juggernaut for each campaign environment in play.",
+            "fr": "Placez 1 jeton Élan sur Le Fléau pour chaque environnement de campagne en jeu."
+          },
+          "when": {
+            "cardList": "earnedEnvironments",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle Black Tom Cassidy with 1 Creeping Willow and deal one to each player facedown. Shuffle the rest into the encounter deck.",
+            "fr": "Mélangez Black Tom Cassidy avec 1 Saule Rampant et distribuez-en une face cachée à chaque joueur. Mélangez le reste dans le deck Rencontre."
+          },
+          "cards": [
+            "40134"
+          ]
+        },
+        {
+          "text": {
+            "en": "Choose one campaign player side scheme you have not chosen before, and put it into play.",
+            "fr": "Choisissez une manigance annexe joueur de campagne que vous n'avez pas encore choisie, et mettez-la en jeu."
+          },
+          "showCardList": "chosenSchemes"
+        },
+        {
+          "text": {
+            "en": "Assemble the Team",
+            "fr": "Réunir l'Équipe"
+          },
+          "cards": [
+            "40190a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40190a"
+          },
+          "action": {
+            "id": "choose_40190a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40190a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40199"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40190a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Establish Safehouse",
+            "fr": "Établir un Refuge"
+          },
+          "cards": [
+            "40191a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40191a"
+          },
+          "action": {
+            "id": "choose_40191a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40191a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40201"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40191a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Gear Up",
+            "fr": "S'Armer Jusqu'aux Dents"
+          },
+          "cards": [
+            "40192a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40192a"
+          },
+          "action": {
+            "id": "choose_40192a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40192a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40203"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40192a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Mission Prep",
+            "fr": "Préparer la Mission"
+          },
+          "cards": [
+            "40193a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40193a"
+          },
+          "action": {
+            "id": "choose_40193a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40193a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40200"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40193a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Practice Maneuvers",
+            "fr": "Entraînement aux Manœuvres"
+          },
+          "cards": [
+            "40194a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40194a"
+          },
+          "action": {
+            "id": "choose_40194a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40194a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40198"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40194a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Prepare Defenses",
+            "fr": "Préparer les Défenses"
+          },
+          "cards": [
+            "40195a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40195a"
+          },
+          "action": {
+            "id": "choose_40195a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40195a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40202"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40195a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck. They stay there for the rest of the campaign.",
+            "fr": "Mélangez celles-ci dans le deck Rencontre. Elles y restent pour tout le reste de la campagne."
+          },
+          "showCardList": "schemeEncounters",
+          "when": {
+            "cardList": "schemeEncounters",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may deal themself 1 facedown encounter card to heal to full.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut se distribuer 1 carte Rencontre face cachée pour se soigner complètement.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "schemeBeaten",
+            "type": "boolean",
+            "label": {
+              "en": "Did you defeat the campaign player side scheme you chose?",
+              "fr": "Avez-vous vaincu la manigance annexe joueur de campagne que vous aviez choisie ?"
+            }
+          },
+          {
+            "id": "hopeDamage",
+            "type": "number",
+            "label": {
+              "en": "How much damage is on Hope Summers?",
+              "fr": "Combien de dégâts y a-t-il sur Hope Summers ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40190b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40190a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40191b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40191a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40192b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40192a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40193b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40193a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40194b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40194a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40195b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40195a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "setCounter",
+            "counter": "hopeDamage",
+            "from": "hopeDamage"
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s4_mister_sinister"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s3_juggernaut"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s4_mister_sinister",
+      "name": {
+        "en": "Mister Sinister",
+        "fr": "Mister Sinistre"
+      },
+      "flavour": {
+        "en": "Under the orphanage there is a lift, and under the lift there are vats with people in them.",
+        "fr": "Sous l'orphelinat il y a un ascenseur, et sous l'ascenseur il y a des cuves avec des gens dedans."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "40136",
+            "40137"
+          ],
+          "expert": [
+            "40137",
+            "40138"
+          ]
+        },
+        "mainScheme": [
+          "40139a"
+        ],
+        "encounterSets": [
+          "mister_sinister",
+          "flight",
+          "super_strength",
+          "telepathy",
+          "hope_summers",
+          "nasty_boys",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put these earned campaign environments into play, in any order.",
+            "fr": "Mettez en jeu ces environnements de campagne acquis, dans l'ordre de votre choix."
+          },
+          "showCardList": "earnedEnvironments",
+          "when": {
+            "cardList": "earnedEnvironments",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Put Teleported Away into play, with 1 extra threat for each campaign environment in play.",
+            "fr": "Mettez Téléporté Ailleurs en jeu, avec 1 menace supplémentaire pour chaque environnement de campagne en jeu."
+          },
+          "cards": [
+            "40146"
+          ]
+        },
+        {
+          "text": {
+            "en": "Place the damage Hope Summers carried out of the last scenario either on her, or as that much threat on Teleported Away.",
+            "fr": "Placez les dégâts que Hope Summers a emportés du scénario précédent soit sur elle, soit en autant de menace sur Téléporté Ailleurs."
+          },
+          "when": {
+            "counter": "hopeDamage",
+            "atLeast": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Choose one campaign player side scheme you have not chosen before, and put it into play.",
+            "fr": "Choisissez une manigance annexe joueur de campagne que vous n'avez pas encore choisie, et mettez-la en jeu."
+          },
+          "showCardList": "chosenSchemes"
+        },
+        {
+          "text": {
+            "en": "Assemble the Team",
+            "fr": "Réunir l'Équipe"
+          },
+          "cards": [
+            "40190a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40190a"
+          },
+          "action": {
+            "id": "choose_40190a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40190a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40199"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40190a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Establish Safehouse",
+            "fr": "Établir un Refuge"
+          },
+          "cards": [
+            "40191a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40191a"
+          },
+          "action": {
+            "id": "choose_40191a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40191a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40201"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40191a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Gear Up",
+            "fr": "S'Armer Jusqu'aux Dents"
+          },
+          "cards": [
+            "40192a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40192a"
+          },
+          "action": {
+            "id": "choose_40192a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40192a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40203"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40192a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Mission Prep",
+            "fr": "Préparer la Mission"
+          },
+          "cards": [
+            "40193a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40193a"
+          },
+          "action": {
+            "id": "choose_40193a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40193a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40200"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40193a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Practice Maneuvers",
+            "fr": "Entraînement aux Manœuvres"
+          },
+          "cards": [
+            "40194a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40194a"
+          },
+          "action": {
+            "id": "choose_40194a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40194a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40198"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40194a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Prepare Defenses",
+            "fr": "Préparer les Défenses"
+          },
+          "cards": [
+            "40195a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40195a"
+          },
+          "action": {
+            "id": "choose_40195a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40195a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40202"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40195a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck. They stay there for the rest of the campaign.",
+            "fr": "Mélangez celles-ci dans le deck Rencontre. Elles y restent pour tout le reste de la campagne."
+          },
+          "showCardList": "schemeEncounters",
+          "when": {
+            "cardList": "schemeEncounters",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may place 1 acceleration token on the main scheme to heal to full.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut placer 1 jeton d'accélération sur la manigance principale pour se soigner complètement.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "schemeBeaten",
+            "type": "boolean",
+            "label": {
+              "en": "Did you defeat the campaign player side scheme you chose?",
+              "fr": "Avez-vous vaincu la manigance annexe joueur de campagne que vous aviez choisie ?"
+            }
+          },
+          {
+            "id": "hopeDamage",
+            "type": "number",
+            "label": {
+              "en": "How much damage is on Hope Summers?",
+              "fr": "Combien de dégâts y a-t-il sur Hope Summers ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40190b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40190a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40191b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40191a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40192b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40192a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40193b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40193a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40194b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40194a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40195b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40195a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "setCounter",
+            "counter": "hopeDamage",
+            "from": "hopeDamage"
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s5_stryfe"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s4_mister_sinister"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s5_stryfe",
+      "name": {
+        "en": "Stryfe",
+        "fr": "Stryfe"
+      },
+      "flavour": {
+        "en": "Sinister went through the portal and Hope went after him. On the other side, Cable's clone is waiting.",
+        "fr": "Sinistre est passé par le portail et Hope l'a suivi. De l'autre côté, le clone de Cable attend."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "40163",
+            "40164"
+          ],
+          "expert": [
+            "40164",
+            "40165"
+          ]
+        },
+        "mainScheme": [
+          "40166a"
+        ],
+        "encounterSets": [
+          "stryfe",
+          "hope_summers",
+          "extreme_measures",
+          "mutant_insurrection",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put these earned campaign environments into play, in any order.",
+            "fr": "Mettez en jeu ces environnements de campagne acquis, dans l'ordre de votre choix."
+          },
+          "showCardList": "earnedEnvironments",
+          "when": {
+            "cardList": "earnedEnvironments",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Place 1 threat on Stryfe's Grasp for each campaign environment in play.",
+            "fr": "Placez 1 menace sur Dans les Griffes de Stryfe pour chaque environnement de campagne en jeu."
+          },
+          "cards": [
+            "40168a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Place the damage Hope Summers carried out of the last scenario either on her, or as that much threat on Stryfe's Grasp.",
+            "fr": "Placez les dégâts que Hope Summers a emportés du scénario précédent soit sur elle, soit en autant de menace sur Dans les Griffes de Stryfe."
+          },
+          "when": {
+            "counter": "hopeDamage",
+            "atLeast": 1
+          }
+        },
+        {
+          "text": {
+            "en": "In player order, discard encounter cards until a minion or a Psionic attachment is discarded, and reveal it.\nThen shuffle the discard pile back in.",
+            "fr": "Dans l'ordre du tour, défaussez des cartes Rencontre jusqu'à en défausser un sbire ou un attachement Psionique, et révélez-le.\nPuis remélangez la pile de défausse dans le deck."
+          }
+        },
+        {
+          "text": {
+            "en": "Choose one campaign player side scheme you have not chosen before, and put it into play.",
+            "fr": "Choisissez une manigance annexe joueur de campagne que vous n'avez pas encore choisie, et mettez-la en jeu."
+          },
+          "showCardList": "chosenSchemes"
+        },
+        {
+          "text": {
+            "en": "Assemble the Team",
+            "fr": "Réunir l'Équipe"
+          },
+          "cards": [
+            "40190a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40190a"
+          },
+          "action": {
+            "id": "choose_40190a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40190a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40199"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40190a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Establish Safehouse",
+            "fr": "Établir un Refuge"
+          },
+          "cards": [
+            "40191a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40191a"
+          },
+          "action": {
+            "id": "choose_40191a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40191a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40201"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40191a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Gear Up",
+            "fr": "S'Armer Jusqu'aux Dents"
+          },
+          "cards": [
+            "40192a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40192a"
+          },
+          "action": {
+            "id": "choose_40192a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40192a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40203"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40192a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Mission Prep",
+            "fr": "Préparer la Mission"
+          },
+          "cards": [
+            "40193a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40193a"
+          },
+          "action": {
+            "id": "choose_40193a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40193a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40200"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40193a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Practice Maneuvers",
+            "fr": "Entraînement aux Manœuvres"
+          },
+          "cards": [
+            "40194a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40194a"
+          },
+          "action": {
+            "id": "choose_40194a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40194a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40198"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40194a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Prepare Defenses",
+            "fr": "Préparer les Défenses"
+          },
+          "cards": [
+            "40195a"
+          ],
+          "when": {
+            "cardList": "chosenSchemes",
+            "notContains": "40195a"
+          },
+          "action": {
+            "id": "choose_40195a",
+            "label": {
+              "en": "Choose this one",
+              "fr": "Choisir celle-ci"
+            },
+            "effects": [
+              {
+                "op": "addCard",
+                "cardList": "chosenSchemes",
+                "cardCode": "40195a"
+              },
+              {
+                "op": "addCard",
+                "cardList": "schemeEncounters",
+                "cardCode": "40202"
+              },
+              {
+                "op": "addCard",
+                "cardList": "thisScenarioScheme",
+                "cardCode": "40195a"
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck. They stay there for the rest of the campaign.",
+            "fr": "Mélangez celles-ci dans le deck Rencontre. Elles y restent pour tout le reste de la campagne."
+          },
+          "showCardList": "schemeEncounters",
+          "when": {
+            "cardList": "schemeEncounters",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may deal themself 1 facedown encounter card to heal to full.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut se distribuer 1 carte Rencontre face cachée pour se soigner complètement.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "schemeBeaten",
+            "type": "boolean",
+            "label": {
+              "en": "Did you defeat the campaign player side scheme you chose?",
+              "fr": "Avez-vous vaincu la manigance annexe joueur de campagne que vous aviez choisie ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40190b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40190a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40191b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40191a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40192b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40192a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40193b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40193a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40194b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40194a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "addCard",
+            "cardList": "earnedEnvironments",
+            "cardCode": "40195b",
+            "when": {
+              "all": [
+                {
+                  "answer": "schemeBeaten"
+                },
+                {
+                  "cardList": "thisScenarioScheme",
+                  "contains": "40195a"
+                }
+              ]
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "end": true
+          }
+        ]
+      },
+      "onDefeat": {
+        "message": {
+          "en": "Stryfe escapes into the past.",
+          "fr": "Stryfe s'échappe dans le passé."
+        },
+        "next": [
+          {
+            "end": true,
+            "when": {
+              "difficulty": "expert"
+            }
+          },
+          {
+            "goto": "s5_stryfe"
+          }
+        ]
+      }
+    }
+  ]
+}

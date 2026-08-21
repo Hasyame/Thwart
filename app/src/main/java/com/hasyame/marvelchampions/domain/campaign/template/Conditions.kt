@@ -41,6 +41,15 @@ data class Condition(
      */
     val cardList: String? = null,
     val contains: String? = null,
+    /**
+     * The list must *not* hold this card.
+     *
+     * NeXt Evolution offers the players a side scheme they have not chosen yet,
+     * every scenario, out of a set that shrinks as they go. Expressing that as
+     * "offer it unless it is already recorded" needs the negative form; there
+     * is no flag to hang it on, because the record is the card itself.
+     */
+    val notContains: String? = null,
     val minSize: Int? = null,
 
     /** A flag must be set. `flagSet.scenarioId`, or just `flagSet`. */
