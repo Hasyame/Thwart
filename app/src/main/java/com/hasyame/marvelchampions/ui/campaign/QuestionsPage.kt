@@ -28,6 +28,8 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -299,23 +301,35 @@ fun QuestionsPage(
                             // repeat it back.
                             prompt.cards.forEach { code ->
                                 val selected = cardSelections[prompt.id].orEmpty().contains(code)
+                                // The whole row toggles. The switch is a
+                                // fraction of the row's width, and the card's
+                                // name is where a finger actually lands, so a
+                                // tap on the name doing nothing reads as the
+                                // list being broken.
+                                fun toggle(on: Boolean) {
+                                    val current = cardSelections[prompt.id].orEmpty()
+                                    cardSelections[prompt.id] = if (on) {
+                                        current + code
+                                    } else {
+                                        current - code
+                                    }
+                                }
                                 Row(
-                                    Modifier.fillMaxWidth(),
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .toggleable(
+                                            value = selected,
+                                            role = Role.Switch,
+                                            onValueChange = ::toggle,
+                                        ),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(run.names.card(code), Modifier.weight(1f))
-                                    Switch(
-                                        checked = selected,
-                                        onCheckedChange = { on ->
-                                            val current = cardSelections[prompt.id].orEmpty()
-                                            cardSelections[prompt.id] = if (on) {
-                                                current + code
-                                            } else {
-                                                current - code
-                                            }
-                                        },
-                                    )
+                                    // Null: the row above already owns the
+                                    // click, and a switch with its own handler
+                                    // would be a second stop for the reader.
+                                    Switch(checked = selected, onCheckedChange = null)
                                 }
                             }
                         }
