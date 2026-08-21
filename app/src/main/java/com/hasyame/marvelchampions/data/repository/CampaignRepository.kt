@@ -400,12 +400,19 @@ class CampaignRepository @Inject constructor(
                     setup.villainDeck.values.forEach { addAll(it) }
                     addAll(setup.mainScheme)
                 }
-                scenario.campaignSetup.forEach { step ->
+                // Every section, not just the middle one, for the same
+                // reason the draws themselves are dealt from all three.
+                scenario.allSetupSteps().forEach { step ->
                     addAll(step.cards)
                     // Everything a draw might come up with. Without these the
                     // card the app picked had no name to show and fell back to
                     // its code, which is the one thing a player cannot read.
-                    step.draw?.let { addAll(it.from) }
+                    // Per-hero pools included: a draw that deals each player
+                    // from their own pile keeps its candidates there instead.
+                    step.draw?.let { draw ->
+                        addAll(draw.from)
+                        draw.perHeroPools.values.forEach { addAll(it) }
+                    }
                     addAll(cardPlaceholders(step.text))
                 }
                 listOfNotNull(scenario.onVictory, scenario.onDefeat).forEach { outcome ->
