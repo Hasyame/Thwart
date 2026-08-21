@@ -601,4 +601,5 @@
         <item quantity="many">Méchant : %1$d vies, stade %2$s</item>
         <item quantity="other">Méchant : %1$d vies, stade %2$s</item>
     </plurals>
+    <string name="campaign_untested">Le développeur n\'a pas encore joué cette campagne en entier sur table. Si vous trouvez une erreur, ou quelque chose à améliorer, signalez-le et ce sera corrigé au plus vite.</string>
 </resources>

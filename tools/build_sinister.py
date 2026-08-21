@@ -625,6 +625,7 @@ def build():
         "id": "sm",
         "schemaVersion": 1,
         "name": t("Sinister Motives"),
+        "untested": True,
         "packCode": "sm",
 
         "notice": t(

@@ -535,6 +535,7 @@ def build():
         "id": "next",
         "schemaVersion": 1,
         "name": t("NeXt Evolution"),
+        "untested": True,
         "packCode": "next_evol",
         "notice": t(
             "Unofficial, reconstructed for the app: the rulebook and cards "

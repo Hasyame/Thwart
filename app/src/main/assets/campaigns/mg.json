@@ -5,6 +5,7 @@
     "en": "Mutant Genesis",
     "fr": "La Genèse des Mutants"
   },
+  "untested": true,
   "packCode": "mut_gen",
   "notice": {
     "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Mutant Genesis box are still needed to play.\n\nThe app keeps the campaign log for you. It remembers each player's role, which campaign side schemes were beaten, which Future Past cards are still in circulation, and who was rescued. It also deals what the rules deal at random: the role upgrade each player starts a scenario with, from that player's own set, and the order the Brotherhood arrive in.\n\nExpert is the expert campaign: the harder villain stages, and hit points that carry from one scenario to the next.",

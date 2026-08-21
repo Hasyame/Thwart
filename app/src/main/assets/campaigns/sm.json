@@ -5,6 +5,7 @@
   "en": "Sinister Motives",
   "fr": "Sinistres Motivations"
  },
+ "untested": true,
  "packCode": "sm",
  "notice": {
   "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Sinister Motives box are still needed to play.\n\nThe app keeps the reputation track for you. It asks the six printed conditions after each scenario, does the adding, and shows only the boxes the track has reached. It also deals what the rules deal at random: the Community Service side scheme, the Osborn Tech attachments, and each player's three S.H.I.E.L.D. Tech upgrades.",

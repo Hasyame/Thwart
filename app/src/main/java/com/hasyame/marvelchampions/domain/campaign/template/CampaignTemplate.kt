@@ -127,6 +127,16 @@ data class CampaignTemplate(
      * without anybody starting it expecting the whole thing.
      */
     @SerialName("wip") val wip: Boolean = false,
+
+    /**
+     * True when the campaign is finished but has not been played at a table.
+     *
+     * Separate from [wip]: nothing is missing, it has simply never been run
+     * end to end, and the mistakes that survive a test suite are the ones a
+     * real game finds. Saying so is fairer than letting somebody discover it
+     * on scenario four.
+     */
+    @SerialName("untested") val untested: Boolean = false,
 ) {
 
     /**
@@ -164,8 +174,12 @@ data class CampaignTemplate(
  * Appended rather than written into the name so it disappears by flipping one
  * field, and so no translation has to carry it.
  */
-fun CampaignTemplate.chooserName(locale: String): String =
-    name.resolve(locale) + if (wip) " (WIP)" else ""
+fun CampaignTemplate.chooserName(locale: String): String = name.resolve(locale) + when {
+    wip -> " (WIP)"
+    untested && locale.startsWith("fr") -> " (Pas entièrement testée)"
+    untested -> " (Not fully tested)"
+    else -> ""
+}
 
 fun ScenarioTemplate.setupSections(): List<Pair<String, List<SetupStep>>> = listOf(
     "preSetup" to preSetup,

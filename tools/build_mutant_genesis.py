@@ -546,6 +546,7 @@ def build():
         "id": "mg",
         "schemaVersion": 1,
         "name": t("Mutant Genesis"),
+        "untested": True,
         "packCode": "mut_gen",
         "notice": t(
             "Unofficial, reconstructed for the app: the rulebook and cards "
