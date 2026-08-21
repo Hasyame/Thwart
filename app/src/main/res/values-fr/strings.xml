@@ -350,7 +350,7 @@
     <string name="campaign_nothing_recorded">Rien d\'enregistré</string>
     <string name="campaign_nobody">Personne</string>
     <string name="settings_contact">Contact</string>
-    <string name="settings_contact_summary">Signaler un bug par e-mail, version et appareil déjà remplis.</string>
+    <string name="settings_contact_summary">Poser une question ou signaler un bug par e-mail.</string>
     <string name="settings_no_mail_app">Aucune application de messagerie. Écrivez à %1$s.</string>
     <string name="campaign_in_progress_section">En cours</string>
     <string name="campaign_finished_section">Campagnes terminées</string>

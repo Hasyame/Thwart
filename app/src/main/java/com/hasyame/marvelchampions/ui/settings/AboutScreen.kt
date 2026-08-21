@@ -119,7 +119,7 @@ fun AboutScreen(
             }
 
             OutlinedButton(
-                onClick = { noMailApp = !sendContactEmail(context, state.lastCardSync) },
+                onClick = { noMailApp = !sendContactEmail(context) },
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.about_contact)) }
 

@@ -224,7 +224,7 @@ fun SettingsScreen(
                 headlineContent = { Text(stringResource(R.string.settings_contact)) },
                 supportingContent = { Text(stringResource(R.string.settings_contact_summary)) },
                 modifier = Modifier.clickable {
-                    noMailApp = !sendContactEmail(context, state.lastCardSync)
+                    noMailApp = !sendContactEmail(context)
                 },
             )
             // Only after a crash. Nothing to say is the normal state, and a row

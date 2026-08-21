@@ -328,7 +328,7 @@
     <string name="campaign_nothing_recorded">Nothing recorded</string>
     <string name="campaign_nobody">Nobody</string>
     <string name="settings_contact">Contact</string>
-    <string name="settings_contact_summary">Report a bug by email, with the version and device details filled in.</string>
+    <string name="settings_contact_summary">Ask a question or report a bug by email.</string>
     <string name="settings_no_mail_app">No mail app installed. Write to %1$s.</string>
     <string name="campaign_in_progress_section">In progress</string>
     <string name="campaign_finished_section">Finished campaigns</string>

@@ -10,4 +10,12 @@
     <files-path
         name="play_photos"
         path="play_photos/" />
+    <!--
+      The crash report a bug mail attaches. Its own folder for the same reason:
+      the campaign log and the backup live in files/ too, and neither of them
+      belongs in a bug report.
+    -->
+    <files-path
+        name="crash_reports"
+        path="crash_reports/" />
 </paths>
