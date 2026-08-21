@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thwart, politique de confidentialité</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0 auto; max-width: 44rem; padding: 2rem 1.25rem 4rem;
+    font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #fff; color: #1a1a1a;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #14090b; color: #ece6e7; }
+    a { color: #ffd24d; }
+  }
+  a { color: #b3000f; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .3rem; }
+  h2 { font-size: 1.15rem; margin: 2.2rem 0 .6rem; }
+  hr { border: 0; border-top: 1px solid rgba(128,128,128,.35); margin: 2.5rem 0 1.5rem; }
+  .lang { font-size: .9rem; margin-bottom: 2rem; }
+  footer { margin-top: 3rem; font-size: .85rem; opacity: .75; }
+</style>
+</head>
+<body>
+<p class="lang"><a href="privacy.html">English version</a></p>
+<h1>Politique de confidentialité</h1>
+<p>Thwart est faite par une seule personne, Benoît Breul, et cette page dit ce qu'elle fait de vos informations. En résumé : presque rien, et rien ne me parvient.</p>
+<p>Dernière mise à jour : 22 août 2026.</p>
+<h2>Ce qui reste sur votre téléphone</h2>
+<p>Tout ce que vous créez dans l'application :</p>
+<ul>
+<li>Vos decks, et les extensions que vous possédez</li>
+<li>Vos campagnes, et chaque choix qui y est enregistré</li>
+<li>Votre historique de parties, les durées, les scores et les notes</li>
+<li>Les photos que vous prenez de la table</li>
+<li>Vos réglages</li>
+</ul>
+<p>Rien de tout cela n'est envoyé. Il n'y a aucun compte à créer, aucun serveur à moi où cela pourrait aller, et aucune copie ailleurs que sur votre téléphone. Si vous désinstallez l'application, tout disparaît (c'est pour cela qu'elle propose un fichier de sauvegarde que vous gardez vous-même).</p>
+<p>Les photos sont conservées dans le stockage privé de l'application, pas dans votre galerie, et les autres applications ne peuvent pas les lire.</p>
+<h2>Ce qui quitte votre téléphone</h2>
+<p>Trois choses, dont deux seulement si vous le demandez.</p>
+<p><strong>Les données de cartes, depuis MarvelCDB.</strong> L'application télécharge les informations de cartes depuis <a href="https://marvelcdb.com">marvelcdb.com</a> pour pouvoir vous les montrer, et récupère les images pendant que vous naviguez. Ce sont des requêtes web ordinaires. Rien vous concernant n'y est joint, et rien n'est envoyé à MarvelCDB. Comme pour toute requête web, les serveurs de MarvelCDB voient la requête arriver, ce qui inclut votre adresse IP. Leurs pratiques de confidentialité sont les leurs, pas les miennes.</p>
+<p><strong>BoardGameGeek, uniquement si vous le configurez.</strong> L'application peut envoyer une partie terminée vers votre compte BoardGameGeek. C'est désactivé tant que vous ne l'activez pas en saisissant vos propres identifiants. Ceux-ci sont chiffrés avec une clé conservée dans le keystore Android et ne quittent jamais votre téléphone, sauf pour se connecter à BoardGameGeek. Je ne les vois jamais. Si vous ne touchez pas à ce réglage, l'application ne contacte jamais BoardGameGeek.</p>
+<p><strong>Un rapport de plantage, uniquement si vous l'envoyez.</strong> Si l'application plante, elle écrit ce qui s'est passé dans un fichier sur votre téléphone. Rien n'est envoyé automatiquement. Si vous choisissez de le signaler, l'application ouvre votre propre messagerie avec ce fichier joint, et c'est vous qui décidez d'appuyer sur envoyer. Vous pouvez lire exactement ce que vous envoyez avant de l'envoyer.</p>
+<h2>Ce que l'application ne fait pas</h2>
+<ul>
+<li>Aucune publicité, et aucune régie publicitaire</li>
+<li>Aucune analyse d'usage, aucune télémétrie, aucun service de rapport de</li>
+</ul>
+<p>plantage</p>
+<ul>
+<li>Aucun pistage d'aucune sorte, et aucun identifiant publicitaire</li>
+<li>Aucun compte, aucune inscription, aucun profil</li>
+<li>Aucune revente ni partage de vos données, puisqu'il n'y en a aucune à vendre</li>
+<li>Aucune localisation, aucun contact, aucun microphone</li>
+</ul>
+<h2>Permissions</h2>
+<p>L'application demande une seule permission : <strong>l'accès à internet</strong>, pour télécharger les données et images de cartes, et pour BoardGameGeek si vous l'activez.</p>
+<p>Elle ne demande <strong>pas</strong> la permission caméra. Quand vous photographiez la table, l'application confie le travail à l'appareil photo de votre téléphone et récupère la photo ensuite.</p>
+<p>La sauvegarde automatique d'Android dans le cloud est désactivée pour cette application : vos données ne sont donc pas copiées vers Google Drive à votre insu.</p>
+<h2>Enfants</h2>
+<p>Thwart est un compagnon pour un jeu de cartes et ne s'adresse pas aux enfants de moins de 13 ans. Elle ne collecte rien de personne, enfants compris.</p>
+<h2>Modifications</h2>
+<p>Si cela change un jour, je mettrai cette page à jour et je le dirai dans les notes de version.</p>
+<h2>Contact</h2>
+<p>Une question, ou quelque chose ici qui ne correspond pas à ce que vous voyez l'application faire : <strong>marvelchampcompanion@proton.me</strong></p>
+<p>L'application est entièrement open source. Si vous préférez vérifier plutôt que me croire sur parole, le code est sur <a href="https://github.com/Hasyame/Thwart">github.com/Hasyame/Thwart</a>.</p>
+<footer>Thwart est un projet de fan non officiel, sans affiliation avec Fantasy Flight Games ni Marvel.</footer>
+</body>
+</html>
