@@ -605,12 +605,16 @@ class CampaignRepository @Inject constructor(
             for (definition in scenario.allSetupSteps().mapNotNull { it.draw }) {
                 // A per-hero draw deals to each player in turn, under its own
                 // id and theirs.
+                // Paired with the hero it is for, so a draw with a pool per
+                // player knows whose pool to deal from.
                 val drawIds = if (definition.perHero) {
-                    run.state.heroes.map { CampaignEngine.heroDrawId(definition.id, it.id) }
+                    run.state.heroes.map {
+                        CampaignEngine.heroDrawId(definition.id, it.id) to it.id
+                    }
                 } else {
-                    listOf(definition.id)
+                    listOf(definition.id to null)
                 }
-                for (drawId in drawIds) {
+                for ((drawId, heroId) in drawIds) {
                     if (CampaignEngine.drawnCards(state, scenarioId, drawId).isNotEmpty()) {
                         continue
                     }
@@ -620,7 +624,7 @@ class CampaignRepository @Inject constructor(
                     // An offer deals several for the players to choose between; a
                     // plain draw deals what it needs and decides.
                     val wanted = if (definition.offer > 0) definition.offer else definition.count
-                    val codes = CampaignEngine.drawPool(definition, state)
+                    val codes = CampaignEngine.drawPool(definition, state, heroId)
                         .shuffled()
                         .take(wanted.coerceAtLeast(1))
                     if (codes.isEmpty()) {

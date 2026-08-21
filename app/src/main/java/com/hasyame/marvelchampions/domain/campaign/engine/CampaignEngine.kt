@@ -491,6 +491,16 @@ class CampaignEngine(
                 val drawId = effect.from ?: return state
                 // Read against the scenario being resolved, so a strike records
                 // what that scenario drew rather than whatever is current now.
+                // Per hero, this records what that player drew against their
+                // own list. Mutant Genesis removes a role upgrade from the
+                // campaign for the player who had it, not for the table, so a
+                // shared list would take one player's card off everybody.
+                if (effect.perHero) {
+                    return state.heroes.fold(state) { acc, hero ->
+                        val forHero = drawnCards(acc, scenarioId, heroDrawId(drawId, hero.id))
+                        if (forHero.isEmpty()) acc else addHeroCards(acc, listId, hero.id, forHero)
+                    }
+                }
                 val drawn = allDrawnCards(state, scenarioId, drawId)
                 val already = state.cardLists[listId].orEmpty()
                 val fresh = drawn.filterNot { it in already }
@@ -707,9 +717,52 @@ class CampaignEngine(
          * empties the pool the full set comes back: a scenario that needs a
          * card must get one, and an empty setup step would read as a bug.
          */
-        fun drawPool(draw: DrawDefinition, state: CampaignState): List<String> {
-            val spent = draw.excluding?.let { state.cardLists[it].orEmpty() }.orEmpty().toSet()
-            return draw.from.filterNot { it in spent }.ifEmpty { draw.from }
+        /**
+         * The cards a draw may come up with.
+         *
+         * [heroId] is set only for a per-hero draw, and only then can a draw
+         * have a pool of its own or a spent list of its own. A pool emptied by
+         * what has been spent refills, because a scenario that requires a card
+         * must still get one — but a per-hero pool does not, since running out
+         * of role upgrades is the rule working rather than a pool to reset.
+         */
+        fun drawPool(
+            draw: DrawDefinition,
+            state: CampaignState,
+            heroId: String? = null,
+        ): List<String> {
+            val perHeroPool = perHeroPool(draw, state, heroId)
+            val candidates = perHeroPool ?: draw.from
+            val spent = buildSet {
+                draw.excluding?.let { addAll(state.cardLists[it].orEmpty()) }
+                if (heroId != null) {
+                    draw.excludingPerHero?.let {
+                        addAll(state.heroCardLists[it].orEmpty()[heroId].orEmpty())
+                    }
+                }
+            }
+            val left = candidates.filterNot { it in spent }
+            return if (perHeroPool != null) left else left.ifEmpty { candidates }
+        }
+
+        /**
+         * One player's pool, or null when this draw does not have per-hero ones.
+         *
+         * A hero who recorded no marker gets an empty pool rather than the
+         * table's, which is what keeps a player who has not chosen a role from
+         * being dealt somebody else's upgrade.
+         */
+        private fun perHeroPool(
+            draw: DrawDefinition,
+            state: CampaignState,
+            heroId: String?,
+        ): List<String>? {
+            if (draw.perHeroPools.isEmpty() || heroId == null) {
+                return null
+            }
+            val listId = draw.perHeroPoolList ?: return null
+            val marker = state.heroCardLists[listId].orEmpty()[heroId].orEmpty().lastOrNull()
+            return draw.perHeroPools[marker].orEmpty()
         }
 
 

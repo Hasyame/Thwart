@@ -449,6 +449,31 @@ data class DrawDefinition(
      * several cards, such as villains laid out in a row.
      */
     val count: Int = 1,
+
+    /**
+     * Pools to deal from when each player draws from a different set.
+     *
+     * Keyed by the marker recorded for that hero in [perHeroPoolList]. Mutant
+     * Genesis gives each player a role, and the upgrade they are dealt comes
+     * from that role's own five cards, so one pool for the table cannot say
+     * what any of them should get.
+     *
+     * Ignored unless [perHero] is set, and a hero with no recorded marker is
+     * dealt nothing rather than dealt from somebody else's set.
+     */
+    val perHeroPools: Map<String, List<String>> = emptyMap(),
+
+    /** The per-hero card list whose recorded code picks the pool. */
+    val perHeroPoolList: String? = null,
+
+    /**
+     * Per-hero card list of what that player has already spent.
+     *
+     * [excluding] is the table's shared record; this is one player's. A role
+     * upgrade is removed from the campaign once it has been in play, and it is
+     * removed for the player who had it, not for everybody.
+     */
+    val excludingPerHero: String? = null,
 )
 
 @Serializable
