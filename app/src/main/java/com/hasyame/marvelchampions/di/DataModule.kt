@@ -7,6 +7,7 @@ import com.hasyame.marvelchampions.data.db.dao.CampaignDao
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import com.hasyame.marvelchampions.data.db.dao.FavouriteDao
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.db.dao.PlayDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedModularSetDao
@@ -112,6 +113,10 @@ object DataModule {
     @Provides
     fun providePlayDao(database: MarvelChampionsDatabase): PlayDao =
         database.playDao()
+
+    @Provides
+    fun providePausedGameDao(database: MarvelChampionsDatabase): PausedGameDao =
+        database.pausedGameDao()
 
     @Provides
     @Singleton

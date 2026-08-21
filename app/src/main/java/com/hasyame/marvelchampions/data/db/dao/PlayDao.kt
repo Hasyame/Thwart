@@ -36,6 +36,10 @@ interface PlayDao {
     @Query("DELETE FROM plays WHERE id = :id")
     suspend fun delete(id: String)
 
+    /** Every play's photo list, for the sweep that deletes the rest. */
+    @Query("SELECT photos FROM plays WHERE photos != ''")
+    suspend fun photoLists(): List<String>
+
     @Query("UPDATE plays SET reportedToBgg = 1 WHERE id = :id")
     suspend fun markReported(id: String)
 

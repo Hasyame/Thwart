@@ -23,6 +23,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
+import com.hasyame.marvelchampions.data.db.entity.PausedPhase
+import com.hasyame.marvelchampions.data.db.entity.VillainStep
+import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
+import java.text.DateFormat
+import java.util.Date
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -55,7 +68,25 @@ fun PlayScreen(
     viewModel: CampaignListViewModel = hiltViewModel(),
 ) {
     val summaries by viewModel.summaries.collectAsStateWithLifecycle()
+    val paused by viewModel.pausedGame.collectAsStateWithLifecycle()
+    var showPaused by remember { mutableStateOf(false) }
     val inProgress = summaries.filterNot { it.entity.finished }
+
+    // Not a screen of its own: it is a page of notes, read once, and a dialog
+    // keeps the table it belongs to one tap away.
+    if (showPaused) {
+        paused?.let { game ->
+            PausedGameRecap(
+                game = game,
+                photoStore = viewModel.photoStore,
+                onForget = {
+                    viewModel.forgetPausedGame()
+                    showPaused = false
+                },
+                onClose = { showPaused = false },
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -80,6 +111,16 @@ fun PlayScreen(
                     title = stringResource(R.string.play_continue),
                     subtitle = running.entity.name.ifBlank { running.entity.templateName },
                     onClick = { onResumeCampaign(running.entity.id) },
+                )
+            }
+
+            // A game left mid-play, with what was written down about the table.
+            paused?.let { game ->
+                Choice(
+                    icon = Icons.Filled.PlayArrow,
+                    title = stringResource(R.string.paused_game_title),
+                    subtitle = game.scenarioName,
+                    onClick = { showPaused = true },
                 )
             }
 
@@ -142,3 +183,87 @@ private fun Choice(
         }
     }
 }
+
+/**
+ * The note a table left itself, read back.
+ *
+ * Everything on it was optional when it was written, so everything here is
+ * shown only if it was answered. A recap of blanks would be worse than none.
+ */
+@Composable
+private fun PausedGameRecap(
+    game: PausedGameEntity,
+    photoStore: PhotoStore,
+    onForget: () -> Unit,
+    onClose: () -> Unit,
+) {
+    // heroLives is code|life; the names it should show are in heroes as code|name.
+    val heroNames = game.heroes.split(",")
+        .filter { it.isNotBlank() }
+        .associate { it.substringBefore('|') to it.substringAfter('|', it) }
+    // A life left blank was stored as "?". Everything on that page was
+    // optional, so an unanswered hero is left out rather than shown empty.
+    val lives = game.heroLives.split(",")
+        .filter { it.isNotBlank() }
+        .mapNotNull { entry ->
+            val code = entry.substringBefore('|')
+            val life = entry.substringAfter('|', "")
+            if (life.isBlank() || life == "?") {
+                null
+            } else {
+                (heroNames[code] ?: code) to life
+            }
+        }
+    val photos = game.photos.split(",").filter { it.isNotBlank() }
+
+    AlertDialog(
+        onDismissRequest = onClose,
+        title = { Text(game.scenarioName) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = DateFormat.getDateInstance().format(Date(game.savedAt)),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Text(stringResource(phaseLabel(game)))
+                lives.forEach { (name, life) ->
+                    Text("$name: $life")
+                }
+                if (game.villainLife > 0) {
+                    Text(
+                        pluralStringResource(
+                            R.plurals.paused_game_villain,
+                            game.villainLife,
+                            game.villainLife,
+                            "I".repeat(game.villainStage.coerceIn(1, 3)),
+                        ),
+                    )
+                }
+                TablePhotoStrip(names = photos, photoStore = photoStore, onOpen = { })
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onClose) { Text(stringResource(R.string.action_close)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onForget) {
+                Text(stringResource(R.string.paused_game_discard))
+            }
+        },
+    )
+}
+
+/** Where the game stopped, as one line. */
+private fun phaseLabel(game: PausedGameEntity): Int =
+    if (game.phase == PausedPhase.VILLAIN.name) {
+        when (game.villainStep) {
+            VillainStep.PLACE_THREAT.name -> R.string.villain_step_threat
+            VillainStep.ACTIVATE_MINIONS.name -> R.string.villain_step_minions
+            VillainStep.DEAL_ENCOUNTERS.name -> R.string.villain_step_deal
+            VillainStep.REVEAL_ENCOUNTERS.name -> R.string.villain_step_reveal
+            VillainStep.PASS_FIRST_PLAYER.name -> R.string.villain_step_pass
+            else -> R.string.phase_villain
+        }
+    } else {
+        R.string.phase_player
+    }

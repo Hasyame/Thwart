@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The one directory the camera app is allowed to write into.
+
+  Scoped to the photo folder rather than to files/ as a whole: a provider that
+  shares everything is a provider that shares the campaign log and the backup
+  file too, and the camera has no business with either.
+-->
+<paths>
+    <files-path
+        name="play_photos"
+        path="play_photos/" />
+</paths>

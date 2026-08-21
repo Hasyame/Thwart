@@ -103,4 +103,15 @@ data class PlayEntity(
 
     /** Whether this play has been sent to BoardGameGeek, so it is not sent twice. */
     val reportedToBgg: Boolean = false,
+
+    /**
+     * Photographs of the table, by file name, comma separated.
+     *
+     * Names rather than paths, and a joined string rather than a table, for the
+     * same reason [aspects] is one: a play has a handful of them at most, they
+     * are only ever read with the play, and a second table would buy nothing.
+     * The files live in the app's private storage; see PhotoStore.
+     */
+    @ColumnInfo(defaultValue = "")
+    val photos: String = "",
 )

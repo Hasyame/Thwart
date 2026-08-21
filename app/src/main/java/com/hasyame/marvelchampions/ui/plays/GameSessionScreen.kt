@@ -41,6 +41,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
+import com.hasyame.marvelchampions.ui.photos.TablePhotoButton
+import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
+import com.hasyame.marvelchampions.ui.photos.rememberTablePhotoCapture
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -135,6 +139,16 @@ fun GameSessionScreen(
                 state = state,
                 onPlay = viewModel::beginPlaying,
                 onBack = viewModel::backToSetup,
+                modifier = Modifier.padding(padding),
+            )
+
+            // Ahead of the playing page rather than a phase of its own: the game
+            // has not moved on, it is being written down, and cancelling puts
+            // the table straight back.
+            state.longBreak != null -> LongBreakPage(
+                state = state,
+                viewModel = viewModel,
+                onSaved = onBack,
                 modifier = Modifier.padding(padding),
             )
 
@@ -626,6 +640,35 @@ private fun PlayingPhase(
                     ),
                 )
             }
+
+            // The other kind of stopping: not the clock, the table. Beside the
+            // pause rather than replacing it, because most breaks are five
+            // minutes and do not want a form.
+            OutlinedButton(
+                onClick = viewModel::beginLongBreak,
+                enabled = !state.isFinishing,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.session_long_break)) }
+
+            // A photograph of the table, taken with the phone's own camera.
+            // Kept with the game and filed with it when it ends.
+            val scope = rememberCoroutineScope()
+            val takePhoto = rememberTablePhotoCapture(
+                photoStore = viewModel.photoStore,
+                scope = scope,
+                onTaken = viewModel::addPhoto,
+            )
+            TablePhotoButton(
+                taken = state.photos.size,
+                onTake = takePhoto,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            TablePhotoStrip(
+                names = state.photos,
+                photoStore = viewModel.photoStore,
+                onOpen = { },
+                onDelete = viewModel::removePhoto,
+            )
 
             if (state.trackEncounter && state.encounter.setup.isUsable) {
                 if (state.keepAwake) {

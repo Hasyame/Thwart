@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.dao.WinRateRow
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
+import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.repository.PlayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -103,6 +104,7 @@ data class PendingReport(val playId: String, val summary: String)
 @HiltViewModel
 class PlaysViewModel @Inject constructor(
     private val repository: PlayRepository,
+    val photoStore: PhotoStore,
 ) : ViewModel() {
 
     /**

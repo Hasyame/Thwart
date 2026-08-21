@@ -28,6 +28,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
+import com.hasyame.marvelchampions.data.photos.PhotoStore
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -123,6 +125,7 @@ fun PlaysScreen(
             items(state.plays, key = { it.id }) { play ->
                 PlayRow(
                     play = play,
+                    photoStore = viewModel.photoStore,
                     onDelete = { confirmDelete = play },
                     onReport = { viewModel.reportLater(play.id) },
                 )
@@ -261,11 +264,18 @@ private fun androidx.compose.foundation.lazy.LazyListScope.winRateSection(
 }
 
 @Composable
-private fun PlayRow(play: PlayEntity, onDelete: () -> Unit, onReport: () -> Unit) {
+private fun PlayRow(
+    play: PlayEntity,
+    photoStore: PhotoStore,
+    onDelete: () -> Unit,
+    onReport: () -> Unit,
+) {
     val heroes = listOfNotNull(
         play.heroName.takeIf { it.isNotBlank() },
         play.otherHeroes.takeIf { it.isNotBlank() },
     ).joinToString(", ")
+
+    val photos = play.photos.split(",").filter { it.isNotBlank() }
 
     ListItem(
         overlineContent = {
@@ -310,6 +320,16 @@ private fun PlayRow(play: PlayEntity, onDelete: () -> Unit, onReport: () -> Unit
                 }
             }
         },
+    )
+
+    // Under the play rather than inside the row: a photograph is the
+    // record's own, and a thumbnail squeezed into a list item's trailing
+    // slot beside two buttons is a thumbnail nobody can see.
+    TablePhotoStrip(
+        names = photos,
+        photoStore = photoStore,
+        onOpen = { },
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
     )
 }
 

@@ -23,6 +23,8 @@ import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
+import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHeroConverters
 import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
@@ -56,8 +58,9 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
         FavouriteCardEntity::class,
         ExcludedModularSetEntity::class,
         ExcludedScenarioEntity::class,
+        PausedGameEntity::class,
     ],
-    version = 13,
+    version = 15,
     exportSchema = true,
     // Both migrations so far only add a table, so Room can generate them from
     // the exported schemas. Anything that alters an existing table needs a
@@ -75,10 +78,13 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
         AutoMigration(from = 10, to = 11),
         AutoMigration(from = 11, to = 12),
         AutoMigration(from = 12, to = 13),
+        AutoMigration(from = 13, to = 14),
+        AutoMigration(from = 14, to = 15),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {
     abstract fun cardDao(): CardDao
+    abstract fun pausedGameDao(): PausedGameDao
     abstract fun packDao(): PackDao
     abstract fun ownedPackDao(): OwnedPackDao
     abstract fun randomizerHistoryDao(): RandomizerHistoryDao

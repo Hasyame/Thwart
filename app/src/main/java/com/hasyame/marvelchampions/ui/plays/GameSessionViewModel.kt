@@ -10,6 +10,12 @@ import com.hasyame.marvelchampions.data.repository.RandomizerNames
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
 import com.hasyame.marvelchampions.data.repository.SchemeBriefing
 import com.hasyame.marvelchampions.data.repository.EncounterRepository
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
+import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
+import com.hasyame.marvelchampions.data.db.entity.PausedPhase
+import com.hasyame.marvelchampions.data.db.entity.VillainStep
+import java.util.UUID
+import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
@@ -26,6 +32,22 @@ import javax.inject.Inject
 
 /** One player at the table: who they are and which aspect they brought. */
 data class SessionHero(val heroCode: String, val aspect: String)
+/**
+ * What is being written down while a game is put away.
+ *
+ * Held apart from the session because none of it is play: it is the note a
+ * table leaves itself, and it only exists between pressing the button and
+ * saving.
+ */
+data class LongBreakDraft(
+    val phase: PausedPhase = PausedPhase.PLAYER,
+    val villainStep: VillainStep = VillainStep.PLACE_THREAT,
+    /** Hit points left, by hero code, as typed. */
+    val heroLives: Map<String, String> = emptyMap(),
+    val villainLife: String = "",
+    val villainStage: Int = 1,
+)
+
 
 /** Which part of the screen is showing. */
 enum class SessionPhase {
@@ -64,6 +86,16 @@ data class GameSessionUiState(
     /** Modular sets shuffled into the encounter deck. */
     val modularSetCodes: List<String> = emptyList(),
     val timer: TimerState = TimerState(),
+    /**
+     * Photographs of the table, by file name, taken while this game runs.
+     *
+     * Held here until the game is filed, because the play they belong to does
+     * not exist until then. A game abandoned halfway leaves its pictures on
+     * disk, which the orphan sweep clears.
+     */
+    val photos: List<String> = emptyList(),
+    /** Non-null while the game is being put away for a long break. */
+    val longBreak: LongBreakDraft? = null,
     /**
      * Who takes the first turn, as an index into [heroes]. Drawn when the game
      * starts and null in solo, where the question does not arise.
@@ -107,6 +139,8 @@ class GameSessionViewModel @Inject constructor(
     private val playRepository: PlayRepository,
     private val encounterRepository: EncounterRepository,
     private val preferences: AppPreferences,
+    val photoStore: PhotoStore,
+    private val pausedGameDao: PausedGameDao,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(GameSessionUiState())
@@ -215,6 +249,79 @@ class GameSessionViewModel @Inject constructor(
      * The clock does not start here. It starts when the player says the table
      * is ready, which is what [beginPlaying] is for.
      */
+    /** Opens the page that writes the table down before it is cleared. */
+    fun beginLongBreak() {
+        val current = state.value
+        state.value = current.copy(
+            longBreak = LongBreakDraft(
+                heroLives = current.heroes.associate { it.heroCode to "" },
+            ),
+        )
+        pause()
+    }
+
+    fun updateLongBreak(draft: LongBreakDraft) {
+        state.value = state.value.copy(longBreak = draft)
+    }
+
+    fun cancelLongBreak() {
+        state.value = state.value.copy(longBreak = null)
+    }
+
+    /**
+     * Files the game away and leaves.
+     *
+     * Photographs taken during the game go with it rather than being deleted:
+     * a picture of the table is the most useful thing in the record, and the
+     * whole point of stopping this way is coming back to it.
+     */
+    fun saveLongBreak(onSaved: () -> Unit) {
+        val current = state.value
+        val draft = current.longBreak ?: return
+        val scenarioCode = current.scenarioCode ?: return
+        viewModelScope.launch {
+            pausedGameDao.upsert(
+                PausedGameEntity(
+                    id = UUID.randomUUID().toString(),
+                    savedAt = System.currentTimeMillis(),
+                    scenarioCode = scenarioCode,
+                    scenarioName = current.names.scenarios[scenarioCode] ?: scenarioCode,
+                    difficulty = current.difficulty,
+                    heroes = current.heroes.joinToString(",") {
+                        "${it.heroCode}|${current.names.heroes[it.heroCode] ?: it.heroCode}"
+                    },
+                    modularSetCodes = current.modularSetCodes.joinToString(","),
+                    elapsedMillis = current.timer.elapsedAt(System.currentTimeMillis()),
+                    phase = draft.phase.name,
+                    villainStep = if (draft.phase == PausedPhase.VILLAIN) {
+                        draft.villainStep.name
+                    } else {
+                        ""
+                    },
+                    heroLives = draft.heroLives.entries.joinToString(",") { (code, life) ->
+                        "$code|${life.ifBlank { "?" }}"
+                    },
+                    villainLife = draft.villainLife.toIntOrNull() ?: 0,
+                    villainStage = draft.villainStage,
+                    photos = current.photos.joinToString(","),
+                ),
+            )
+            state.value = state.value.copy(longBreak = null)
+            onSaved()
+        }
+    }
+
+    /** Remembers a photograph just taken, in the order they were taken. */
+    fun addPhoto(name: String) {
+        state.value = state.value.copy(photos = state.value.photos + name)
+    }
+
+    /** Throws one away, file and all: an unwanted photo is not a record. */
+    fun removePhoto(name: String) {
+        state.value = state.value.copy(photos = state.value.photos - name)
+        viewModelScope.launch { photoStore.delete(name) }
+    }
+
     fun start() {
         val current = state.value
         if (!current.canStart) {
@@ -363,6 +470,7 @@ class GameSessionViewModel @Inject constructor(
             finished.value = playRepository.record(
                 PlayEntity(
                     id = playRepository.newPlayId(),
+                    photos = current.photos.joinToString(","),
                     playedAt = System.currentTimeMillis(),
                     scenarioCode = scenarioCode,
                     scenarioName = current.names.scenarios[scenarioCode] ?: scenarioCode,

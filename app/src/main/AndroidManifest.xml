@@ -71,6 +71,22 @@
           WorkManager is configured on demand from MarvelChampionsApplication so
           that Hilt can build CardSyncWorker; its default initializer has to go.
         -->
+        <!--
+          Lets the phone's own camera app write a photo into the app's private
+          photo folder, and nothing else. The app asks for no camera permission
+          because it never opens a camera: it hands a file to whichever app the
+          owner already trusts with one.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.photos"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/photo_paths" />
+        </provider>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

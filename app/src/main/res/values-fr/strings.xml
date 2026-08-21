@@ -438,6 +438,30 @@
     <string name="plays_stat_played">Jouées</string>
     <string name="plays_stat_won">Gagnées</string>
     <string name="plays_stat_rate">Taux de victoire</string>
+    <string name="long_break_title">Ranger la partie</string>
+    <string name="long_break_intro">Notez ce dont vous ne vous souviendrez plus dans une semaine. Tout est facultatif.</string>
+    <string name="long_break_photo">Une photo de la table</string>
+    <string name="long_break_where">Où vous vous êtes arrêtés</string>
+    <string name="long_break_heroes">Points de vie restants</string>
+    <string name="long_break_villain">Le méchant</string>
+    <string name="long_break_life">Vie</string>
+    <string name="long_break_stage">Quelle carte Méchant est visible</string>
+    <string name="long_break_save">Sauvegarder et quitter</string>
+    <string name="long_break_back">Revenir à la partie</string>
+    <string name="phase_player">Phase des joueurs</string>
+    <string name="phase_villain">Phase du méchant</string>
+    <string name="villain_step_threat">Placer la menace</string>
+    <string name="villain_step_minions">Activation des sbires</string>
+    <string name="villain_step_deal">Attribuer des cartes Rencontre</string>
+    <string name="villain_step_reveal">Révéler les cartes Rencontre</string>
+    <string name="villain_step_pass">Passer le pion Premier Joueur et mettre fin au round</string>
+    <string name="session_long_break">Faire une longue pause</string>
+    <string name="action_close">Fermer</string>
+    <string name="paused_game_title">Une partie vous attend</string>
+    <string name="paused_game_discard">L’oublier</string>
+    <string name="photo_take">Photographier la table</string>
+    <string name="photo_of_table">Photo de la table</string>
+    <string name="photo_delete">Supprimer cette photo</string>
     <string name="plays_won">Victoire contre %1$s</string>
     <string name="plays_lost">Défaite contre %1$s</string>
     <string name="plays_send_title">Envoyer sur BoardGameGeek ?</string>
@@ -567,4 +591,14 @@
     <string name="campaign_lost_title">Campagne abandonnée</string>
     <string name="campaign_lost_message">Vous avez choisi d’en rester là face au Caïd. La campagne s’arrête ici.</string>
     <string name="campaign_lost_leave">Fermer la campagne</string>
+    <plurals name="photo_take_more">
+        <item quantity="one">Autre photo (%1$d prise)</item>
+        <item quantity="many">Autre photo (%1$d prises)</item>
+        <item quantity="other">Autre photo (%1$d prises)</item>
+    </plurals>
+    <plurals name="paused_game_villain">
+        <item quantity="one">Méchant : %1$d vie, stade %2$s</item>
+        <item quantity="many">Méchant : %1$d vies, stade %2$s</item>
+        <item quantity="other">Méchant : %1$d vies, stade %2$s</item>
+    </plurals>
 </resources>

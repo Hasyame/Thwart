@@ -10,6 +10,12 @@ import coil3.disk.DiskCache
 import coil3.disk.directory
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import com.hasyame.marvelchampions.data.diagnostics.CrashLog
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
+import com.hasyame.marvelchampions.data.db.dao.PlayDao
+import com.hasyame.marvelchampions.data.photos.PhotoStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -25,6 +31,27 @@ class MarvelChampionsApplication :
         super.onCreate()
         // First thing, so a crash during the rest of startup is still recorded.
         CrashLog.install(this)
+        sweepPhotos()
+    }
+
+    /**
+     * Throws away photographs no play and no paused game refers to any more.
+     *
+     * A game abandoned without being filed, or a paused game forgotten, leaves
+     * its pictures behind and nothing else would ever remove them. Done once at
+     * startup, off the main thread, and failure is not worth crashing over: the
+     * only cost of skipping it is a few kilobytes until the next launch.
+     */
+    private fun sweepPhotos() {
+        CoroutineScope(Dispatchers.IO).launch {
+            runCatching {
+                val keep = (playDao.get().photoLists() + pausedGameDao.get().photoLists())
+                    .flatMap { it.split(",") }
+                    .filter { it.isNotBlank() }
+                    .toSet()
+                photoStore.get().deleteOrphans(keep)
+            }
+        }
     }
 
     @Inject
@@ -32,6 +59,18 @@ class MarvelChampionsApplication :
 
     @Inject
     lateinit var okHttpClient: Provider<OkHttpClient>
+
+    // Providers rather than direct injection: the sweep is the only thing that
+    // needs these, and it should not pull the database open during startup any
+    // earlier than the app would have opened it anyway.
+    @Inject
+    lateinit var playDao: Provider<PlayDao>
+
+    @Inject
+    lateinit var pausedGameDao: Provider<PausedGameDao>
+
+    @Inject
+    lateinit var photoStore: Provider<PhotoStore>
 
     /**
      * WorkManager is configured on demand rather than by its default

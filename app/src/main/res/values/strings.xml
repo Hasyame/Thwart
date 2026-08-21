@@ -418,6 +418,30 @@
     <string name="plays_stat_played">Played</string>
     <string name="plays_stat_won">Won</string>
     <string name="plays_stat_rate">Win rate</string>
+    <string name="long_break_title">Putting the game away</string>
+    <string name="long_break_intro">Write down what is hard to remember in a week. Everything here is optional.</string>
+    <string name="long_break_photo">A photo of the table</string>
+    <string name="long_break_where">Where you stopped</string>
+    <string name="long_break_heroes">Hit points left</string>
+    <string name="long_break_villain">The villain</string>
+    <string name="long_break_life">Life</string>
+    <string name="long_break_stage">Which villain card is face up</string>
+    <string name="long_break_save">Save and leave</string>
+    <string name="long_break_back">Back to the game</string>
+    <string name="phase_player">Player phase</string>
+    <string name="phase_villain">Villain phase</string>
+    <string name="villain_step_threat">Place threat</string>
+    <string name="villain_step_minions">Activate minions</string>
+    <string name="villain_step_deal">Deal encounter cards</string>
+    <string name="villain_step_reveal">Reveal encounter cards</string>
+    <string name="villain_step_pass">Pass first player and end the round</string>
+    <string name="session_long_break">Take a long break</string>
+    <string name="action_close">Close</string>
+    <string name="paused_game_title">A game is waiting</string>
+    <string name="paused_game_discard">Forget it</string>
+    <string name="photo_take">Take a photo of the table</string>
+    <string name="photo_of_table">Photo of the table</string>
+    <string name="photo_delete">Delete this photo</string>
     <string name="plays_won">Beat %1$s</string>
     <string name="plays_lost">Lost to %1$s</string>
     <string name="plays_send_title">Send to BoardGameGeek?</string>
@@ -547,4 +571,12 @@
     <string name="campaign_lost_title">Campaign abandoned</string>
     <string name="campaign_lost_message">You chose to stop here rather than face Kingpin again. The campaign ends here.</string>
     <string name="campaign_lost_leave">Close the campaign</string>
+    <plurals name="photo_take_more">
+        <item quantity="one">Another photo (%1$d taken)</item>
+        <item quantity="other">Another photo (%1$d taken)</item>
+    </plurals>
+    <plurals name="paused_game_villain">
+        <item quantity="one">Villain: %1$d life, stage %2$s</item>
+        <item quantity="other">Villain: %1$d life, stage %2$s</item>
+    </plurals>
 </resources>

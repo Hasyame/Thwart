@@ -1,5 +1,8 @@
 package com.hasyame.marvelchampions.ui.campaign
 
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
+import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
@@ -27,7 +30,22 @@ data class CampaignListUiState(
 @HiltViewModel
 class CampaignListViewModel @Inject constructor(
     private val repository: CampaignRepository,
+    private val pausedGameDao: PausedGameDao,
+    val photoStore: PhotoStore,
 ) : ViewModel() {
+
+    /**
+     * The game put away on a long break, if there is one.
+     *
+     * Shown beside a campaign in progress: both are things the table left
+     * standing, and both are found in the same place.
+     */
+    val pausedGame: StateFlow<PausedGameEntity?> = pausedGameDao.observe()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    fun forgetPausedGame() {
+        viewModelScope.launch { pausedGameDao.clear() }
+    }
 
     private val importErrors = MutableStateFlow<List<TemplateError>>(emptyList())
     private val importMessage = MutableStateFlow<String?>(null)
