@@ -28,7 +28,7 @@
     <string name="cards_database_empty">La base de cartes est vide. Mettez les cartes à jour depuis les réglages.</string>
     <string name="cards_filter_owned_only">Cartes de ma collection</string>
     <string name="cards_filter_type">Type</string>
-    <string name="cards_filter_aspect">Aspect</string>
+    <string name="cards_filter_aspect">Affinité</string>
     <string name="cards_filter_cost">Coût</string>
     <string name="cards_filter_traits">Traits</string>
     <string name="card_cost_short">%1$d</string>
@@ -68,7 +68,7 @@
     <string name="collection_contents_hint">Décochez ce qui manque dans cette extension. Rien de tel ne sera tiré, ni proposé quand vous préparez une partie vous-même.</string>
     <string name="collection_scenarios">Scénarios</string>
     <string name="collection_modular_sets">Sets modulaires</string>
-    <string name="randomizer_collection_note">Seuls les scénarios, difficultés, héros et aspects de votre collection sont proposés.</string>
+    <string name="randomizer_collection_note">Seuls les scénarios, difficultés, héros et affinités de votre collection sont proposés.</string>
     <string name="collection_show_modular_sets">Afficher les sets modulaires de cette extension</string>
     <string name="collection_hide_modular_sets">Masquer les sets modulaires de cette extension</string>
     <plurals name="collection_missing_sets">
@@ -117,7 +117,7 @@
     <string name="randomizer_mandatory_legend">* exigé par ce scénario : relancer ne peut pas le changer.</string>
     <string name="randomizer_players">Joueurs</string>
     <string name="randomizer_heroes">Héros</string>
-    <string name="randomizer_aspects">Aspects</string>
+    <string name="randomizer_aspects">Affinités</string>
     <string name="randomizer_none">—</string>
     <string name="randomizer_lock">Verrouiller</string>
     <string name="randomizer_unlock">Déverrouiller</string>
@@ -125,7 +125,7 @@
     <string name="randomizer_history">Historique</string>
     <string name="randomizer_beaten">Battu</string>
     <string name="randomizer_exclude_beaten">Exclure les scénarios déjà battus</string>
-    <string name="randomizer_excluded_aspects">Aspects exclus</string>
+    <string name="randomizer_excluded_aspects">Affinités exclues</string>
     <string name="randomizer_no_packs">Sélectionnez vos extensions dans les réglages avant de tirer.</string>
     <string name="randomizer_needs_review">La mise en place de ce scénario n\'a pas pu être lue automatiquement. Vérifiez la carte du scénario.</string>
     <string name="action_delete">Supprimer</string>
@@ -212,9 +212,9 @@
     <string name="decks_name">Nom du deck</string>
     <string name="decks_choose_hero">Choisissez un héros</string>
     <plurals name="decks_choose_aspects">
-        <item quantity="one">Choisissez %1$d aspect</item>
-        <item quantity="many">Choisissez %1$d d\'aspects</item>
-        <item quantity="other">Choisissez %1$d aspects</item>
+        <item quantity="one">Choisissez %1$d affinité</item>
+        <item quantity="many">Choisissez %1$d d\'affinités</item>
+        <item quantity="other">Choisissez %1$d affinités</item>
     </plurals>
     <string name="decks_create">Créer le deck</string>
     <string name="decks_hero_not_owned">%1$s — extension absente de votre collection</string>
@@ -246,9 +246,9 @@
         <item quantity="other">%1$d cartes, %2$d au maximum.</item>
     </plurals>
     <plurals name="decks_problem_aspect_count">
-        <item quantity="one">%1$d aspect choisi, %2$d requis.</item>
-        <item quantity="many">%1$d d\'aspects choisis, %2$d requis.</item>
-        <item quantity="other">%1$d aspects choisis, %2$d requis.</item>
+        <item quantity="one">%1$d affinité choisie, %2$d requise.</item>
+        <item quantity="many">%1$d d\'affinités choisies, %2$d requises.</item>
+        <item quantity="other">%1$d affinités choisies, %2$d requises.</item>
     </plurals>
     <string name="decks_problem_off_aspect">%1$s n\'est pas autorisée : elle appartient à %2$s.</string>
     <plurals name="decks_problem_copy_limit">
@@ -258,7 +258,7 @@
     </plurals>
     <string name="decks_problem_unique">%1$s est unique, un seul exemplaire autorisé.</string>
     <string name="decks_problem_required_card">%1$s fait partie des cartes du héros — requis : %2$d, dans le deck : %3$d.</string>
-    <string name="decks_problem_unbalanced_aspects">Vos aspects doivent apporter le même nombre de cartes (%1$s).</string>
+    <string name="decks_problem_unbalanced_aspects">Vos affinités doivent apporter le même nombre de cartes (%1$s).</string>
     <string name="decks_error_local">Ce deck a été construit dans l\'application, il n\'y a rien à actualiser depuis MarvelCDB.</string>
 
     <plurals name="decks_missing_count">
@@ -412,7 +412,7 @@
     <string name="decks_stats_energy">Énergie</string>
     <string name="decks_stats_wild">Joker</string>
     <string name="decks_stats_by_type">Par type de carte</string>
-    <string name="decks_stats_by_aspect">Par aspect</string>
+    <string name="decks_stats_by_aspect">Par affinité</string>
     <string name="settings_bgg">BoardGameGeek</string>
     <string name="settings_bgg_summary">Enregistrez vos parties terminées dans votre historique BoardGameGeek.</string>
     <string name="settings_bgg_password_warning">BoardGameGeek ne propose pas de connexion pour les applications : votre mot de passe de compte est donc nécessaire. Il est chiffré sur cet appareil et envoyé uniquement à boardgamegeek.com. La déconnexion l\'efface.</string>
@@ -432,7 +432,7 @@
     <string name="plays_empty">Aucune partie enregistrée. Jouez-en une, puis enregistrez-la depuis le tirage aléatoire.</string>
     <string name="plays_history">Historique</string>
     <string name="plays_by_hero">Par héros</string>
-    <string name="plays_by_aspect">Par aspect</string>
+    <string name="plays_by_aspect">Par affinité</string>
     <string name="plays_by_scenario">Par scénario</string>
     <string name="plays_by_difficulty">Par difficulté</string>
     <string name="plays_stat_played">Jouées</string>
@@ -479,7 +479,7 @@
     <string name="session_scenario">Scénario</string>
     <string name="session_difficulty">Difficulté</string>
     <string name="session_hero">Ajouter un héros</string>
-    <string name="session_aspect">…avec quel aspect ?</string>
+    <string name="session_aspect">…avec quelle affinité ?</string>
     <string name="session_table">À la table</string>
     <string name="session_start">Commencer la partie</string>
     <string name="session_play">Jouer</string>
@@ -500,7 +500,7 @@
     <string name="play_continue">Reprendre la campagne</string>
     <string name="play_start_something">COMMENCER UNE PARTIE</string>
     <string name="play_random">Partie aléatoire</string>
-    <string name="play_random_detail">Laissez l\'application choisir un scénario, des héros et des aspects parmi ce que vous possédez.</string>
+    <string name="play_random_detail">Laissez l\'application choisir un scénario, des héros et des affinités parmi ce que vous possédez.</string>
     <string name="play_own">Ma propre partie</string>
     <string name="play_own_detail">Choisissez tout vous-même. L\'application chronomètre la partie.</string>
     <string name="play_campaign">Campagne</string>
@@ -544,7 +544,7 @@
     <string name="decks_share">Partager ce deck</string>
     <string name="decks_share_no_app">Aucune application de cet appareil ne peut partager du texte.</string>
     <string name="plays_by_players">Solo ou en groupe</string>
-    <string name="plays_by_hero_aspect">Héros et aspect ensemble</string>
+    <string name="plays_by_hero_aspect">Héros et affinité ensemble</string>
     <string name="settings_images">Images hors ligne</string>
     <string name="settings_images_summary">Le texte des cartes fonctionne déjà hors ligne ; les images sont téléchargées à la première ouverture d\'une carte. Téléchargez-les maintenant et toutes les cartes de votre collection s\'afficheront sans réseau. Des centaines de fichiers : préférez le wi-fi.</string>
     <string name="settings_images_download">Télécharger les images de mes extensions</string>
@@ -570,18 +570,18 @@
     <string name="campaign_share_in_progress">Campagne en cours</string>
     <string name="campaign_share_footer">Suivie avec Thwart, une application compagnon gratuite pour Marvel Champions : https://github.com/Hasyame/Thwart</string>
     <string name="settings_tracker_title">Suivre les points de vie et la menace</string>
-    <string name="settings_tracker_summary">Pendant une partie, compte les points de vie du vilain et la menace de la manigance principale d\'après les cartes, calculés pour votre nombre de joueurs. L\'écran reste allumé pendant le jeu.</string>
+    <string name="settings_tracker_summary">Pendant une partie, compte les points de vie du méchant et la menace de la manigance principale d\'après les cartes, calculés pour votre nombre de joueurs. L\'écran reste allumé pendant le jeu.</string>
     <string name="session_round">Round %1$d</string>
-    <string name="session_damage">Dégâts sur le vilain</string>
+    <string name="session_damage">Dégâts sur le méchant</string>
     <string name="session_threat">Menace sur la manigance principale</string>
-    <string name="session_flip_villain">Retourner le vilain sur son stade suivant</string>
+    <string name="session_flip_villain">Retourner le méchant sur son stade suivant</string>
     <string name="session_advance_scheme">Faire avancer la manigance principale</string>
     <string name="session_end_round">Terminer le round</string>
     <string name="session_keep_awake">Garder l\'écran allumé</string>
-    <string name="campaign_villains_struck">Ce tour, les vilains frappent : %1$s</string>
+    <string name="campaign_villains_struck">Ce tour, les méchants frappent : %1$s</string>
     <string name="campaign_pressure">Menace %1$d / 3</string>
     <string name="campaign_pressure_critical">Menace %1$d / 3 — une de plus et il tombe</string>
-    <string name="campaign_environment_title">Les vilains font progresser deux lieux.</string>
+    <string name="campaign_environment_title">Les méchants font progresser deux lieux.</string>
     <string name="campaign_environment_last">Un seul lieu restant. Il encaisse deux fois.</string>
     <string name="campaign_environment_achieved">ACHEVÉ</string>
     <string name="campaign_environment_failed">ÉCHOUÉ</string>
