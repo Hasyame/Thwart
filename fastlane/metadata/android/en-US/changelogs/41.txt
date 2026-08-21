@@ -1,0 +1,30 @@
+NeXt Evolution, and the counters finally work in campaigns.
+
+The campaign is five scenarios in order, Morlock Siege through Stryfe, and all
+five have to be won. Losing one costs nothing: set it up and play it again.
+
+It turns on a choice rather than a draw. Six player side schemes, and each
+scenario you pick one of those you have not used yet. The encounter card paired
+with it joins the deck for the rest of the campaign whether you beat the scheme
+or not. Beat it and you keep its environment on the table for every scenario
+after. Fail, and that reward is gone for good. The app offers what is still
+available and records what you take, because the rules say the table chooses,
+and that is the only real decision the campaign gives you.
+
+The log carries the rest: which Marauders were routed, since they leave the
+game entirely in the second scenario, how many Morlocks you saved, and how much
+damage Hope Summers is carrying, which you can hand back later as damage or as
+threat.
+
+Counting health and threat now works in a campaign. The setting said "during a
+game" and a campaign scenario is a game, but the counters only ever existed on
+the standalone play screen, so switching it on and starting a campaign did
+nothing at all. It reads off the villain the campaign is about to put out, so
+it works for all eight campaigns.
+
+Contact and the crash report no longer do the same thing. Contact opens an
+empty draft, because whatever you want to say you can say, and the device
+details it used to paste in had to be scrolled past first. The crash report
+attaches a text file instead of pasting the trace into the message, and the
+file carries the app version, the Android version and the device alongside it.
+Nothing is sent by the app either way: the draft opens and you decide.

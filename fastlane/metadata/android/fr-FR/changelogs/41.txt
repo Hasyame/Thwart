@@ -1,0 +1,35 @@
+Next Evolution, et les compteurs marchent enfin en campagne.
+
+La campagne, c'est cinq scénarios dans l'ordre, du Siège des Morlocks à Stryfe,
+et il faut gagner les cinq. Perdre n'a aucun coût : vous remettez le scénario
+en place et vous le rejouez.
+
+Elle repose sur un choix, pas sur un tirage. Six manigances annexes joueur, et
+à chaque scénario vous en choisissez une parmi celles que vous n'avez pas
+encore utilisées. La carte Rencontre qui lui est associée rejoint le deck pour
+tout le reste de la campagne, que vous vainquiez la manigance ou non. Vainquez-
+la et vous gardez son environnement sur la table pour tous les scénarios
+suivants. Échouez, et cette récompense est perdue définitivement.
+L'application propose celles qui restent disponibles et note celle que vous
+prenez, car les règles disent que la table choisit, et c'est la seule vraie
+décision que la campagne vous laisse.
+
+Le journal retient le reste : quels Maraudeurs ont été mis en déroute, puisque
+ceux-là quittent complètement la partie au deuxième scénario, combien de
+Morlocks vous avez sauvés, et combien de dégâts Hope Summers porte encore, que
+vous pourrez rendre plus tard en dégâts ou en menace.
+
+Le suivi des points de vie et de la menace fonctionne maintenant en campagne.
+Le réglage disait « pendant une partie », et un scénario de campagne est une
+partie, mais les compteurs n'existaient que sur l'écran de partie autonome :
+activer le réglage puis lancer une campagne ne faisait donc rien du tout. Ils
+se basent sur le méchant que la campagne s'apprête à mettre en jeu, ce qui
+couvre les huit campagnes.
+
+Contact et le rapport de plantage ne font plus la même chose. Contact ouvre un
+brouillon vide, parce que ce que vous avez à dire, vous pouvez le dire, et les
+informations d'appareil qu'il collait avant devaient d'abord être dépassées. Le
+rapport de plantage joint un fichier texte au lieu de coller la trace dans le
+message, et ce fichier porte la version de l'application, la version d'Android
+et l'appareil. Rien n'est envoyé par l'application : le brouillon s'ouvre, et
+c'est vous qui décidez.
