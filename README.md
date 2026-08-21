@@ -180,7 +180,8 @@ rather than machinery.
   lists, a market, per-scenario questionnaires, and setup steps for one scenario
   that depend on what was recorded in the ones before it. **The Galaxy's Most
   Wanted**, **Age of Apocalypse**, **The Mad Titan's Shadow**, **The Rise of Red
-  Skull**, **Fear No Evil** and **Sinister Motives** ship with the app.
+  Skull**, **Fear No Evil**, **Sinister Motives** and **Mutant Genesis** ship
+  with the app.
 
   Fear No Evil is the odd one, because it has no scenario order at all. Two
   environments are drawn before every game and push their scenarios along
@@ -200,6 +201,15 @@ rather than machinery.
   job too, including the three S.H.I.E.L.D. Tech upgrades, which are dealt once
   per player rather than once for the table.
 
+  Mutant Genesis brings roles. Each player takes one of the four at the first
+  scenario and keeps it, and the upgrade they start each later scenario with is
+  dealt from that role's own set of five rather than from a pile the table
+  shares. An upgrade that has been in play is out of the campaign for the
+  player who had it, so the five run down one player at a time, which is the
+  "use it or lose it" rule the book is after. The log also carries which
+  campaign side schemes were beaten, which Future Past cards are still in
+  circulation, and who was rescued.
+
   Where a campaign says each player *chooses* a card, that is compulsory. The
   questionnaire records one answer per player and will not file until everyone
   has picked, because every later scenario assumes the card is in the deck.
@@ -207,7 +217,8 @@ rather than machinery.
   random is drawn by the app: Age of Apocalypse's side missions and overseers,
   the order the Four Horsemen line up in, which Loki you face first, Fear No
   Evil's environments and subordinates, Sinister Motives' Community Service
-  scheme, Osborn Tech and S.H.I.E.L.D. Tech. Each draw is recorded so it cannot
+  scheme, Osborn Tech and S.H.I.E.L.D. Tech, Mutant Genesis' role upgrades and
+  the order the Brotherhood arrive in. Each draw is recorded so it cannot
   change while you read it, and kept out of the pool next time.
 - **The setup printed on the scenario.** A campaign briefing lists the cards to
   fetch, then the campaign's own steps, then the setup written on the main
