@@ -156,6 +156,18 @@ rather than machinery.
   the randomiser, from a campaign, or were set up by hand. The clock can be
   corrected afterwards, a game can be thrown away before it is filed, and at a
   table of two or more the app draws who goes first.
+- **Photographs of the table.** Taken during a game and kept with the play, so
+  a board worth remembering is still there in the log months later. The picture
+  is taken by the phone's own camera app through a content URI, which is why
+  the app holds no camera permission and never opens a camera itself, and it
+  stays in the app's private storage: a photo of somebody's living room does
+  not belong in the shared gallery.
+- **Putting a game away.** A game that has to stop mid-play can be filed rather
+  than abandoned. The page writes down what nobody remembers a week later: a
+  photo of the table, whether you stopped in the player phase or the villain
+  phase and which of its five steps, what each hero has left, and the villain's
+  life and which stage is face up. All of it optional, and what was left blank
+  is left out rather than shown as a gap. The game then waits on the Play tab.
 - **Statistics.** Win rate by hero, by scenario, by aspect, by difficulty, by
   hero *with* aspect, and solo against multiplayer, kept apart because a blended
   figure describes neither. Plus total time played, longest game, and current and
@@ -182,7 +194,11 @@ rather than machinery.
 
   Sinister Motives brings its reputation track. The app puts the six printed
   conditions after each scenario, does the adding, and shows only the boxes the
-  track has actually reached.
+  track has actually reached. Every reward and penalty hangs off the node the
+  printed track hangs it off, so a run that reaches the eighth box gets what the
+  eighth box gives and nothing else. The deals the track calls for are the app's
+  job too, including the three S.H.I.E.L.D. Tech upgrades, which are dealt once
+  per player rather than once for the table.
 
   Where a campaign says each player *chooses* a card, that is compulsory. The
   questionnaire records one answer per player and will not file until everyone
@@ -191,8 +207,8 @@ rather than machinery.
   random is drawn by the app: Age of Apocalypse's side missions and overseers,
   the order the Four Horsemen line up in, which Loki you face first, Fear No
   Evil's environments and subordinates, Sinister Motives' Community Service
-  scheme and Osborn Tech. Each draw is recorded so it cannot change while you
-  read it, and kept out of the pool next time.
+  scheme, Osborn Tech and S.H.I.E.L.D. Tech. Each draw is recorded so it cannot
+  change while you read it, and kept out of the pool next time.
 - **The setup printed on the scenario.** A campaign briefing lists the cards to
   fetch, then the campaign's own steps, then the setup written on the main
   scheme itself, which is the order it is done in at the table. That last part
@@ -233,10 +249,6 @@ rather than machinery.
   guessing an English title risks printing something that does not match the
   card in your hand. When the encounter cards appear, the steps gain the usual
   tappable chips.
-- **Confirming the Sinister Motives reputation track.** The node each reward and
-  penalty hangs off was read from the printed track by position. Most land
-  squarely. Four sit between two nodes and are marked in the template as
-  unconfirmed until they can be checked against the component.
 - **Fear No Evil and Shadowland in the randomiser.** Nine scenarios the card
   database has not got. Civil War looked like the same problem and was not, since
   the card database had it all along under a set type nothing else uses, so
