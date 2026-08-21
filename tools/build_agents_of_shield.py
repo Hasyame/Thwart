@@ -577,7 +577,6 @@ def build():
         "schemaVersion": 1,
         "name": t("Agents of S.H.I.E.L.D."),
         "packCode": "aos",
-        "untested": True,
         "notice": t(
             "Unofficial, reconstructed for the app: the rulebook and cards "
             "from the Agents of S.H.I.E.L.D. box are still needed to play."

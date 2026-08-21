@@ -579,5 +579,4 @@
         <item quantity="one">Villain: %1$d life, stage %2$s</item>
         <item quantity="other">Villain: %1$d life, stage %2$s</item>
     </plurals>
-    <string name="campaign_untested">The developer has not played this campaign through at a table yet. If you find a mistake, or something that could be done better, tell him and it will be fixed as soon as possible.</string>
 </resources>

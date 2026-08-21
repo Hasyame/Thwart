@@ -1,1665 +1,1664 @@
 {
- "id": "sm",
- "schemaVersion": 1,
- "name": {
-  "en": "Sinister Motives",
-  "fr": "Sinistres Motivations"
- },
- "untested": true,
- "packCode": "sm",
- "notice": {
-  "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Sinister Motives box are still needed to play.\n\nThe app keeps the reputation track for you. It asks the six printed conditions after each scenario, does the adding, and shows only the boxes the track has reached. It also deals what the rules deal at random: the Community Service side scheme, the Osborn Tech attachments, and each player's three S.H.I.E.L.D. Tech upgrades.",
-  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Sinistres Motivations restent nécessaires pour jouer.\n\nL'application tient la piste de réputation à votre place : elle pose les six conditions imprimées après chaque scénario, fait l'addition et n'affiche que les cases atteintes. Elle distribue aussi ce que les règles tirent au hasard : la manigance annexe Intérêt Général, les attachements Technologie Osborn et les trois améliorations Techno du SHIELD de chaque joueur."
- },
- "difficulties": [
-  "standard",
-  "expert"
- ],
- "counters": [
-  {
-   "id": "reputation",
-   "scope": "campaign",
-   "initial": 0
+  "id": "sm",
+  "schemaVersion": 1,
+  "name": {
+    "en": "Sinister Motives",
+    "fr": "Sinistres Motivations"
   },
-  {
-   "id": "wakingNightmare",
-   "scope": "campaign",
-   "initial": 0
+  "packCode": "sm",
+  "notice": {
+    "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Sinister Motives box are still needed to play.\n\nThe app keeps the reputation track for you. It asks the six printed conditions after each scenario, does the adding, and shows only the boxes the track has reached. It also deals what the rules deal at random: the Community Service side scheme, the Osborn Tech attachments, and each player's three S.H.I.E.L.D. Tech upgrades.",
+    "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Sinistres Motivations restent nécessaires pour jouer.\n\nL'application tient la piste de réputation à votre place : elle pose les six conditions imprimées après chaque scénario, fait l'addition et n'affiche que les cases atteintes. Elle distribue aussi ce que les règles tirent au hasard : la manigance annexe Intérêt Général, les attachements Technologie Osborn et les trois améliorations Techno du SHIELD de chaque joueur."
   },
-  {
-   "id": "hp",
-   "scope": "hero",
-   "initial": 0,
-   "maxFrom": "heroCard.health",
-   "activeWhen": {
-    "difficulty": "expert"
-   }
-  }
- ],
- "flagSets": [
-  {
-   "id": "osborn1"
-  },
-  {
-   "id": "shield1"
-  },
-  {
-   "id": "aspect9"
-  },
-  {
-   "id": "osborn13"
-  },
-  {
-   "id": "planning17"
-  },
-  {
-   "id": "osborn21"
-  }
- ],
- "cardLists": [
-  {
-   "id": "communityService",
-   "scope": "campaign"
-  },
-  {
-   "id": "osbornTech",
-   "scope": "campaign"
-  },
-  {
-   "id": "lastOnesStanding",
-   "scope": "campaign"
-  },
-  {
-   "id": "shieldTech",
-   "scope": "campaign"
-  },
-  {
-   "id": "aspectAdvantage",
-   "scope": "campaign"
-  },
-  {
-   "id": "planningAhead",
-   "scope": "campaign"
-  }
- ],
- "setupFragments": {
-  "reputation": [
-   {
-    "text": {
-     "en": "An Osborn Tech attachment is drawn and recorded.",
-     "fr": "Un attachement Technologie Osborn est tiré et enregistré."
+  "difficulties": [
+    "standard",
+    "expert"
+  ],
+  "counters": [
+    {
+      "id": "reputation",
+      "scope": "campaign",
+      "initial": 0
     },
-    "when": {
-     "all": [
+    {
+      "id": "wakingNightmare",
+      "scope": "campaign",
+      "initial": 0
+    },
+    {
+      "id": "hp",
+      "scope": "hero",
+      "initial": 0,
+      "maxFrom": "heroCard.health",
+      "activeWhen": {
+        "difficulty": "expert"
+      }
+    }
+  ],
+  "flagSets": [
+    {
+      "id": "osborn1"
+    },
+    {
+      "id": "shield1"
+    },
+    {
+      "id": "aspect9"
+    },
+    {
+      "id": "osborn13"
+    },
+    {
+      "id": "planning17"
+    },
+    {
+      "id": "osborn21"
+    }
+  ],
+  "cardLists": [
+    {
+      "id": "communityService",
+      "scope": "campaign"
+    },
+    {
+      "id": "osbornTech",
+      "scope": "campaign"
+    },
+    {
+      "id": "lastOnesStanding",
+      "scope": "campaign"
+    },
+    {
+      "id": "shieldTech",
+      "scope": "campaign"
+    },
+    {
+      "id": "aspectAdvantage",
+      "scope": "campaign"
+    },
+    {
+      "id": "planningAhead",
+      "scope": "campaign"
+    }
+  ],
+  "setupFragments": {
+    "reputation": [
       {
-       "counter": "reputation",
-       "atLeast": 1
+        "text": {
+          "en": "An Osborn Tech attachment is drawn and recorded.",
+          "fr": "Un attachement Technologie Osborn est tiré et enregistré."
+        },
+        "when": {
+          "all": [
+            {
+              "counter": "reputation",
+              "atLeast": 1
+            },
+            {
+              "notFlag": "osborn1"
+            }
+          ]
+        },
+        "draw": {
+          "id": "osborn1",
+          "from": [
+            "27147",
+            "27148",
+            "27149",
+            "27150",
+            "27151",
+            "27152"
+          ],
+          "excluding": "osbornTech"
+        },
+        "showCardList": "osbornTech",
+        "action": {
+          "id": "record_osborn1",
+          "label": {
+            "en": "Record it",
+            "fr": "Enregistrer"
+          },
+          "effects": [
+            {
+              "op": "addDrawnCard",
+              "cardList": "osbornTech",
+              "from": "osborn1"
+            },
+            {
+              "op": "setFlag",
+              "flag": "osborn1",
+              "boolValue": true
+            }
+          ]
+        }
       },
       {
-       "notFlag": "osborn1"
-      }
-     ]
-    },
-    "draw": {
-     "id": "osborn1",
-     "from": [
-      "27147",
-      "27148",
-      "27149",
-      "27150",
-      "27151",
-      "27152"
-     ],
-     "excluding": "osbornTech"
-    },
-    "showCardList": "osbornTech",
-    "action": {
-     "id": "record_osborn1",
-     "label": {
-      "en": "Record it",
-      "fr": "Enregistrer"
-     },
-     "effects": [
-      {
-       "op": "addDrawnCard",
-       "cardList": "osbornTech",
-       "from": "osborn1"
+        "text": {
+          "en": "Setup: shuffle every recorded Osborn Tech attachment into the encounter deck.",
+          "fr": "Mise en place : mélangez dans le deck rencontre chaque attachement Technologie Osborn enregistré."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 1
+        }
       },
       {
-       "op": "setFlag",
-       "flag": "osborn1",
-       "boolValue": true
-      }
-     ]
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: shuffle every recorded Osborn Tech attachment into the encounter deck.",
-     "fr": "Mise en place : mélangez dans le deck rencontre chaque attachement Technologie Osborn enregistré."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 1
-    }
-   },
-   {
-    "text": {
-     "en": "Three S.H.I.E.L.D. Tech upgrades are dealt to each player. Keep one for the rest of the campaign.",
-     "fr": "Trois améliorations Techno du SHIELD sont distribuées à chaque joueur. Gardez-en une pour le reste de la campagne."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 1
+        "text": {
+          "en": "Three S.H.I.E.L.D. Tech upgrades are dealt to each player. Keep one for the rest of the campaign.",
+          "fr": "Trois améliorations Techno du SHIELD sont distribuées à chaque joueur. Gardez-en une pour le reste de la campagne."
+        },
+        "when": {
+          "all": [
+            {
+              "counter": "reputation",
+              "atLeast": 1
+            },
+            {
+              "notFlag": "shield1"
+            }
+          ]
+        },
+        "draw": {
+          "id": "shield1",
+          "from": [
+            "27182a",
+            "27183a",
+            "27184a",
+            "27185a",
+            "27186a",
+            "27187a",
+            "27188a",
+            "27189a"
+          ],
+          "offer": 3,
+          "perHero": true
+        },
+        "action": {
+          "id": "record_shield1",
+          "label": {
+            "en": "Record them",
+            "fr": "Enregistrer"
+          },
+          "effects": [
+            {
+              "op": "addDrawnCard",
+              "cardList": "shieldTech",
+              "from": "shield1"
+            },
+            {
+              "op": "setFlag",
+              "flag": "shield1",
+              "boolValue": true
+            }
+          ]
+        }
       },
       {
-       "notFlag": "shield1"
-      }
-     ]
-    },
-    "draw": {
-     "id": "shield1",
-     "from": [
-      "27182a",
-      "27183a",
-      "27184a",
-      "27185a",
-      "27186a",
-      "27187a",
-      "27188a",
-      "27189a"
-     ],
-     "offer": 3,
-     "perHero": true
-    },
-    "action": {
-     "id": "record_shield1",
-     "label": {
-      "en": "Record them",
-      "fr": "Enregistrer"
-     },
-     "effects": [
-      {
-       "op": "addDrawnCard",
-       "cardList": "shieldTech",
-       "from": "shield1"
+        "text": {
+          "en": "Setup: place 1 threat per player on the main scheme.",
+          "fr": "Mise en place : placez 1 menace par joueur sur la manigance principale."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 5
+        }
       },
       {
-       "op": "setFlag",
-       "flag": "shield1",
-       "boolValue": true
-      }
-     ]
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: place 1 threat per player on the main scheme.",
-     "fr": "Mise en place : placez 1 menace par joueur sur la manigance principale."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 5
-    }
-   },
-   {
-    "text": {
-     "en": "Each player may take 1 additional mulligan during step 13 of setup.",
-     "fr": "Chaque joueur peut faire 1 mulligan supplémentaire à l'étape 13 de la mise en place."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 5
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: in player order, each player puts a minion from the encounter deck or discard pile into play engaged with them. Shuffle.\nAny player who does not takes 1 facedown encounter card.",
-     "fr": "Mise en place : dans l'ordre du tour, chaque joueur met en jeu un sbire du deck rencontre ou de la pile de défausse, engagé avec lui.\nMélangez. Tout joueur qui ne le fait pas reçoit 1 carte Rencontre face cachée."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 9
-    }
-   },
-   {
-    "text": {
-     "en": "Each player adds the maximum copies of one aspect card of their choice, from any aspect, to their deck for the rest of the campaign.",
-     "fr": "Chaque joueur choisit une carte d'affinité, de n'importe quelle affinité.\nIl en ajoute le nombre maximum d'exemplaires à son deck pour le reste de la campagne."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 9
+        "text": {
+          "en": "Each player may take 1 additional mulligan during step 13 of setup.",
+          "fr": "Chaque joueur peut faire 1 mulligan supplémentaire à l'étape 13 de la mise en place."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 5
+        }
       },
       {
-       "notFlag": "aspect9"
-      }
-     ]
-    },
-    "action": {
-     "id": "done_aspect9",
-     "label": {
-      "en": "Done",
-      "fr": "Fait"
-     },
-     "effects": [
-      {
-       "op": "setFlag",
-       "flag": "aspect9",
-       "boolValue": true
-      }
-     ]
-    },
-    "showCardList": "aspectAdvantage"
-   },
-   {
-    "text": {
-     "en": "An Osborn Tech attachment is drawn and recorded.",
-     "fr": "Un attachement Technologie Osborn est tiré et enregistré."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 13
+        "text": {
+          "en": "Setup: in player order, each player puts a minion from the encounter deck or discard pile into play engaged with them. Shuffle.\nAny player who does not takes 1 facedown encounter card.",
+          "fr": "Mise en place : dans l'ordre du tour, chaque joueur met en jeu un sbire du deck rencontre ou de la pile de défausse, engagé avec lui.\nMélangez. Tout joueur qui ne le fait pas reçoit 1 carte Rencontre face cachée."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 9
+        }
       },
       {
-       "notFlag": "osborn13"
-      }
-     ]
-    },
-    "draw": {
-     "id": "osborn13",
-     "from": [
-      "27147",
-      "27148",
-      "27149",
-      "27150",
-      "27151",
-      "27152"
-     ],
-     "excluding": "osbornTech"
-    },
-    "showCardList": "osbornTech",
-    "action": {
-     "id": "record_osborn13",
-     "label": {
-      "en": "Record it",
-      "fr": "Enregistrer"
-     },
-     "effects": [
-      {
-       "op": "addDrawnCard",
-       "cardList": "osbornTech",
-       "from": "osborn13"
+        "text": {
+          "en": "Each player adds the maximum copies of one aspect card of their choice, from any aspect, to their deck for the rest of the campaign.",
+          "fr": "Chaque joueur choisit une carte d'affinité, de n'importe quelle affinité.\nIl en ajoute le nombre maximum d'exemplaires à son deck pour le reste de la campagne."
+        },
+        "when": {
+          "all": [
+            {
+              "counter": "reputation",
+              "atLeast": 9
+            },
+            {
+              "notFlag": "aspect9"
+            }
+          ]
+        },
+        "action": {
+          "id": "done_aspect9",
+          "label": {
+            "en": "Done",
+            "fr": "Fait"
+          },
+          "effects": [
+            {
+              "op": "setFlag",
+              "flag": "aspect9",
+              "boolValue": true
+            }
+          ]
+        },
+        "showCardList": "aspectAdvantage"
       },
       {
-       "op": "setFlag",
-       "flag": "osborn13",
-       "boolValue": true
-      }
-     ]
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced side.",
-     "fr": "Mise en place : chaque joueur retourne son amélioration Techno du SHIELD sur sa face Améliorée."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 13
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: the first player searches the encounter deck and discard pile for a scenario side scheme and reveals it.\nPlace 1 threat per player on it. Shuffle.",
-     "fr": "Mise en place : le premier joueur cherche dans le deck rencontre et la pile de défausse une manigance annexe du scénario et la révèle.\nPlacez 1 menace par joueur dessus. Mélangez."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 17
-    }
-   },
-   {
-    "text": {
-     "en": "Each player chooses one card from their deck and records it.",
-     "fr": "Chaque joueur choisit une carte de son deck et l'enregistre."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 17
+        "text": {
+          "en": "An Osborn Tech attachment is drawn and recorded.",
+          "fr": "Un attachement Technologie Osborn est tiré et enregistré."
+        },
+        "when": {
+          "all": [
+            {
+              "counter": "reputation",
+              "atLeast": 13
+            },
+            {
+              "notFlag": "osborn13"
+            }
+          ]
+        },
+        "draw": {
+          "id": "osborn13",
+          "from": [
+            "27147",
+            "27148",
+            "27149",
+            "27150",
+            "27151",
+            "27152"
+          ],
+          "excluding": "osbornTech"
+        },
+        "showCardList": "osbornTech",
+        "action": {
+          "id": "record_osborn13",
+          "label": {
+            "en": "Record it",
+            "fr": "Enregistrer"
+          },
+          "effects": [
+            {
+              "op": "addDrawnCard",
+              "cardList": "osbornTech",
+              "from": "osborn13"
+            },
+            {
+              "op": "setFlag",
+              "flag": "osborn13",
+              "boolValue": true
+            }
+          ]
+        }
       },
       {
-       "notFlag": "planning17"
-      }
-     ]
-    },
-    "action": {
-     "id": "done_planning17",
-     "label": {
-      "en": "Done",
-      "fr": "Fait"
-     },
-     "effects": [
-      {
-       "op": "setFlag",
-       "flag": "planning17",
-       "boolValue": true
-      }
-     ]
-    },
-    "showCardList": "planningAhead"
-   },
-   {
-    "text": {
-     "en": "Setup: each player searches their deck and discard pile for their recorded card and adds it to hand. Shuffle.",
-     "fr": "Mise en place : chaque joueur cherche dans son deck et sa pile de défausse la carte qu'il a enregistrée et l'ajoute à sa main. Mélangez."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 17
-    }
-   },
-   {
-    "text": {
-     "en": "An Osborn Tech attachment is drawn and recorded.",
-     "fr": "Un attachement Technologie Osborn est tiré et enregistré."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 21
+        "text": {
+          "en": "Setup: each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced side.",
+          "fr": "Mise en place : chaque joueur retourne son amélioration Techno du SHIELD sur sa face Améliorée."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 13
+        }
       },
       {
-       "notFlag": "osborn21"
-      }
-     ]
-    },
-    "draw": {
-     "id": "osborn21",
-     "from": [
-      "27147",
-      "27148",
-      "27149",
-      "27150",
-      "27151",
-      "27152"
-     ],
-     "excluding": "osbornTech"
-    },
-    "showCardList": "osbornTech",
-    "action": {
-     "id": "record_osborn21",
-     "label": {
-      "en": "Record it",
-      "fr": "Enregistrer"
-     },
-     "effects": [
-      {
-       "op": "addDrawnCard",
-       "cardList": "osbornTech",
-       "from": "osborn21"
+        "text": {
+          "en": "Setup: the first player searches the encounter deck and discard pile for a scenario side scheme and reveals it.\nPlace 1 threat per player on it. Shuffle.",
+          "fr": "Mise en place : le premier joueur cherche dans le deck rencontre et la pile de défausse une manigance annexe du scénario et la révèle.\nPlacez 1 menace par joueur dessus. Mélangez."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 17
+        }
       },
       {
-       "op": "setFlag",
-       "flag": "osborn21",
-       "boolValue": true
+        "text": {
+          "en": "Each player chooses one card from their deck and records it.",
+          "fr": "Chaque joueur choisit une carte de son deck et l'enregistre."
+        },
+        "when": {
+          "all": [
+            {
+              "counter": "reputation",
+              "atLeast": 17
+            },
+            {
+              "notFlag": "planning17"
+            }
+          ]
+        },
+        "action": {
+          "id": "done_planning17",
+          "label": {
+            "en": "Done",
+            "fr": "Fait"
+          },
+          "effects": [
+            {
+              "op": "setFlag",
+              "flag": "planning17",
+              "boolValue": true
+            }
+          ]
+        },
+        "showCardList": "planningAhead"
+      },
+      {
+        "text": {
+          "en": "Setup: each player searches their deck and discard pile for their recorded card and adds it to hand. Shuffle.",
+          "fr": "Mise en place : chaque joueur cherche dans son deck et sa pile de défausse la carte qu'il a enregistrée et l'ajoute à sa main. Mélangez."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 17
+        }
+      },
+      {
+        "text": {
+          "en": "An Osborn Tech attachment is drawn and recorded.",
+          "fr": "Un attachement Technologie Osborn est tiré et enregistré."
+        },
+        "when": {
+          "all": [
+            {
+              "counter": "reputation",
+              "atLeast": 21
+            },
+            {
+              "notFlag": "osborn21"
+            }
+          ]
+        },
+        "draw": {
+          "id": "osborn21",
+          "from": [
+            "27147",
+            "27148",
+            "27149",
+            "27150",
+            "27151",
+            "27152"
+          ],
+          "excluding": "osbornTech"
+        },
+        "showCardList": "osbornTech",
+        "action": {
+          "id": "record_osborn21",
+          "label": {
+            "en": "Record it",
+            "fr": "Enregistrer"
+          },
+          "effects": [
+            {
+              "op": "addDrawnCard",
+              "cardList": "osbornTech",
+              "from": "osborn21"
+            },
+            {
+              "op": "setFlag",
+              "flag": "osborn21",
+              "boolValue": true
+            }
+          ]
+        }
+      },
+      {
+        "text": {
+          "en": "Setup: each player may search their collection for a Helicarrier support and put it into play.",
+          "fr": "Mise en place : chaque joueur peut chercher un soutien Héliporteur dans sa collection et le mettre en jeu."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 21
+        }
+      },
+      {
+        "text": {
+          "en": "Setup: each player may search their collection for a Symbiote Suit upgrade and put it into play.",
+          "fr": "Mise en place : chaque joueur peut chercher une amélioration Costume de Symbiote dans sa collection et la mettre en jeu."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 25
+        }
+      },
+      {
+        "text": {
+          "en": "Setup: deal 1 facedown encounter card to each player.",
+          "fr": "Mise en place : attribuez 1 carte Rencontre face cachée à chaque joueur."
+        },
+        "when": {
+          "counter": "reputation",
+          "atLeast": 25
+        }
       }
-     ]
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: each player may search their collection for a Helicarrier support and put it into play.",
-     "fr": "Mise en place : chaque joueur peut chercher un soutien Héliporteur dans sa collection et le mettre en jeu."
+    ]
+  },
+  "startScenarioId": "s1_sandman",
+  "scenarios": [
+    {
+      "id": "s1_sandman",
+      "name": {
+        "en": "Sandman",
+        "fr": "L'Homme-Sable"
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "27061",
+            "27062"
+          ],
+          "expert": [
+            "27062",
+            "27063"
+          ]
+        },
+        "mainScheme": [
+          "27064a"
+        ],
+        "encounterSets": [
+          "sandman",
+          "city_in_chaos",
+          "down_to_earth",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put Public Outcry into play, Standard Mode side up.",
+            "fr": "Mettez en jeu Indignation Populaire, face Mode Standard visible."
+          },
+          "cards": [
+            "27174a"
+          ],
+          "when": {
+            "difficulty": "standard"
+          }
+        },
+        {
+          "text": {
+            "en": "Put Public Outcry into play, Expert Mode side up.",
+            "fr": "Mettez en jeu Indignation Populaire, face Mode Expert visible."
+          },
+          "cards": [
+            "27174b"
+          ],
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck.",
+            "fr": "Mélangez ces cartes dans le deck rencontre."
+          },
+          "cards": [
+            "27175"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle this Community Service side scheme into the encounter deck.",
+            "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+          },
+          "draw": {
+            "id": "service_s1_sandman",
+            "from": [
+              "27176",
+              "27177",
+              "27178",
+              "27179",
+              "27180"
+            ],
+            "excluding": "communityService"
+          }
+        },
+        {
+          "text": {
+            "en": "Expert: place 2 additional sand counters on City Streets and resolve Surging Sands.",
+            "fr": "Expert : placez 2 jetons Sable supplémentaires sur Rues de la Ville et résolvez Afflux de Sable."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "include": "reputation"
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "noMinions",
+            "type": "boolean",
+            "label": {
+              "en": "No minions in play?",
+              "fr": "Aucun sbire en jeu ?"
+            }
+          },
+          {
+            "id": "noSideSchemes",
+            "type": "boolean",
+            "label": {
+              "en": "No side schemes in play?",
+              "fr": "Aucune manigance annexe en jeu ?"
+            }
+          },
+          {
+            "id": "noThreat",
+            "type": "boolean",
+            "label": {
+              "en": "No threat on the main scheme?",
+              "fr": "Aucune menace sur la manigance principale ?"
+            }
+          },
+          {
+            "id": "fewAcceleration",
+            "type": "boolean",
+            "label": {
+              "en": "Fewer than 1 acceleration tokens in play?",
+              "fr": "Moins de 1 jeton accélération en jeu ?"
+            }
+          },
+          {
+            "id": "noDefeated",
+            "type": "boolean",
+            "label": {
+              "en": "No defeated identities?",
+              "fr": "Aucune identité vaincue ?"
+            }
+          },
+          {
+            "id": "serviceDone",
+            "type": "boolean",
+            "label": {
+              "en": "Is the Community Service side scheme in the victory display?",
+              "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "from": "vp"
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noMinions"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noSideSchemes"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noThreat"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "fewAcceleration"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noDefeated"
+            }
+          },
+          {
+            "op": "addDrawnCard",
+            "cardList": "communityService",
+            "from": "service_s1_sandman",
+            "when": {
+              "answer": "serviceDone"
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s2_venom"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s1_sandman"
+          }
+        ]
+      },
+      "flavour": {
+        "en": "Sandman fills the streets with a tidal wall of dust, and the people caught in it are running out of time.",
+        "fr": "L'Homme-Sable noie les rues sous un mur de poussière, et ceux qui sont pris dedans n'ont plus beaucoup de temps."
+      }
     },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 21
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: each player may search their collection for a Symbiote Suit upgrade and put it into play.",
-     "fr": "Mise en place : chaque joueur peut chercher une amélioration Costume de Symbiote dans sa collection et la mettre en jeu."
+    {
+      "id": "s2_venom",
+      "name": {
+        "en": "Venom",
+        "fr": "Venom"
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "27073",
+            "27074"
+          ],
+          "expert": [
+            "27074",
+            "27075"
+          ]
+        },
+        "mainScheme": [
+          "27076a"
+        ],
+        "encounterSets": [
+          "venom",
+          "down_to_earth",
+          "symbiotic_strength",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put Public Outcry into play.",
+            "fr": "Mettez en jeu Indignation Populaire."
+          },
+          "cards": [
+            "27174a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck.",
+            "fr": "Mélangez ces cartes dans le deck rencontre."
+          },
+          "cards": [
+            "27175"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle this Community Service side scheme into the encounter deck.",
+            "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+          },
+          "draw": {
+            "id": "service_s2_venom",
+            "from": [
+              "27176",
+              "27177",
+              "27178",
+              "27179",
+              "27180"
+            ],
+            "excluding": "communityService"
+          }
+        },
+        {
+          "include": "reputation"
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "noMinions",
+            "type": "boolean",
+            "label": {
+              "en": "No minions in play?",
+              "fr": "Aucun sbire en jeu ?"
+            }
+          },
+          {
+            "id": "noSideSchemes",
+            "type": "boolean",
+            "label": {
+              "en": "No side schemes in play?",
+              "fr": "Aucune manigance annexe en jeu ?"
+            }
+          },
+          {
+            "id": "noThreat",
+            "type": "boolean",
+            "label": {
+              "en": "No threat on the main scheme?",
+              "fr": "Aucune menace sur la manigance principale ?"
+            }
+          },
+          {
+            "id": "fewAcceleration",
+            "type": "boolean",
+            "label": {
+              "en": "Fewer than 1 acceleration tokens in play?",
+              "fr": "Moins de 1 jeton accélération en jeu ?"
+            }
+          },
+          {
+            "id": "noDefeated",
+            "type": "boolean",
+            "label": {
+              "en": "No defeated identities?",
+              "fr": "Aucune identité vaincue ?"
+            }
+          },
+          {
+            "id": "serviceDone",
+            "type": "boolean",
+            "label": {
+              "en": "Is the Community Service side scheme in the victory display?",
+              "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "from": "vp"
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noMinions"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noSideSchemes"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noThreat"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "fewAcceleration"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noDefeated"
+            }
+          },
+          {
+            "op": "addDrawnCard",
+            "cardList": "communityService",
+            "from": "service_s2_venom",
+            "when": {
+              "answer": "serviceDone"
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s3_mysterio"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s2_venom"
+          }
+        ]
+      },
+      "flavour": {
+        "en": "Venom comes at you blind with rage. The bell tower across the rooftops might be the only thing that slows him down.",
+        "fr": "Venom fonce sur vous, aveuglé par la rage. Le clocher de l'autre côté des toits est peut-être la seule chose qui puisse le ralentir."
+      }
     },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 25
-    }
-   },
-   {
-    "text": {
-     "en": "Setup: deal 1 facedown encounter card to each player.",
-     "fr": "Mise en place : attribuez 1 carte Rencontre face cachée à chaque joueur."
+    {
+      "id": "s3_mysterio",
+      "name": {
+        "en": "Mysterio",
+        "fr": "Mysterio"
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "27084",
+            "27085"
+          ],
+          "expert": [
+            "27085",
+            "27086"
+          ]
+        },
+        "mainScheme": [
+          "27087a",
+          "27088a"
+        ],
+        "encounterSets": [
+          "mysterio",
+          "personal_nightmare",
+          "whispers_of_paranoia",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put the Venom ally into play under the first player's control.",
+            "fr": "Mettez en jeu l'allié Venom sous le contrôle du premier joueur."
+          },
+          "cards": [
+            "27190"
+          ]
+        },
+        {
+          "text": {
+            "en": "Put Public Outcry into play.",
+            "fr": "Mettez en jeu Indignation Populaire."
+          },
+          "cards": [
+            "27174a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck.",
+            "fr": "Mélangez ces cartes dans le deck rencontre."
+          },
+          "cards": [
+            "27175",
+            "27181"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle this Community Service side scheme into the encounter deck.",
+            "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+          },
+          "draw": {
+            "id": "service_s3_mysterio",
+            "from": [
+              "27176",
+              "27177",
+              "27178",
+              "27179",
+              "27180"
+            ],
+            "excluding": "communityService"
+          }
+        },
+        {
+          "include": "reputation"
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "noMinions",
+            "type": "boolean",
+            "label": {
+              "en": "No minions in play?",
+              "fr": "Aucun sbire en jeu ?"
+            }
+          },
+          {
+            "id": "noSideSchemes",
+            "type": "boolean",
+            "label": {
+              "en": "No side schemes in play?",
+              "fr": "Aucune manigance annexe en jeu ?"
+            }
+          },
+          {
+            "id": "noThreat",
+            "type": "boolean",
+            "label": {
+              "en": "No threat on the main scheme?",
+              "fr": "Aucune menace sur la manigance principale ?"
+            }
+          },
+          {
+            "id": "fewAcceleration",
+            "type": "boolean",
+            "label": {
+              "en": "Fewer than 1 acceleration tokens in play?",
+              "fr": "Moins de 1 jeton accélération en jeu ?"
+            }
+          },
+          {
+            "id": "noDefeated",
+            "type": "boolean",
+            "label": {
+              "en": "No defeated identities?",
+              "fr": "Aucune identité vaincue ?"
+            }
+          },
+          {
+            "id": "serviceDone",
+            "type": "boolean",
+            "label": {
+              "en": "Is the Community Service side scheme in the victory display?",
+              "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "illusions",
+            "type": "number",
+            "label": {
+              "en": "How many Illusion cards are in all player decks?",
+              "fr": "Combien de cartes Illusion y a-t-il dans les decks des joueurs ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "from": "vp"
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noMinions"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noSideSchemes"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noThreat"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "fewAcceleration"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noDefeated"
+            }
+          },
+          {
+            "op": "addDrawnCard",
+            "cardList": "communityService",
+            "from": "service_s3_mysterio",
+            "when": {
+              "answer": "serviceDone"
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          },
+          {
+            "op": "setCounter",
+            "counter": "wakingNightmare",
+            "from": "illusions"
+          }
+        ],
+        "next": [
+          {
+            "goto": "s4_sinister_six"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s3_mysterio"
+          }
+        ]
+      },
+      "flavour": {
+        "en": "Deeper into Oscorp, a maze of mirrors turns your own fears back on you until you cannot tell them from the room.",
+        "fr": "Plus profond dans Oscorp, un labyrinthe de miroirs vous renvoie vos propres peurs jusqu'à ce que vous ne les distinguiez plus de la pièce."
+      }
     },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 25
+    {
+      "id": "s4_sinister_six",
+      "name": {
+        "en": "The Sinister Six",
+        "fr": "Les Sinistres Six"
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "27094",
+            "27095",
+            "27096",
+            "27097",
+            "27098",
+            "27099"
+          ],
+          "expert": [
+            "27094",
+            "27095",
+            "27096",
+            "27097",
+            "27098",
+            "27099"
+          ]
+        },
+        "mainScheme": [
+          "27100a",
+          "27101a"
+        ],
+        "encounterSets": [
+          "sinister_six",
+          "guerrilla_tactics",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put the Venom ally into play under the first player's control.",
+            "fr": "Mettez en jeu l'allié Venom sous le contrôle du premier joueur."
+          },
+          "cards": [
+            "27190"
+          ]
+        },
+        {
+          "text": {
+            "en": "Put Public Outcry into play.",
+            "fr": "Mettez en jeu Indignation Populaire."
+          },
+          "cards": [
+            "27174a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck.",
+            "fr": "Mélangez ces cartes dans le deck rencontre."
+          },
+          "cards": [
+            "27175",
+            "27181"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle this Community Service side scheme into the encounter deck.",
+            "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+          },
+          "draw": {
+            "id": "service_s4_sinister_six",
+            "from": [
+              "27176",
+              "27177",
+              "27178",
+              "27179",
+              "27180"
+            ],
+            "excluding": "communityService"
+          }
+        },
+        {
+          "text": {
+            "en": "Place this much threat on Light at the End.",
+            "fr": "Placez autant de menace sur Lumière au Bout du Tunnel."
+          },
+          "cards": [
+            "27102a"
+          ],
+          "showCounter": "wakingNightmare"
+        },
+        {
+          "include": "reputation"
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "noMinions",
+            "type": "boolean",
+            "label": {
+              "en": "No minions in play?",
+              "fr": "Aucun sbire en jeu ?"
+            }
+          },
+          {
+            "id": "noSideSchemes",
+            "type": "boolean",
+            "label": {
+              "en": "No side schemes in play?",
+              "fr": "Aucune manigance annexe en jeu ?"
+            }
+          },
+          {
+            "id": "noThreat",
+            "type": "boolean",
+            "label": {
+              "en": "No threat on the main scheme?",
+              "fr": "Aucune menace sur la manigance principale ?"
+            }
+          },
+          {
+            "id": "fewAcceleration",
+            "type": "boolean",
+            "label": {
+              "en": "Fewer than 1 acceleration tokens in play?",
+              "fr": "Moins de 1 jeton accélération en jeu ?"
+            }
+          },
+          {
+            "id": "noDefeated",
+            "type": "boolean",
+            "label": {
+              "en": "No defeated identities?",
+              "fr": "Aucune identité vaincue ?"
+            }
+          },
+          {
+            "id": "serviceDone",
+            "type": "boolean",
+            "label": {
+              "en": "Is the Community Service side scheme in the victory display?",
+              "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "standing",
+            "type": "cardSelect",
+            "label": {
+              "en": "Which villains were still in play?",
+              "fr": "Quels méchants étaient encore en jeu ?"
+            },
+            "cards": [
+              "27094",
+              "27095",
+              "27096",
+              "27097",
+              "27098",
+              "27099"
+            ]
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "from": "vp"
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noMinions"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noSideSchemes"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noThreat"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "fewAcceleration"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noDefeated"
+            }
+          },
+          {
+            "op": "addDrawnCard",
+            "cardList": "communityService",
+            "from": "service_s4_sinister_six",
+            "when": {
+              "answer": "serviceDone"
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          },
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "lastOnesStanding",
+            "from": "standing"
+          }
+        ],
+        "next": [
+          {
+            "goto": "s5_venom_goblin"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s4_sinister_six"
+          }
+        ]
+      },
+      "flavour": {
+        "en": "The smoke clears on a silo, and all six of them step out of the dark at once.",
+        "fr": "La fumée se dissipe sur un silo, et tous les six sortent de l'ombre en même temps."
+      }
+    },
+    {
+      "id": "s5_venom_goblin",
+      "name": {
+        "en": "Venom Goblin",
+        "fr": "Le Bouffon Venom"
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "27113",
+            "27114"
+          ],
+          "expert": [
+            "27114",
+            "27115"
+          ]
+        },
+        "mainScheme": [
+          "27116a",
+          "27117a",
+          "27118a",
+          "27119a"
+        ],
+        "encounterSets": [
+          "venom_goblin",
+          "symbiotic_strength",
+          "goblin_gear",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put Public Outcry into play.",
+            "fr": "Mettez en jeu Indignation Populaire."
+          },
+          "cards": [
+            "27174a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle these into the encounter deck.",
+            "fr": "Mélangez ces cartes dans le deck rencontre."
+          },
+          "cards": [
+            "27175"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle this Community Service side scheme into the encounter deck.",
+            "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+          },
+          "draw": {
+            "id": "service_s5_venom_goblin",
+            "from": [
+              "27176",
+              "27177",
+              "27178",
+              "27179",
+              "27180"
+            ],
+            "excluding": "communityService"
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle the Sinister Assault minion matching each villain left standing into the encounter deck.",
+            "fr": "Mélangez dans le deck rencontre le sbire Assaut Sinistre correspondant à chaque méchant encore en jeu."
+          },
+          "cards": [
+            "27158",
+            "27159",
+            "27160",
+            "27161",
+            "27162",
+            "27163"
+          ],
+          "showCardList": "lastOnesStanding"
+        },
+        {
+          "include": "reputation"
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "noMinions",
+            "type": "boolean",
+            "label": {
+              "en": "No minions in play?",
+              "fr": "Aucun sbire en jeu ?"
+            }
+          },
+          {
+            "id": "noSideSchemes",
+            "type": "boolean",
+            "label": {
+              "en": "No side schemes in play?",
+              "fr": "Aucune manigance annexe en jeu ?"
+            }
+          },
+          {
+            "id": "noThreat",
+            "type": "boolean",
+            "label": {
+              "en": "No threat on the main scheme?",
+              "fr": "Aucune menace sur la manigance principale ?"
+            }
+          },
+          {
+            "id": "fewAcceleration",
+            "type": "boolean",
+            "label": {
+              "en": "Fewer than 1 acceleration tokens in play?",
+              "fr": "Moins de 1 jeton accélération en jeu ?"
+            }
+          },
+          {
+            "id": "noDefeated",
+            "type": "boolean",
+            "label": {
+              "en": "No defeated identities?",
+              "fr": "Aucune identité vaincue ?"
+            }
+          },
+          {
+            "id": "serviceDone",
+            "type": "boolean",
+            "label": {
+              "en": "Is the Community Service side scheme in the victory display?",
+              "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "from": "vp"
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noMinions"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noSideSchemes"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noThreat"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "fewAcceleration"
+            }
+          },
+          {
+            "op": "addCounter",
+            "counter": "reputation",
+            "value": 1,
+            "when": {
+              "answer": "noDefeated"
+            }
+          },
+          {
+            "op": "addDrawnCard",
+            "cardList": "communityService",
+            "from": "service_s5_venom_goblin",
+            "when": {
+              "answer": "serviceDone"
+            }
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "end": true
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "end": true,
+            "when": {
+              "difficulty": "expert"
+            }
+          },
+          {
+            "goto": "s5_venom_goblin"
+          }
+        ]
+      },
+      "flavour": {
+        "en": "Osborn has bound the symbiote to his will, and he is over the city now, making an army out of everyone below.",
+        "fr": "Osborn a plié le symbiote à sa volonté, et il survole la ville, en train de faire une armée de tous ceux qui sont en dessous."
+      }
     }
-   }
   ]
- },
- "startScenarioId": "s1_sandman",
- "scenarios": [
-  {
-   "id": "s1_sandman",
-   "name": {
-    "en": "Sandman",
-    "fr": "L'Homme-Sable"
-   },
-   "baseSetup": {
-    "villainDeck": {
-     "standard": [
-      "27061",
-      "27062"
-     ],
-     "expert": [
-      "27062",
-      "27063"
-     ]
-    },
-    "mainScheme": [
-     "27064a"
-    ],
-    "encounterSets": [
-     "sandman",
-     "city_in_chaos",
-     "down_to_earth",
-     "standard"
-    ]
-   },
-   "campaignSetup": [
-    {
-     "text": {
-      "en": "Put Public Outcry into play, Standard Mode side up.",
-      "fr": "Mettez en jeu Indignation Populaire, face Mode Standard visible."
-     },
-     "cards": [
-      "27174a"
-     ],
-     "when": {
-      "difficulty": "standard"
-     }
-    },
-    {
-     "text": {
-      "en": "Put Public Outcry into play, Expert Mode side up.",
-      "fr": "Mettez en jeu Indignation Populaire, face Mode Expert visible."
-     },
-     "cards": [
-      "27174b"
-     ],
-     "when": {
-      "difficulty": "expert"
-     }
-    },
-    {
-     "text": {
-      "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
-     },
-     "cards": [
-      "27175"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
-     },
-     "draw": {
-      "id": "service_s1_sandman",
-      "from": [
-       "27176",
-       "27177",
-       "27178",
-       "27179",
-       "27180"
-      ],
-      "excluding": "communityService"
-     }
-    },
-    {
-     "text": {
-      "en": "Expert: place 2 additional sand counters on City Streets and resolve Surging Sands.",
-      "fr": "Expert : placez 2 jetons Sable supplémentaires sur Rues de la Ville et résolvez Afflux de Sable."
-     },
-     "when": {
-      "difficulty": "expert"
-     }
-    },
-    {
-     "include": "reputation"
-    }
-   ],
-   "onVictory": {
-    "prompts": [
-     {
-      "id": "vp",
-      "type": "number",
-      "label": {
-       "en": "How many victory points are in the victory display?",
-       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "noMinions",
-      "type": "boolean",
-      "label": {
-       "en": "No minions in play?",
-       "fr": "Aucun sbire en jeu ?"
-      }
-     },
-     {
-      "id": "noSideSchemes",
-      "type": "boolean",
-      "label": {
-       "en": "No side schemes in play?",
-       "fr": "Aucune manigance annexe en jeu ?"
-      }
-     },
-     {
-      "id": "noThreat",
-      "type": "boolean",
-      "label": {
-       "en": "No threat on the main scheme?",
-       "fr": "Aucune menace sur la manigance principale ?"
-      }
-     },
-     {
-      "id": "fewAcceleration",
-      "type": "boolean",
-      "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
-      }
-     },
-     {
-      "id": "noDefeated",
-      "type": "boolean",
-      "label": {
-       "en": "No defeated identities?",
-       "fr": "Aucune identité vaincue ?"
-      }
-     },
-     {
-      "id": "serviceDone",
-      "type": "boolean",
-      "label": {
-       "en": "Is the Community Service side scheme in the victory display?",
-       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "hpPerHero",
-      "type": "perHeroNumber",
-      "label": {
-       "en": "Remaining hit points",
-       "fr": "Points de vie restants"
-      },
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "effects": [
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "from": "vp"
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noMinions"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noSideSchemes"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noThreat"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "fewAcceleration"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noDefeated"
-      }
-     },
-     {
-      "op": "addDrawnCard",
-      "cardList": "communityService",
-      "from": "service_s1_sandman",
-      "when": {
-       "answer": "serviceDone"
-      }
-     },
-     {
-      "op": "setHeroCounter",
-      "counter": "hp",
-      "from": "hpPerHero",
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "next": [
-     {
-      "goto": "s2_venom"
-     }
-    ]
-   },
-   "onDefeat": {
-    "next": [
-     {
-      "goto": "s1_sandman"
-     }
-    ]
-   },
-   "flavour": {
-    "en": "Sandman fills the streets with a tidal wall of dust, and the people caught in it are running out of time.",
-    "fr": "L'Homme-Sable noie les rues sous un mur de poussière, et ceux qui sont pris dedans n'ont plus beaucoup de temps."
-   }
-  },
-  {
-   "id": "s2_venom",
-   "name": {
-    "en": "Venom",
-    "fr": "Venom"
-   },
-   "baseSetup": {
-    "villainDeck": {
-     "standard": [
-      "27073",
-      "27074"
-     ],
-     "expert": [
-      "27074",
-      "27075"
-     ]
-    },
-    "mainScheme": [
-     "27076a"
-    ],
-    "encounterSets": [
-     "venom",
-     "down_to_earth",
-     "symbiotic_strength",
-     "standard"
-    ]
-   },
-   "campaignSetup": [
-    {
-     "text": {
-      "en": "Put Public Outcry into play.",
-      "fr": "Mettez en jeu Indignation Populaire."
-     },
-     "cards": [
-      "27174a"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
-     },
-     "cards": [
-      "27175"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
-     },
-     "draw": {
-      "id": "service_s2_venom",
-      "from": [
-       "27176",
-       "27177",
-       "27178",
-       "27179",
-       "27180"
-      ],
-      "excluding": "communityService"
-     }
-    },
-    {
-     "include": "reputation"
-    }
-   ],
-   "onVictory": {
-    "prompts": [
-     {
-      "id": "vp",
-      "type": "number",
-      "label": {
-       "en": "How many victory points are in the victory display?",
-       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "noMinions",
-      "type": "boolean",
-      "label": {
-       "en": "No minions in play?",
-       "fr": "Aucun sbire en jeu ?"
-      }
-     },
-     {
-      "id": "noSideSchemes",
-      "type": "boolean",
-      "label": {
-       "en": "No side schemes in play?",
-       "fr": "Aucune manigance annexe en jeu ?"
-      }
-     },
-     {
-      "id": "noThreat",
-      "type": "boolean",
-      "label": {
-       "en": "No threat on the main scheme?",
-       "fr": "Aucune menace sur la manigance principale ?"
-      }
-     },
-     {
-      "id": "fewAcceleration",
-      "type": "boolean",
-      "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
-      }
-     },
-     {
-      "id": "noDefeated",
-      "type": "boolean",
-      "label": {
-       "en": "No defeated identities?",
-       "fr": "Aucune identité vaincue ?"
-      }
-     },
-     {
-      "id": "serviceDone",
-      "type": "boolean",
-      "label": {
-       "en": "Is the Community Service side scheme in the victory display?",
-       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "hpPerHero",
-      "type": "perHeroNumber",
-      "label": {
-       "en": "Remaining hit points",
-       "fr": "Points de vie restants"
-      },
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "effects": [
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "from": "vp"
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noMinions"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noSideSchemes"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noThreat"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "fewAcceleration"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noDefeated"
-      }
-     },
-     {
-      "op": "addDrawnCard",
-      "cardList": "communityService",
-      "from": "service_s2_venom",
-      "when": {
-       "answer": "serviceDone"
-      }
-     },
-     {
-      "op": "setHeroCounter",
-      "counter": "hp",
-      "from": "hpPerHero",
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "next": [
-     {
-      "goto": "s3_mysterio"
-     }
-    ]
-   },
-   "onDefeat": {
-    "next": [
-     {
-      "goto": "s2_venom"
-     }
-    ]
-   },
-   "flavour": {
-    "en": "Venom comes at you blind with rage. The bell tower across the rooftops might be the only thing that slows him down.",
-    "fr": "Venom fonce sur vous, aveuglé par la rage. Le clocher de l'autre côté des toits est peut-être la seule chose qui puisse le ralentir."
-   }
-  },
-  {
-   "id": "s3_mysterio",
-   "name": {
-    "en": "Mysterio",
-    "fr": "Mysterio"
-   },
-   "baseSetup": {
-    "villainDeck": {
-     "standard": [
-      "27084",
-      "27085"
-     ],
-     "expert": [
-      "27085",
-      "27086"
-     ]
-    },
-    "mainScheme": [
-     "27087a",
-     "27088a"
-    ],
-    "encounterSets": [
-     "mysterio",
-     "personal_nightmare",
-     "whispers_of_paranoia",
-     "standard"
-    ]
-   },
-   "campaignSetup": [
-    {
-     "text": {
-      "en": "Put the Venom ally into play under the first player's control.",
-      "fr": "Mettez en jeu l'allié Venom sous le contrôle du premier joueur."
-     },
-     "cards": [
-      "27190"
-     ]
-    },
-    {
-     "text": {
-      "en": "Put Public Outcry into play.",
-      "fr": "Mettez en jeu Indignation Populaire."
-     },
-     "cards": [
-      "27174a"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
-     },
-     "cards": [
-      "27175",
-      "27181"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
-     },
-     "draw": {
-      "id": "service_s3_mysterio",
-      "from": [
-       "27176",
-       "27177",
-       "27178",
-       "27179",
-       "27180"
-      ],
-      "excluding": "communityService"
-     }
-    },
-    {
-     "include": "reputation"
-    }
-   ],
-   "onVictory": {
-    "prompts": [
-     {
-      "id": "vp",
-      "type": "number",
-      "label": {
-       "en": "How many victory points are in the victory display?",
-       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "noMinions",
-      "type": "boolean",
-      "label": {
-       "en": "No minions in play?",
-       "fr": "Aucun sbire en jeu ?"
-      }
-     },
-     {
-      "id": "noSideSchemes",
-      "type": "boolean",
-      "label": {
-       "en": "No side schemes in play?",
-       "fr": "Aucune manigance annexe en jeu ?"
-      }
-     },
-     {
-      "id": "noThreat",
-      "type": "boolean",
-      "label": {
-       "en": "No threat on the main scheme?",
-       "fr": "Aucune menace sur la manigance principale ?"
-      }
-     },
-     {
-      "id": "fewAcceleration",
-      "type": "boolean",
-      "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
-      }
-     },
-     {
-      "id": "noDefeated",
-      "type": "boolean",
-      "label": {
-       "en": "No defeated identities?",
-       "fr": "Aucune identité vaincue ?"
-      }
-     },
-     {
-      "id": "serviceDone",
-      "type": "boolean",
-      "label": {
-       "en": "Is the Community Service side scheme in the victory display?",
-       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "illusions",
-      "type": "number",
-      "label": {
-       "en": "How many Illusion cards are in all player decks?",
-       "fr": "Combien de cartes Illusion y a-t-il dans les decks des joueurs ?"
-      }
-     },
-     {
-      "id": "hpPerHero",
-      "type": "perHeroNumber",
-      "label": {
-       "en": "Remaining hit points",
-       "fr": "Points de vie restants"
-      },
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "effects": [
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "from": "vp"
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noMinions"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noSideSchemes"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noThreat"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "fewAcceleration"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noDefeated"
-      }
-     },
-     {
-      "op": "addDrawnCard",
-      "cardList": "communityService",
-      "from": "service_s3_mysterio",
-      "when": {
-       "answer": "serviceDone"
-      }
-     },
-     {
-      "op": "setHeroCounter",
-      "counter": "hp",
-      "from": "hpPerHero",
-      "when": {
-       "difficulty": "expert"
-      }
-     },
-     {
-      "op": "setCounter",
-      "counter": "wakingNightmare",
-      "from": "illusions"
-     }
-    ],
-    "next": [
-     {
-      "goto": "s4_sinister_six"
-     }
-    ]
-   },
-   "onDefeat": {
-    "next": [
-     {
-      "goto": "s3_mysterio"
-     }
-    ]
-   },
-   "flavour": {
-    "en": "Deeper into Oscorp, a maze of mirrors turns your own fears back on you until you cannot tell them from the room.",
-    "fr": "Plus profond dans Oscorp, un labyrinthe de miroirs vous renvoie vos propres peurs jusqu'à ce que vous ne les distinguiez plus de la pièce."
-   }
-  },
-  {
-   "id": "s4_sinister_six",
-   "name": {
-    "en": "The Sinister Six",
-    "fr": "Les Sinistres Six"
-   },
-   "baseSetup": {
-    "villainDeck": {
-     "standard": [
-      "27094",
-      "27095",
-      "27096",
-      "27097",
-      "27098",
-      "27099"
-     ],
-     "expert": [
-      "27094",
-      "27095",
-      "27096",
-      "27097",
-      "27098",
-      "27099"
-     ]
-    },
-    "mainScheme": [
-     "27100a",
-     "27101a"
-    ],
-    "encounterSets": [
-     "sinister_six",
-     "guerrilla_tactics",
-     "standard"
-    ]
-   },
-   "campaignSetup": [
-    {
-     "text": {
-      "en": "Put the Venom ally into play under the first player's control.",
-      "fr": "Mettez en jeu l'allié Venom sous le contrôle du premier joueur."
-     },
-     "cards": [
-      "27190"
-     ]
-    },
-    {
-     "text": {
-      "en": "Put Public Outcry into play.",
-      "fr": "Mettez en jeu Indignation Populaire."
-     },
-     "cards": [
-      "27174a"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
-     },
-     "cards": [
-      "27175",
-      "27181"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
-     },
-     "draw": {
-      "id": "service_s4_sinister_six",
-      "from": [
-       "27176",
-       "27177",
-       "27178",
-       "27179",
-       "27180"
-      ],
-      "excluding": "communityService"
-     }
-    },
-    {
-     "text": {
-      "en": "Place this much threat on Light at the End.",
-      "fr": "Placez autant de menace sur Lumière au Bout du Tunnel."
-     },
-     "cards": [
-      "27102a"
-     ],
-     "showCounter": "wakingNightmare"
-    },
-    {
-     "include": "reputation"
-    }
-   ],
-   "onVictory": {
-    "prompts": [
-     {
-      "id": "vp",
-      "type": "number",
-      "label": {
-       "en": "How many victory points are in the victory display?",
-       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "noMinions",
-      "type": "boolean",
-      "label": {
-       "en": "No minions in play?",
-       "fr": "Aucun sbire en jeu ?"
-      }
-     },
-     {
-      "id": "noSideSchemes",
-      "type": "boolean",
-      "label": {
-       "en": "No side schemes in play?",
-       "fr": "Aucune manigance annexe en jeu ?"
-      }
-     },
-     {
-      "id": "noThreat",
-      "type": "boolean",
-      "label": {
-       "en": "No threat on the main scheme?",
-       "fr": "Aucune menace sur la manigance principale ?"
-      }
-     },
-     {
-      "id": "fewAcceleration",
-      "type": "boolean",
-      "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
-      }
-     },
-     {
-      "id": "noDefeated",
-      "type": "boolean",
-      "label": {
-       "en": "No defeated identities?",
-       "fr": "Aucune identité vaincue ?"
-      }
-     },
-     {
-      "id": "serviceDone",
-      "type": "boolean",
-      "label": {
-       "en": "Is the Community Service side scheme in the victory display?",
-       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "standing",
-      "type": "cardSelect",
-      "label": {
-       "en": "Which villains were still in play?",
-       "fr": "Quels méchants étaient encore en jeu ?"
-      },
-      "cards": [
-       "27094",
-       "27095",
-       "27096",
-       "27097",
-       "27098",
-       "27099"
-      ]
-     },
-     {
-      "id": "hpPerHero",
-      "type": "perHeroNumber",
-      "label": {
-       "en": "Remaining hit points",
-       "fr": "Points de vie restants"
-      },
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "effects": [
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "from": "vp"
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noMinions"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noSideSchemes"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noThreat"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "fewAcceleration"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noDefeated"
-      }
-     },
-     {
-      "op": "addDrawnCard",
-      "cardList": "communityService",
-      "from": "service_s4_sinister_six",
-      "when": {
-       "answer": "serviceDone"
-      }
-     },
-     {
-      "op": "setHeroCounter",
-      "counter": "hp",
-      "from": "hpPerHero",
-      "when": {
-       "difficulty": "expert"
-      }
-     },
-     {
-      "op": "addCardsFromAnswer",
-      "cardList": "lastOnesStanding",
-      "from": "standing"
-     }
-    ],
-    "next": [
-     {
-      "goto": "s5_venom_goblin"
-     }
-    ]
-   },
-   "onDefeat": {
-    "next": [
-     {
-      "goto": "s4_sinister_six"
-     }
-    ]
-   },
-   "flavour": {
-    "en": "The smoke clears on a silo, and all six of them step out of the dark at once.",
-    "fr": "La fumée se dissipe sur un silo, et tous les six sortent de l'ombre en même temps."
-   }
-  },
-  {
-   "id": "s5_venom_goblin",
-   "name": {
-    "en": "Venom Goblin",
-    "fr": "Le Bouffon Venom"
-   },
-   "baseSetup": {
-    "villainDeck": {
-     "standard": [
-      "27113",
-      "27114"
-     ],
-     "expert": [
-      "27114",
-      "27115"
-     ]
-    },
-    "mainScheme": [
-     "27116a",
-     "27117a",
-     "27118a",
-     "27119a"
-    ],
-    "encounterSets": [
-     "venom_goblin",
-     "symbiotic_strength",
-     "goblin_gear",
-     "standard"
-    ]
-   },
-   "campaignSetup": [
-    {
-     "text": {
-      "en": "Put Public Outcry into play.",
-      "fr": "Mettez en jeu Indignation Populaire."
-     },
-     "cards": [
-      "27174a"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
-     },
-     "cards": [
-      "27175"
-     ]
-    },
-    {
-     "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
-     },
-     "draw": {
-      "id": "service_s5_venom_goblin",
-      "from": [
-       "27176",
-       "27177",
-       "27178",
-       "27179",
-       "27180"
-      ],
-      "excluding": "communityService"
-     }
-    },
-    {
-     "text": {
-      "en": "Shuffle the Sinister Assault minion matching each villain left standing into the encounter deck.",
-      "fr": "Mélangez dans le deck rencontre le sbire Assaut Sinistre correspondant à chaque méchant encore en jeu."
-     },
-     "cards": [
-      "27158",
-      "27159",
-      "27160",
-      "27161",
-      "27162",
-      "27163"
-     ],
-     "showCardList": "lastOnesStanding"
-    },
-    {
-     "include": "reputation"
-    }
-   ],
-   "onVictory": {
-    "prompts": [
-     {
-      "id": "vp",
-      "type": "number",
-      "label": {
-       "en": "How many victory points are in the victory display?",
-       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "noMinions",
-      "type": "boolean",
-      "label": {
-       "en": "No minions in play?",
-       "fr": "Aucun sbire en jeu ?"
-      }
-     },
-     {
-      "id": "noSideSchemes",
-      "type": "boolean",
-      "label": {
-       "en": "No side schemes in play?",
-       "fr": "Aucune manigance annexe en jeu ?"
-      }
-     },
-     {
-      "id": "noThreat",
-      "type": "boolean",
-      "label": {
-       "en": "No threat on the main scheme?",
-       "fr": "Aucune menace sur la manigance principale ?"
-      }
-     },
-     {
-      "id": "fewAcceleration",
-      "type": "boolean",
-      "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
-      }
-     },
-     {
-      "id": "noDefeated",
-      "type": "boolean",
-      "label": {
-       "en": "No defeated identities?",
-       "fr": "Aucune identité vaincue ?"
-      }
-     },
-     {
-      "id": "serviceDone",
-      "type": "boolean",
-      "label": {
-       "en": "Is the Community Service side scheme in the victory display?",
-       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
-      }
-     },
-     {
-      "id": "hpPerHero",
-      "type": "perHeroNumber",
-      "label": {
-       "en": "Remaining hit points",
-       "fr": "Points de vie restants"
-      },
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "effects": [
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "from": "vp"
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noMinions"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noSideSchemes"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noThreat"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "fewAcceleration"
-      }
-     },
-     {
-      "op": "addCounter",
-      "counter": "reputation",
-      "value": 1,
-      "when": {
-       "answer": "noDefeated"
-      }
-     },
-     {
-      "op": "addDrawnCard",
-      "cardList": "communityService",
-      "from": "service_s5_venom_goblin",
-      "when": {
-       "answer": "serviceDone"
-      }
-     },
-     {
-      "op": "setHeroCounter",
-      "counter": "hp",
-      "from": "hpPerHero",
-      "when": {
-       "difficulty": "expert"
-      }
-     }
-    ],
-    "next": [
-     {
-      "end": true
-     }
-    ]
-   },
-   "onDefeat": {
-    "next": [
-     {
-      "end": true,
-      "when": {
-       "difficulty": "expert"
-      }
-     },
-     {
-      "goto": "s5_venom_goblin"
-     }
-    ]
-   },
-   "flavour": {
-    "en": "Osborn has bound the symbiote to his will, and he is over the city now, making an army out of everyone below.",
-    "fr": "Osborn a plié le symbiote à sa volonté, et il survole la ville, en train de faire une armée de tous ceux qui sont en dessous."
-   }
-  }
- ]
 }

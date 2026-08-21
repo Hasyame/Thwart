@@ -143,19 +143,8 @@ fun StartCampaignScreen(
                 }
             }
 
-            // Only a campaign that has something to say shows this. A
-            // campaign nobody has played through says so here too, appended
-            // rather than written into each template so the four that carry it
-            // cannot drift apart.
-            val untestedNote = stringResource(R.string.campaign_untested)
-            val fullNotice = template?.notice?.resolve(campaignTextLocale).orEmpty().let { text ->
-                when {
-                    template?.untested != true -> text
-                    text.isBlank() -> untestedNote
-                    else -> text + NOTICE_GAP + untestedNote
-                }
-            }
-            fullNotice.takeIf { it.isNotBlank() }?.let { notice ->
+            // Only a campaign that has something to say shows this.
+            template?.notice?.resolve(campaignTextLocale)?.takeIf { it.isNotBlank() }?.let { notice ->
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
