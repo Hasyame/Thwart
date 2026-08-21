@@ -1,0 +1,11 @@
+A privacy policy, and a tag taken back off four campaigns.
+
+The app now has a written privacy policy, linked from About and published at
+hasyame.github.io/Thwart/privacy.html, in English and French. It is short,
+because there is very little to describe: one permission, two hosts the app
+ever talks to, and everything you make staying on your phone. It is needed for
+an app store listing, but it is worth having regardless.
+
+The Rise of Red Skull, Sinister Motives, Mutant Genesis and NeXt Evolution no
+longer carry a "not fully tested" tag. Fear No Evil keeps its WIP tag, which
+means something different: that one really is unfinished.

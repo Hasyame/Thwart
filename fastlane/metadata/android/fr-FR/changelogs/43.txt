@@ -1,0 +1,14 @@
+Une politique de confidentialité, et une étiquette retirée de quatre campagnes.
+
+L'application a désormais une politique de confidentialité écrite, accessible
+depuis À propos et publiée sur hasyame.github.io/Thwart/confidentialite.html,
+en français et en anglais. Elle est courte, parce qu'il y a très peu à
+décrire : une seule permission, deux serveurs que l'application contacte, et
+tout ce que vous créez qui reste sur votre téléphone. Elle est nécessaire pour
+une fiche sur un magasin d'applications, mais elle vaut la peine d'exister de
+toute façon.
+
+L'Ascension du Crâne Rouge, Sinistres Motivations, La Genèse des Mutants et
+Next Evolution ne portent plus l'étiquette « pas entièrement testée ». Peur de
+Rien garde son étiquette WIP, qui dit autre chose : celle-là est réellement
+inachevée.
