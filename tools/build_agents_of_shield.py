@@ -53,11 +53,15 @@ BOARD = [
 ]
 
 # --- evidence, by category --------------------------------------------------
-MEANS = [("50185", "Medical Records"), ("50186", "Wiretap"),
-         ("50187", "Security Scanner")]
-MOTIVE = [("50188", "Money"), ("50189", "Blackmail"), ("50190", "Ideology")]
-OPPORTUNITY = [("50191", "Security Clearance"), ("50192", "Travel"),
-               ("50193", "Authority")]
+MEANS = [("50185", "⚕️ Medical Records"),
+         ("50186", "🎧 Wiretap"),
+         ("50187", "🔍 Security Scanner")]
+MOTIVE = [("50188", "💲 Money"),
+          ("50189", "🤐 Blackmail"),
+          ("50190", "✊ Ideology")]
+OPPORTUNITY = [("50191", "🔑 Security Clearance"),
+               ("50192", "✈️ Travel"),
+               ("50193", "👑 Authority")]
 
 ALERT_LEVEL = "50090a"
 ADAPTOIDS = ["50109", "50110", "50111", "50112"]
@@ -67,6 +71,24 @@ THUNDERBOLTS = ["50139", "50143", "50148", "50152", "50156", "50161"]
 
 
 FR = {
+    'Opportunity: 👑 Authority':
+        'Occasion : 👑 Authority',
+    'Opportunity: ✈️ Travel':
+        'Occasion : ✈️ Travel',
+    'Opportunity: 🔑 Security Clearance':
+        'Occasion : 🔑 Security Clearance',
+    'Motive: ✊ Ideology':
+        'Mobile : ✊ Ideology',
+    'Motive: 🤐 Blackmail':
+        'Mobile : 🤐 Blackmail',
+    'Motive: 💲 Money':
+        'Mobile : 💲 Money',
+    'Means: 🔍 Security Scanner':
+        'Moyen : 🔍 Security Scanner',
+    'Means: 🎧 Wiretap':
+        'Moyen : 🎧 Wiretap',
+    'Means: ⚕️ Medical Records':
+        'Moyen : ⚕️ Medical Records',
     "Unofficial, reconstructed for the app: the rulebook and cards from the Agents of S.H.I.E.L.D. box are still needed to play.\n\nThe app keeps the campaign log for you. Secrets on each of the three board members, carried from one scenario to the next, the evidence you have gathered, and the records each scenario passes to the one after it.\n\nIt also does the deduction. Every evidence card you find is one the mole does not have, so the app shows only what is still unaccounted for. When a category is down to one card, that is the mole's. Which board member those three point to is the grid printed in your campaign log, and you read the name off that.\n\nThe cards of this box are not in the French card database yet, so card names here stay in English rather than being invented.\n\nExpert is the expert campaign: the harder villain stages, board members turning at three secrets instead of four, and hit points that carry from one scenario to the next.":
         "Non officiel, reconstitué pour l'application : le livret et les cartes de la boîte Agents du S.H.I.E.L.D. restent nécessaires pour jouer.\n\nL'application tient le journal de campagne pour vous. Les secrets sur chacun des trois Board Members, reportés d'un scénario au suivant, les preuves que vous avez réunies, et ce que chaque scénario transmet au suivant.\n\nElle fait aussi la déduction. Chaque carte Preuve trouvée est une carte que la taupe n'a pas : l'application n'affiche donc que ce qui manque encore. Quand une catégorie se réduit à une seule carte, c'est celle de la taupe. Le Board Member vers lequel ces trois-là pointent se lit sur la grille imprimée dans votre journal de campagne.\n\nLes cartes de cette boîte ne sont pas encore dans la base de données française : les noms de cartes restent donc en anglais plutôt que d'être inventés.\n\nExpert correspond à la campagne experte : les stades de méchant les plus durs, les Board Members qui basculent à trois secrets au lieu de quatre, et des points de vie qui se reportent d'un scénario au suivant.",
     'Each player may place 1 secret counter on a Board Member to heal their identity by its REC.\nA player defeated last scenario rejoins this way.':
@@ -115,24 +137,6 @@ FR = {
         'Gardez les deux enveloppes à portée de main.',
     'M.O.D.O.K.':
         'M.O.D.O.K.',
-    'Means: Medical Records':
-        'Moyen : Medical Records',
-    'Means: Security Scanner':
-        'Moyen : Security Scanner',
-    'Means: Wiretap':
-        'Moyen : Wiretap',
-    'Motive: Blackmail':
-        'Mobile : Blackmail',
-    'Motive: Ideology':
-        'Mobile : Ideology',
-    'Motive: Money':
-        'Mobile : Money',
-    'Opportunity: Authority':
-        'Occasion : Authority',
-    'Opportunity: Security Clearance':
-        'Occasion : Security Clearance',
-    'Opportunity: Travel':
-        'Occasion : Travel',
     'Place 3 extra lock counters on the top Holding Cell, then take off one for each Rescued Captive you got out last scenario.':
         'Placez 3 jetons Verrou supplémentaires sur la Holding Cell du dessus, puis retirez-en un par Rescued Captive libéré au scénario précédent.',
     'Place this much threat on the Alert Level environment, from the minions and side schemes left standing last scenario.':
