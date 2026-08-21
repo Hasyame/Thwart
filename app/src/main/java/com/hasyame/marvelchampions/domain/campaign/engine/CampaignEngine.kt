@@ -491,7 +491,7 @@ class CampaignEngine(
                 val drawId = effect.from ?: return state
                 // Read against the scenario being resolved, so a strike records
                 // what that scenario drew rather than whatever is current now.
-                val drawn = state.draws[scenarioId].orEmpty()[drawId].orEmpty()
+                val drawn = allDrawnCards(state, scenarioId, drawId)
                 val already = state.cardLists[listId].orEmpty()
                 val fresh = drawn.filterNot { it in already }
                 if (fresh.isEmpty()) {
@@ -749,6 +749,31 @@ class CampaignEngine(
         /** What a scenario has already drawn, in the order drawn. */
         fun drawnCards(state: CampaignState, scenarioId: String?, drawId: String): List<String> =
             state.draws[scenarioId].orEmpty()[drawId].orEmpty()
+
+        /** The id a per-hero draw files one hero's cards under. */
+        fun heroDrawId(drawId: String, heroId: String): String = "$drawId|$heroId"
+
+        /**
+         * Every card a draw came up with, a per-hero draw included.
+         *
+         * A per-hero draw has no cards of its own: they are filed one hero at a
+         * time. Effects that record what was drawn want the lot.
+         */
+        fun allDrawnCards(
+            state: CampaignState,
+            scenarioId: String?,
+            drawId: String,
+        ): List<String> {
+            val own = drawnCards(state, scenarioId, drawId)
+            if (own.isNotEmpty()) {
+                return own
+            }
+            val prefix = "$drawId|"
+            return state.draws[scenarioId].orEmpty()
+                .filterKeys { it.startsWith(prefix) }
+                .values
+                .flatten()
+        }
         /**
          * The sentinel the campaign-scoped environment draw records under, so
          * it is never confused with a real scenario's draws and never cleared

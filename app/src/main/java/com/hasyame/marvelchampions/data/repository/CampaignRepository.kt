@@ -15,6 +15,7 @@ import com.hasyame.marvelchampions.domain.campaign.engine.CampaignHero
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignState
 import com.hasyame.marvelchampions.domain.campaign.engine.HeroCardStats
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
+import com.hasyame.marvelchampions.domain.campaign.template.allSetupSteps
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.LocalizedText
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateError
@@ -598,36 +599,48 @@ class CampaignRepository @Inject constructor(
             // it, or two draws over the same pool could come up with one card
             // twice in the same setup.
             var state = run.state
-            for (definition in scenario.campaignSetup.mapNotNull { it.draw }) {
-                if (CampaignEngine.drawnCards(state, scenarioId, definition.id).isNotEmpty()) {
-                    continue
+            // Every section, not just the middle one. A draw written into the
+            // pre-setup or the information block was never dealt, which is how
+            // Fear No Evil's Psyche Perturbee face went undrawn.
+            for (definition in scenario.allSetupSteps().mapNotNull { it.draw }) {
+                // A per-hero draw deals to each player in turn, under its own
+                // id and theirs.
+                val drawIds = if (definition.perHero) {
+                    run.state.heroes.map { CampaignEngine.heroDrawId(definition.id, it.id) }
+                } else {
+                    listOf(definition.id)
                 }
-                // Shuffled rather than picked one at a time: a draw of several
-                // is an arrangement, and the order it comes out in is the order
-                // the cards are set out in.
-                // An offer deals several for the players to choose between; a
-                // plain draw deals what it needs and decides.
-                val wanted = if (definition.offer > 0) definition.offer else definition.count
-                val codes = CampaignEngine.drawPool(definition, state)
-                    .shuffled()
-                    .take(wanted.coerceAtLeast(1))
-                if (codes.isEmpty()) {
-                    continue
+                for (drawId in drawIds) {
+                    if (CampaignEngine.drawnCards(state, scenarioId, drawId).isNotEmpty()) {
+                        continue
+                    }
+                    // Shuffled rather than picked one at a time: a draw of several
+                    // is an arrangement, and the order it comes out in is the order
+                    // the cards are set out in.
+                    // An offer deals several for the players to choose between; a
+                    // plain draw deals what it needs and decides.
+                    val wanted = if (definition.offer > 0) definition.offer else definition.count
+                    val codes = CampaignEngine.drawPool(definition, state)
+                        .shuffled()
+                        .take(wanted.coerceAtLeast(1))
+                    if (codes.isEmpty()) {
+                        continue
+                    }
+                    val event = CampaignEvent.SetupDrawn(
+                        id = UUID.randomUUID().toString(),
+                        timestamp = System.currentTimeMillis(),
+                        scenarioId = scenarioId,
+                        drawId = drawId,
+                        cardCodes = codes,
+                    )
+                    append(runId, event)
+                    state = state.copy(
+                        draws = state.draws + (
+                            scenarioId to (state.draws[scenarioId].orEmpty() + (drawId to codes))
+                            ),
+                    )
+                    drawn = true
                 }
-                val event = CampaignEvent.SetupDrawn(
-                    id = UUID.randomUUID().toString(),
-                    timestamp = System.currentTimeMillis(),
-                    scenarioId = scenarioId,
-                    drawId = definition.id,
-                    cardCodes = codes,
-                )
-                append(runId, event)
-                state = state.copy(
-                    draws = state.draws + (
-                        scenarioId to (state.draws[scenarioId].orEmpty() + (definition.id to codes))
-                        ),
-                )
-                drawn = true
             }
             drawn
         }

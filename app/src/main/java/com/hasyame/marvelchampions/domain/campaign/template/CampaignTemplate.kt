@@ -422,6 +422,15 @@ data class DrawDefinition(
      * the log afterwards.
      */
     val counts: Map<String, String> = emptyMap(),
+
+    /**
+     * Deals this draw once per player rather than once for the table.
+     *
+     * Sinister Motives deals three S.H.I.E.L.D. Tech upgrades to each player,
+     * who keeps one. Each hero's cards are filed under the draw's id and the
+     * hero's, so one draw definition covers a table of any size.
+     */
+    val perHero: Boolean = false,
     /**
      * How many candidates to offer when the players choose rather than the app.
      *

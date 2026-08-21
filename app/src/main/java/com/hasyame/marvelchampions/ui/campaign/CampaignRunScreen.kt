@@ -504,42 +504,41 @@ private fun SetupPanel(
                             // else. Listing the whole pool beside it would
                             // put the player back to picking one, which is
                             // the job the app just did for them.
-                            val chips = step.draw?.let {
-                                CampaignEngine.drawnCards(
-                                    run.state,
-                                    run.state.currentScenarioId,
-                                    it.id,
-                                )
-                            } ?: step.cards
-
-                            // An offer still waiting on the table: tapping a
-                            // card keeps it and returns the others to the
-                            // pool. Once kept there is only one chip left,
-                            // so this reads as an ordinary reference again.
-                            val undecided = step.draw?.offer.orEmpty0() > 0 && chips.size > 1
-
-                            if (chips.isNotEmpty()) {
-                                if (undecided) {
-                                    Text(
-                                        text = stringResource(R.string.campaign_choose_one),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.primary,
+                            val draw = step.draw
+                            if (draw != null && draw.perHero) {
+                                // Dealt to each player in turn, so it is shown
+                                // that way: a table of three has three rows and
+                                // three separate decisions.
+                                run.state.heroes.forEach { hero ->
+                                    val heroDrawId = CampaignEngine.heroDrawId(draw.id, hero.id)
+                                    DrawnCards(
+                                        label = hero.name,
+                                        codes = CampaignEngine.drawnCards(
+                                            run.state,
+                                            run.state.currentScenarioId,
+                                            heroDrawId,
+                                        ),
+                                        offered = draw.offer,
+                                        run = run,
+                                        onKeep = { code -> onKeepCard(heroDrawId, code) },
+                                        onCardClick = onCardClick,
                                     )
                                 }
-                                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    chips.forEach { code ->
-                                        AssistChip(
-                                            onClick = {
-                                                if (undecided) {
-                                                    onKeepCard(step.draw!!.id, code)
-                                                } else {
-                                                    onCardClick(code)
-                                                }
-                                            },
-                                            label = { Text(run.names.card(code)) },
+                            } else {
+                                DrawnCards(
+                                    label = null,
+                                    codes = draw?.let {
+                                        CampaignEngine.drawnCards(
+                                            run.state,
+                                            run.state.currentScenarioId,
+                                            it.id,
                                         )
-                                    }
-                                }
+                                    } ?: step.cards,
+                                    offered = draw?.offer ?: 0,
+                                    run = run,
+                                    onKeep = { code -> draw?.let { onKeepCard(it.id, code) } },
+                                    onCardClick = onCardClick,
+                                )
                             }
                             step.action?.let { action ->
                                 val enabled =
@@ -571,6 +570,51 @@ private fun SetupPanel(
                     }
             }
         }
+}
+
+/**
+ * The cards a draw came up with, as chips.
+ *
+ * An offer still waiting on the table is tapped to keep one, which returns the
+ * others to the pool. Once kept there is a single chip left and it reads as an
+ * ordinary card reference again. [label] names the player when the draw was
+ * dealt to each of them separately.
+ */
+@Composable
+private fun DrawnCards(
+    label: String?,
+    codes: List<String>,
+    offered: Int,
+    run: CampaignRun,
+    onKeep: (String) -> Unit,
+    onCardClick: (String) -> Unit,
+) {
+    if (codes.isEmpty()) {
+        return
+    }
+    val undecided = offered > 0 && codes.size > 1
+    if (label != null) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+    if (undecided) {
+        Text(
+            text = stringResource(R.string.campaign_choose_one),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        codes.forEach { code ->
+            AssistChip(
+                onClick = { if (undecided) onKeep(code) else onCardClick(code) },
+                label = { Text(run.names.card(code)) },
+            )
+        }
+    }
 }
 
 /** Page 2. The clock, and the two ways a scenario ends. */
@@ -930,7 +974,6 @@ private fun CampaignTotals(run: CampaignRun) {
 }
 
 /** Null and zero mean the same thing here: a draw that decides for itself. */
-private fun Int?.orEmpty0(): Int = this ?: 0
 
 
 /**

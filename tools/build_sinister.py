@@ -26,9 +26,8 @@ off what is already recorded, and `addDrawnCard` files the result. The players
 are asked whether the side scheme ended in the victory display, never which one
 it was — the app dealt it and already knows.
 
-The one thing it cannot deal is the S.H.I.E.L.D. Tech reward: three at random
-*per player*, and draws are campaign-wide. That step records what each player
-took instead of dealing it.
+The S.H.I.E.L.D. Tech reward deals three at random per player, so it needs a
+per-hero draw rather than the campaign-wide kind.
 
 Card codes are MarvelCDB codes for pack 'sm', read from the bundled card
 database rather than transcribed.
@@ -62,9 +61,183 @@ SHIELD_TECH = ["27182a", "27183a", "27184a", "27185a", "27186a", "27187a",
 SINISTER_ASSAULT = ["27158", "27159", "27160", "27161", "27162", "27163"]
 
 
+# The three Osborn Tech boxes are the same box at three nodes.
+OSBORN_DRAW = "__osborn__"
+
+# The S.H.I.E.L.D. Tech reward, dealt three at a time to each player.
+SHIELD_DEAL = "__shield__"
+
+
+# ---------------------------------------------------------------------------
+# FRENCH
+#
+# Keyed by the English string, so adding a language costs a dictionary rather
+# than an edit at every call site. Terms follow the bilingual rules reference
+# the app bundles; card and set names follow MarvelCDB's French data, since this
+# pack is published and the player is holding the card.
+# ---------------------------------------------------------------------------
+
+FR = {
+    # The name printed on the French box, from MarvelCDB rather than
+    # translated here.
+    "Sinister Motives": "Sinistres Motivations",
+    "Unofficial, reconstructed for the app: the rulebook and cards from "
+    "the Sinister Motives box are still needed to play."
+    "\n\n"
+    "The app keeps the reputation track for you. It asks the six printed "
+    "conditions after each scenario, does the adding, and shows only the "
+    "boxes the track has reached. It also deals what the rules deal at "
+    "random: the Community Service side scheme, the Osborn Tech "
+    "attachments, and each player's three S.H.I.E.L.D. Tech upgrades.":
+        "Campagne non officielle, reconstituée pour l'application : le livret "
+        "et les cartes de la boîte Sinistres Motivations restent nécessaires "
+        "pour jouer."
+        "\n\n"
+        "L'application tient la piste de réputation à votre place : elle pose "
+        "les six conditions imprimées après chaque scénario, fait l'addition et "
+        "n'affiche que les cases atteintes. Elle distribue aussi ce que les "
+        "règles tirent au hasard : la manigance annexe Intérêt Général, les "
+        "attachements Technologie Osborn et les trois améliorations Techno du "
+        "SHIELD de chaque joueur.",
+
+    # The reputation track.
+    "An Osborn Tech attachment is drawn and recorded.":
+        "Un attachement Technologie Osborn est tiré et enregistré.",
+    "Record it": "Enregistrer",
+    "Record them": "Enregistrer",
+    "Done": "Fait",
+    "Setup: shuffle every recorded Osborn Tech attachment into the encounter "
+    "deck.":
+        "Mise en place : mélangez dans le deck rencontre chaque attachement "
+        "Technologie Osborn enregistré.",
+    "Three S.H.I.E.L.D. Tech upgrades are dealt to each player. Keep one for "
+    "the rest of the campaign.":
+        "Trois améliorations Techno du SHIELD sont distribuées à chaque joueur. "
+        "Gardez-en une pour le reste de la campagne.",
+    "Setup: place 1 threat per player on the main scheme.":
+        "Mise en place : placez 1 menace par joueur sur la manigance principale.",
+    "Each player may take 1 additional mulligan during step 13 of setup.":
+        "Chaque joueur peut faire 1 mulligan supplémentaire à l'étape 13 de la "
+        "mise en place.",
+    "Setup: in player order, each player puts a minion from the encounter deck "
+    "or discard pile into play engaged with them. Shuffle.\n"
+    "Any player who does not takes 1 facedown encounter card.":
+        "Mise en place : dans l'ordre du tour, chaque joueur met en jeu un sbire "
+        "du deck rencontre ou de la pile de défausse, engagé avec lui.\n"
+        "Mélangez. Tout joueur qui ne le fait pas reçoit 1 carte Rencontre face "
+        "cachée.",
+    "Each player adds the maximum copies of one aspect card of their choice, "
+    "from any aspect, to their deck for the rest of the campaign.":
+        # Two lines: French runs longer than the English here, and the guard
+        # caps a setup step at a line.
+        "Chaque joueur choisit une carte d'affinité, de n'importe quelle "
+        "affinité." + chr(10) +
+        "Il en ajoute le nombre maximum d'exemplaires à son deck pour le reste "
+        "de la campagne.",
+    "Setup: each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced "
+    "side.":
+        "Mise en place : chaque joueur retourne son amélioration Techno du "
+        "SHIELD sur sa face Améliorée.",
+    "Setup: the first player searches the encounter deck and discard pile for "
+    "a scenario side scheme and reveals it.\n"
+    "Place 1 threat per player on it. Shuffle.":
+        "Mise en place : le premier joueur cherche dans le deck rencontre et la "
+        "pile de défausse une manigance annexe du scénario et la révèle.\n"
+        "Placez 1 menace par joueur dessus. Mélangez.",
+    "Each player chooses one card from their deck and records it.":
+        "Chaque joueur choisit une carte de son deck et l'enregistre.",
+    "Setup: each player searches their deck and discard pile for their "
+    "recorded card and adds it to hand. Shuffle.":
+        "Mise en place : chaque joueur cherche dans son deck et sa pile de "
+        "défausse la carte qu'il a enregistrée et l'ajoute à sa main. Mélangez.",
+    "Setup: each player may search their collection for a Helicarrier support "
+    "and put it into play.":
+        "Mise en place : chaque joueur peut chercher un soutien Héliporteur "
+        "dans sa collection et le mettre en jeu.",
+    "Setup: each player may search their collection for a Symbiote Suit "
+    "upgrade and put it into play.":
+        "Mise en place : chaque joueur peut chercher une amélioration Costume "
+        "de Symbiote dans sa collection et la mettre en jeu.",
+    "Setup: deal 1 facedown encounter card to each player.":
+        "Mise en place : attribuez 1 carte Rencontre face cachée à chaque joueur.",
+
+    # The scenarios.
+    "Sandman": "L'Homme-Sable",
+    "Venom": "Venom",
+    "Mysterio": "Mysterio",
+    "The Sinister Six": "Les Sinistres Six",
+    "Venom Goblin": "Le Bouffon Venom",
+
+    # What every scenario sets up.
+    "Put Public Outcry into play, Standard Mode side up.":
+        "Mettez en jeu Indignation Populaire, face Mode Standard visible.",
+    "Put Public Outcry into play, Expert Mode side up.":
+        "Mettez en jeu Indignation Populaire, face Mode Expert visible.",
+    "Put Public Outcry into play.": "Mettez en jeu Indignation Populaire.",
+    "Shuffle these into the encounter deck.":
+        "Mélangez ces cartes dans le deck rencontre.",
+    "Shuffle this Community Service side scheme into the encounter deck.":
+        "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre.",
+    "Put the Venom ally into play under the first player's control.":
+        "Mettez en jeu l'allié Venom sous le contrôle du premier joueur.",
+    "Expert: place 2 additional sand counters on City Streets and resolve "
+    "Surging Sands.":
+        "Expert : placez 2 jetons Sable supplémentaires sur Rues de la Ville et "
+        "résolvez Afflux de Sable.",
+    "Place this much threat on Light at the End.":
+        "Placez autant de menace sur Lumière au Bout du Tunnel.",
+    "Shuffle the Sinister Assault minion matching each villain left standing "
+    "into the encounter deck.":
+        "Mélangez dans le deck rencontre le sbire Assaut Sinistre correspondant "
+        "à chaque méchant encore en jeu.",
+
+    # The questions after a scenario.
+    "How many victory points are in the victory display?":
+        "Combien de points de victoire y a-t-il dans la pile de victoire ?",
+    "No minions in play?": "Aucun sbire en jeu ?",
+    "No side schemes in play?": "Aucune manigance annexe en jeu ?",
+    "No threat on the main scheme?": "Aucune menace sur la manigance principale ?",
+    "Fewer than 1 acceleration tokens in play?":
+        "Moins de 1 jeton accélération en jeu ?",
+    "No defeated identities?": "Aucune identité vaincue ?",
+    "Is the Community Service side scheme in the victory display?":
+        "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?",
+    "Remaining hit points": "Points de vie restants",
+    "How many Illusion cards are in all player decks?":
+        "Combien de cartes Illusion y a-t-il dans les decks des joueurs ?",
+    "Which villains were still in play?": "Quels méchants étaient encore en jeu ?",
+
+    # The story.
+    "Sandman fills the streets with a tidal wall of dust, and the people "
+    "caught in it are running out of time.":
+        "L'Homme-Sable noie les rues sous un mur de poussière, et ceux qui sont "
+        "pris dedans n'ont plus beaucoup de temps.",
+    "Venom comes at you blind with rage. The bell tower across the rooftops "
+    "might be the only thing that slows him down.":
+        "Venom fonce sur vous, aveuglé par la rage. Le clocher de l'autre côté "
+        "des toits est peut-être la seule chose qui puisse le ralentir.",
+    "Deeper into Oscorp, a maze of mirrors turns your own fears back on you "
+    "until you cannot tell them from the room.":
+        "Plus profond dans Oscorp, un labyrinthe de miroirs vous renvoie vos "
+        "propres peurs jusqu'à ce que vous ne les distinguiez plus de la pièce.",
+    "The smoke clears on a silo, and all six of them step out of the dark at "
+    "once.":
+        "La fumée se dissipe sur un silo, et tous les six sortent de l'ombre en "
+        "même temps.",
+    "Osborn has bound the symbiote to his will, and he is over the city now, "
+    "making an army out of everyone below.":
+        "Osborn a plié le symbiote à sa volonté, et il survole la ville, en "
+        "train de faire une armée de tous ceux qui sont en dessous.",
+}
+
+
 def t(en):
-    """English only for now; French falls back to it until it is translated."""
-    return {"en": en}
+    """The string in both languages, French looked up by its English.
+
+    A string with no French entry keeps the English, and `missing_french()`
+    below reports it rather than letting it pass unnoticed.
+    """
+    return {"en": en, "fr": FR.get(en, en)}
 
 
 def at_least(node):
@@ -72,123 +245,160 @@ def at_least(node):
     return {"counter": "reputation", "atLeast": node}
 
 
-def unmarked(node):
-    """A once-only box: the node is reached and the box has not fired yet."""
-    return {"all": [at_least(node), {"notFlag": "node%d" % node}]}
+def unmarked(node, flag):
+    """A once-only box: its node is reached and the box has not fired yet.
+
+    Keyed by the box rather than by the node. Node 1 carries two of them, and
+    three separate nodes carry an Osborn Tech draw.
+    """
+    return {"all": [at_least(node), {"notFlag": flag}]}
 
 
 # ---------------------------------------------------------------------------
 # THE REPUTATION TRACK
 #
-# Node numbers are read off the printed track on page 22: the labelled nodes
-# sit at 5, 10, 15, 20 and 25, evenly spaced, and each box connects to one of
-# them. The measured position of every box is noted beside it so this can be
-# checked against the physical track rather than taken on trust. The four
-# marked UNCONFIRMED fall between two nodes and are the ones worth verifying.
+# Node by node, as printed on the component. An earlier pass placed these by
+# measuring where each box sat beside the track, and got five of the fourteen
+# wrong — including two the measurements looked confident about. Positions are
+# not a source; the component is.
+#
+# `flag` names a box that resolves once, when its node is first marked. The
+# rest are "Setup:" boxes, which apply at the start of every later scenario for
+# as long as the node stays marked.
 # ---------------------------------------------------------------------------
 
-REWARDS = [
-    # node, once?, text                                             (measured)
-    (3, True,
-     "Deal 3 S.H.I.E.L.D. Tech upgrades at random to a player. They keep 1 for "
-     "the campaign; return the rest. Repeat for each player.",      # 2.47 UNCONFIRMED
-     "shieldTech"),
-    (5, False,
-     "Each player may take 1 additional mulligan during step 13 of setup.",  # 5.37
-     None),
-    (9, True,
-     "Each player adds the maximum copies of one aspect card of their choice "
-     "to their deck for the rest of the campaign.",                 # 8.93
-     "aspectAdvantage"),
-    (13, False,
-     "Each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced side.",  # 13.07
-     None),
-    (16, True,
-     "Each player chooses one card from their deck and records it.",  # 15.90
-     "planningAhead"),
-    (18, False,
-     "Each player searches their deck and discard pile for their recorded card "
-     "and adds it to hand. Shuffle.",                               # 18.03
-     None),
-    (21, False,
-     "Each player may search their collection for a Helicarrier support and put "
-     "it into play.",                                               # 21.07
-     None),
-    (24, False,
-     "Each player may search their collection for a Symbiote Suit upgrade and "
-     "put it into play.",                                           # 24.30
-     None),
+# node, flag (None for a recurring Setup box), text
+NODES = [
+    (1, "osborn1", OSBORN_DRAW),
+    (1, None,
+     "Setup: shuffle every recorded Osborn Tech attachment into the encounter "
+     "deck."),
+    (1, "shield1", SHIELD_DEAL),
+
+    (5, None, "Setup: place 1 threat per player on the main scheme."),
+    (5, None, "Each player may take 1 additional mulligan during step 13 of setup."),
+
+    (9, None,
+     "Setup: in player order, each player puts a minion from the encounter deck "
+     "or discard pile into play engaged with them. Shuffle.\n"
+     "Any player who does not takes 1 facedown encounter card."),
+    (9, "aspect9",
+     "Each player adds the maximum copies of one aspect card of their choice, "
+     "from any aspect, to their deck for the rest of the campaign."),
+
+    (13, "osborn13", OSBORN_DRAW),
+    (13, None,
+     "Setup: each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced "
+     "side."),
+
+    (17, None,
+     "Setup: the first player searches the encounter deck and discard pile for "
+     "a scenario side scheme and reveals it.\n"
+     "Place 1 threat per player on it. Shuffle."),
+    (17, "planning17",
+     "Each player chooses one card from their deck and records it."),
+    (17, None,
+     "Setup: each player searches their deck and discard pile for their "
+     "recorded card and adds it to hand. Shuffle."),
+
+    (21, "osborn21", OSBORN_DRAW),
+    (21, None,
+     "Setup: each player may search their collection for a Helicarrier support "
+     "and put it into play."),
+
+    (25, None,
+     "Setup: each player may search their collection for a Symbiote Suit "
+     "upgrade and put it into play."),
+    (25, None, "Setup: deal 1 facedown encounter card to each player."),
 ]
 
-PENALTIES = [
-    (1, True, "osborn", None),                                      # 1.33
-    (3, False, None,
-     "Shuffle every recorded Osborn Tech attachment into the encounter deck."),  # 2.90 UNCONFIRMED
-    (5, False, None, "Place 1 threat on the main scheme."),         # 5.00
-    (9, False, None,
-     # Two lines: the guard caps a setup step at a line, and a step long enough
-     # to be a paragraph is a rule copied out of the book.
-     "In player order, each player puts a minion from the encounter deck or "
-     "discard pile into play engaged with them. Shuffle.\n"
-     "Any player who does not takes 1 facedown encounter card."),   # 8.97
-    (13, True, "osborn", None),                                     # 13.03
-    (17, False, None,
-     "The first player searches the encounter deck and discard pile for a "
-     "scenario side scheme, reveals it, and places 1 threat on it. Shuffle."),  # 17.03
-    (21, True, "osborn", None),                                     # 21.00
-    (25, False, None, "Deal 1 facedown encounter card to each player."),  # 24.53 UNCONFIRMED
-]
+# Which card list a once-only box records into, when it records anything.
+RECORDS = {
+    "shield1": "shieldTech",
+    "aspect9": "aspectAdvantage",
+    "planning17": "planningAhead",
+}
 
 
-def osborn_draw(node):
+def osborn_draw(node, flag):
     """The app draws the attachment, because the rules say "at random".
 
-    Recorded into the campaign log by [addDrawnCard], and struck from the pool
-    by `excluding` so three marked nodes cannot produce the same card twice.
+    Recorded by [addDrawnCard], and struck from the pool by `excluding`, so the
+    three marked nodes cannot turn up the same attachment twice.
     """
     return {
         "text": t("An Osborn Tech attachment is drawn and recorded."),
-        "when": unmarked(node),
-        "draw": {"id": "osborn%d" % node, "from": OSBORN_TECH,
-                 "excluding": "osbornTech"},
+        "when": unmarked(node, flag),
+        "draw": {"id": flag, "from": OSBORN_TECH, "excluding": "osbornTech"},
+        # Named here as well, so the shuffle step at node 1 can be followed
+        # without going back through the campaign log.
+        "showCardList": "osbornTech",
         "action": {
-            "id": "recordOsborn%d" % node,
+            "id": "record_" + flag,
             "label": t("Record it"),
             "effects": [
-                {"op": "addDrawnCard", "cardList": "osbornTech",
-                 "from": "osborn%d" % node},
-                {"op": "setFlag", "flag": "node%d" % node, "boolValue": True},
+                {"op": "addDrawnCard", "cardList": "osbornTech", "from": flag},
+                {"op": "setFlag", "flag": flag, "boolValue": True},
+            ],
+        },
+    }
+
+
+def shield_deal(node, flag):
+    """Three upgrades dealt to each player, who keeps one.
+
+    A per-hero draw, because the rules deal to each player separately and a
+    table of three makes three separate decisions. Keeping one returns the
+    others, which is what an `offer` does: the kept card replaces the offer and
+    the rest were never struck from the pool.
+    """
+    return {
+        "text": t(
+            "Three S.H.I.E.L.D. Tech upgrades are dealt to each player. Keep "
+            "one for the rest of the campaign."
+        ),
+        "when": unmarked(node, flag),
+        "draw": {"id": flag, "from": SHIELD_TECH, "offer": 3, "perHero": True},
+        "action": {
+            "id": "record_" + flag,
+            "label": t("Record them"),
+            "effects": [
+                {"op": "addDrawnCard", "cardList": "shieldTech", "from": flag},
+                {"op": "setFlag", "flag": flag, "boolValue": True},
             ],
         },
     }
 
 
 def reputation_setup():
-    """Every marked node's box, rewards first, then penalties.
+    """Every box whose node the track has reached, in printed order.
 
-    The rulebook works down the left side of the track and then the right, and
-    this keeps that order so a table can follow along on the printed track.
+    Node by node, and within a node in the order the component lists them, so a
+    table can follow along on the track itself.
     """
     steps = []
-    for node, once, text, records in REWARDS:
-        step = {"text": t(text), "when": unmarked(node) if once else at_least(node)}
-        if once:
-            effects = [{"op": "setFlag", "flag": "node%d" % node, "boolValue": True}]
-            step["action"] = {"id": "reward%d" % node, "label": t("Done"),
-                              "effects": effects}
-        if records:
-            step["showCardList"] = records
-        steps.append(step)
+    for node, flag, text in NODES:
+        if text is OSBORN_DRAW:
+            steps.append(osborn_draw(node, flag))
+            continue
+        if text is SHIELD_DEAL:
+            steps.append(shield_deal(node, flag))
+            continue
 
-    for node, once, kind, text in PENALTIES:
-        if kind == "osborn":
-            steps.append(osborn_draw(node))
+        step = {"text": t(text)}
+        if flag is None:
+            step["when"] = at_least(node)
         else:
-            step = {"text": t(text), "when": at_least(node)}
-            if node == 3:
-                # Names what was drawn, so nobody goes looking through the log.
-                step["showCardList"] = "osbornTech"
-            steps.append(step)
+            step["when"] = unmarked(node, flag)
+            step["action"] = {
+                "id": "done_" + flag,
+                "label": t("Done"),
+                "effects": [{"op": "setFlag", "flag": flag, "boolValue": True}],
+            }
+        recorded = RECORDS.get(flag)
+        if recorded:
+            step["showCardList"] = recorded
+        steps.append(step)
     return steps
 
 
@@ -416,18 +626,16 @@ def build():
         "schemaVersion": 1,
         "name": t("Sinister Motives"),
         "packCode": "sm",
-        # Marked in the chooser until the reputation node numbers are confirmed
-        # against the printed track and the French translation lands.
-        "wip": True,
+
         "notice": t(
             "Unofficial, reconstructed for the app: the rulebook and cards from "
-            "the Sinister Motives box are still needed to play. This campaign's "
-            "text is English only for the moment; French is coming.\n\n"
-            "The app keeps the reputation track for you — it asks the six "
-            "conditions after each scenario, does the adding, and shows you only "
-            "the track boxes you have actually reached. It also draws the "
-            "Community Service side scheme and the Osborn Tech attachments, and "
-            "records what came up."
+            "the Sinister Motives box are still needed to play."
+            "\n\n"
+            "The app keeps the reputation track for you. It asks the six printed "
+            "conditions after each scenario, does the adding, and shows only the "
+            "boxes the track has reached. It also deals what the rules deal at "
+            "random: the Community Service side scheme, the Osborn Tech "
+            "attachments, and each player's three S.H.I.E.L.D. Tech upgrades."
         ),
         "difficulties": ["standard", "expert"],
         "counters": [
@@ -444,10 +652,10 @@ def build():
             },
         ],
         # One flag per once-only node, so a box that has fired stops offering.
+        # One per box that fires once, so a box is offered until it is taken
+        # and never again.
         "flagSets": [
-            {"id": "node%d" % node}
-            for node in sorted({n for n, once, _, _ in REWARDS if once} |
-                               {n for n, once, _, _ in PENALTIES if once})
+            {"id": flag} for _, flag, _ in NODES if flag is not None
         ],
         "cardLists": [
             {"id": "communityService", "scope": "campaign"},
@@ -463,6 +671,25 @@ def build():
     }
 
 
+def missing_french(data):
+    """Every string that came out with its English standing in for French."""
+    missing = []
+
+    def walk(node):
+        if isinstance(node, dict):
+            if ("en" in node and node.get("fr") == node["en"]
+                    and node["en"] not in FR):
+                missing.append(node["en"])
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+
+    walk(data)
+    return sorted(set(missing))
+
+
 if __name__ == "__main__":
     path = "app/src/main/assets/campaigns/sm.json"
     data = build()
@@ -470,3 +697,8 @@ if __name__ == "__main__":
     io.open(path, "w", encoding="utf-8", newline="\n").write(text + "\n")
     print("wrote %s, %d bytes, %d scenarios"
           % (path, len(text), len(data["scenarios"])))
+    untranslated = missing_french(data)
+    if untranslated:
+        print("  %d string(s) still English in French:" % len(untranslated))
+        for line in untranslated:
+            print("    |", line.replace("\n", " / ")[:96])

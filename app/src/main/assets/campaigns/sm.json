@@ -2,12 +2,13 @@
  "id": "sm",
  "schemaVersion": 1,
  "name": {
-  "en": "Sinister Motives"
+  "en": "Sinister Motives",
+  "fr": "Sinistres Motivations"
  },
  "packCode": "sm",
- "wip": true,
  "notice": {
-  "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Sinister Motives box are still needed to play. This campaign's text is English only for the moment; French is coming.\n\nThe app keeps the reputation track for you — it asks the six conditions after each scenario, does the adding, and shows you only the track boxes you have actually reached. It also draws the Community Service side scheme and the Osborn Tech attachments, and records what came up."
+  "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Sinister Motives box are still needed to play.\n\nThe app keeps the reputation track for you. It asks the six printed conditions after each scenario, does the adding, and shows only the boxes the track has reached. It also deals what the rules deal at random: the Community Service side scheme, the Osborn Tech attachments, and each player's three S.H.I.E.L.D. Tech upgrades.",
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Sinistres Motivations restent nécessaires pour jouer.\n\nL'application tient la piste de réputation à votre place : elle pose les six conditions imprimées après chaque scénario, fait l'addition et n'affiche que les cases atteintes. Elle distribue aussi ce que les règles tirent au hasard : la manigance annexe Intérêt Général, les attachements Technologie Osborn et les trois améliorations Techno du SHIELD de chaque joueur."
  },
  "difficulties": [
   "standard",
@@ -36,22 +37,22 @@
  ],
  "flagSets": [
   {
-   "id": "node1"
+   "id": "osborn1"
   },
   {
-   "id": "node3"
+   "id": "shield1"
   },
   {
-   "id": "node9"
+   "id": "aspect9"
   },
   {
-   "id": "node13"
+   "id": "osborn13"
   },
   {
-   "id": "node16"
+   "id": "planning17"
   },
   {
-   "id": "node21"
+   "id": "osborn21"
   }
  ],
  "cardLists": [
@@ -84,142 +85,8 @@
   "reputation": [
    {
     "text": {
-     "en": "Deal 3 S.H.I.E.L.D. Tech upgrades at random to a player. They keep 1 for the campaign; return the rest. Repeat for each player."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 3
-      },
-      {
-       "notFlag": "node3"
-      }
-     ]
-    },
-    "action": {
-     "id": "reward3",
-     "label": {
-      "en": "Done"
-     },
-     "effects": [
-      {
-       "op": "setFlag",
-       "flag": "node3",
-       "boolValue": true
-      }
-     ]
-    },
-    "showCardList": "shieldTech"
-   },
-   {
-    "text": {
-     "en": "Each player may take 1 additional mulligan during step 13 of setup."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 5
-    }
-   },
-   {
-    "text": {
-     "en": "Each player adds the maximum copies of one aspect card of their choice to their deck for the rest of the campaign."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 9
-      },
-      {
-       "notFlag": "node9"
-      }
-     ]
-    },
-    "action": {
-     "id": "reward9",
-     "label": {
-      "en": "Done"
-     },
-     "effects": [
-      {
-       "op": "setFlag",
-       "flag": "node9",
-       "boolValue": true
-      }
-     ]
-    },
-    "showCardList": "aspectAdvantage"
-   },
-   {
-    "text": {
-     "en": "Each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced side."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 13
-    }
-   },
-   {
-    "text": {
-     "en": "Each player chooses one card from their deck and records it."
-    },
-    "when": {
-     "all": [
-      {
-       "counter": "reputation",
-       "atLeast": 16
-      },
-      {
-       "notFlag": "node16"
-      }
-     ]
-    },
-    "action": {
-     "id": "reward16",
-     "label": {
-      "en": "Done"
-     },
-     "effects": [
-      {
-       "op": "setFlag",
-       "flag": "node16",
-       "boolValue": true
-      }
-     ]
-    },
-    "showCardList": "planningAhead"
-   },
-   {
-    "text": {
-     "en": "Each player searches their deck and discard pile for their recorded card and adds it to hand. Shuffle."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 18
-    }
-   },
-   {
-    "text": {
-     "en": "Each player may search their collection for a Helicarrier support and put it into play."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 21
-    }
-   },
-   {
-    "text": {
-     "en": "Each player may search their collection for a Symbiote Suit upgrade and put it into play."
-    },
-    "when": {
-     "counter": "reputation",
-     "atLeast": 24
-    }
-   },
-   {
-    "text": {
-     "en": "An Osborn Tech attachment is drawn and recorded."
+     "en": "An Osborn Tech attachment is drawn and recorded.",
+     "fr": "Un attachement Technologie Osborn est tiré et enregistré."
     },
     "when": {
      "all": [
@@ -228,7 +95,7 @@
        "atLeast": 1
       },
       {
-       "notFlag": "node1"
+       "notFlag": "osborn1"
       }
      ]
     },
@@ -244,10 +111,12 @@
      ],
      "excluding": "osbornTech"
     },
+    "showCardList": "osbornTech",
     "action": {
-     "id": "recordOsborn1",
+     "id": "record_osborn1",
      "label": {
-      "en": "Record it"
+      "en": "Record it",
+      "fr": "Enregistrer"
      },
      "effects": [
       {
@@ -257,7 +126,7 @@
       },
       {
        "op": "setFlag",
-       "flag": "node1",
+       "flag": "osborn1",
        "boolValue": true
       }
      ]
@@ -265,17 +134,69 @@
    },
    {
     "text": {
-     "en": "Shuffle every recorded Osborn Tech attachment into the encounter deck."
+     "en": "Setup: shuffle every recorded Osborn Tech attachment into the encounter deck.",
+     "fr": "Mise en place : mélangez dans le deck rencontre chaque attachement Technologie Osborn enregistré."
     },
     "when": {
      "counter": "reputation",
-     "atLeast": 3
-    },
-    "showCardList": "osbornTech"
+     "atLeast": 1
+    }
    },
    {
     "text": {
-     "en": "Place 1 threat on the main scheme."
+     "en": "Three S.H.I.E.L.D. Tech upgrades are dealt to each player. Keep one for the rest of the campaign.",
+     "fr": "Trois améliorations Techno du SHIELD sont distribuées à chaque joueur. Gardez-en une pour le reste de la campagne."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 1
+      },
+      {
+       "notFlag": "shield1"
+      }
+     ]
+    },
+    "draw": {
+     "id": "shield1",
+     "from": [
+      "27182a",
+      "27183a",
+      "27184a",
+      "27185a",
+      "27186a",
+      "27187a",
+      "27188a",
+      "27189a"
+     ],
+     "offer": 3,
+     "perHero": true
+    },
+    "action": {
+     "id": "record_shield1",
+     "label": {
+      "en": "Record them",
+      "fr": "Enregistrer"
+     },
+     "effects": [
+      {
+       "op": "addDrawnCard",
+       "cardList": "shieldTech",
+       "from": "shield1"
+      },
+      {
+       "op": "setFlag",
+       "flag": "shield1",
+       "boolValue": true
+      }
+     ]
+    }
+   },
+   {
+    "text": {
+     "en": "Setup: place 1 threat per player on the main scheme.",
+     "fr": "Mise en place : placez 1 menace par joueur sur la manigance principale."
     },
     "when": {
      "counter": "reputation",
@@ -284,7 +205,18 @@
    },
    {
     "text": {
-     "en": "In player order, each player puts a minion from the encounter deck or discard pile into play engaged with them. Shuffle.\nAny player who does not takes 1 facedown encounter card."
+     "en": "Each player may take 1 additional mulligan during step 13 of setup.",
+     "fr": "Chaque joueur peut faire 1 mulligan supplémentaire à l'étape 13 de la mise en place."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 5
+    }
+   },
+   {
+    "text": {
+     "en": "Setup: in player order, each player puts a minion from the encounter deck or discard pile into play engaged with them. Shuffle.\nAny player who does not takes 1 facedown encounter card.",
+     "fr": "Mise en place : dans l'ordre du tour, chaque joueur met en jeu un sbire du deck rencontre ou de la pile de défausse, engagé avec lui.\nMélangez. Tout joueur qui ne le fait pas reçoit 1 carte Rencontre face cachée."
     },
     "when": {
      "counter": "reputation",
@@ -293,7 +225,40 @@
    },
    {
     "text": {
-     "en": "An Osborn Tech attachment is drawn and recorded."
+     "en": "Each player adds the maximum copies of one aspect card of their choice, from any aspect, to their deck for the rest of the campaign.",
+     "fr": "Chaque joueur choisit une carte d'affinité, de n'importe quelle affinité.\nIl en ajoute le nombre maximum d'exemplaires à son deck pour le reste de la campagne."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 9
+      },
+      {
+       "notFlag": "aspect9"
+      }
+     ]
+    },
+    "action": {
+     "id": "done_aspect9",
+     "label": {
+      "en": "Done",
+      "fr": "Fait"
+     },
+     "effects": [
+      {
+       "op": "setFlag",
+       "flag": "aspect9",
+       "boolValue": true
+      }
+     ]
+    },
+    "showCardList": "aspectAdvantage"
+   },
+   {
+    "text": {
+     "en": "An Osborn Tech attachment is drawn and recorded.",
+     "fr": "Un attachement Technologie Osborn est tiré et enregistré."
     },
     "when": {
      "all": [
@@ -302,7 +267,7 @@
        "atLeast": 13
       },
       {
-       "notFlag": "node13"
+       "notFlag": "osborn13"
       }
      ]
     },
@@ -318,10 +283,12 @@
      ],
      "excluding": "osbornTech"
     },
+    "showCardList": "osbornTech",
     "action": {
-     "id": "recordOsborn13",
+     "id": "record_osborn13",
      "label": {
-      "en": "Record it"
+      "en": "Record it",
+      "fr": "Enregistrer"
      },
      "effects": [
       {
@@ -331,7 +298,7 @@
       },
       {
        "op": "setFlag",
-       "flag": "node13",
+       "flag": "osborn13",
        "boolValue": true
       }
      ]
@@ -339,7 +306,18 @@
    },
    {
     "text": {
-     "en": "The first player searches the encounter deck and discard pile for a scenario side scheme, reveals it, and places 1 threat on it. Shuffle."
+     "en": "Setup: each player flips their S.H.I.E.L.D. Tech upgrade to its Enhanced side.",
+     "fr": "Mise en place : chaque joueur retourne son amélioration Techno du SHIELD sur sa face Améliorée."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 13
+    }
+   },
+   {
+    "text": {
+     "en": "Setup: the first player searches the encounter deck and discard pile for a scenario side scheme and reveals it.\nPlace 1 threat per player on it. Shuffle.",
+     "fr": "Mise en place : le premier joueur cherche dans le deck rencontre et la pile de défausse une manigance annexe du scénario et la révèle.\nPlacez 1 menace par joueur dessus. Mélangez."
     },
     "when": {
      "counter": "reputation",
@@ -348,7 +326,50 @@
    },
    {
     "text": {
-     "en": "An Osborn Tech attachment is drawn and recorded."
+     "en": "Each player chooses one card from their deck and records it.",
+     "fr": "Chaque joueur choisit une carte de son deck et l'enregistre."
+    },
+    "when": {
+     "all": [
+      {
+       "counter": "reputation",
+       "atLeast": 17
+      },
+      {
+       "notFlag": "planning17"
+      }
+     ]
+    },
+    "action": {
+     "id": "done_planning17",
+     "label": {
+      "en": "Done",
+      "fr": "Fait"
+     },
+     "effects": [
+      {
+       "op": "setFlag",
+       "flag": "planning17",
+       "boolValue": true
+      }
+     ]
+    },
+    "showCardList": "planningAhead"
+   },
+   {
+    "text": {
+     "en": "Setup: each player searches their deck and discard pile for their recorded card and adds it to hand. Shuffle.",
+     "fr": "Mise en place : chaque joueur cherche dans son deck et sa pile de défausse la carte qu'il a enregistrée et l'ajoute à sa main. Mélangez."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 17
+    }
+   },
+   {
+    "text": {
+     "en": "An Osborn Tech attachment is drawn and recorded.",
+     "fr": "Un attachement Technologie Osborn est tiré et enregistré."
     },
     "when": {
      "all": [
@@ -357,7 +378,7 @@
        "atLeast": 21
       },
       {
-       "notFlag": "node21"
+       "notFlag": "osborn21"
       }
      ]
     },
@@ -373,10 +394,12 @@
      ],
      "excluding": "osbornTech"
     },
+    "showCardList": "osbornTech",
     "action": {
-     "id": "recordOsborn21",
+     "id": "record_osborn21",
      "label": {
-      "en": "Record it"
+      "en": "Record it",
+      "fr": "Enregistrer"
      },
      "effects": [
       {
@@ -386,7 +409,7 @@
       },
       {
        "op": "setFlag",
-       "flag": "node21",
+       "flag": "osborn21",
        "boolValue": true
       }
      ]
@@ -394,7 +417,28 @@
    },
    {
     "text": {
-     "en": "Deal 1 facedown encounter card to each player."
+     "en": "Setup: each player may search their collection for a Helicarrier support and put it into play.",
+     "fr": "Mise en place : chaque joueur peut chercher un soutien Héliporteur dans sa collection et le mettre en jeu."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 21
+    }
+   },
+   {
+    "text": {
+     "en": "Setup: each player may search their collection for a Symbiote Suit upgrade and put it into play.",
+     "fr": "Mise en place : chaque joueur peut chercher une amélioration Costume de Symbiote dans sa collection et la mettre en jeu."
+    },
+    "when": {
+     "counter": "reputation",
+     "atLeast": 25
+    }
+   },
+   {
+    "text": {
+     "en": "Setup: deal 1 facedown encounter card to each player.",
+     "fr": "Mise en place : attribuez 1 carte Rencontre face cachée à chaque joueur."
     },
     "when": {
      "counter": "reputation",
@@ -408,7 +452,8 @@
   {
    "id": "s1_sandman",
    "name": {
-    "en": "Sandman"
+    "en": "Sandman",
+    "fr": "L'Homme-Sable"
    },
    "baseSetup": {
     "villainDeck": {
@@ -434,7 +479,8 @@
    "campaignSetup": [
     {
      "text": {
-      "en": "Put Public Outcry into play, Standard Mode side up."
+      "en": "Put Public Outcry into play, Standard Mode side up.",
+      "fr": "Mettez en jeu Indignation Populaire, face Mode Standard visible."
      },
      "cards": [
       "27174a"
@@ -445,7 +491,8 @@
     },
     {
      "text": {
-      "en": "Put Public Outcry into play, Expert Mode side up."
+      "en": "Put Public Outcry into play, Expert Mode side up.",
+      "fr": "Mettez en jeu Indignation Populaire, face Mode Expert visible."
      },
      "cards": [
       "27174b"
@@ -456,7 +503,8 @@
     },
     {
      "text": {
-      "en": "Shuffle these into the encounter deck."
+      "en": "Shuffle these into the encounter deck.",
+      "fr": "Mélangez ces cartes dans le deck rencontre."
      },
      "cards": [
       "27175"
@@ -464,7 +512,8 @@
     },
     {
      "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck."
+      "en": "Shuffle this Community Service side scheme into the encounter deck.",
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
      },
      "draw": {
       "id": "service_s1_sandman",
@@ -480,7 +529,8 @@
     },
     {
      "text": {
-      "en": "Expert: place 2 additional sand counters on City Streets and resolve Surging Sands."
+      "en": "Expert: place 2 additional sand counters on City Streets and resolve Surging Sands.",
+      "fr": "Expert : placez 2 jetons Sable supplémentaires sur Rues de la Ville et résolvez Afflux de Sable."
      },
      "when": {
       "difficulty": "expert"
@@ -496,56 +546,64 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "en": "How many victory points are in the victory display?"
+       "en": "How many victory points are in the victory display?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
       }
      },
      {
       "id": "noMinions",
       "type": "boolean",
       "label": {
-       "en": "No minions in play?"
+       "en": "No minions in play?",
+       "fr": "Aucun sbire en jeu ?"
       }
      },
      {
       "id": "noSideSchemes",
       "type": "boolean",
       "label": {
-       "en": "No side schemes in play?"
+       "en": "No side schemes in play?",
+       "fr": "Aucune manigance annexe en jeu ?"
       }
      },
      {
       "id": "noThreat",
       "type": "boolean",
       "label": {
-       "en": "No threat on the main scheme?"
+       "en": "No threat on the main scheme?",
+       "fr": "Aucune menace sur la manigance principale ?"
       }
      },
      {
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?"
+       "en": "Fewer than 1 acceleration tokens in play?",
+       "fr": "Moins de 1 jeton accélération en jeu ?"
       }
      },
      {
       "id": "noDefeated",
       "type": "boolean",
       "label": {
-       "en": "No defeated identities?"
+       "en": "No defeated identities?",
+       "fr": "Aucune identité vaincue ?"
       }
      },
      {
       "id": "serviceDone",
       "type": "boolean",
       "label": {
-       "en": "Is the Community Service side scheme in the victory display?"
+       "en": "Is the Community Service side scheme in the victory display?",
+       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
       }
      },
      {
       "id": "hpPerHero",
       "type": "perHeroNumber",
       "label": {
-       "en": "Remaining hit points"
+       "en": "Remaining hit points",
+       "fr": "Points de vie restants"
       },
       "when": {
        "difficulty": "expert"
@@ -629,13 +687,15 @@
     ]
    },
    "flavour": {
-    "en": "Sandman fills the streets with a tidal wall of dust, and the people caught in it are running out of time."
+    "en": "Sandman fills the streets with a tidal wall of dust, and the people caught in it are running out of time.",
+    "fr": "L'Homme-Sable noie les rues sous un mur de poussière, et ceux qui sont pris dedans n'ont plus beaucoup de temps."
    }
   },
   {
    "id": "s2_venom",
    "name": {
-    "en": "Venom"
+    "en": "Venom",
+    "fr": "Venom"
    },
    "baseSetup": {
     "villainDeck": {
@@ -661,7 +721,8 @@
    "campaignSetup": [
     {
      "text": {
-      "en": "Put Public Outcry into play."
+      "en": "Put Public Outcry into play.",
+      "fr": "Mettez en jeu Indignation Populaire."
      },
      "cards": [
       "27174a"
@@ -669,7 +730,8 @@
     },
     {
      "text": {
-      "en": "Shuffle these into the encounter deck."
+      "en": "Shuffle these into the encounter deck.",
+      "fr": "Mélangez ces cartes dans le deck rencontre."
      },
      "cards": [
       "27175"
@@ -677,7 +739,8 @@
     },
     {
      "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck."
+      "en": "Shuffle this Community Service side scheme into the encounter deck.",
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
      },
      "draw": {
       "id": "service_s2_venom",
@@ -701,56 +764,64 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "en": "How many victory points are in the victory display?"
+       "en": "How many victory points are in the victory display?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
       }
      },
      {
       "id": "noMinions",
       "type": "boolean",
       "label": {
-       "en": "No minions in play?"
+       "en": "No minions in play?",
+       "fr": "Aucun sbire en jeu ?"
       }
      },
      {
       "id": "noSideSchemes",
       "type": "boolean",
       "label": {
-       "en": "No side schemes in play?"
+       "en": "No side schemes in play?",
+       "fr": "Aucune manigance annexe en jeu ?"
       }
      },
      {
       "id": "noThreat",
       "type": "boolean",
       "label": {
-       "en": "No threat on the main scheme?"
+       "en": "No threat on the main scheme?",
+       "fr": "Aucune menace sur la manigance principale ?"
       }
      },
      {
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?"
+       "en": "Fewer than 1 acceleration tokens in play?",
+       "fr": "Moins de 1 jeton accélération en jeu ?"
       }
      },
      {
       "id": "noDefeated",
       "type": "boolean",
       "label": {
-       "en": "No defeated identities?"
+       "en": "No defeated identities?",
+       "fr": "Aucune identité vaincue ?"
       }
      },
      {
       "id": "serviceDone",
       "type": "boolean",
       "label": {
-       "en": "Is the Community Service side scheme in the victory display?"
+       "en": "Is the Community Service side scheme in the victory display?",
+       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
       }
      },
      {
       "id": "hpPerHero",
       "type": "perHeroNumber",
       "label": {
-       "en": "Remaining hit points"
+       "en": "Remaining hit points",
+       "fr": "Points de vie restants"
       },
       "when": {
        "difficulty": "expert"
@@ -834,13 +905,15 @@
     ]
    },
    "flavour": {
-    "en": "Venom comes at you blind with rage. The bell tower across the rooftops might be the only thing that slows him down."
+    "en": "Venom comes at you blind with rage. The bell tower across the rooftops might be the only thing that slows him down.",
+    "fr": "Venom fonce sur vous, aveuglé par la rage. Le clocher de l'autre côté des toits est peut-être la seule chose qui puisse le ralentir."
    }
   },
   {
    "id": "s3_mysterio",
    "name": {
-    "en": "Mysterio"
+    "en": "Mysterio",
+    "fr": "Mysterio"
    },
    "baseSetup": {
     "villainDeck": {
@@ -867,7 +940,8 @@
    "campaignSetup": [
     {
      "text": {
-      "en": "Put the Venom ally into play under the first player's control."
+      "en": "Put the Venom ally into play under the first player's control.",
+      "fr": "Mettez en jeu l'allié Venom sous le contrôle du premier joueur."
      },
      "cards": [
       "27190"
@@ -875,7 +949,8 @@
     },
     {
      "text": {
-      "en": "Put Public Outcry into play."
+      "en": "Put Public Outcry into play.",
+      "fr": "Mettez en jeu Indignation Populaire."
      },
      "cards": [
       "27174a"
@@ -883,7 +958,8 @@
     },
     {
      "text": {
-      "en": "Shuffle these into the encounter deck."
+      "en": "Shuffle these into the encounter deck.",
+      "fr": "Mélangez ces cartes dans le deck rencontre."
      },
      "cards": [
       "27175",
@@ -892,7 +968,8 @@
     },
     {
      "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck."
+      "en": "Shuffle this Community Service side scheme into the encounter deck.",
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
      },
      "draw": {
       "id": "service_s3_mysterio",
@@ -916,63 +993,72 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "en": "How many victory points are in the victory display?"
+       "en": "How many victory points are in the victory display?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
       }
      },
      {
       "id": "noMinions",
       "type": "boolean",
       "label": {
-       "en": "No minions in play?"
+       "en": "No minions in play?",
+       "fr": "Aucun sbire en jeu ?"
       }
      },
      {
       "id": "noSideSchemes",
       "type": "boolean",
       "label": {
-       "en": "No side schemes in play?"
+       "en": "No side schemes in play?",
+       "fr": "Aucune manigance annexe en jeu ?"
       }
      },
      {
       "id": "noThreat",
       "type": "boolean",
       "label": {
-       "en": "No threat on the main scheme?"
+       "en": "No threat on the main scheme?",
+       "fr": "Aucune menace sur la manigance principale ?"
       }
      },
      {
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?"
+       "en": "Fewer than 1 acceleration tokens in play?",
+       "fr": "Moins de 1 jeton accélération en jeu ?"
       }
      },
      {
       "id": "noDefeated",
       "type": "boolean",
       "label": {
-       "en": "No defeated identities?"
+       "en": "No defeated identities?",
+       "fr": "Aucune identité vaincue ?"
       }
      },
      {
       "id": "serviceDone",
       "type": "boolean",
       "label": {
-       "en": "Is the Community Service side scheme in the victory display?"
+       "en": "Is the Community Service side scheme in the victory display?",
+       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
       }
      },
      {
       "id": "illusions",
       "type": "number",
       "label": {
-       "en": "How many Illusion cards are in all player decks?"
+       "en": "How many Illusion cards are in all player decks?",
+       "fr": "Combien de cartes Illusion y a-t-il dans les decks des joueurs ?"
       }
      },
      {
       "id": "hpPerHero",
       "type": "perHeroNumber",
       "label": {
-       "en": "Remaining hit points"
+       "en": "Remaining hit points",
+       "fr": "Points de vie restants"
       },
       "when": {
        "difficulty": "expert"
@@ -1061,13 +1147,15 @@
     ]
    },
    "flavour": {
-    "en": "Deeper into Oscorp, a maze of mirrors turns your own fears back on you until you cannot tell them from the room."
+    "en": "Deeper into Oscorp, a maze of mirrors turns your own fears back on you until you cannot tell them from the room.",
+    "fr": "Plus profond dans Oscorp, un labyrinthe de miroirs vous renvoie vos propres peurs jusqu'à ce que vous ne les distinguiez plus de la pièce."
    }
   },
   {
    "id": "s4_sinister_six",
    "name": {
-    "en": "The Sinister Six"
+    "en": "The Sinister Six",
+    "fr": "Les Sinistres Six"
    },
    "baseSetup": {
     "villainDeck": {
@@ -1101,7 +1189,8 @@
    "campaignSetup": [
     {
      "text": {
-      "en": "Put the Venom ally into play under the first player's control."
+      "en": "Put the Venom ally into play under the first player's control.",
+      "fr": "Mettez en jeu l'allié Venom sous le contrôle du premier joueur."
      },
      "cards": [
       "27190"
@@ -1109,7 +1198,8 @@
     },
     {
      "text": {
-      "en": "Put Public Outcry into play."
+      "en": "Put Public Outcry into play.",
+      "fr": "Mettez en jeu Indignation Populaire."
      },
      "cards": [
       "27174a"
@@ -1117,7 +1207,8 @@
     },
     {
      "text": {
-      "en": "Shuffle these into the encounter deck."
+      "en": "Shuffle these into the encounter deck.",
+      "fr": "Mélangez ces cartes dans le deck rencontre."
      },
      "cards": [
       "27175",
@@ -1126,7 +1217,8 @@
     },
     {
      "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck."
+      "en": "Shuffle this Community Service side scheme into the encounter deck.",
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
      },
      "draw": {
       "id": "service_s4_sinister_six",
@@ -1142,7 +1234,8 @@
     },
     {
      "text": {
-      "en": "Place this much threat on Light at the End."
+      "en": "Place this much threat on Light at the End.",
+      "fr": "Placez autant de menace sur Lumière au Bout du Tunnel."
      },
      "cards": [
       "27102a"
@@ -1159,56 +1252,64 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "en": "How many victory points are in the victory display?"
+       "en": "How many victory points are in the victory display?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
       }
      },
      {
       "id": "noMinions",
       "type": "boolean",
       "label": {
-       "en": "No minions in play?"
+       "en": "No minions in play?",
+       "fr": "Aucun sbire en jeu ?"
       }
      },
      {
       "id": "noSideSchemes",
       "type": "boolean",
       "label": {
-       "en": "No side schemes in play?"
+       "en": "No side schemes in play?",
+       "fr": "Aucune manigance annexe en jeu ?"
       }
      },
      {
       "id": "noThreat",
       "type": "boolean",
       "label": {
-       "en": "No threat on the main scheme?"
+       "en": "No threat on the main scheme?",
+       "fr": "Aucune menace sur la manigance principale ?"
       }
      },
      {
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?"
+       "en": "Fewer than 1 acceleration tokens in play?",
+       "fr": "Moins de 1 jeton accélération en jeu ?"
       }
      },
      {
       "id": "noDefeated",
       "type": "boolean",
       "label": {
-       "en": "No defeated identities?"
+       "en": "No defeated identities?",
+       "fr": "Aucune identité vaincue ?"
       }
      },
      {
       "id": "serviceDone",
       "type": "boolean",
       "label": {
-       "en": "Is the Community Service side scheme in the victory display?"
+       "en": "Is the Community Service side scheme in the victory display?",
+       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
       }
      },
      {
       "id": "standing",
       "type": "cardSelect",
       "label": {
-       "en": "Which villains were still in play?"
+       "en": "Which villains were still in play?",
+       "fr": "Quels méchants étaient encore en jeu ?"
       },
       "cards": [
        "27094",
@@ -1223,7 +1324,8 @@
       "id": "hpPerHero",
       "type": "perHeroNumber",
       "label": {
-       "en": "Remaining hit points"
+       "en": "Remaining hit points",
+       "fr": "Points de vie restants"
       },
       "when": {
        "difficulty": "expert"
@@ -1312,13 +1414,15 @@
     ]
    },
    "flavour": {
-    "en": "The smoke clears on a silo, and all six of them step out of the dark at once."
+    "en": "The smoke clears on a silo, and all six of them step out of the dark at once.",
+    "fr": "La fumée se dissipe sur un silo, et tous les six sortent de l'ombre en même temps."
    }
   },
   {
    "id": "s5_venom_goblin",
    "name": {
-    "en": "Venom Goblin"
+    "en": "Venom Goblin",
+    "fr": "Le Bouffon Venom"
    },
    "baseSetup": {
     "villainDeck": {
@@ -1347,7 +1451,8 @@
    "campaignSetup": [
     {
      "text": {
-      "en": "Put Public Outcry into play."
+      "en": "Put Public Outcry into play.",
+      "fr": "Mettez en jeu Indignation Populaire."
      },
      "cards": [
       "27174a"
@@ -1355,7 +1460,8 @@
     },
     {
      "text": {
-      "en": "Shuffle these into the encounter deck."
+      "en": "Shuffle these into the encounter deck.",
+      "fr": "Mélangez ces cartes dans le deck rencontre."
      },
      "cards": [
       "27175"
@@ -1363,7 +1469,8 @@
     },
     {
      "text": {
-      "en": "Shuffle this Community Service side scheme into the encounter deck."
+      "en": "Shuffle this Community Service side scheme into the encounter deck.",
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
      },
      "draw": {
       "id": "service_s5_venom_goblin",
@@ -1379,7 +1486,8 @@
     },
     {
      "text": {
-      "en": "Shuffle the Sinister Assault minion matching each villain left standing into the encounter deck."
+      "en": "Shuffle the Sinister Assault minion matching each villain left standing into the encounter deck.",
+      "fr": "Mélangez dans le deck rencontre le sbire Assaut Sinistre correspondant à chaque méchant encore en jeu."
      },
      "cards": [
       "27158",
@@ -1401,56 +1509,64 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "en": "How many victory points are in the victory display?"
+       "en": "How many victory points are in the victory display?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
       }
      },
      {
       "id": "noMinions",
       "type": "boolean",
       "label": {
-       "en": "No minions in play?"
+       "en": "No minions in play?",
+       "fr": "Aucun sbire en jeu ?"
       }
      },
      {
       "id": "noSideSchemes",
       "type": "boolean",
       "label": {
-       "en": "No side schemes in play?"
+       "en": "No side schemes in play?",
+       "fr": "Aucune manigance annexe en jeu ?"
       }
      },
      {
       "id": "noThreat",
       "type": "boolean",
       "label": {
-       "en": "No threat on the main scheme?"
+       "en": "No threat on the main scheme?",
+       "fr": "Aucune menace sur la manigance principale ?"
       }
      },
      {
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?"
+       "en": "Fewer than 1 acceleration tokens in play?",
+       "fr": "Moins de 1 jeton accélération en jeu ?"
       }
      },
      {
       "id": "noDefeated",
       "type": "boolean",
       "label": {
-       "en": "No defeated identities?"
+       "en": "No defeated identities?",
+       "fr": "Aucune identité vaincue ?"
       }
      },
      {
       "id": "serviceDone",
       "type": "boolean",
       "label": {
-       "en": "Is the Community Service side scheme in the victory display?"
+       "en": "Is the Community Service side scheme in the victory display?",
+       "fr": "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?"
       }
      },
      {
       "id": "hpPerHero",
       "type": "perHeroNumber",
       "label": {
-       "en": "Remaining hit points"
+       "en": "Remaining hit points",
+       "fr": "Points de vie restants"
       },
       "when": {
        "difficulty": "expert"
@@ -1540,7 +1656,8 @@
     ]
    },
    "flavour": {
-    "en": "Osborn has bound the symbiote to his will, and he is over the city now, making an army out of everyone below."
+    "en": "Osborn has bound the symbiote to his will, and he is over the city now, making an army out of everyone below.",
+    "fr": "Osborn a plié le symbiote à sa volonté, et il survole la ville, en train de faire une armée de tous ceux qui sont en dessous."
    }
   }
  ]
