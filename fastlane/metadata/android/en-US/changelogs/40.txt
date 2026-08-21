@@ -1,0 +1,26 @@
+Mutant Genesis.
+
+Five scenarios in order, Sabretooth through Magneto, and all five have to be
+won. Losing one costs nothing: you set it up and play it again.
+
+Each player takes one of the four roles at the first scenario and keeps it for
+the campaign. The upgrade you start each later scenario with is dealt by the
+app from your own role's set of five, not from a pile the table shares, and an
+upgrade that has been in play is out of the campaign for the player who had it.
+So the five run down one player at a time, which is what the "use it or lose
+it" rule is for.
+
+The app keeps the campaign log. Which of the five campaign side schemes you
+beat, and so whether you have earned the next scenario's upgrade. Which Future
+Past cards were still in circulation at the end of a game, so the right ones go
+back into the encounter deck next time and the ones that reached the victory
+display stay gone. Whether Jubilee is with you, which captives you freed and
+can shuffle into a deck, and which allies you left behind and cannot use again.
+The order the Brotherhood arrive in at the mansion is drawn too.
+
+Expert is the expert campaign: the harder villain stages, and hit points that
+carry from one scenario to the next.
+
+Card names in the campaign are the ones printed on the French cards, taken from
+the card database rather than translated here, so what the app calls a card is
+what you are holding.

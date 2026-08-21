@@ -1,0 +1,28 @@
+La Genèse des Mutants.
+
+Cinq scénarios dans l'ordre, de Dents-de-Sabre à Magnéto, et il faut gagner les
+cinq. Perdre n'a aucun coût : vous remettez le scénario en place et vous le
+rejouez.
+
+Chaque joueur prend l'un des quatre rôles au premier scénario et le garde pour
+toute la campagne. L'amélioration avec laquelle vous commencez chaque scénario
+suivant est distribuée par l'application depuis le set de cinq de votre propre
+rôle, et non depuis une pile commune à la table. Une amélioration qui a été en
+jeu quitte la campagne pour le joueur qui l'avait : les cinq s'épuisent donc
+joueur par joueur, ce qui est tout l'intérêt de la règle.
+
+L'application tient le journal de campagne. Quelles manigances annexes de
+campagne vous avez vaincues, et donc si vous avez mérité l'amélioration du
+scénario suivant. Quelles cartes Avenir Passé étaient encore en circulation à
+la fin d'une partie, pour que les bonnes retournent dans le deck Rencontre la
+fois d'après et que celles arrivées dans la zone de victoire n'en ressortent
+plus. Si Jubilé est avec vous, quels captifs vous avez libérés et pouvez
+mélanger à un deck, et quels alliés vous avez laissés derrière et ne pourrez
+plus utiliser. L'ordre d'arrivée de la Confrérie au manoir est tiré aussi.
+
+Expert correspond à la campagne experte : les stades de méchant les plus durs,
+et des points de vie qui se reportent d'un scénario au suivant.
+
+Les noms de cartes de la campagne sont ceux imprimés sur les cartes françaises,
+pris dans la base de données plutôt que traduits ici, pour que ce que
+l'application nomme corresponde à ce que vous tenez.
