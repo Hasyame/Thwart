@@ -1,0 +1,25 @@
+Photographs of the table, a way to put a game away, and Sinister Motives.
+
+You can photograph the table during a game. The pictures stay with the play and
+show up in your stats. They are taken by the phone's own camera app, so the app
+asks for no camera permission and never opens a camera itself, and they live in
+the app's private storage: a picture of your living room does not belong in the
+shared gallery, and there is nowhere else for it to go.
+
+A game can now be put away instead of abandoned. The page writes down what you
+will not remember in a week: a photo of the table, whether you stopped in the
+player phase or the villain phase and which of its five steps, what each hero
+has left, and the villain's life and which stage is face up. Everything on it is
+optional. The game waits for you on the Play tab, and opening it shows the note
+back, with the photo.
+
+Sinister Motives is finished. The reputation track is the printed one, node for
+node, and the app keeps it: it asks the six conditions after each scenario, does
+the adding, and shows only the boxes the track has reached. It also deals what
+the rules deal at random, so you do not have to: the Community Service side
+scheme, the Osborn Tech attachments, and each player's three S.H.I.E.L.D. Tech
+upgrades, one draw per player rather than one for the table.
+
+Two French terms are corrected. The four card groupings are affinites, which is
+what the printed cards and the reference glossary call them, and the villain is
+a mechant throughout instead of a vilain in some places and a mechant in others.

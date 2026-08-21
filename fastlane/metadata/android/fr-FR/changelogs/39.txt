@@ -1,0 +1,28 @@
+Des photos de la table, un moyen de ranger une partie, et Sinistres Motivations.
+
+Vous pouvez photographier la table pendant une partie. Les photos restent
+attachées à la partie et apparaissent dans vos statistiques. Elles sont prises
+par l'appareil photo du téléphone : l'application ne demande aucune permission
+caméra et n'ouvre jamais l'appareil elle-même. Elles restent dans le stockage
+privé de l'application, car une photo de votre salon n'a rien à faire dans la
+galerie partagée, et il n'y a aucun autre endroit où l'envoyer.
+
+Une partie peut maintenant être rangée au lieu d'être abandonnée. La page note
+ce dont vous ne vous souviendrez plus dans une semaine : une photo de la table,
+si vous vous êtes arrêtés en phase des joueurs ou en phase du méchant et à
+laquelle de ses cinq étapes, ce qu'il reste à chaque héros, et les points de vie
+du méchant ainsi que le stade visible. Tout y est facultatif. La partie vous
+attend dans l'onglet Jouer, et l'ouvrir vous rend la note, photo comprise.
+
+Sinistres Motivations est terminée. La piste de réputation est celle du livret,
+case par case, et l'application la tient pour vous : elle pose les six
+conditions après chaque scénario, fait les additions, et n'affiche que les cases
+atteintes. Elle distribue aussi ce que les règles distribuent au hasard, pour
+vous l'épargner : la manigance annexe Travaux d'Intérêt Général, les
+améliorations Technologie Osborn, et les trois améliorations Technologie
+S.H.I.E.L.D. de chaque joueur, un tirage par joueur et non un seul pour la
+table.
+
+Deux termes français sont corrigés. Les quatre groupes de cartes sont des
+affinités, comme sur les cartes et dans le glossaire de référence, et le méchant
+est appelé méchant partout au lieu de vilain par endroits.
