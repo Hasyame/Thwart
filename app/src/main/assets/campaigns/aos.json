@@ -1,0 +1,2070 @@
+{
+  "id": "aos",
+  "schemaVersion": 1,
+  "name": {
+    "en": "Agents of S.H.I.E.L.D.",
+    "fr": "Agents du S.H.I.E.L.D."
+  },
+  "packCode": "aos",
+  "untested": true,
+  "notice": {
+    "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Agents of S.H.I.E.L.D. box are still needed to play.\n\nThe app keeps the campaign log for you. Secrets on each of the three board members, carried from one scenario to the next, the evidence you have gathered, and the records each scenario passes to the one after it.\n\nIt also does the deduction. Every evidence card you find is one the mole does not have, so the app shows only what is still unaccounted for. When a category is down to one card, that is the mole's. Which board member those three point to is the grid printed in your campaign log, and you read the name off that.\n\nThe cards of this box are not in the French card database yet, so card names here stay in English rather than being invented.\n\nExpert is the expert campaign: the harder villain stages, board members turning at three secrets instead of four, and hit points that carry from one scenario to the next.",
+    "fr": "Non officiel, reconstitué pour l'application : le livret et les cartes de la boîte Agents du S.H.I.E.L.D. restent nécessaires pour jouer.\n\nL'application tient le journal de campagne pour vous. Les secrets sur chacun des trois Board Members, reportés d'un scénario au suivant, les preuves que vous avez réunies, et ce que chaque scénario transmet au suivant.\n\nElle fait aussi la déduction. Chaque carte Preuve trouvée est une carte que la taupe n'a pas : l'application n'affiche donc que ce qui manque encore. Quand une catégorie se réduit à une seule carte, c'est celle de la taupe. Le Board Member vers lequel ces trois-là pointent se lit sur la grille imprimée dans votre journal de campagne.\n\nLes cartes de cette boîte ne sont pas encore dans la base de données française : les noms de cartes restent donc en anglais plutôt que d'être inventés.\n\nExpert correspond à la campagne experte : les stades de méchant les plus durs, les Board Members qui basculent à trois secrets au lieu de quatre, et des points de vie qui se reportent d'un scénario au suivant."
+  },
+  "difficulties": [
+    "standard",
+    "expert"
+  ],
+  "counters": [
+    {
+      "id": "hp",
+      "scope": "hero",
+      "initial": 0,
+      "maxFrom": "heroCard.health"
+    },
+    {
+      "id": "secretsMedical",
+      "scope": "campaign",
+      "initial": 2
+    },
+    {
+      "id": "secretsSurveillance",
+      "scope": "campaign",
+      "initial": 2
+    },
+    {
+      "id": "secretsTactical",
+      "scope": "campaign",
+      "initial": 2
+    },
+    {
+      "id": "alertLevel",
+      "scope": "campaign",
+      "initial": 0
+    },
+    {
+      "id": "rescuedCaptives",
+      "scope": "campaign",
+      "initial": 0
+    }
+  ],
+  "flagSets": [],
+  "cardLists": [
+    {
+      "id": "evidenceGained",
+      "scope": "campaign"
+    },
+    {
+      "id": "adaptoids",
+      "scope": "campaign"
+    },
+    {
+      "id": "survivingThunderbolts",
+      "scope": "campaign"
+    }
+  ],
+  "startScenarioId": "s1_black_widow",
+  "scenarios": [
+    {
+      "id": "s1_black_widow",
+      "name": {
+        "en": "Black Widow",
+        "fr": "Black Widow"
+      },
+      "flavour": {
+        "en": "Sarah Garza's phone leads to a disused stretch of subway tunnel, an A.I.M. base, and Yelena Belova waiting in it.",
+        "fr": "Le téléphone de Sarah Garza mène à un tronçon de métro désaffecté, à une base d'A.I.M., et à Yelena Belova qui y attend."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "50064",
+            "50065"
+          ],
+          "expert": [
+            "50065",
+            "50066"
+          ]
+        },
+        "mainScheme": [
+          "50067a"
+        ],
+        "encounterSets": [
+          "black_widow_villain",
+          "a.i.m._abduction",
+          "a.i.m._science",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Prepare the evidence and the two envelopes, as the rulebook sets out.",
+            "fr": "Préparez les preuves et les deux enveloppes, comme l'indique le livret."
+          }
+        },
+        {
+          "text": {
+            "en": "Put the three Board Member environments into play, with 2 secret counters on each.",
+            "fr": "Mettez en jeu les trois environnements Board Member, avec 2 jetons Secret sur chacun."
+          },
+          "cards": [
+            "50181a",
+            "50182a",
+            "50183a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Shuffle the three copies of A.I.M. Interference into the encounter deck.",
+            "fr": "Mélangez les trois exemplaires d'A.I.M. Interference dans le deck Rencontre."
+          },
+          "cards": [
+            "50184a",
+            "50184b",
+            "50184c"
+          ]
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "alertLevel",
+            "type": "number",
+            "label": {
+              "en": "How many minions and side schemes are in play in total?",
+              "fr": "Combien y a-t-il de sbires et de manigances annexes en jeu au total ?"
+            }
+          },
+          {
+            "id": "secretsMedical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Medical Officer",
+              "fr": "Jetons Secret sur le Chief Medical Officer"
+            }
+          },
+          {
+            "id": "secretsSurveillance",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Surveillance Officer",
+              "fr": "Jetons Secret sur le Chief Surveillance Officer"
+            }
+          },
+          {
+            "id": "secretsTactical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Tactical Officer",
+              "fr": "Jetons Secret sur le Chief Tactical Officer"
+            }
+          },
+          {
+            "id": "evidence",
+            "type": "cardSelect",
+            "cards": [
+              "50185",
+              "50186",
+              "50187",
+              "50188",
+              "50189",
+              "50190",
+              "50191",
+              "50192",
+              "50193"
+            ],
+            "label": {
+              "en": "Did a Board Member end with no secrets? If so, take one evidence card from the S.H.I.E.L.D. envelope and record it here.",
+              "fr": "Un Board Member a-t-il fini sans aucun secret ? Si oui, prenez une carte Preuve dans l'enveloppe S.H.I.E.L.D. et notez-la ici."
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "setCounter",
+            "counter": "alertLevel",
+            "from": "alertLevel"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsMedical",
+            "from": "secretsMedical"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsSurveillance",
+            "from": "secretsSurveillance"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsTactical",
+            "from": "secretsTactical"
+          },
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "evidenceGained",
+            "from": "evidence"
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s2_batroc"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s1_black_widow"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s2_batroc",
+      "name": {
+        "en": "Batroc",
+        "fr": "Batroc"
+      },
+      "flavour": {
+        "en": "The kidnapped are leaving the country through the A.I.M. Island embassy, and you are going in without the Board's blessing.",
+        "fr": "Les personnes enlevées quittent le pays par l'ambassade d'A.I.M. Island, et vous y entrez sans l'aval du Board."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "50086a"
+          ],
+          "expert": [
+            "50086b"
+          ]
+        },
+        "mainScheme": [
+          "50087a"
+        ],
+        "encounterSets": [
+          "batroc",
+          "a.i.m._science",
+          "batrocs_brigade",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Place this much threat on the Alert Level environment, from the minions and side schemes left standing last scenario.",
+            "fr": "Placez autant de menace sur l'environnement Alert Level, d'après les sbires et manigances annexes restés en jeu au scénario précédent."
+          },
+          "cards": [
+            "50090a"
+          ],
+          "showCounter": "alertLevel"
+        },
+        {
+          "text": {
+            "en": "Put the three Board Member environments into play, with the secrets they carried out of the last scenario.",
+            "fr": "Mettez en jeu les trois environnements Board Member, avec les secrets qu'ils ont emportés du scénario précédent."
+          },
+          "cards": [
+            "50181a",
+            "50182a",
+            "50183a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Chief Medical Officer",
+            "fr": "Chief Medical Officer"
+          },
+          "showCounter": "secretsMedical"
+        },
+        {
+          "text": {
+            "en": "Chief Surveillance Officer",
+            "fr": "Chief Surveillance Officer"
+          },
+          "showCounter": "secretsSurveillance"
+        },
+        {
+          "text": {
+            "en": "Chief Tactical Officer",
+            "fr": "Chief Tactical Officer"
+          },
+          "showCounter": "secretsTactical"
+        },
+        {
+          "text": {
+            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
+            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle the three copies of A.I.M. Interference into the encounter deck.",
+            "fr": "Mélangez les trois exemplaires d'A.I.M. Interference dans le deck Rencontre."
+          },
+          "cards": [
+            "50184a",
+            "50184b",
+            "50184c"
+          ]
+        },
+        {
+          "text": {
+            "en": "After mulligans, resolve the Setup ability of each evidence card you have earned.",
+            "fr": "Après les mulligans, résolvez la capacité Mise en place de chaque carte Preuve que vous avez obtenue."
+          },
+          "showCardList": "evidenceGained",
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "The mole's evidence is whatever you have not found. These are still unaccounted for.",
+            "fr": "Les preuves de la taupe sont celles que vous n'avez pas trouvées. Voici ce qui manque encore à l'appel."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Medical Records",
+            "fr": "Moyen : Medical Records"
+          },
+          "cards": [
+            "50185"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50185"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Wiretap",
+            "fr": "Moyen : Wiretap"
+          },
+          "cards": [
+            "50186"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50186"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Security Scanner",
+            "fr": "Moyen : Security Scanner"
+          },
+          "cards": [
+            "50187"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50187"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Money",
+            "fr": "Mobile : Money"
+          },
+          "cards": [
+            "50188"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50188"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Blackmail",
+            "fr": "Mobile : Blackmail"
+          },
+          "cards": [
+            "50189"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50189"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Ideology",
+            "fr": "Mobile : Ideology"
+          },
+          "cards": [
+            "50190"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50190"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Security Clearance",
+            "fr": "Occasion : Security Clearance"
+          },
+          "cards": [
+            "50191"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50191"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Travel",
+            "fr": "Occasion : Travel"
+          },
+          "cards": [
+            "50192"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50192"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Authority",
+            "fr": "Occasion : Authority"
+          },
+          "cards": [
+            "50193"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50193"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Read those three off the combinations in your campaign log to name the mole.",
+            "fr": "Reportez ces trois-là sur les combinaisons de votre journal de campagne pour identifier la taupe."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 4
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may place 1 secret counter on a Board Member to heal their identity by its REC.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut placer 1 jeton Secret sur un Board Member pour soigner son identité de sa RÉC.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "rescued",
+            "type": "number",
+            "label": {
+              "en": "How many Rescued Captive allies are in play?",
+              "fr": "Combien d'alliés Rescued Captive sont en jeu ?"
+            }
+          },
+          {
+            "id": "secretsMedical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Medical Officer",
+              "fr": "Jetons Secret sur le Chief Medical Officer"
+            }
+          },
+          {
+            "id": "secretsSurveillance",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Surveillance Officer",
+              "fr": "Jetons Secret sur le Chief Surveillance Officer"
+            }
+          },
+          {
+            "id": "secretsTactical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Tactical Officer",
+              "fr": "Jetons Secret sur le Chief Tactical Officer"
+            }
+          },
+          {
+            "id": "evidence",
+            "type": "cardSelect",
+            "cards": [
+              "50185",
+              "50186",
+              "50187",
+              "50188",
+              "50189",
+              "50190",
+              "50191",
+              "50192",
+              "50193"
+            ],
+            "label": {
+              "en": "Did a Board Member end with no secrets? If so, take one evidence card from the S.H.I.E.L.D. envelope and record it here.",
+              "fr": "Un Board Member a-t-il fini sans aucun secret ? Si oui, prenez une carte Preuve dans l'enveloppe S.H.I.E.L.D. et notez-la ici."
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "setCounter",
+            "counter": "rescuedCaptives",
+            "from": "rescued"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsMedical",
+            "from": "secretsMedical"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsSurveillance",
+            "from": "secretsSurveillance"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsTactical",
+            "from": "secretsTactical"
+          },
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "evidenceGained",
+            "from": "evidence"
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s3_modok"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s2_batroc"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s3_modok",
+      "name": {
+        "en": "M.O.D.O.K.",
+        "fr": "M.O.D.O.K."
+      },
+      "flavour": {
+        "en": "The missing were shipped to A.I.M. Island to be copied. A member of the Board is in on it, and you are going anyway.",
+        "fr": "Les disparus ont été envoyés sur A.I.M. Island pour être copiés. Un membre du Board est dans le coup, et vous y allez quand même."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "50103a"
+          ],
+          "expert": [
+            "50103b"
+          ]
+        },
+        "mainScheme": [
+          "50104a"
+        ],
+        "encounterSets": [
+          "m.o.d.o.k.",
+          "scientist_supreme",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Place 3 extra lock counters on the top Holding Cell, then take off one for each Rescued Captive you got out last scenario.",
+            "fr": "Placez 3 jetons Verrou supplémentaires sur la Holding Cell du dessus, puis retirez-en un par Rescued Captive libéré au scénario précédent."
+          },
+          "showCounter": "rescuedCaptives"
+        },
+        {
+          "text": {
+            "en": "Put the three Board Member environments into play, with the secrets they carried out of the last scenario.",
+            "fr": "Mettez en jeu les trois environnements Board Member, avec les secrets qu'ils ont emportés du scénario précédent."
+          },
+          "cards": [
+            "50181a",
+            "50182a",
+            "50183a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Chief Medical Officer",
+            "fr": "Chief Medical Officer"
+          },
+          "showCounter": "secretsMedical"
+        },
+        {
+          "text": {
+            "en": "Chief Surveillance Officer",
+            "fr": "Chief Surveillance Officer"
+          },
+          "showCounter": "secretsSurveillance"
+        },
+        {
+          "text": {
+            "en": "Chief Tactical Officer",
+            "fr": "Chief Tactical Officer"
+          },
+          "showCounter": "secretsTactical"
+        },
+        {
+          "text": {
+            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
+            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle the three copies of A.I.M. Interference into the encounter deck.",
+            "fr": "Mélangez les trois exemplaires d'A.I.M. Interference dans le deck Rencontre."
+          },
+          "cards": [
+            "50184a",
+            "50184b",
+            "50184c"
+          ]
+        },
+        {
+          "text": {
+            "en": "After mulligans, resolve the Setup ability of each evidence card you have earned.",
+            "fr": "Après les mulligans, résolvez la capacité Mise en place de chaque carte Preuve que vous avez obtenue."
+          },
+          "showCardList": "evidenceGained",
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "The mole's evidence is whatever you have not found. These are still unaccounted for.",
+            "fr": "Les preuves de la taupe sont celles que vous n'avez pas trouvées. Voici ce qui manque encore à l'appel."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Medical Records",
+            "fr": "Moyen : Medical Records"
+          },
+          "cards": [
+            "50185"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50185"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Wiretap",
+            "fr": "Moyen : Wiretap"
+          },
+          "cards": [
+            "50186"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50186"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Security Scanner",
+            "fr": "Moyen : Security Scanner"
+          },
+          "cards": [
+            "50187"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50187"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Money",
+            "fr": "Mobile : Money"
+          },
+          "cards": [
+            "50188"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50188"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Blackmail",
+            "fr": "Mobile : Blackmail"
+          },
+          "cards": [
+            "50189"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50189"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Ideology",
+            "fr": "Mobile : Ideology"
+          },
+          "cards": [
+            "50190"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50190"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Security Clearance",
+            "fr": "Occasion : Security Clearance"
+          },
+          "cards": [
+            "50191"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50191"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Travel",
+            "fr": "Occasion : Travel"
+          },
+          "cards": [
+            "50192"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50192"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Authority",
+            "fr": "Occasion : Authority"
+          },
+          "cards": [
+            "50193"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50193"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Read those three off the combinations in your campaign log to name the mole.",
+            "fr": "Reportez ces trois-là sur les combinaisons de votre journal de campagne pour identifier la taupe."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 4
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may place 1 secret counter on a Board Member to heal their identity by its REC.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut placer 1 jeton Secret sur un Board Member pour soigner son identité de sa RÉC.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "adaptoids",
+            "type": "cardSelect",
+            "cards": [
+              "50109",
+              "50110",
+              "50111",
+              "50112"
+            ],
+            "label": {
+              "en": "Which Adaptoid environments are in play?",
+              "fr": "Quels environnements Adaptoid sont en jeu ?"
+            }
+          },
+          {
+            "id": "secretsMedical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Medical Officer",
+              "fr": "Jetons Secret sur le Chief Medical Officer"
+            }
+          },
+          {
+            "id": "secretsSurveillance",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Surveillance Officer",
+              "fr": "Jetons Secret sur le Chief Surveillance Officer"
+            }
+          },
+          {
+            "id": "secretsTactical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Tactical Officer",
+              "fr": "Jetons Secret sur le Chief Tactical Officer"
+            }
+          },
+          {
+            "id": "evidence",
+            "type": "cardSelect",
+            "cards": [
+              "50185",
+              "50186",
+              "50187",
+              "50188",
+              "50189",
+              "50190",
+              "50191",
+              "50192",
+              "50193"
+            ],
+            "label": {
+              "en": "Did a Board Member end with no secrets? If so, take one evidence card from the S.H.I.E.L.D. envelope and record it here.",
+              "fr": "Un Board Member a-t-il fini sans aucun secret ? Si oui, prenez une carte Preuve dans l'enveloppe S.H.I.E.L.D. et notez-la ici."
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "adaptoids",
+            "from": "adaptoids"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsMedical",
+            "from": "secretsMedical"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsSurveillance",
+            "from": "secretsSurveillance"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsTactical",
+            "from": "secretsTactical"
+          },
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "evidenceGained",
+            "from": "evidence"
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s4_thunderbolts"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s3_modok"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s4_thunderbolts",
+      "name": {
+        "en": "Thunderbolts",
+        "fr": "Thunderbolts"
+      },
+      "flavour": {
+        "en": "You land back in Washington and the Thunderbolts are waiting at the airport with a warrant for your arrest.",
+        "fr": "Vous atterrissez à Washington et les Thunderbolts vous attendent à l'aéroport avec un mandat d'arrêt."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "50129a"
+          ],
+          "expert": [
+            "50129b"
+          ]
+        },
+        "mainScheme": [
+          "50130a"
+        ],
+        "encounterSets": [
+          "thunderbolts",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Add 2 modular sets, each holding an Elite Thunderbolt minion.",
+            "fr": "Ajoutez 2 sets modulaires, contenant chacun un sbire Thunderbolt d'Élite."
+          }
+        },
+        {
+          "text": {
+            "en": "Put the three Board Member environments into play, with the secrets they carried out of the last scenario.",
+            "fr": "Mettez en jeu les trois environnements Board Member, avec les secrets qu'ils ont emportés du scénario précédent."
+          },
+          "cards": [
+            "50181a",
+            "50182a",
+            "50183a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Chief Medical Officer",
+            "fr": "Chief Medical Officer"
+          },
+          "showCounter": "secretsMedical"
+        },
+        {
+          "text": {
+            "en": "Chief Surveillance Officer",
+            "fr": "Chief Surveillance Officer"
+          },
+          "showCounter": "secretsSurveillance"
+        },
+        {
+          "text": {
+            "en": "Chief Tactical Officer",
+            "fr": "Chief Tactical Officer"
+          },
+          "showCounter": "secretsTactical"
+        },
+        {
+          "text": {
+            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
+            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle the three copies of A.I.M. Interference into the encounter deck.",
+            "fr": "Mélangez les trois exemplaires d'A.I.M. Interference dans le deck Rencontre."
+          },
+          "cards": [
+            "50184a",
+            "50184b",
+            "50184c"
+          ]
+        },
+        {
+          "text": {
+            "en": "After mulligans, resolve the Setup ability of each evidence card you have earned.",
+            "fr": "Après les mulligans, résolvez la capacité Mise en place de chaque carte Preuve que vous avez obtenue."
+          },
+          "showCardList": "evidenceGained",
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "The mole's evidence is whatever you have not found. These are still unaccounted for.",
+            "fr": "Les preuves de la taupe sont celles que vous n'avez pas trouvées. Voici ce qui manque encore à l'appel."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Medical Records",
+            "fr": "Moyen : Medical Records"
+          },
+          "cards": [
+            "50185"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50185"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Wiretap",
+            "fr": "Moyen : Wiretap"
+          },
+          "cards": [
+            "50186"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50186"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Security Scanner",
+            "fr": "Moyen : Security Scanner"
+          },
+          "cards": [
+            "50187"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50187"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Money",
+            "fr": "Mobile : Money"
+          },
+          "cards": [
+            "50188"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50188"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Blackmail",
+            "fr": "Mobile : Blackmail"
+          },
+          "cards": [
+            "50189"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50189"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Ideology",
+            "fr": "Mobile : Ideology"
+          },
+          "cards": [
+            "50190"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50190"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Security Clearance",
+            "fr": "Occasion : Security Clearance"
+          },
+          "cards": [
+            "50191"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50191"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Travel",
+            "fr": "Occasion : Travel"
+          },
+          "cards": [
+            "50192"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50192"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Authority",
+            "fr": "Occasion : Authority"
+          },
+          "cards": [
+            "50193"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50193"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Read those three off the combinations in your campaign log to name the mole.",
+            "fr": "Reportez ces trois-là sur les combinaisons de votre journal de campagne pour identifier la taupe."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 4
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may place 1 secret counter on a Board Member to heal their identity by its REC.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut placer 1 jeton Secret sur un Board Member pour soigner son identité de sa RÉC.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "survivors",
+            "type": "cardSelect",
+            "cards": [
+              "50139",
+              "50143",
+              "50148",
+              "50152",
+              "50156",
+              "50161"
+            ],
+            "label": {
+              "en": "Which Thunderbolt minions are still in play?",
+              "fr": "Quels sbires Thunderbolt sont encore en jeu ?"
+            }
+          },
+          {
+            "id": "secretsMedical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Medical Officer",
+              "fr": "Jetons Secret sur le Chief Medical Officer"
+            }
+          },
+          {
+            "id": "secretsSurveillance",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Surveillance Officer",
+              "fr": "Jetons Secret sur le Chief Surveillance Officer"
+            }
+          },
+          {
+            "id": "secretsTactical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Tactical Officer",
+              "fr": "Jetons Secret sur le Chief Tactical Officer"
+            }
+          },
+          {
+            "id": "evidence",
+            "type": "cardSelect",
+            "cards": [
+              "50185",
+              "50186",
+              "50187",
+              "50188",
+              "50189",
+              "50190",
+              "50191",
+              "50192",
+              "50193"
+            ],
+            "label": {
+              "en": "Did a Board Member end with no secrets? If so, take one evidence card from the S.H.I.E.L.D. envelope and record it here.",
+              "fr": "Un Board Member a-t-il fini sans aucun secret ? Si oui, prenez une carte Preuve dans l'enveloppe S.H.I.E.L.D. et notez-la ici."
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "survivingThunderbolts",
+            "from": "survivors"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsMedical",
+            "from": "secretsMedical"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsSurveillance",
+            "from": "secretsSurveillance"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsTactical",
+            "from": "secretsTactical"
+          },
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "evidenceGained",
+            "from": "evidence"
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "goto": "s5_baron_zemo"
+          }
+        ]
+      },
+      "onDefeat": {
+        "next": [
+          {
+            "goto": "s4_thunderbolts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s5_baron_zemo",
+      "name": {
+        "en": "Baron Zemo",
+        "fr": "Baron Zemo"
+      },
+      "flavour": {
+        "en": "Citizen V is Helmut Zemo, the Board knew, and the only way out is to name the mole before Zemo turns all three of them.",
+        "fr": "Citizen V est Helmut Zemo, le Board le savait, et la seule issue est d'identifier la taupe avant que Zemo ne les retourne tous les trois."
+      },
+      "baseSetup": {
+        "villainDeck": {
+          "standard": [
+            "50165a",
+            "50165b"
+          ],
+          "expert": [
+            "50166a",
+            "50166b"
+          ]
+        },
+        "mainScheme": [
+          "50167a"
+        ],
+        "encounterSets": [
+          "baron_zemo",
+          "s.h.i.e.l.d._executive_board",
+          "executive_board_evidence",
+          "scientist_supreme",
+          "s.h.i.e.l.d.",
+          "standard"
+        ]
+      },
+      "campaignSetup": [
+        {
+          "text": {
+            "en": "Put these Adaptoid environments into play, and shuffle the Adaptoid minions into the encounter deck.",
+            "fr": "Mettez ces environnements Adaptoid en jeu, et mélangez les sbires Adaptoid dans le deck Rencontre."
+          },
+          "showCardList": "adaptoids",
+          "when": {
+            "cardList": "adaptoids",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Shuffle these surviving Thunderbolts and their sets into the encounter deck, except Jolt's.",
+            "fr": "Mélangez ces Thunderbolts survivants et leurs sets dans le deck Rencontre, sauf celui de Jolt."
+          },
+          "showCardList": "survivingThunderbolts",
+          "when": {
+            "cardList": "survivingThunderbolts",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Keep both envelopes within reach.",
+            "fr": "Gardez les deux enveloppes à portée de main."
+          }
+        },
+        {
+          "text": {
+            "en": "Put the three Board Member environments into play, with the secrets they carried out of the last scenario.",
+            "fr": "Mettez en jeu les trois environnements Board Member, avec les secrets qu'ils ont emportés du scénario précédent."
+          },
+          "cards": [
+            "50181a",
+            "50182a",
+            "50183a"
+          ]
+        },
+        {
+          "text": {
+            "en": "Chief Medical Officer",
+            "fr": "Chief Medical Officer"
+          },
+          "showCounter": "secretsMedical"
+        },
+        {
+          "text": {
+            "en": "Chief Surveillance Officer",
+            "fr": "Chief Surveillance Officer"
+          },
+          "showCounter": "secretsSurveillance"
+        },
+        {
+          "text": {
+            "en": "Chief Tactical Officer",
+            "fr": "Chief Tactical Officer"
+          },
+          "showCounter": "secretsTactical"
+        },
+        {
+          "text": {
+            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
+            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+          }
+        },
+        {
+          "text": {
+            "en": "After mulligans, resolve the Setup ability of each evidence card you have earned.",
+            "fr": "Après les mulligans, résolvez la capacité Mise en place de chaque carte Preuve que vous avez obtenue."
+          },
+          "showCardList": "evidenceGained",
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "The mole's evidence is whatever you have not found. These are still unaccounted for.",
+            "fr": "Les preuves de la taupe sont celles que vous n'avez pas trouvées. Voici ce qui manque encore à l'appel."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 1
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Medical Records",
+            "fr": "Moyen : Medical Records"
+          },
+          "cards": [
+            "50185"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50185"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Wiretap",
+            "fr": "Moyen : Wiretap"
+          },
+          "cards": [
+            "50186"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50186"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Means: Security Scanner",
+            "fr": "Moyen : Security Scanner"
+          },
+          "cards": [
+            "50187"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50187"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Money",
+            "fr": "Mobile : Money"
+          },
+          "cards": [
+            "50188"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50188"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Blackmail",
+            "fr": "Mobile : Blackmail"
+          },
+          "cards": [
+            "50189"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50189"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Motive: Ideology",
+            "fr": "Mobile : Ideology"
+          },
+          "cards": [
+            "50190"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50190"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Security Clearance",
+            "fr": "Occasion : Security Clearance"
+          },
+          "cards": [
+            "50191"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50191"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Travel",
+            "fr": "Occasion : Travel"
+          },
+          "cards": [
+            "50192"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50192"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Opportunity: Authority",
+            "fr": "Occasion : Authority"
+          },
+          "cards": [
+            "50193"
+          ],
+          "when": {
+            "all": [
+              {
+                "cardList": "evidenceGained",
+                "notContains": "50193"
+              },
+              {
+                "cardList": "evidenceGained",
+                "minSize": 1
+              }
+            ]
+          }
+        },
+        {
+          "text": {
+            "en": "Read those three off the combinations in your campaign log to name the mole.",
+            "fr": "Reportez ces trois-là sur les combinaisons de votre journal de campagne pour identifier la taupe."
+          },
+          "when": {
+            "cardList": "evidenceGained",
+            "minSize": 4
+          }
+        },
+        {
+          "text": {
+            "en": "Set each player's hit points to what they had left at the end of the last scenario.",
+            "fr": "Fixez les points de vie de chaque joueur à ce qu'il lui restait à la fin du scénario précédent."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "Each player may place 1 secret counter on a Board Member to heal their identity by its REC.\nA player defeated last scenario rejoins this way.",
+            "fr": "Chaque joueur peut placer 1 jeton Secret sur un Board Member pour soigner son identité de sa RÉC.\nUn joueur vaincu au scénario précédent revient ainsi."
+          },
+          "when": {
+            "difficulty": "expert"
+          }
+        },
+        {
+          "text": {
+            "en": "A wrong accusation does not lose the scenario, it only makes it harder. All three board members turning does lose it.",
+            "fr": "Une accusation erronée ne fait pas perdre le scénario, elle le rend seulement plus dur. Les trois Board Members retournés, si."
+          }
+        }
+      ],
+      "onVictory": {
+        "prompts": [
+          {
+            "id": "vp",
+            "type": "number",
+            "label": {
+              "en": "How many victory points are in the victory display?",
+              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+            }
+          },
+          {
+            "id": "secretsMedical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Medical Officer",
+              "fr": "Jetons Secret sur le Chief Medical Officer"
+            }
+          },
+          {
+            "id": "secretsSurveillance",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Surveillance Officer",
+              "fr": "Jetons Secret sur le Chief Surveillance Officer"
+            }
+          },
+          {
+            "id": "secretsTactical",
+            "type": "number",
+            "label": {
+              "en": "Secret counters on the Chief Tactical Officer",
+              "fr": "Jetons Secret sur le Chief Tactical Officer"
+            }
+          },
+          {
+            "id": "evidence",
+            "type": "cardSelect",
+            "cards": [
+              "50185",
+              "50186",
+              "50187",
+              "50188",
+              "50189",
+              "50190",
+              "50191",
+              "50192",
+              "50193"
+            ],
+            "label": {
+              "en": "Did a Board Member end with no secrets? If so, take one evidence card from the S.H.I.E.L.D. envelope and record it here.",
+              "fr": "Un Board Member a-t-il fini sans aucun secret ? Si oui, prenez une carte Preuve dans l'enveloppe S.H.I.E.L.D. et notez-la ici."
+            }
+          },
+          {
+            "id": "hpPerHero",
+            "type": "perHeroNumber",
+            "label": {
+              "en": "Remaining hit points",
+              "fr": "Points de vie restants"
+            },
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "setCounter",
+            "counter": "secretsMedical",
+            "from": "secretsMedical"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsSurveillance",
+            "from": "secretsSurveillance"
+          },
+          {
+            "op": "setCounter",
+            "counter": "secretsTactical",
+            "from": "secretsTactical"
+          },
+          {
+            "op": "addCardsFromAnswer",
+            "cardList": "evidenceGained",
+            "from": "evidence"
+          },
+          {
+            "op": "setHeroCounter",
+            "counter": "hp",
+            "from": "hpPerHero",
+            "when": {
+              "difficulty": "expert"
+            }
+          }
+        ],
+        "next": [
+          {
+            "end": true
+          }
+        ]
+      },
+      "onDefeat": {
+        "message": {
+          "en": "The heroes are arrested and convicted.",
+          "fr": "Les héros sont arrêtés et condamnés."
+        },
+        "next": [
+          {
+            "end": true,
+            "when": {
+              "difficulty": "expert"
+            }
+          },
+          {
+            "goto": "s5_baron_zemo"
+          }
+        ]
+      }
+    }
+  ]
+}
