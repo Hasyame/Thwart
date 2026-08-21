@@ -601,4 +601,6 @@
         <item quantity="many">Méchant : %1$d vies, stade %2$s</item>
         <item quantity="other">Méchant : %1$d vies, stade %2$s</item>
     </plurals>
+    <string name="about_privacy">Politique de confidentialité</string>
+    <string name="about_privacy_url">https://hasyame.github.io/Thwart/confidentialite.html</string>
 </resources>

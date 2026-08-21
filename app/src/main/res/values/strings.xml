@@ -579,4 +579,6 @@
         <item quantity="one">Villain: %1$d life, stage %2$s</item>
         <item quantity="other">Villain: %1$d life, stage %2$s</item>
     </plurals>
+    <string name="about_privacy">Privacy policy</string>
+    <string name="about_privacy_url" translatable="true">https://hasyame.github.io/Thwart/privacy.html</string>
 </resources>

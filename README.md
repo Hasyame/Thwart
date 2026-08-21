@@ -17,6 +17,7 @@ app in French with English cards, or the other way round.
 - [Install it](#install-it)
 - [What it does](#what-it-does)
 - [What is still to come](#what-is-still-to-come)
+- [Privacy](#privacy)
 - [Supporting it](#supporting-it)
 - [Versioning](#versioning)
 - [Build it yourself](#build-it-yourself)
@@ -278,6 +279,14 @@ Campaigns are added after they have been played, so the mechanics in a template
 come from experience rather than from a reading of the book. That is the whole
 roadmap. No further app features are planned, and anything else will come from
 something going wrong at a real table.
+
+## Privacy
+
+The app has no account, no server and no analytics, and nothing you make in it
+leaves your phone. The full policy is at
+<https://hasyame.github.io/Thwart/privacy.html>
+([en français](https://hasyame.github.io/Thwart/confidentialite.html)), and the
+same text is in [PRIVACY.md](PRIVACY.md) in this repository.
 
 ## Supporting it
 

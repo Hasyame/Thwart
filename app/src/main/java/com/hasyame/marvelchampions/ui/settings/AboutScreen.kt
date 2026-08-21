@@ -32,6 +32,7 @@ import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.halftone
+import androidx.compose.ui.platform.LocalUriHandler
 import com.hasyame.marvelchampions.ui.util.CONTACT_ADDRESS
 import com.hasyame.marvelchampions.ui.util.sendContactEmail
 
@@ -118,10 +119,20 @@ fun AboutScreen(
                 )
             }
 
+            val uriHandler = LocalUriHandler.current
+
             OutlinedButton(
                 onClick = { noMailApp = !sendContactEmail(context) },
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.about_contact)) }
+
+            // The address is a string resource, so values-fr picks the
+            // French page the same way it picks the label on the button.
+            val privacyUrl = stringResource(R.string.about_privacy_url)
+            OutlinedButton(
+                onClick = { uriHandler.openUri(privacyUrl) },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(stringResource(R.string.about_privacy)) }
 
             if (noMailApp) {
                 Text(
