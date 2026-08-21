@@ -1,0 +1,31 @@
+Agents of S.H.I.E.L.D. That makes nine campaigns, and every campaign box is in.
+
+Five scenarios in order, Black Widow through Baron Zemo, all five to be won,
+and losing one costs nothing.
+
+The app does the deduction for you. Nine evidence cards, three of each kind,
+and one of each is sealed in the A.I.M. envelope naming the mole. So every card
+you win is one the mole does not have. The app remembers what you have gathered
+and shows only what is still unaccounted for, each piece marked with its own
+icon so it lines up with the grid in your log. When a category is down to a
+single card, that card is the mole's, and nobody had to cross anything out.
+
+What it will not do is name the mole. Which combination sits under which board
+member is a grid of icons printed in the campaign log, not written anywhere as
+text, and a guessed grid would send you to the wrong accusation. The app
+narrows it to three cards and the log turns those into a name.
+
+Secrets on the three board members carry from one scenario to the next, which
+is what decides whether one of them turns against you for good. So do the
+minions and side schemes left standing, the captives you rescued, the Adaptoids
+in play, and the surviving Thunderbolts.
+
+Four campaigns now say plainly that they have not been played through at a
+table: The Rise of Red Skull, Sinister Motives, Mutant Genesis and NeXt
+Evolution. Everything in them is built and tested, but a real game finds the
+mistakes a test suite cannot, so they say so and ask you to report anything
+wrong.
+
+Picking a card in a campaign question works properly now. Tapping the card's
+name did nothing before, because only the switch at the far edge of the row
+was listening, and the name is where a finger goes.

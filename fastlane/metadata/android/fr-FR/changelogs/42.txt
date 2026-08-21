@@ -1,0 +1,34 @@
+Agents du S.H.I.E.L.D. Cela fait neuf campagnes, et toutes les boîtes campagne
+sont désormais dans l'application.
+
+Cinq scénarios dans l'ordre, de Black Widow à Baron Zemo, il faut gagner les
+cinq, et en perdre un ne coûte rien.
+
+L'application fait la déduction à votre place. Neuf cartes Preuve, trois de
+chaque type, et une de chaque est scellée dans l'enveloppe A.I.M. : c'est elle
+qui désigne la taupe. Chaque carte que vous gagnez est donc une carte que la
+taupe n'a pas. L'application retient ce que vous avez réuni et n'affiche que ce
+qui manque encore, chaque preuve portant son propre symbole pour correspondre à
+la grille de votre journal. Quand une catégorie se réduit à une seule carte,
+c'est celle de la taupe, sans que personne ait eu à rayer quoi que ce soit.
+
+Ce qu'elle ne fait pas, c'est nommer la taupe. Le lien entre une combinaison et
+un Board Member est une grille de symboles imprimée dans le journal de
+campagne, écrite nulle part sous forme de texte, et une grille devinée vous
+enverrait vers la mauvaise accusation. L'application réduit à trois cartes, et
+le journal en tire un nom.
+
+Les secrets sur les trois Board Members se reportent d'un scénario au suivant,
+et c'est ce qui décide si l'un d'eux bascule définitivement contre vous. De
+même pour les sbires et manigances restés en jeu, les captifs libérés, les
+Adaptoids en jeu et les Thunderbolts survivants.
+
+Quatre campagnes indiquent maintenant clairement qu'elles n'ont pas été jouées
+en entier sur table : L'Ascension du Crâne Rouge, Sinistres Motivations, La
+Genèse des Mutants et Next Evolution. Tout y est construit et testé, mais une
+vraie partie trouve les erreurs qu'une suite de tests ne voit pas : elles le
+disent, et vous invitent à signaler ce qui cloche.
+
+Choisir une carte dans une question de campagne fonctionne enfin correctement.
+Toucher le nom de la carte ne faisait rien : seul l'interrupteur tout au bord
+de la ligne réagissait, alors que le doigt se pose sur le nom.
