@@ -52,7 +52,12 @@ object ConditionEvaluator {
             val recorded = state.cardLists[listId].orEmpty()
             condition.contains?.let { if (it !in recorded) return false }
             condition.notContains?.let { if (it in recorded) return false }
-            condition.minSize?.let { if (recorded.size < it) return false }
+            // A bound written per player is multiplied by the heroes in the
+            // run, so "1 card per player or fewer" is one check for the table
+            // rather than a question asked of each hero in turn.
+            val perPlayer = if (condition.perPlayer) state.heroes.size.coerceAtLeast(1) else 1
+            condition.minSize?.let { if (recorded.size < it * perPlayer) return false }
+            condition.maxSize?.let { if (recorded.size > it * perPlayer) return false }
         }
 
         condition.flag?.let {

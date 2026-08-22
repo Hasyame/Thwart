@@ -51,6 +51,18 @@ data class Condition(
      */
     val notContains: String? = null,
     val minSize: Int? = null,
+    val maxSize: Int? = null,
+
+    /**
+     * Scales [minSize] and [maxSize] by the number of heroes in the run.
+     *
+     * The booklets write limits that grow with the table: Galaxy's Most Wanted
+     * pays a credit to everyone when The Collection holds "1 card per player or
+     * fewer", counted once for the table rather than hero by hero. Without this
+     * the rule has to be asked as a per-hero question, which pays the wrong
+     * players whenever the cards are not spread evenly.
+     */
+    val perPlayer: Boolean = false,
 
     /** A flag must be set. `flagSet.scenarioId`, or just `flagSet`. */
     val flag: String? = null,

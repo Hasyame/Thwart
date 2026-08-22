@@ -557,14 +557,6 @@
       }
      },
      {
-      "id": "fewCollection",
-      "type": "perHeroBoolean",
-      "label": {
-       "fr": "Ce héros a-t-il au plus 1 carte dans La Collection ?",
-       "en": "Does this hero have at most 1 card in The Collection?"
-      }
-     },
-     {
       "id": "noThreat",
       "type": "boolean",
       "label": {
@@ -605,18 +597,25 @@
     ],
     "effects": [
      {
-      "op": "addCounter",
-      "counter": "credits",
-      "from": "vp",
-      "max": 3
+      "op": "addCardsFromAnswer",
+      "cardList": "collection",
+      "from": "collectionCards"
      },
      {
       "op": "addCounter",
       "counter": "credits",
       "value": 1,
       "when": {
-       "heroAnswer": "fewCollection"
+       "cardList": "collection",
+       "maxSize": 1,
+       "perPlayer": true
       }
+     },
+     {
+      "op": "addCounter",
+      "counter": "credits",
+      "from": "vp",
+      "max": 3
      },
      {
       "op": "addCounter",
@@ -630,11 +629,6 @@
       "op": "addCounter",
       "counter": "credits",
       "value": 1
-     },
-     {
-      "op": "addCardsFromAnswer",
-      "cardList": "collection",
-      "from": "collectionCards"
      },
      {
       "op": "setFlag",
