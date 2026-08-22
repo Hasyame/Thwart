@@ -135,13 +135,17 @@ interface CardDao {
      * the numbers — so the caller keeps the side that actually has a threat
      * limit on it. Ordered by set position, which is the order the cards are
      * stacked in the box.
+     *
+     * Leaders count as villains here. Civil War puts one where every other box
+     * puts a villain, and its rulebook says they function identically, so a
+     * query that asked only for villains found nothing in a Civil War game.
      */
     @Query(
         """
         SELECT * FROM cards
         WHERE locale = :locale
           AND cardSetCode = :cardSetCode
-          AND typeCode IN ('villain', 'main_scheme')
+          AND typeCode IN ('villain', 'leader', 'main_scheme')
         ORDER BY setPosition
         """,
     )

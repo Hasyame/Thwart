@@ -28,16 +28,54 @@ class EncounterRepository @Inject constructor(
     suspend fun setupFor(scenarioCode: String, players: Int): EncounterSetup =
         withContext(ioDispatcher) {
             val locale = preferences.cardLocale.first()
+            versusHalves(scenarioCode)?.let { (side, leader) ->
+                return@withContext versusSetup(side, leader, players, locale.code)
+            }
             val rows = cardDao.getScenarioSides(scenarioCode, locale.code)
 
             EncounterSetup(
-                villain = rows.filter { it.typeCode == VILLAIN && !it.doubleSided }
+                villain = rows.filter { it.typeCode in VILLAIN_TYPES && !it.doubleSided }
                     .map(::villainSide),
                 scheme = rows.filter { it.typeCode == MAIN_SCHEME && it.isNumbersSide }
                     .map(::schemeSide),
                 players = players.coerceAtLeast(1),
             )
         }
+
+    /**
+     * A versus scenario's side and leader, or null for an ordinary scenario.
+     *
+     * The randomiser builds the pair's code, and this reads it back. Kept
+     * beside the reader rather than shared as a helper because the shape of
+     * that code is this file's problem and nobody else's.
+     */
+    private fun versusHalves(scenarioCode: String): Pair<String, String>? {
+        val parts = scenarioCode.split(VERSUS_SEPARATOR)
+        return if (parts.size == 2) parts[0] to parts[1] else null
+    }
+
+    /**
+     * The leader's stages, and no scheme.
+     *
+     * Each side holds four stage-1 schemes and four stage-2 schemes because
+     * the players mix and match, so which one is on the table is not knowable
+     * from the pair alone. A guessed threat limit is worse than none: the
+     * counter shows a count with no target, which the panel already handles.
+     */
+    private suspend fun versusSetup(
+        side: String,
+        leader: String,
+        players: Int,
+        locale: String,
+    ): EncounterSetup {
+        val rows = cardDao.getScenarioSides(leader, locale)
+        return EncounterSetup(
+            villain = rows.filter { it.typeCode in VILLAIN_TYPES && !it.doubleSided }
+                .map(::villainSide),
+            scheme = emptyList(),
+            players = players.coerceAtLeast(1),
+        )
+    }
 
     /**
      * The side of a main scheme that carries the numbers.
@@ -79,7 +117,13 @@ class EncounterRepository @Inject constructor(
     )
 
     private companion object {
+        /** How the randomiser joins a versus side to its leader. */
+        const val VERSUS_SEPARATOR = "__"
+
         const val VILLAIN = "villain"
+
+        /** Civil War's leaders sit in the villain's place and behave as one. */
+        val VILLAIN_TYPES = setOf(VILLAIN, "leader")
         const val MAIN_SCHEME = "main_scheme"
     }
 }

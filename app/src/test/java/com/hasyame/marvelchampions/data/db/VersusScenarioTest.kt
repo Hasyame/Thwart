@@ -114,4 +114,26 @@ class VersusScenarioTest {
         )
         assertEquals("synthezoid", dao.getLeaders("en").single().packCode)
     }
+
+    @Test
+    fun `a leader's stages are found the way a villain's are`() = runTest {
+        // Civil War puts a leader where every other box puts a villain, and its
+        // rulebook says the two behave identically. The scenario-sides query
+        // asked for villains by type, so a Civil War game found nothing to
+        // count and showed no health at all.
+        dao.insertAll(
+            listOf(
+                card("56059", "iron_man_leader", "Iron Man", "leader", "cw")
+                    .copy(stage = "I", health = 12),
+                card("56060", "iron_man_leader", "Iron Man", "leader", "cw")
+                    .copy(stage = "II", health = 16),
+                card("56061", "iron_man_leader", "Iron Man", "leader", "cw")
+                    .copy(stage = "III", health = 16),
+            ),
+        )
+
+        val stages = dao.getScenarioSides("iron_man_leader", "en")
+        assertEquals(3, stages.size)
+        assertEquals(listOf(12, 16, 16), stages.map { it.health })
+    }
 }
