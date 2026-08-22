@@ -14,7 +14,7 @@
   "en": "The Galaxy's Most Wanted"
  },
  "notice": {
-  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Convoitise Galactique restent nécessaires pour jouer.\n\nL'application tient la boutique et le registre à votre place : vos crédits et vos achats, les cartes joueur placées dans La Collection, les Galactic Artifacts de votre pile de victoire, les jetons évasion, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Convoitise Galactique restent nécessaires pour jouer.\n\nL'application tient la boutique et le registre à votre place : vos crédits et vos achats, les cartes joueur placées dans La Collection, les Artefacts Galactiques de votre pile de victoire, les jetons évasion, et en campagne experte les points de vie de chaque héros entre les parties.",
   "en": "Unofficial, reconstructed for the app: the rulebook and cards from The Galaxy's Most Wanted box are still needed to play.\n\nThe app runs the market and keeps the log for you: your credits and purchases, the player cards put into The Collection, the Galactic Artifacts in your victory display, the escape tokens, and in an expert campaign each hero's hit points between games."
  },
  "packCode": "gmw",
@@ -235,7 +235,7 @@
     "en": "Drang beat!"
    },
    "defeatLabel": {
-    "fr": "Drang vous a vaincu !",
+    "fr": "Drang vous a vaincus !",
     "en": "Drang has beat you!"
    },
    "flavour": {
@@ -267,7 +267,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Révéler la manigance annexe",
+      "fr": "Révélez la manigance annexe",
       "en": "Reveal the side scheme"
      },
      "cards": [
@@ -276,7 +276,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger ce sbire dans le deck rencontre",
+      "fr": "Mélangez ce sbire dans le deck Rencontre",
       "en": "Shuffle this minion into the encounter deck"
      },
      "cards": [
@@ -294,7 +294,7 @@
     },
     {
      "text": {
-      "fr": "Étape supplémentaire en Expert — voir le livret de campagne",
+      "fr": "Étape supplémentaire en campagne experte — voir le livret de campagne",
       "en": "Additional Expert step — see the campaign book"
      },
      "when": {
@@ -308,7 +308,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       },
       "_note": "The total of the VICTORY values printed on encounter cards in the victory display, which the players add up themselves."
@@ -424,7 +424,7 @@
     "en": "The Collector is beaten!"
    },
    "defeatLabel": {
-    "fr": "Le Collectionneur vous a vaincu !",
+    "fr": "Le Collectionneur vous a vaincus !",
     "en": "The Collector has beaten you!"
    },
    "flavour": {
@@ -455,7 +455,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Révéler cette manigance annexe",
+      "fr": "Révélez cette manigance annexe",
       "en": "Reveal this side scheme"
      },
      "when": {
@@ -467,7 +467,7 @@
     },
     {
      "text": {
-      "fr": "Révéler cette manigance annexe — face verso",
+      "fr": "Révélez cette manigance annexe — face verso",
       "en": "Reveal this side scheme — reverse side"
      },
      "when": {
@@ -479,7 +479,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger ce sbire dans le deck rencontre",
+      "fr": "Mélangez ce sbire dans le deck Rencontre",
       "en": "Shuffle this minion into the encounter deck"
      },
      "cards": [
@@ -488,7 +488,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -501,7 +501,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : reprendre les points de vie enregistrés au scénario précédent",
+      "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
       "en": "Expert campaign: set each hit point total to the value recorded last scenario"
      },
      "when": {
@@ -510,7 +510,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : dépenser 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -538,7 +538,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : chaque joueur place 1 carte de sa main face visible dans La Collection",
+      "fr": "Campagne Experte Uniquement : chaque joueur place 1 carte de sa main face visible dans La Collection",
       "en": "Expert campaign: each player puts 1 card from hand faceup into The Collection"
      },
      "when": {
@@ -552,7 +552,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -576,7 +576,7 @@
       "id": "collectionCards",
       "type": "deckCardSelect",
       "label": {
-       "fr": "Cartes joueur placées dans La Collection — les sélectionner dans les decks",
+       "fr": "Cartes joueur placées dans La Collection — sélectionnez-les dans les decks",
        "en": "Player cards put into The Collection — pick them from the decks"
       }
      },
@@ -707,7 +707,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Révéler cette manigance annexe",
+      "fr": "Révélez cette manigance annexe",
       "en": "Reveal this side scheme"
      },
      "when": {
@@ -719,7 +719,7 @@
     },
     {
      "text": {
-      "fr": "Révéler cette manigance annexe — face verso",
+      "fr": "Révélez cette manigance annexe — face verso",
       "en": "Reveal this side scheme — reverse side"
      },
      "when": {
@@ -731,7 +731,7 @@
     },
     {
      "text": {
-      "fr": "Retirer ces cartes de la partie : elles ne peuvent pas être jouées ce scénario. Puis piocher jusqu'à la taille de main",
+      "fr": "Retirez ces cartes de la partie : elles ne peuvent pas être jouées durant ce scénario. Puis piochez jusqu'à votre taille de main",
       "en": "Remove these cards from the game — they cannot be played this scenario. Then draw up to hand size"
      },
      "showCardList": "collection",
@@ -742,7 +742,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger ce sbire dans le deck rencontre",
+      "fr": "Mélangez ce sbire dans le deck Rencontre",
       "en": "Shuffle this minion into the encounter deck"
      },
      "cards": [
@@ -751,7 +751,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -764,7 +764,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -777,7 +777,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : reprendre les points de vie enregistrés au scénario précédent",
+      "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
       "en": "Expert campaign: set each hit point total to the value recorded last scenario"
      },
      "when": {
@@ -786,7 +786,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : dépenser 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -814,7 +814,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : défausser le deck rencontre jusqu’à un attachement, puis le révéler",
+      "fr": "Campagne Experte Uniquement : défaussez le deck Rencontre jusqu’à un attachement, puis révélez-le",
       "en": "Expert campaign: discard the encounter deck until an attachment, then reveal it"
      },
      "when": {
@@ -828,7 +828,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -836,7 +836,7 @@
       "id": "artifactCount",
       "type": "number",
       "label": {
-       "fr": "Combien de manigances Galactic Artifacts dans la pile de victoire ?",
+       "fr": "Combien de manigances Artefacts Galactiques y a-t-il dans la pile de victoire ?",
        "en": "How many Galactic Artifacts side schemes are in the victory display?"
       }
      },
@@ -844,7 +844,7 @@
       "id": "artifactNames",
       "type": "cardSelect",
       "label": {
-       "fr": "Quels manigances Galactic Artifacts sont dans votre pile de victoire ?",
+       "fr": "Quelles manigances Artefacts Galactiques sont dans votre pile de victoire ?",
        "en": "Which Galactic Artifacts side schemes are in your victory display?"
       },
       "cards": [
@@ -972,7 +972,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Révéler cette manigance annexe",
+      "fr": "Révélez cette manigance annexe",
       "en": "Reveal this side scheme"
      },
      "when": {
@@ -984,7 +984,7 @@
     },
     {
      "text": {
-      "fr": "Révéler cette manigance annexe — face verso",
+      "fr": "Révélez cette manigance annexe — face verso",
       "en": "Reveal this side scheme — reverse side"
      },
      "when": {
@@ -996,7 +996,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger dans le deck rencontre les manigances Galactic Artifacts enregistrés",
+      "fr": "Mélangez dans le deck Rencontre les manigances Artefacts Galactiques enregistrées",
       "en": "Shuffle the recorded Galactic Artifacts side schemes into the encounter deck"
      },
      "showCardList": "artifacts",
@@ -1007,7 +1007,7 @@
     },
     {
      "text": {
-      "fr": "Placer 1 jeton évasion sur le vaisseau de Nebula",
+      "fr": "Placez 1 jeton évasion sur le Vaisseau de Nebula",
       "en": "Place 1 evasion counter on Nebula’s Ship"
      },
      "cards": [
@@ -1020,7 +1020,7 @@
     },
     {
      "text": {
-      "fr": "Donner 1 carte rencontre face cachée au premier joueur",
+      "fr": "Donnez 1 carte rencontre face cachée au premier joueur",
       "en": "Deal the first player 1 facedown encounter card"
      },
      "cards": [
@@ -1033,7 +1033,7 @@
     },
     {
      "text": {
-      "fr": "Donner 1 carte boost face cachée à Nebula",
+      "fr": "Donnez 1 carte boost face cachée à Nebula",
       "en": "Give Nebula 1 facedown boost card"
      },
      "cards": [
@@ -1046,7 +1046,7 @@
     },
     {
      "text": {
-      "fr": "Donner un statut « tough » à Nebula",
+      "fr": "Donnez un statut « tough » à Nebula",
       "en": "Give Nebula a tough status card"
      },
      "cards": [
@@ -1059,7 +1059,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger ce sbire dans le deck rencontre",
+      "fr": "Mélangez ce sbire dans le deck Rencontre",
       "en": "Shuffle this minion into the encounter deck"
      },
      "cards": [
@@ -1068,7 +1068,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -1081,7 +1081,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -1094,7 +1094,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger ce sbire dans le deck rencontre",
+      "fr": "Mélangez ce sbire dans le deck Rencontre",
       "en": "Shuffle this minion into the encounter deck"
      },
      "cards": [
@@ -1107,7 +1107,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : reprendre les points de vie enregistrés au scénario précédent",
+      "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
       "en": "Expert campaign: set each hit point total to the value recorded last scenario"
      },
      "when": {
@@ -1116,7 +1116,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : dépenser 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -1144,7 +1144,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : défausser le deck rencontre jusqu’à un attachement Technique, puis l’attacher à Nebula",
+      "fr": "Campagne Experte Uniquement : défaussez le deck Rencontre jusqu’à un attachement Technique, puis attachez-le à Nebula",
       "en": "Expert campaign: discard the encounter deck until a Technique attachment, then attach it to Nebula"
      },
      "when": {
@@ -1158,7 +1158,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -1166,7 +1166,7 @@
       "id": "fewEvasion",
       "type": "boolean",
       "label": {
-       "fr": "Y a-t-il au plus 1 jeton évasion sur le vaisseau de Nebula ?",
+       "fr": "Y a-t-il au plus 1 jeton évasion sur le Vaisseau de Nebula ?",
        "en": "Is there at most 1 evasion counter on Nebula’s Ship?"
       }
      },
@@ -1185,7 +1185,7 @@
       "id": "evasionCount",
       "type": "number",
       "label": {
-       "fr": "Combien de jetons évasion sur le vaisseau de Nebula ?",
+       "fr": "Combien de jetons évasion sur le Vaisseau de Nebula ?",
        "en": "How many evasion counters are on Nebula’s Ship?"
       }
      },
@@ -1308,11 +1308,11 @@
     "en": "Ronan is beaten!"
    },
    "defeatLabel": {
-    "fr": "Ronan vous a vaincu !",
+    "fr": "Ronan vous a vaincus !",
     "en": "Ronan has beaten you!"
    },
    "flavour": {
-    "fr": "Cap sur Knowhere, la Pierre et Nebula à bord. Un vaisseau kree vous coupe la route : Ronan l’Accusateur.",
+    "fr": "Cap sur Nulle-Part, la Pierre et Nebula à bord. Un vaisseau kree vous coupe la route : Ronan l’Accusateur.",
     "en": "You set course for Knowhere with the Stone and Nebula aboard. A Kree warship cuts you off: Ronan the Accuser."
    },
    "baseSetup": {
@@ -1341,7 +1341,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Facultatif : révéler cette manigance annexe",
+      "fr": "Facultatif : révélez cette manigance annexe",
       "en": "Optional: reveal this side scheme"
      },
      "when": {
@@ -1353,7 +1353,7 @@
     },
     {
      "text": {
-      "fr": "Facultatif : révéler cette manigance annexe — face verso",
+      "fr": "Facultatif : révélez cette manigance annexe — face verso",
       "en": "Optional: reveal this side scheme — reverse side"
      },
      "when": {
@@ -1365,7 +1365,7 @@
     },
     {
      "text": {
-      "fr": "Chercher cette traîtrise dans le deck rencontre et la pile de défausse, puis la donner face cachée à ce joueur",
+      "fr": "Cherchez cette traîtrise dans le deck Rencontre et la pile de défausse, puis donnez-la face cachée à ce joueur",
       "en": "Search the encounter deck and discard pile for this treachery, then deal it facedown to this player"
      },
      "cards": [
@@ -1381,7 +1381,7 @@
     },
     {
      "text": {
-      "fr": "Révéler cette manigance annexe et y placer ce nombre de menace par joueur",
+      "fr": "Révélez cette manigance annexe et placez-y ce nombre de menace par joueur",
       "en": "Reveal this side scheme and place this much threat per player on it"
      },
      "cards": [
@@ -1391,7 +1391,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger ce sbire dans le deck rencontre",
+      "fr": "Mélangez ce sbire dans le deck Rencontre",
       "en": "Shuffle this minion into the encounter deck"
      },
      "cards": [
@@ -1400,7 +1400,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -1413,7 +1413,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -1426,7 +1426,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger ce sbire dans le deck rencontre",
+      "fr": "Mélangez ce sbire dans le deck Rencontre",
       "en": "Shuffle this minion into the encounter deck"
      },
      "cards": [
@@ -1439,7 +1439,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette manigance annexe dans le deck rencontre",
+      "fr": "Mélangez cette manigance annexe dans le deck Rencontre",
       "en": "Shuffle this side scheme into the encounter deck"
      },
      "cards": [
@@ -1452,7 +1452,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : reprendre les points de vie enregistrés au scénario précédent",
+      "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
       "en": "Expert campaign: set each hit point total to the value recorded last scenario"
      },
      "when": {
@@ -1461,7 +1461,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : dépenser 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -1489,7 +1489,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : placer 1 menace supplémentaire par joueur sur la manigance principale",
+      "fr": "Campagne Experte Uniquement : placez 1 menace supplémentaire par joueur sur la manigance principale",
       "en": "Expert campaign: place 1 additional threat per player on the main scheme"
      },
      "when": {
@@ -1498,7 +1498,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Expert : une défaite ici fait perdre la campagne",
+      "fr": "Campagne Experte Uniquement : une défaite ici fait perdre la campagne",
       "en": "Expert campaign: losing here loses the campaign"
      },
      "when": {
@@ -1512,7 +1512,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      }

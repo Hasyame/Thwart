@@ -96,7 +96,7 @@ def experimental_step():
     """
     return {
         "text": t(
-            "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+            "Mélangez dans le deck Rencontre chaque attachement EXPERIMENTAL noté",
             "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck",
         ),
         "showCardList": "experimental",
@@ -109,7 +109,8 @@ def expert_steps():
     return [
         {
             "text": t(
-                "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+                "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à "
+                "la valeur indiquée dans le registre de campagne",
                 "Expert: set each hero's hit points to the value below",
             ),
             "when": {"difficulty": "expert"},
@@ -117,8 +118,8 @@ def expert_steps():
         },
         {
             "text": t(
-                "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set "
-                "Campagne Expert à son deck pour se soigner à fond",
+                "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 "
+                "obligation aléatoire de son Set Campagne Experte",
                 "Expert: each player may add 1 random obligation from their Expert Campaign "
                 "set to their deck to heal to full",
             ),
@@ -220,15 +221,15 @@ scenarios.append({
 # ---------------------------------------------------------------- scenario 2
 scenarios.append({
     "id": "s2_absorbing_man",
-    "name": t("Absorbing Man", "Absorbing Man"),
+    "name": t("L'Homme Absorbant", "Absorbing Man"),
     "flavour": t(
-        "Madame Hydra file avec la Pierre d'Infinité. Absorbing Man est payé pour vous "
-        "retarder, et il n'a besoin que de temps.",
+        "Madame Hydra file avec la Pierre d'Infinité. L'Homme Absorbant est payé "
+        "pour vous retarder, et il n'a besoin que de temps.",
         "Madame Hydra is away with the Infinity Stone. Absorbing Man is paid to delay you, "
         "and delay is all he needs.",
     ),
-    "victoryLabel": t("Absorbing Man est vaincu !", "Absorbing Man is beaten!"),
-    "defeatLabel": t("Absorbing Man vous a vaincus !", "Absorbing Man has beaten you!"),
+    "victoryLabel": t("L'Homme Absorbant est vaincu !", "Absorbing Man is beaten!"),
+    "defeatLabel": t("L'Homme Absorbant vous a vaincus !", "Absorbing Man has beaten you!"),
     "baseSetup": {
         "villainDeck": {
             "standard": [ABSORBING_MAN[0], ABSORBING_MAN[1]],
@@ -393,7 +394,7 @@ scenarios.append({
 # ---------------------------------------------------------------- scenario 5
 scenarios.append({
     "id": "s5_red_skull",
-    "name": t("Red Skull", "Red Skull"),
+    "name": t("Le Crâne Rouge", "Red Skull"),
     "flavour": t(
         "La Maison-Blanche est la forteresse du Crâne Rouge, et ses scientifiques achèvent "
         "la machine de Zola. Après, le monde entier.",
@@ -418,7 +419,7 @@ scenarios.append({
         # the app cannot show one number that means both.
         {
             "text": t(
-                "Placer sur la manigance principale autant de menace que de pions retard notés",
+                "Placez sur la manigance principale autant de menace que de pions retard notés",
                 "Place as much threat on the main scheme as the delay counters recorded",
             ),
             "showCounter": "delay",
@@ -426,7 +427,8 @@ scenarios.append({
         },
         {
             "text": t(
-                "Expert : placer cette menace par joueur sur la manigance principale",
+                "Campagne Experte Uniquement : placez cette menace par joueur sur la "
+                "manigance principale",
                 "Expert: place this much threat per player on the main scheme",
             ),
             "showCounter": "delay",
@@ -452,8 +454,8 @@ scenarios.append({
         },
         {
             "text": t(
-                "Expert : ces héros étaient engagés avec un ennemi et se distribuent chacun "
-                "une carte rencontre",
+                "Campagne Experte Uniquement : ces héros étaient engagés avec un ennemi "
+                "et se distribuent chacun une carte rencontre",
                 "Expert: these heroes were engaged with an enemy and each deal themselves "
                 "an encounter card",
             ),
@@ -462,7 +464,8 @@ scenarios.append({
         },
         {
             "text": t(
-                "Expert : une défaite ici perd la campagne",
+                "Campagne Experte Uniquement : si les joueurs perdent cette partie, ils "
+                "perdent la campagne",
                 "Expert: losing here loses the campaign",
             ),
             "when": {"difficulty": "expert"},

@@ -108,7 +108,7 @@ FR = {
     "Done": "Fait",
     "Setup: shuffle every recorded Osborn Tech attachment into the encounter "
     "deck.":
-        "Mise en place : mélangez dans le deck rencontre chaque attachement "
+        "Mise en place : mélangez dans le deck Rencontre chaque attachement "
         "Technologie Osborn enregistré.",
     "Three S.H.I.E.L.D. Tech upgrades are dealt to each player. Keep one for "
     "the rest of the campaign.":
@@ -123,7 +123,7 @@ FR = {
     "or discard pile into play engaged with them. Shuffle.\n"
     "Any player who does not takes 1 facedown encounter card.":
         "Mise en place : dans l'ordre du tour, chaque joueur met en jeu un sbire "
-        "du deck rencontre ou de la pile de défausse, engagé avec lui.\n"
+        "du deck Rencontre ou de la pile de défausse, engagé avec lui.\n"
         "Mélangez. Tout joueur qui ne le fait pas reçoit 1 carte Rencontre face "
         "cachée.",
     "Each player adds the maximum copies of one aspect card of their choice, "
@@ -141,7 +141,7 @@ FR = {
     "Setup: the first player searches the encounter deck and discard pile for "
     "a scenario side scheme and reveals it.\n"
     "Place 1 threat per player on it. Shuffle.":
-        "Mise en place : le premier joueur cherche dans le deck rencontre et la "
+        "Mise en place : le premier joueur cherche dans le deck Rencontre et la "
         "pile de défausse une manigance annexe du scénario et la révèle.\n"
         "Placez 1 menace par joueur dessus. Mélangez.",
     "Each player chooses one card from their deck and records it.":
@@ -175,20 +175,21 @@ FR = {
         "Mettez en jeu Indignation Populaire, face Mode Expert visible.",
     "Put Public Outcry into play.": "Mettez en jeu Indignation Populaire.",
     "Shuffle these into the encounter deck.":
-        "Mélangez ces cartes dans le deck rencontre.",
+        "Mélangez ces cartes dans le deck Rencontre.",
     "Shuffle this Community Service side scheme into the encounter deck.":
-        "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre.",
+        "Mélangez cette manigance annexe Intérêt Général dans le deck Rencontre.",
     "Put the Venom ally into play under the first player's control.":
         "Mettez en jeu l'allié Venom sous le contrôle du premier joueur.",
     "Expert: place 2 additional sand counters on City Streets and resolve "
     "Surging Sands.":
-        "Expert : placez 2 jetons Sable supplémentaires sur Rues de la Ville et "
+        "Campagne Experte Uniquement : placez 2 jetons Sable supplémentaires sur "
+        "Rues de la Ville et "
         "résolvez Afflux de Sable.",
     "Place this much threat on Light at the End.":
         "Placez autant de menace sur Lumière au Bout du Tunnel.",
     "Shuffle the Sinister Assault minion matching each villain left standing "
     "into the encounter deck.":
-        "Mélangez dans le deck rencontre le sbire Assaut Sinistre correspondant "
+        "Mélangez dans le deck Rencontre le sbire Assaut Sinistre correspondant "
         "à chaque méchant encore en jeu.",
 
     # The questions after a scenario.

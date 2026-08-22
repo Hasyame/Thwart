@@ -50,7 +50,7 @@ def vp_prompt():
         "id": "vp",
         "type": "number",
         "label": t(
-            "Combien de points de victoire y a-t-il dans la zone de victoire ?",
+            "Combien de points de victoire y a-t-il dans la pile de victoire ?",
             "How many victory points did you accumulate?",
         ),
     }
@@ -159,8 +159,8 @@ scenarios.append({
         "Ebony Maw is storming Knowhere for the Power Stone. The Knowhere Corps will not hold "
         "on their own.",
     ),
-    "victoryLabel": t("Ebony Maw est vaincu !", "Ebony Maw is beaten!"),
-    "defeatLabel": t("Ebony Maw vous a vaincus !", "Ebony Maw has beaten you!"),
+    "victoryLabel": t("Mâchoire d'Ébène est vaincu !", "Ebony Maw is beaten!"),
+    "defeatLabel": t("Mâchoire d'Ébène vous a vaincus !", "Ebony Maw has beaten you!"),
     "baseSetup": {
         "villainDeck": {"standard": ["21071", "21072"], "expert": ["21072", "21073"]},
         "mainScheme": ["21074a", "21075a"],
@@ -234,8 +234,8 @@ scenarios.append({
         "Pierre de la Réalité.",
         "Corvus Glaive and Proxima Midnight strike Avengers Tower to seize the Reality Stone.",
     ),
-    "victoryLabel": t("Le Black Order est vaincu !", "The Black Order is beaten!"),
-    "defeatLabel": t("Le Black Order vous a vaincus !", "The Black Order has beaten you!"),
+    "victoryLabel": t("L'Ordre Noir est vaincu !", "The Black Order is beaten!"),
+    "defeatLabel": t("L'Ordre Noir vous a vaincus !", "The Black Order has beaten you!"),
     "baseSetup": {
         "villainDeck": {
             "standard": ["21092", "21093", "21095", "21096"],

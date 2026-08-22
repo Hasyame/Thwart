@@ -130,7 +130,7 @@ FR = {
     'How many minions and side schemes are in play in total?':
         'Combien y a-t-il de sbires et de manigances annexes en jeu au total ?',
     'How many victory points are in the victory display?':
-        'Combien de points de victoire y a-t-il dans la zone de victoire ?',
+        'Combien de points de victoire y a-t-il dans la pile de victoire ?',
     "It also does the deduction. Every evidence card you find is one the mole does not have, so the app shows only what is still unaccounted for. When a category is down to one card, that is the mole's. Which board member those three point to is the grid printed in your campaign log, and you read the name off that.":
         "Elle fait aussi la déduction. Chaque carte Preuve trouvée est une carte que la taupe n'a pas : l'application n'affiche donc que ce qui manque encore. Quand une catégorie se réduit à une seule carte, c'est celle de la taupe. Le Board Member vers lequel ces trois-là pointent se lit sur la grille imprimée dans votre journal de campagne.",
     'Keep both envelopes within reach.':

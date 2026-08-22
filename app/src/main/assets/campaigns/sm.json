@@ -135,7 +135,7 @@
    {
     "text": {
      "en": "Setup: shuffle every recorded Osborn Tech attachment into the encounter deck.",
-     "fr": "Mise en place : mélangez dans le deck rencontre chaque attachement Technologie Osborn enregistré."
+     "fr": "Mise en place : mélangez dans le deck Rencontre chaque attachement Technologie Osborn enregistré."
     },
     "when": {
      "counter": "reputation",
@@ -216,7 +216,7 @@
    {
     "text": {
      "en": "Setup: in player order, each player puts a minion from the encounter deck or discard pile into play engaged with them. Shuffle.\nAny player who does not takes 1 facedown encounter card.",
-     "fr": "Mise en place : dans l'ordre du tour, chaque joueur met en jeu un sbire du deck rencontre ou de la pile de défausse, engagé avec lui.\nMélangez. Tout joueur qui ne le fait pas reçoit 1 carte Rencontre face cachée."
+     "fr": "Mise en place : dans l'ordre du tour, chaque joueur met en jeu un sbire du deck Rencontre ou de la pile de défausse, engagé avec lui.\nMélangez. Tout joueur qui ne le fait pas reçoit 1 carte Rencontre face cachée."
     },
     "when": {
      "counter": "reputation",
@@ -317,7 +317,7 @@
    {
     "text": {
      "en": "Setup: the first player searches the encounter deck and discard pile for a scenario side scheme and reveals it.\nPlace 1 threat per player on it. Shuffle.",
-     "fr": "Mise en place : le premier joueur cherche dans le deck rencontre et la pile de défausse une manigance annexe du scénario et la révèle.\nPlacez 1 menace par joueur dessus. Mélangez."
+     "fr": "Mise en place : le premier joueur cherche dans le deck Rencontre et la pile de défausse une manigance annexe du scénario et la révèle.\nPlacez 1 menace par joueur dessus. Mélangez."
     },
     "when": {
      "counter": "reputation",
@@ -504,7 +504,7 @@
     {
      "text": {
       "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
+      "fr": "Mélangez ces cartes dans le deck Rencontre."
      },
      "cards": [
       "27175"
@@ -513,7 +513,7 @@
     {
      "text": {
       "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck Rencontre."
      },
      "draw": {
       "id": "service_s1_sandman",
@@ -530,7 +530,7 @@
     {
      "text": {
       "en": "Expert: place 2 additional sand counters on City Streets and resolve Surging Sands.",
-      "fr": "Expert : placez 2 jetons Sable supplémentaires sur Rues de la Ville et résolvez Afflux de Sable."
+      "fr": "Campagne Experte Uniquement : placez 2 jetons Sable supplémentaires sur Rues de la Ville et résolvez Afflux de Sable."
      },
      "when": {
       "difficulty": "expert"
@@ -731,7 +731,7 @@
     {
      "text": {
       "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
+      "fr": "Mélangez ces cartes dans le deck Rencontre."
      },
      "cards": [
       "27175"
@@ -740,7 +740,7 @@
     {
      "text": {
       "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck Rencontre."
      },
      "draw": {
       "id": "service_s2_venom",
@@ -959,7 +959,7 @@
     {
      "text": {
       "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
+      "fr": "Mélangez ces cartes dans le deck Rencontre."
      },
      "cards": [
       "27175",
@@ -969,7 +969,7 @@
     {
      "text": {
       "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck Rencontre."
      },
      "draw": {
       "id": "service_s3_mysterio",
@@ -1208,7 +1208,7 @@
     {
      "text": {
       "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
+      "fr": "Mélangez ces cartes dans le deck Rencontre."
      },
      "cards": [
       "27175",
@@ -1218,7 +1218,7 @@
     {
      "text": {
       "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck Rencontre."
      },
      "draw": {
       "id": "service_s4_sinister_six",
@@ -1461,7 +1461,7 @@
     {
      "text": {
       "en": "Shuffle these into the encounter deck.",
-      "fr": "Mélangez ces cartes dans le deck rencontre."
+      "fr": "Mélangez ces cartes dans le deck Rencontre."
      },
      "cards": [
       "27175"
@@ -1470,7 +1470,7 @@
     {
      "text": {
       "en": "Shuffle this Community Service side scheme into the encounter deck.",
-      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck rencontre."
+      "fr": "Mélangez cette manigance annexe Intérêt Général dans le deck Rencontre."
      },
      "draw": {
       "id": "service_s5_venom_goblin",
@@ -1487,7 +1487,7 @@
     {
      "text": {
       "en": "Shuffle the Sinister Assault minion matching each villain left standing into the encounter deck.",
-      "fr": "Mélangez dans le deck rencontre le sbire Assaut Sinistre correspondant à chaque méchant encore en jeu."
+      "fr": "Mélangez dans le deck Rencontre le sbire Assaut Sinistre correspondant à chaque méchant encore en jeu."
      },
      "cards": [
       "27158",

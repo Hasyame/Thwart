@@ -119,7 +119,7 @@ FR = {
     'Expert is the expert campaign: the harder villain stages, and hit points that carry from one scenario to the next.':
         "Expert correspond à la campagne experte : les stades de méchant les plus durs, et des points de vie qui se reportent d'un scénario au suivant.",
     'How many victory points are in the victory display?':
-        'Combien de points de victoire y a-t-il dans la zone de victoire ?',
+        'Combien de points de victoire y a-t-il dans la pile de victoire ?',
     'Is Jubilee in play?':
         'Jubilé est-elle en jeu ?',
     'Jubilee joins you. Put her into play.':
@@ -161,7 +161,7 @@ FR = {
     'Shuffle these Future Past cards into the encounter deck. Shuffle the rest of the Future Past deck and set it aside.':
         'Mélangez ces cartes Avenir Passé dans le deck Rencontre. Mélangez le reste du deck Avenir Passé et mettez-le de côté.',
     'Take this role':
-        'Prendre ce rôle',
+        'Prenez ce rôle',
     'The Brotherhood are inside the school. Magneto wanted the X-Men called home, and it worked.':
         "La Confrérie est dans l'école. Magnéto voulait rappeler les X-Men chez eux, et cela a marché.",
     'The Brotherhood arrive in this order. Defeat 2 of them on Standard, 3 on Expert, to win.':
@@ -177,7 +177,7 @@ FR = {
     'Was the campaign side scheme defeated?':
         'La manigance annexe de campagne a-t-elle été vaincue ?',
     'Which Future Past cards were in the encounter deck, the discard pile or in play? The rest reached the victory display and are out of the campaign.':
-        'Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la zone de victoire et quittent la campagne.',
+        'Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la pile de victoire et quittent la campagne.',
     'Which allies ended the game under Find the Prisoners or Rescue Captives? They cannot be used again.':
         'Quels alliés ont fini la partie sous Trouver Les Prisonniers ou Secourir les Captifs ? Ils ne pourront plus servir.',
     'Which captive allies entered play?':

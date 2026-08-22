@@ -119,7 +119,7 @@
             "id": "role_brawler",
             "label": {
               "en": "Take this role",
-              "fr": "Prendre ce rôle"
+              "fr": "Prenez ce rôle"
             },
             "perHero": true,
             "effects": [
@@ -141,7 +141,7 @@
             "id": "role_commander",
             "label": {
               "en": "Take this role",
-              "fr": "Prendre ce rôle"
+              "fr": "Prenez ce rôle"
             },
             "perHero": true,
             "effects": [
@@ -163,7 +163,7 @@
             "id": "role_defender",
             "label": {
               "en": "Take this role",
-              "fr": "Prendre ce rôle"
+              "fr": "Prenez ce rôle"
             },
             "perHero": true,
             "effects": [
@@ -185,7 +185,7 @@
             "id": "role_peacekeeper",
             "label": {
               "en": "Take this role",
-              "fr": "Prendre ce rôle"
+              "fr": "Prenez ce rôle"
             },
             "perHero": true,
             "effects": [
@@ -266,7 +266,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -289,7 +289,7 @@
             ],
             "label": {
               "en": "Which Future Past cards were in the encounter deck, the discard pile or in play? The rest reached the victory display and are out of the campaign.",
-              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la zone de victoire et quittent la campagne."
+              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la pile de victoire et quittent la campagne."
             }
           },
           {
@@ -513,7 +513,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -536,7 +536,7 @@
             ],
             "label": {
               "en": "Which Future Past cards were in the encounter deck, the discard pile or in play? The rest reached the victory display and are out of the campaign.",
-              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la zone de victoire et quittent la campagne."
+              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la pile de victoire et quittent la campagne."
             }
           },
           {
@@ -797,7 +797,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -820,7 +820,7 @@
             ],
             "label": {
               "en": "Which Future Past cards were in the encounter deck, the discard pile or in play? The rest reached the victory display and are out of the campaign.",
-              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la zone de victoire et quittent la campagne."
+              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la pile de victoire et quittent la campagne."
             }
           },
           {
@@ -1117,7 +1117,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -1140,7 +1140,7 @@
             ],
             "label": {
               "en": "Which Future Past cards were in the encounter deck, the discard pile or in play? The rest reached the victory display and are out of the campaign.",
-              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la zone de victoire et quittent la campagne."
+              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la pile de victoire et quittent la campagne."
             }
           },
           {
@@ -1381,7 +1381,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -1404,7 +1404,7 @@
             ],
             "label": {
               "en": "Which Future Past cards were in the encounter deck, the discard pile or in play? The rest reached the victory display and are out of the campaign.",
-              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la zone de victoire et quittent la campagne."
+              "fr": "Quelles cartes Avenir Passé étaient dans le deck Rencontre, la pile de défausse ou en jeu ? Les autres ont atteint la pile de victoire et quittent la campagne."
             }
           },
           {

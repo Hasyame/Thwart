@@ -374,14 +374,16 @@ def shared_campaign_setup():
         # 10 and 11. Expert carries damage between games.
         {
             "text": text(
-                "Expert : reprenez les points de vie enregistrés au scénario précédent.",
+                "Campagne Experte Uniquement : reprenez les points de vie enregistrés au "
+                "scénario précédent.",
                 "Expert: set each hit point total to the value recorded last scenario.",
             ),
             "when": {"difficulty": "expert"},
         },
         {
             "text": text(
-                "Expert : chaque joueur peut prendre une carte Rencontre face cachée "
+                "Campagne Experte Uniquement : chaque joueur peut prendre une carte "
+                "Rencontre face cachée "
                 "pour se soigner de sa REC.",
                 "Expert: each player may take a facedown encounter card to heal for "
                 "their REC.",
@@ -578,7 +580,7 @@ def scenario(scenario_id, name_fr, name_en, counter):
                 % (q(SCENARIO_DECKS[scenario_id][0]), NOTES_EN[SCENARIO_DECKS[scenario_id][1]]),
             )},
             {"text": text(
-                "Deck Rencontre : %s, plus le set du méchant."
+                "deck Rencontre : %s, plus le set du méchant."
                 % q_all(SCENARIO_DECKS[scenario_id][2]),
                 "Encounter deck: %s, plus the villain's set."
                 % q_all(SCENARIO_DECKS[scenario_id][2]),
@@ -617,10 +619,10 @@ def kingpin():
              "when": {"difficulty": "expert"}},
             {"text": text(
                 "Deck Manigance Principale : \"Le Gambit du Roi\", \"Fin de la Partie\".",
-                "Main scheme deck: \"Le Gambit du Roi\", \"Fin de la Partie\".",
+                "Main scheme deck: \"King's Gambit\", \"End Game\".",
             )},
             {"text": text(
-                "Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
+                "deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
                 "Encounter deck: \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
             )},
             {"text": text("Ce scénario n'utilise pas le set Standard.",

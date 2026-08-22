@@ -53,11 +53,11 @@
     "en": "Ebony Maw is storming Knowhere for the Power Stone. The Knowhere Corps will not hold on their own."
    },
    "victoryLabel": {
-    "fr": "Ebony Maw est vaincu !",
+    "fr": "Mâchoire d'Ébène est vaincu !",
     "en": "Ebony Maw is beaten!"
    },
    "defeatLabel": {
-    "fr": "Ebony Maw vous a vaincus !",
+    "fr": "Mâchoire d'Ébène vous a vaincus !",
     "en": "Ebony Maw has beaten you!"
    },
    "baseSetup": {
@@ -108,7 +108,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -197,11 +197,11 @@
     "en": "Corvus Glaive and Proxima Midnight strike Avengers Tower to seize the Reality Stone."
    },
    "victoryLabel": {
-    "fr": "Le Black Order est vaincu !",
+    "fr": "L'Ordre Noir est vaincu !",
     "en": "The Black Order is beaten!"
    },
    "defeatLabel": {
-    "fr": "Le Black Order vous a vaincus !",
+    "fr": "L'Ordre Noir vous a vaincus !",
     "en": "The Black Order has beaten you!"
    },
    "baseSetup": {
@@ -312,7 +312,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -569,7 +569,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -777,7 +777,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -1054,7 +1054,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
+       "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      }

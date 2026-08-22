@@ -199,19 +199,19 @@
   {
    "id": "s2_absorbing_man",
    "name": {
-    "fr": "Absorbing Man",
+    "fr": "L'Homme Absorbant",
     "en": "Absorbing Man"
    },
    "flavour": {
-    "fr": "Madame Hydra file avec la Pierre d'Infinité. Absorbing Man est payé pour vous retarder, et il n'a besoin que de temps.",
+    "fr": "Madame Hydra file avec la Pierre d'Infinité. L'Homme Absorbant est payé pour vous retarder, et il n'a besoin que de temps.",
     "en": "Madame Hydra is away with the Infinity Stone. Absorbing Man is paid to delay you, and delay is all he needs."
    },
    "victoryLabel": {
-    "fr": "Absorbing Man est vaincu !",
+    "fr": "L'Homme Absorbant est vaincu !",
     "en": "Absorbing Man is beaten!"
    },
    "defeatLabel": {
-    "fr": "Absorbing Man vous a vaincus !",
+    "fr": "L'Homme Absorbant vous a vaincus !",
     "en": "Absorbing Man has beaten you!"
    },
    "baseSetup": {
@@ -243,7 +243,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "fr": "Mélangez dans le deck Rencontre chaque attachement EXPERIMENTAL noté",
       "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
      },
      "showCardList": "experimental",
@@ -254,7 +254,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -264,7 +264,7 @@
     },
     {
      "text": {
-      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
       "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {
@@ -416,7 +416,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "fr": "Mélangez dans le deck Rencontre chaque attachement EXPERIMENTAL noté",
       "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
      },
      "showCardList": "experimental",
@@ -427,7 +427,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -437,7 +437,7 @@
     },
     {
      "text": {
-      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
       "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {
@@ -573,7 +573,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "fr": "Mélangez dans le deck Rencontre chaque attachement EXPERIMENTAL noté",
       "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
      },
      "showCardList": "experimental",
@@ -584,7 +584,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -594,7 +594,7 @@
     },
     {
      "text": {
-      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
       "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {
@@ -712,7 +712,7 @@
   {
    "id": "s5_red_skull",
    "name": {
-    "fr": "Red Skull",
+    "fr": "Le Crâne Rouge",
     "en": "Red Skull"
    },
    "flavour": {
@@ -758,7 +758,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "fr": "Mélangez dans le deck Rencontre chaque attachement EXPERIMENTAL noté",
       "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
      },
      "showCardList": "experimental",
@@ -769,7 +769,7 @@
     },
     {
      "text": {
-      "fr": "Placer sur la manigance principale autant de menace que de pions retard notés",
+      "fr": "Placez sur la manigance principale autant de menace que de pions retard notés",
       "en": "Place as much threat on the main scheme as the delay counters recorded"
      },
      "showCounter": "delay",
@@ -779,7 +779,7 @@
     },
     {
      "text": {
-      "fr": "Expert : placer cette menace par joueur sur la manigance principale",
+      "fr": "Campagne Experte Uniquement : placez cette menace par joueur sur la manigance principale",
       "en": "Expert: place this much threat per player on the main scheme"
      },
      "showCounter": "delay",
@@ -811,7 +811,7 @@
     },
     {
      "text": {
-      "fr": "Expert : ces héros étaient engagés avec un ennemi et se distribuent chacun une carte rencontre",
+      "fr": "Campagne Experte Uniquement : ces héros étaient engagés avec un ennemi et se distribuent chacun une carte rencontre",
       "en": "Expert: these heroes were engaged with an enemy and each deal themselves an encounter card"
      },
      "showHeroesWith": "engaged",
@@ -821,7 +821,7 @@
     },
     {
      "text": {
-      "fr": "Expert : une défaite ici perd la campagne",
+      "fr": "Campagne Experte Uniquement : si les joueurs perdent cette partie, ils perdent la campagne",
       "en": "Expert: losing here loses the campaign"
      },
      "when": {
@@ -830,7 +830,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -840,7 +840,7 @@
     },
     {
      "text": {
-      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
       "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {

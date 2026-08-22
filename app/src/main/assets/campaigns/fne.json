@@ -231,7 +231,7 @@
    },
    {
     "text": {
-     "fr": "Expert : reprenez les points de vie enregistrés au scénario précédent.",
+     "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent.",
      "en": "Expert: set each hit point total to the value recorded last scenario."
     },
     "when": {
@@ -240,7 +240,7 @@
    },
    {
     "text": {
-     "fr": "Expert : chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
+     "fr": "Campagne Experte Uniquement : chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
      "en": "Expert: each player may take a facedown encounter card to heal for their REC."
     },
     "when": {
@@ -746,7 +746,7 @@
     },
     {
      "text": {
-      "fr": "Deck Rencontre : \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus le set du méchant.",
+      "fr": "deck Rencontre : \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus the villain's set."
      }
     }
@@ -972,7 +972,7 @@
     },
     {
      "text": {
-      "fr": "Deck Rencontre : \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus le set du méchant.",
+      "fr": "deck Rencontre : \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus the villain's set."
      }
     }
@@ -1198,7 +1198,7 @@
     },
     {
      "text": {
-      "fr": "Deck Rencontre : \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
+      "fr": "deck Rencontre : \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus the villain's set."
      }
     }
@@ -1424,7 +1424,7 @@
     },
     {
      "text": {
-      "fr": "Deck Rencontre : \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus le set du méchant.",
+      "fr": "deck Rencontre : \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus the villain's set."
      }
     }
@@ -1650,7 +1650,7 @@
     },
     {
      "text": {
-      "fr": "Deck Rencontre : \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
+      "fr": "deck Rencontre : \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus the villain's set."
      }
     }
@@ -1862,12 +1862,12 @@
     {
      "text": {
       "fr": "Deck Manigance Principale : \"Le Gambit du Roi\", \"Fin de la Partie\".",
-      "en": "Main scheme deck: \"Le Gambit du Roi\", \"Fin de la Partie\"."
+      "en": "Main scheme deck: \"King's Gambit\", \"End Game\"."
      }
     },
     {
      "text": {
-      "fr": "Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
+      "fr": "deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
       "en": "Encounter deck: \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\"."
      }
     },

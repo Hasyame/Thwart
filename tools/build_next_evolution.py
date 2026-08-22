@@ -95,7 +95,7 @@ FR = {
     'Choose one campaign player side scheme you have not chosen before, and put it into play.':
         "Choisissez une manigance annexe joueur de campagne que vous n'avez pas encore choisie, et mettez-la en jeu.",
     'Choose this one':
-        'Choisir celle-ci',
+        'Choisissez celle-ci',
     'Defeat 3 of the 7 Marauders to win.':
         'Vainquez 3 des 7 Maraudeurs pour gagner.',
     'Did you defeat the campaign player side scheme you chose?':
@@ -121,7 +121,7 @@ FR = {
     'How many Morlock allies are still in play?':
         "Combien d'alliés Morlocks sont encore en jeu ?",
     'How many victory points are in the victory display?':
-        'Combien de points de victoire y a-t-il dans la zone de victoire ?',
+        'Combien de points de victoire y a-t-il dans la pile de victoire ?',
     'How much damage is on Hope Summers?':
         'Combien de dégâts y a-t-il sur Hope Summers ?',
     'In player order, discard encounter cards until a minion or a Psionic attachment is discarded, and reveal it.':

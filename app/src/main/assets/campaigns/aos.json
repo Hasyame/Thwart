@@ -132,7 +132,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -582,7 +582,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -1028,7 +1028,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -1478,7 +1478,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
@@ -1953,7 +1953,7 @@
             "type": "number",
             "label": {
               "en": "How many victory points are in the victory display?",
-              "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?"
+              "fr": "Combien de points de victoire y a-t-il dans la pile de victoire ?"
             }
           },
           {
