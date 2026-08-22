@@ -23,6 +23,7 @@ import io
 import json
 import os
 
+NL = chr(10)
 FR, EN = "fr", "en"
 
 
@@ -54,24 +55,36 @@ VILLAIN_CODES = [code for code, _ in VILLAINS]
 # Mechanics only — what to place and where, never the book's prose.
 PRESSURE_SETUP = {
     "s1_musee": text(
-        "Placez 1 menace par case cochée sur la manigance principale (2 en Expert).",
-        "Place 1 threat per ticked box on the main scheme (2 in Expert).",
+        "Placez sur la manigance principale 1 menace par case de pression "
+        "cochée pour cette mission, ou 2 en campagne experte.",
+        "Place 1 threat on the main scheme for each pressure box ticked "
+        "against this mission, or 2 in an expert campaign.",
     ),
     "s2_poursuite": text(
-        "Révélez le \"Camion-Citerne\" ; à 2 cases, 1 menace de plus dessus (2 en Expert).",
-        "Reveal the Tanker Truck; at 2 boxes, 1 more threat on it (2 in Expert).",
+        "Révélez le \"Camion-Citerne\". Si cette mission a 2 cases de pression "
+        "cochées, placez 1 menace dessus, ou 2 en campagne experte.",
+        "Reveal the Tanker Truck. If this mission has 2 pressure boxes "
+        "ticked, place 1 threat on it, or 2 in an expert campaign.",
     ),
     "s3_racket": text(
-        "Placez 1 menace par case cochée sur chaque manigance principale (2 en Expert).",
-        "Place 1 threat per ticked box on every main scheme (2 in Expert).",
+        "Placez sur chaque manigance principale 1 menace par case de pression "
+        "cochée pour cette mission, ou 2 en campagne experte.",
+        "Place 1 threat on every main scheme for each pressure box ticked "
+        "against this mission, or 2 in an expert campaign.",
     ),
     "s4_raft": text(
-        "Carte d'état Tenace à chaque sbire PRISONNIER ; à 2 cases, aussi une carte de boost face cachée.",
-        "Tough on each PRISONER minion; at 2 boxes, a facedown boost as well.",
+        "Chaque sbire PRISONNIER entre en jeu avec une carte d'état Tenace." + NL +
+        "Si cette mission a 2 cases de pression cochées, donnez-lui aussi "
+        "une carte de boost face cachée.",
+        "Each PRISONER minion enters play with a tough status card." + NL +
+        "If this mission has 2 pressure boxes ticked, give it a facedown "
+        "boost card as well.",
     ),
     "s5_rotatives": text(
-        "Retirez 1 jeton Endurance par case cochée de chaque soutien DAILY BUGLE.",
-        "Remove 1 Use token per ticked box from each DAILY BUGLE support.",
+        "Retirez de chaque soutien DAILY BUGLE 1 jeton par case de pression "
+        "cochée pour cette mission.",
+        "Remove 1 token from each DAILY BUGLE support for every pressure "
+        "box ticked against this mission.",
     ),
 }
 
@@ -125,7 +138,7 @@ SCENARIO_EXTRA_EN = {
     "s2_poursuite": "The \"En Tête / Roue Contre Roue\" attachment starts \"En Tête\" face up.",
     "s3_racket": "Each player takes a main scheme into their own play area.",
     "s4_raft": "The villain gets the \"Passe-Partout\" attachment.",
-    "s5_rotatives": "Each player is dealt a random DAILY BUGLE support (3 Use tokens).",
+    "s5_rotatives": "Each player is dealt a random DAILY BUGLE support, which enters play with 3 tokens.",
 }
 
 SCENARIO_EXTRA = {
@@ -133,7 +146,7 @@ SCENARIO_EXTRA = {
     "s2_poursuite": "L'attachement \"En Tête / Roue Contre Roue\" commence face \"En Tête\" visible.",
     "s3_racket": "Chaque joueur prend une manigance principale dans sa propre zone de jeu.",
     "s4_raft": "Le méchant reçoit l'attachement \"Passe-Partout\".",
-    "s5_rotatives": "Chaque joueur reçoit au hasard un soutien DAILY BUGLE (3 jetons Endurance).",
+    "s5_rotatives": "Chaque joueur reçoit au hasard un soutien DAILY BUGLE, qui entre en jeu avec 3 jetons.",
 }
 
 
@@ -376,7 +389,7 @@ def shared_campaign_setup():
             "text": text(
                 "Campagne Experte Uniquement : reprenez les points de vie enregistrés au "
                 "scénario précédent.",
-                "Expert: set each hit point total to the value recorded last scenario.",
+                "Expert Campaign Only: set each hit point total to the value recorded last scenario.",
             ),
             "when": {"difficulty": "expert"},
         },
@@ -385,7 +398,7 @@ def shared_campaign_setup():
                 "Campagne Experte Uniquement : chaque joueur peut prendre une carte "
                 "Rencontre face cachée "
                 "pour se soigner de sa REC.",
-                "Expert: each player may take a facedown encounter card to heal for "
+                "Expert Campaign Only: each player may take a facedown encounter card to heal for "
                 "their REC.",
             ),
             "when": {"difficulty": "expert"},
@@ -467,7 +480,7 @@ def victory_outcome(scenario_id):
                 "type": "boolean",
                 "label": text(
                     "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
-                    "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?",
+                    "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory display?",
                 ),
                 "when": {"all": [
                     {"any": [
@@ -642,15 +655,19 @@ def kingpin():
             )},
             {
                 "text": text(
-                    "3 environnements ACHEVÉ ou plus : carte d'état Tenace à chaque sbire en jeu.",
-                    "3+ ACHEVÉ environments: a Tough status card on each minion in play.",
+                    "Si 3 missions ou plus sont ACHEVÉ, donnez une carte d'état Tenace "
+                    "à chaque sbire en jeu.",
+                    "If 3 or more missions are ACHEVÉ, give a tough status card "
+                    "to each minion in play.",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 3},
             },
             {
                 "text": text(
-                    "4 environnements ACHEVÉ ou plus : trouvez et révélez \"James Wesley\".",
-                    "4+ ACHEVÉ environments: find and reveal \"James Wesley\".",
+                    "Si 4 missions ou plus sont ACHEVÉ, trouvez et révélez "
+                    "\"James Wesley\".",
+                    "If 4 or more missions are ACHEVÉ, find and reveal "
+                    "\"James Wesley\".",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 4},
             },

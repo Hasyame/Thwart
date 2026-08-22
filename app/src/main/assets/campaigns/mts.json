@@ -274,7 +274,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -284,7 +284,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
-      "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
+      "en": "Expert Campaign Only: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
       "difficulty": "expert"
@@ -531,7 +531,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -541,7 +541,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
-      "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
+      "en": "Expert Campaign Only: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
       "difficulty": "expert"
@@ -739,7 +739,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -749,7 +749,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
-      "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
+      "en": "Expert Campaign Only: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
       "difficulty": "expert"
@@ -904,7 +904,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Touchez la carte pour voir quel Loki vous affrontez en premier ; mettez les quatre autres de côté, hors jeu",
+      "fr": "Touchez la carte pour voir quel Loki vous affrontez en premier, puis mettez les quatre autres de côté, hors jeu",
       "en": "Tap the card to see which Loki you face first; set the other four aside, out of play"
      },
      "draw": {
@@ -1007,7 +1007,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : si les joueurs perdent cette partie, Loki régnera sur tout l'univers et les joueurs auront perdu la campagne",
-      "en": "Expert: losing here loses the campaign"
+      "en": "Expert Campaign Only: losing here loses the campaign"
      },
      "when": {
       "difficulty": "expert"
@@ -1016,7 +1016,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -1026,7 +1026,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
-      "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
+      "en": "Expert Campaign Only: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
       "difficulty": "expert"

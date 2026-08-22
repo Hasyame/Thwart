@@ -141,7 +141,7 @@ FR = {
     'One Marauder is drawn to carry Hope. Defeat that villain twice to win.':
         'Un Maraudeur est tiré pour emmener Hope. Vainquez ce méchant deux fois pour gagner.',
     'Place 1 momentum counter on Juggernaut for each campaign environment in play.':
-        'Placez 1 jeton Élan sur Le Fléau pour chaque environnement de campagne en jeu.',
+        'Placez 1 jeton Inertie sur Le Fléau pour chaque environnement de campagne en jeu.',
     "Place 1 threat on Stryfe's Grasp for each campaign environment in play.":
         'Placez 1 menace sur Dans les Griffes de Stryfe pour chaque environnement de campagne en jeu.',
     "Place the damage Hope Summers carried out of the last scenario either on her, or as that much threat on Stryfe's Grasp.":

@@ -7,7 +7,7 @@
   "en": "The Rise of Red Skull"
  },
  "notice": {
-  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ascension du Crâne Rouge restent nécessaires pour jouer.\n\nL'application tient le registre à votre place : l'amélioration TECH de chaque joueur, les alliés libérés ou restés prisonniers, les améliorations Basic attachées, les pions retard, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ascension du Crâne Rouge restent nécessaires pour jouer.\n\nL'application tient le registre à votre place : l'amélioration TECH de chaque joueur, les alliés libérés ou restés prisonniers, les améliorations Basic attachées, les jetons Retard, et en campagne experte les points de vie de chaque héros entre les parties.",
   "en": "Unofficial, reconstructed for the app: the rulebook and cards from The Rise of Red Skull box are still needed to play.\n\nThe app keeps the log for you: each player's TECH upgrade, the allies freed or left imprisoned, the Basic upgrades attached, the delay counters, and in an expert campaign each hero's hit points between games."
  },
  "packCode": "trors",
@@ -255,7 +255,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -265,7 +265,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
-      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+      "en": "Expert Campaign Only: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {
       "difficulty": "expert"
@@ -301,7 +301,7 @@
       "id": "delayCounters",
       "type": "number",
       "label": {
-       "fr": "Combien de pions retard sur la manigance principale ?",
+       "fr": "Combien de jetons Retard sur la manigance principale ?",
        "en": "How many delay counters on the main scheme?"
       },
       "cards": [
@@ -428,7 +428,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -438,7 +438,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
-      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+      "en": "Expert Campaign Only: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {
       "difficulty": "expert"
@@ -585,7 +585,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -595,7 +595,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
-      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+      "en": "Expert Campaign Only: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {
       "difficulty": "expert"
@@ -769,7 +769,7 @@
     },
     {
      "text": {
-      "fr": "Placez sur la manigance principale autant de menace que de pions retard notés",
+      "fr": "Placez sur la manigance principale autant de menace que de jetons Retard notés",
       "en": "Place as much threat on the main scheme as the delay counters recorded"
      },
      "showCounter": "delay",
@@ -780,7 +780,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : placez cette menace par joueur sur la manigance principale",
-      "en": "Expert: place this much threat per player on the main scheme"
+      "en": "Expert Campaign Only: place this much threat per player on the main scheme"
      },
      "showCounter": "delay",
      "when": {
@@ -812,7 +812,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : ces héros étaient engagés avec un ennemi et se distribuent chacun une carte Rencontre",
-      "en": "Expert: these heroes were engaged with an enemy and each deal themselves an encounter card"
+      "en": "Expert Campaign Only: these heroes were engaged with an enemy and each deal themselves an encounter card"
      },
      "showHeroesWith": "engaged",
      "when": {
@@ -822,7 +822,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : si les joueurs perdent cette partie, ils perdent la campagne",
-      "en": "Expert: losing here loses the campaign"
+      "en": "Expert Campaign Only: losing here loses the campaign"
      },
      "when": {
       "difficulty": "expert"
@@ -831,7 +831,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-      "en": "Expert: set each hero's hit points to the value below"
+      "en": "Expert Campaign Only: set each hero's hit points to the value below"
      },
      "when": {
       "difficulty": "expert"
@@ -841,7 +841,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 obligation aléatoire de son Set Campagne Experte",
-      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+      "en": "Expert Campaign Only: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
      },
      "when": {
       "difficulty": "expert"

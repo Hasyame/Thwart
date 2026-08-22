@@ -75,7 +75,7 @@ def expert_steps(first_scenario=False):
         steps.append({
             "text": t(
                 "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-                "Expert: set each hero's hit points to the value below",
+                "Expert Campaign Only: set each hero's hit points to the value below",
             ),
             "when": {"difficulty": "expert"},
             "showCounter": "hp",
@@ -85,7 +85,7 @@ def expert_steps(first_scenario=False):
                 "Campagne Experte Uniquement : chaque joueur peut placer 3 menaces "
                 "sur la MISSION." + NL +
                 "Cela soigne son identité jusqu'à sa valeur de points de vie maximale.",
-                "Expert: place 3 threat on the MISSION to heal a hero to full",
+                "Expert Campaign Only: place 3 threat on the MISSION to heal a hero to full",
             ),
             "when": {"difficulty": "expert"},
             "action": {
@@ -323,7 +323,7 @@ scenarios.append({
         {"include": "standardIII"},
         {
             "text": t(
-                "Aligner ces quatre méchants dans cet ordre, chacun avec son compteur de points de vie",
+                "Alignez ces quatre méchants dans cet ordre, chacun avec son compteur de points de vie",
                 "Set these four villains in a row in this order, each with its own hit point dial",
             ),
             "draw": {
@@ -334,7 +334,8 @@ scenarios.append({
         },
         {
             "text": t(
-                "Face A en Escarmouche et Standard, face B en Expert et Héroïque",
+                "Utilisez la face A en Escarmouche et Standard, la face B en Expert "
+                "et Héroïque",
                 "Use side A for Skirmish and Standard, side B for Expert and Heroic",
             ),
         },

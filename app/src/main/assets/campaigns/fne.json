@@ -232,7 +232,7 @@
    {
     "text": {
      "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent.",
-     "en": "Expert: set each hit point total to the value recorded last scenario."
+     "en": "Expert Campaign Only: set each hit point total to the value recorded last scenario."
     },
     "when": {
      "difficulty": "expert"
@@ -241,7 +241,7 @@
    {
     "text": {
      "fr": "Campagne Experte Uniquement : chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
-     "en": "Expert: each player may take a facedown encounter card to heal for their REC."
+     "en": "Expert Campaign Only: each player may take a facedown encounter card to heal for their REC."
     },
     "when": {
      "difficulty": "expert"
@@ -760,8 +760,8 @@
     },
     {
      "text": {
-      "fr": "Placez 1 menace par case cochée sur la manigance principale (2 en Expert).",
-      "en": "Place 1 threat per ticked box on the main scheme (2 in Expert)."
+      "fr": "Placez sur la manigance principale 1 menace par case de pression cochée pour cette mission, ou 2 en campagne experte.",
+      "en": "Place 1 threat on the main scheme for each pressure box ticked against this mission, or 2 in an expert campaign."
      },
      "when": {
       "counter": "pressionMusee",
@@ -814,7 +814,7 @@
       "type": "boolean",
       "label": {
        "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
-       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory display?"
       },
       "when": {
        "all": [
@@ -986,8 +986,8 @@
     },
     {
      "text": {
-      "fr": "Révélez le \"Camion-Citerne\" ; à 2 cases, 1 menace de plus dessus (2 en Expert).",
-      "en": "Reveal the Tanker Truck; at 2 boxes, 1 more threat on it (2 in Expert)."
+      "fr": "Révélez le \"Camion-Citerne\". Si cette mission a 2 cases de pression cochées, placez 1 menace dessus, ou 2 en campagne experte.",
+      "en": "Reveal the Tanker Truck. If this mission has 2 pressure boxes ticked, place 1 threat on it, or 2 in an expert campaign."
      },
      "when": {
       "counter": "pressionPoursuite",
@@ -1040,7 +1040,7 @@
       "type": "boolean",
       "label": {
        "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
-       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory display?"
       },
       "when": {
        "all": [
@@ -1212,8 +1212,8 @@
     },
     {
      "text": {
-      "fr": "Placez 1 menace par case cochée sur chaque manigance principale (2 en Expert).",
-      "en": "Place 1 threat per ticked box on every main scheme (2 in Expert)."
+      "fr": "Placez sur chaque manigance principale 1 menace par case de pression cochée pour cette mission, ou 2 en campagne experte.",
+      "en": "Place 1 threat on every main scheme for each pressure box ticked against this mission, or 2 in an expert campaign."
      },
      "when": {
       "counter": "pressionRacket",
@@ -1266,7 +1266,7 @@
       "type": "boolean",
       "label": {
        "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
-       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory display?"
       },
       "when": {
        "all": [
@@ -1438,8 +1438,8 @@
     },
     {
      "text": {
-      "fr": "Carte d'état Tenace à chaque sbire PRISONNIER ; à 2 cases, aussi une carte de boost face cachée.",
-      "en": "Tough on each PRISONER minion; at 2 boxes, a facedown boost as well."
+      "fr": "Chaque sbire PRISONNIER entre en jeu avec une carte d'état Tenace.\nSi cette mission a 2 cases de pression cochées, donnez-lui aussi une carte de boost face cachée.",
+      "en": "Each PRISONER minion enters play with a tough status card.\nIf this mission has 2 pressure boxes ticked, give it a facedown boost card as well."
      },
      "when": {
       "counter": "pressionRaft",
@@ -1492,7 +1492,7 @@
       "type": "boolean",
       "label": {
        "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
-       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory display?"
       },
       "when": {
        "all": [
@@ -1658,14 +1658,14 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Chaque joueur reçoit au hasard un soutien DAILY BUGLE (3 jetons Endurance).",
-      "en": "Each player is dealt a random DAILY BUGLE support (3 Use tokens)."
+      "fr": "Chaque joueur reçoit au hasard un soutien DAILY BUGLE, qui entre en jeu avec 3 jetons.",
+      "en": "Each player is dealt a random DAILY BUGLE support, which enters play with 3 tokens."
      }
     },
     {
      "text": {
-      "fr": "Retirez 1 jeton Endurance par case cochée de chaque soutien DAILY BUGLE.",
-      "en": "Remove 1 Use token per ticked box from each DAILY BUGLE support."
+      "fr": "Retirez de chaque soutien DAILY BUGLE 1 jeton par case de pression cochée pour cette mission.",
+      "en": "Remove 1 token from each DAILY BUGLE support for every pressure box ticked against this mission."
      },
      "when": {
       "counter": "pressionRotatives",
@@ -1718,7 +1718,7 @@
       "type": "boolean",
       "label": {
        "fr": "\"Mary Typhoïde\" / \"Bloody Mary\" est-elle dans la pile de victoire ?",
-       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory pile?"
+       "en": "Is \"Typhoid Mary\" / \"Bloody Mary\" in the victory display?"
       },
       "when": {
        "all": [
@@ -1902,8 +1902,8 @@
     },
     {
      "text": {
-      "fr": "3 environnements ACHEVÉ ou plus : carte d'état Tenace à chaque sbire en jeu.",
-      "en": "3+ ACHEVÉ environments: a Tough status card on each minion in play."
+      "fr": "Si 3 missions ou plus sont ACHEVÉ, donnez une carte d'état Tenace à chaque sbire en jeu.",
+      "en": "If 3 or more missions are ACHEVÉ, give a tough status card to each minion in play."
      },
      "when": {
       "countTrue": "acheve",
@@ -1912,8 +1912,8 @@
     },
     {
      "text": {
-      "fr": "4 environnements ACHEVÉ ou plus : trouvez et révélez \"James Wesley\".",
-      "en": "4+ ACHEVÉ environments: find and reveal \"James Wesley\"."
+      "fr": "Si 4 missions ou plus sont ACHEVÉ, trouvez et révélez \"James Wesley\".",
+      "en": "If 4 or more missions are ACHEVÉ, find and reveal \"James Wesley\"."
      },
      "when": {
       "countTrue": "acheve",

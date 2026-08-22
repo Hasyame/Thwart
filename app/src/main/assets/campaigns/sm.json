@@ -529,7 +529,7 @@
     },
     {
      "text": {
-      "en": "Expert: place 2 additional sand counters on City Streets and resolve Surging Sands.",
+      "en": "Expert Campaign Only: place 2 additional sand counters on City Streets and resolve Surging Sands.",
       "fr": "Campagne Experte Uniquement : placez 2 jetons Sable supplémentaires sur Rues de la Ville et résolvez Afflux de Sable."
      },
      "when": {
@@ -578,8 +578,8 @@
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
+       "en": "No acceleration tokens in play?",
+       "fr": "Aucun pion Accélération en jeu ?"
       }
      },
      {
@@ -796,8 +796,8 @@
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
+       "en": "No acceleration tokens in play?",
+       "fr": "Aucun pion Accélération en jeu ?"
       }
      },
      {
@@ -1025,8 +1025,8 @@
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
+       "en": "No acceleration tokens in play?",
+       "fr": "Aucun pion Accélération en jeu ?"
       }
      },
      {
@@ -1284,8 +1284,8 @@
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
+       "en": "No acceleration tokens in play?",
+       "fr": "Aucun pion Accélération en jeu ?"
       }
      },
      {
@@ -1541,8 +1541,8 @@
       "id": "fewAcceleration",
       "type": "boolean",
       "label": {
-       "en": "Fewer than 1 acceleration tokens in play?",
-       "fr": "Moins de 1 jeton accélération en jeu ?"
+       "en": "No acceleration tokens in play?",
+       "fr": "Aucun pion Accélération en jeu ?"
       }
      },
      {

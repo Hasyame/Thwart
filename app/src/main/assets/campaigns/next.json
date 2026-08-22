@@ -1118,7 +1118,7 @@
         {
           "text": {
             "en": "Place 1 momentum counter on Juggernaut for each campaign environment in play.",
-            "fr": "Placez 1 jeton Élan sur Le Fléau pour chaque environnement de campagne en jeu."
+            "fr": "Placez 1 jeton Inertie sur Le Fléau pour chaque environnement de campagne en jeu."
           },
           "when": {
             "cardList": "earnedEnvironments",

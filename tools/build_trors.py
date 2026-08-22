@@ -111,7 +111,7 @@ def expert_steps():
             "text": t(
                 "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à "
                 "la valeur indiquée dans le registre de campagne",
-                "Expert: set each hero's hit points to the value below",
+                "Expert Campaign Only: set each hero's hit points to the value below",
             ),
             "when": {"difficulty": "expert"},
             "showCounter": "hp",
@@ -120,7 +120,7 @@ def expert_steps():
             "text": t(
                 "Campagne Experte Uniquement : chaque joueur peut ajouter à son deck 1 "
                 "obligation aléatoire de son Set Campagne Experte",
-                "Expert: each player may add 1 random obligation from their Expert Campaign "
+                "Expert Campaign Only: each player may add 1 random obligation from their Expert Campaign "
                 "set to their deck to heal to full",
             ),
             "when": {"difficulty": "expert"},
@@ -246,7 +246,7 @@ scenarios.append({
                 "id": "delayCounters",
                 "type": "number",
                 "label": t(
-                    "Combien de pions retard sur la manigance principale ?",
+                    "Combien de jetons Retard sur la manigance principale ?",
                     "How many delay counters on the main scheme?",
                 ),
                 "cards": ["04079a"],
@@ -419,7 +419,7 @@ scenarios.append({
         # the app cannot show one number that means both.
         {
             "text": t(
-                "Placez sur la manigance principale autant de menace que de pions retard notés",
+                "Placez sur la manigance principale autant de menace que de jetons Retard notés",
                 "Place as much threat on the main scheme as the delay counters recorded",
             ),
             "showCounter": "delay",
@@ -429,7 +429,7 @@ scenarios.append({
             "text": t(
                 "Campagne Experte Uniquement : placez cette menace par joueur sur la "
                 "manigance principale",
-                "Expert: place this much threat per player on the main scheme",
+                "Expert Campaign Only: place this much threat per player on the main scheme",
             ),
             "showCounter": "delay",
             "when": {"difficulty": "expert"},
@@ -456,7 +456,7 @@ scenarios.append({
             "text": t(
                 "Campagne Experte Uniquement : ces héros étaient engagés avec un ennemi "
                 "et se distribuent chacun une carte Rencontre",
-                "Expert: these heroes were engaged with an enemy and each deal themselves "
+                "Expert Campaign Only: these heroes were engaged with an enemy and each deal themselves "
                 "an encounter card",
             ),
             "showHeroesWith": "engaged",
@@ -466,7 +466,7 @@ scenarios.append({
             "text": t(
                 "Campagne Experte Uniquement : si les joueurs perdent cette partie, ils "
                 "perdent la campagne",
-                "Expert: losing here loses the campaign",
+                "Expert Campaign Only: losing here loses the campaign",
             ),
             "when": {"difficulty": "expert"},
         },
@@ -495,7 +495,7 @@ template = {
     # Shown before the campaign starts: what this is, what it still
     # needs from you, and what the app takes off your hands.
     "notice": t(
-        "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ascension du Crâne Rouge restent nécessaires pour jouer.\n\nL'application tient le registre à votre place : l'amélioration TECH de chaque joueur, les alliés libérés ou restés prisonniers, les améliorations Basic attachées, les pions retard, et en campagne experte les points de vie de chaque héros entre les parties.",
+        "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ascension du Crâne Rouge restent nécessaires pour jouer.\n\nL'application tient le registre à votre place : l'amélioration TECH de chaque joueur, les alliés libérés ou restés prisonniers, les améliorations Basic attachées, les jetons Retard, et en campagne experte les points de vie de chaque héros entre les parties.",
         "Unofficial, reconstructed for the app: the rulebook and cards from The Rise of Red Skull box are still needed to play.\n\nThe app keeps the log for you: each player's TECH upgrade, the allies freed or left imprisoned, the Basic upgrades attached, the delay counters, and in an expert campaign each hero's hit points between games.",
     ),
     "packCode": "trors",

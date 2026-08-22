@@ -232,11 +232,11 @@
    },
    "victoryLabel": {
     "fr": "Drang est vaincu !",
-    "en": "Drang beat!"
+    "en": "Drang is beaten!"
    },
    "defeatLabel": {
     "fr": "Drang vous a vaincus !",
-    "en": "Drang has beat you!"
+    "en": "Drang has beaten you!"
    },
    "flavour": {
     "fr": "Les Badoon attaquent la Terre. Les Gardiens rejoignent les Vengeurs pour repousser la flotte de Drang.",
@@ -502,7 +502,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
-      "en": "Expert campaign: set each hit point total to the value recorded last scenario"
+      "en": "Expert Campaign Only: set each hit point total to the value recorded last scenario"
      },
      "when": {
       "difficulty": "expert"
@@ -511,7 +511,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
-      "en": "Expert campaign: spend 1 unit to heal to printed hit points"
+      "en": "Expert Campaign Only: subtract 1 credit to heal your identity to its printed hit points"
      },
      "when": {
       "difficulty": "expert"
@@ -539,7 +539,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : chaque joueur place 1 carte de sa main face visible dans La Collection",
-      "en": "Expert campaign: each player puts 1 card from hand faceup into The Collection"
+      "en": "Expert Campaign Only: each player puts 1 card from hand faceup into The Collection"
      },
      "when": {
       "difficulty": "expert"
@@ -732,7 +732,7 @@
     {
      "text": {
       "fr": "Retirez ces cartes de la partie, puis piochez jusqu'à votre taille de main",
-      "en": "Remove these cards from the game — they cannot be played this scenario. Then draw up to hand size"
+      "en": "Remove these cards from the game, then draw up to your hand size"
      },
      "showCardList": "collection",
      "when": {
@@ -778,7 +778,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
-      "en": "Expert campaign: set each hit point total to the value recorded last scenario"
+      "en": "Expert Campaign Only: set each hit point total to the value recorded last scenario"
      },
      "when": {
       "difficulty": "expert"
@@ -787,7 +787,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
-      "en": "Expert campaign: spend 1 unit to heal to printed hit points"
+      "en": "Expert Campaign Only: subtract 1 credit to heal your identity to its printed hit points"
      },
      "when": {
       "difficulty": "expert"
@@ -815,7 +815,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : défaussez le deck Rencontre jusqu’à un attachement, puis révélez-le",
-      "en": "Expert campaign: discard the encounter deck until an attachment, then reveal it"
+      "en": "Expert Campaign Only: discard the encounter deck until an attachment, then reveal it"
      },
      "when": {
       "difficulty": "expert"
@@ -1108,7 +1108,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
-      "en": "Expert campaign: set each hit point total to the value recorded last scenario"
+      "en": "Expert Campaign Only: set each hit point total to the value recorded last scenario"
      },
      "when": {
       "difficulty": "expert"
@@ -1117,7 +1117,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
-      "en": "Expert campaign: spend 1 unit to heal to printed hit points"
+      "en": "Expert Campaign Only: subtract 1 credit to heal your identity to its printed hit points"
      },
      "when": {
       "difficulty": "expert"
@@ -1145,7 +1145,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : défaussez le deck Rencontre jusqu’à un attachement Technique, puis attachez-le à Nebula",
-      "en": "Expert campaign: discard the encounter deck until a Technique attachment, then attach it to Nebula"
+      "en": "Expert Campaign Only: discard the encounter deck until a Technique attachment, then attach it to Nebula"
      },
      "when": {
       "difficulty": "expert"
@@ -1453,7 +1453,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent",
-      "en": "Expert campaign: set each hit point total to the value recorded last scenario"
+      "en": "Expert Campaign Only: set each hit point total to the value recorded last scenario"
      },
      "when": {
       "difficulty": "expert"
@@ -1462,7 +1462,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
-      "en": "Expert campaign: spend 1 unit to heal to printed hit points"
+      "en": "Expert Campaign Only: subtract 1 credit to heal your identity to its printed hit points"
      },
      "when": {
       "difficulty": "expert"
@@ -1490,7 +1490,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : placez 1 menace supplémentaire par joueur sur la manigance principale",
-      "en": "Expert campaign: place 1 additional threat per player on the main scheme"
+      "en": "Expert Campaign Only: place 1 additional threat per player on the main scheme"
      },
      "when": {
       "difficulty": "expert"
@@ -1499,7 +1499,7 @@
     {
      "text": {
       "fr": "Campagne Experte Uniquement : si les joueurs perdent cette partie, Ronan récupère la Pierre du Pouvoir et la campagne est perdue",
-      "en": "Expert campaign: losing here loses the campaign"
+      "en": "Expert Campaign Only: if the players lose this game, Ronan takes the Power Stone and the campaign is lost"
      },
      "when": {
       "difficulty": "expert"

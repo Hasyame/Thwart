@@ -180,7 +180,7 @@ FR = {
         "Mélangez cette manigance annexe Intérêt Général dans le deck Rencontre.",
     "Put the Venom ally into play under the first player's control.":
         "Mettez en jeu l'allié Venom sous le contrôle du premier joueur.",
-    "Expert: place 2 additional sand counters on City Streets and resolve "
+    "Expert Campaign Only: place 2 additional sand counters on City Streets and resolve "
     "Surging Sands.":
         "Campagne Experte Uniquement : placez 2 jetons Sable supplémentaires sur "
         "Rues de la Ville et "
@@ -198,8 +198,8 @@ FR = {
     "No minions in play?": "Aucun sbire en jeu ?",
     "No side schemes in play?": "Aucune manigance annexe en jeu ?",
     "No threat on the main scheme?": "Aucune menace sur la manigance principale ?",
-    "Fewer than 1 acceleration tokens in play?":
-        "Moins de 1 jeton accélération en jeu ?",
+    "No acceleration tokens in play?":
+        "Aucun pion Accélération en jeu ?",
     "No defeated identities?": "Aucune identité vaincue ?",
     "Is the Community Service side scheme in the victory display?":
         "La manigance annexe Intérêt Général est-elle dans la pile de victoire ?",
@@ -419,7 +419,7 @@ def reputation_prompts():
         {"id": "noThreat", "type": "boolean",
          "label": t("No threat on the main scheme?")},
         {"id": "fewAcceleration", "type": "boolean",
-         "label": t("Fewer than 1 acceleration tokens in play?")},
+         "label": t("No acceleration tokens in play?")},
         {"id": "noDefeated", "type": "boolean",
          "label": t("No defeated identities?")},
     ]
@@ -549,7 +549,7 @@ def build():
             flavour="Sandman fills the streets with a tidal wall of dust, and "
                     "the people caught in it are running out of time.",
             extra_setup=[{
-                "text": t("Expert: place 2 additional sand counters on City "
+                "text": t("Expert Campaign Only: place 2 additional sand counters on City "
                           "Streets and resolve Surging Sands."),
                 "when": {"difficulty": "expert"},
             }],

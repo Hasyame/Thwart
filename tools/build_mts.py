@@ -80,7 +80,7 @@ def expert_steps():
         {
             "text": t(
                 "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
-                "Expert: set each hero's hit points to the value below",
+                "Expert Campaign Only: set each hero's hit points to the value below",
             ),
             "when": {"difficulty": "expert"},
             "showCounter": "hp",
@@ -90,7 +90,7 @@ def expert_steps():
                 "Campagne Experte Uniquement : chaque joueur peut placer 1 pion "
                 "Accélération sur la manigance principale." + NL +
                 "Cela soigne son identité jusqu'à sa valeur de points de vie maximale.",
-                "Expert: place an acceleration token on a main scheme to heal a hero to full",
+                "Expert Campaign Only: place an acceleration token on a main scheme to heal a hero to full",
             ),
             "when": {"difficulty": "expert"},
             "action": {
@@ -526,7 +526,7 @@ scenarios.append({
     "campaignSetup": [
         {
             "text": t(
-                "Touchez la carte pour voir quel Loki vous affrontez en premier ; mettez "
+                "Touchez la carte pour voir quel Loki vous affrontez en premier, puis mettez "
                 "les quatre autres de côté, hors jeu",
                 "Tap the card to see which Loki you face first; set the other four aside, "
                 "out of play",
@@ -583,7 +583,7 @@ scenarios.append({
         {
             "text": t(
                 "Campagne Experte Uniquement : si les joueurs perdent cette partie, Loki régnera sur tout l'univers et les joueurs auront perdu la campagne",
-                "Expert: losing here loses the campaign",
+                "Expert Campaign Only: losing here loses the campaign",
             ),
             "when": {"difficulty": "expert"},
         },
