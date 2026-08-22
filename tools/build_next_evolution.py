@@ -81,7 +81,7 @@ FR = {
     "Remove these Marauders from the game before resolving the main scheme's setup.\nMinions of the same name stay in the encounter deck.":
         'Retirez ces Maraudeurs de la partie avant de résoudre la mise en place de la manigance principale.\nLes sbires du même nom restent dans le deck Rencontre.',
     'Unofficial, reconstructed for the app: the rulebook and cards from the NeXt Evolution box are still needed to play.\n\nThe app keeps the campaign log for you. Which player side schemes you have already chosen, which environments you earned by beating them, the encounter cards they dragged into the deck for good, which Marauders were routed, and how much damage Hope Summers is carrying.\n\nThe side scheme each scenario is a choice, not a draw, so the app offers the ones you have not used and records what you pick rather than picking for you.\n\nExpert is the expert campaign: the harder villain stages, and hit points that carry from one scenario to the next.':
-        "Non officiel, reconstitué pour l'application : le livret et les cartes de la boîte Next Evolution restent nécessaires pour jouer.\n\nL'application tient le journal de campagne pour vous. Quelles manigances annexes joueur vous avez déjà choisies, quels environnements vous avez acquis en les vainquant, les cartes Rencontre qu'elles ont ajoutées définitivement au deck, quels Maraudeurs ont été mis en déroute, et combien de dégâts Hope Summers porte encore.\n\nLa manigance annexe de chaque scénario est un choix, pas un tirage : l'application propose celles que vous n'avez pas encore utilisées et note celle que vous prenez, au lieu de choisir à votre place.\n\nExpert correspond à la campagne experte : les stades de méchant les plus durs, et des points de vie qui se reportent d'un scénario au suivant.",
+        "Non officiel, reconstitué pour l'application : le livret et les cartes de la boîte NeXt Evolution restent nécessaires pour jouer.\n\nL'application tient le journal de campagne pour vous. Quelles manigances annexes joueur vous avez déjà choisies, quels environnements vous avez acquis en les vainquant, les cartes Rencontre qu'elles ont ajoutées définitivement au deck, quels Maraudeurs ont été mis en déroute, et combien de dégâts Hope Summers porte encore.\n\nLa manigance annexe de chaque scénario est un choix, pas un tirage : l'application propose celles que vous n'avez pas encore utilisées et note celle que vous prenez, au lieu de choisir à votre place.\n\nExpert correspond à la campagne experte : les stades de méchant les plus durs, et des points de vie qui se reportent d'un scénario au suivant.",
     'In player order, discard encounter cards until a minion or a Psionic attachment is discarded, and reveal it.\nThen shuffle the discard pile back in.':
         "Dans l'ordre du tour, défaussez des cartes Rencontre jusqu'à en défausser un sbire ou un attachement Psionique, et révélez-le.\nPuis remélangez la pile de défausse dans le deck.",
     'Each player may deal themself 1 facedown encounter card to heal to full.\nA player defeated last scenario rejoins this way.':
@@ -135,7 +135,7 @@ FR = {
     'Morlock Siege':
         'Le Siège des Morlocks',
     'NeXt Evolution':
-        'Next Evolution',
+        'NeXt Evolution',
     'On the Run':
         'En Fuite',
     'One Marauder is drawn to carry Hope. Defeat that villain twice to win.':
@@ -185,7 +185,7 @@ FR = {
     'Under the orphanage there is a lift, and under the lift there are vats with people in them.':
         "Sous l'orphelinat il y a un ascenseur, et sous l'ascenseur il y a des cuves avec des gens dedans.",
     'Unofficial, reconstructed for the app: the rulebook and cards from the NeXt Evolution box are still needed to play.':
-        "Non officiel, reconstitué pour l'application : le livret et les cartes de la boîte Next Evolution restent nécessaires pour jouer.",
+        "Non officiel, reconstitué pour l'application : le livret et les cartes de la boîte NeXt Evolution restent nécessaires pour jouer.",
     'Which Marauders ended the game under Routed? They are out of the game from here.':
         'Quels Maraudeurs ont fini la partie sous Déroute ? Ils quittent la partie à partir de maintenant.',
 }

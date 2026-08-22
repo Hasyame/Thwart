@@ -28,7 +28,15 @@ FR, EN = "fr", "en"
 
 
 def text(fr, en=None):
-    return {FR: fr, EN: en if en is not None else fr}
+    """The string in both languages, or only in French when there is no English.
+
+    Leaving the English out is not the same as copying the French into it: the
+    app falls back to French for an English reader either way, but only the
+    absence lets the campaign page report how much is really translated.
+    """
+    if en is None:
+        return {FR: fr}
+    return {FR: fr, EN: en}
 
 
 # id, French name, English name, pressure counter.

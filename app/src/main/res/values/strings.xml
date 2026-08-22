@@ -597,4 +597,5 @@
     <string name="versus_tiebreak_4">The team whose identities have the most hit points left.</string>
     <string name="versus_tiebreak_5">The team with the fewest attachments on their leader.</string>
     <string name="versus_subtitle">Two teams, two boards, one device between them.</string>
+    <string name="campaign_translation_coverage">This campaign is written %1$d%% in French and %2$d%% in English.</string>
 </resources>

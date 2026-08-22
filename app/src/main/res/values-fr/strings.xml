@@ -619,4 +619,5 @@
     <string name="versus_tiebreak_4">L’équipe dont les identités ont le plus de points de vie restants.</string>
     <string name="versus_tiebreak_5">L’équipe avec le moins d’attachements sur son leader.</string>
     <string name="versus_subtitle">Deux équipes, deux tableaux, un seul appareil.</string>
+    <string name="campaign_translation_coverage">Cette campagne est écrite à %1$d %% en français et à %2$d %% en anglais.</string>
 </resources>

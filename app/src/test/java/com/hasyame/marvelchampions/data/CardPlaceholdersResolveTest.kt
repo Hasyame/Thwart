@@ -91,9 +91,13 @@ class CardPlaceholdersResolveTest {
     }
 
     @Test
-    fun `locally named cards are named in both languages`() {
-        // A local name with no French half would fall back to English inside a
-        // French sentence, which is the leak this campaign exists to avoid.
+    fun `every locally named card has a French name`() {
+        // These names exist because the pack has no MarvelCDB entry, and they
+        // were read off the French box, so French is the half that must be
+        // there. The English half is optional on purpose: LocalizedText falls
+        // back, and leaving it out is how the campaign page knows to report
+        // that the English is unfinished rather than silently showing French
+        // and calling it translated.
         val missing = mutableListOf<String>()
         context().assets.list("campaigns").orEmpty().filter { it.endsWith(".json") }
             .forEach { name ->
@@ -102,11 +106,11 @@ class CardPlaceholdersResolveTest {
                     asset("campaigns/$name"),
                 )
                 template.localCardNames.forEach { (code, text) ->
-                    if (text.fr.isNullOrBlank() || text.en.isNullOrBlank()) {
+                    if (text.fr.isNullOrBlank()) {
                         missing.add("$name -> $code")
                     }
                 }
             }
-        assertTrue("local card names missing a language: $missing", missing.isEmpty())
+        assertTrue("local card names with no French: $missing", missing.isEmpty())
     }
 }

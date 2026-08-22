@@ -160,6 +160,21 @@ fun StartCampaignScreen(
                 }
             }
 
+            // Shown on every campaign, complete or not: "100% and 100%" is the
+            // answer to "is this one finished in my language?", and a line that
+            // only appears when something is wrong cannot answer it.
+            template?.id?.let { state.coverage[it] }?.let { coverage ->
+                Text(
+                    text = stringResource(
+                        R.string.campaign_translation_coverage,
+                        coverage.frenchPercent,
+                        coverage.englishPercent,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
             Section(stringResource(R.string.campaign_name)) {
                 OutlinedTextField(
                     value = name,

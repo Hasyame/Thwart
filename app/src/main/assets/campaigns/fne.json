@@ -79,60 +79,46 @@
  },
  "localCardNames": {
   "s1_musee": {
-   "fr": "Cambriolage du Musée d'Art",
-   "en": "Cambriolage du Musée d'Art"
+   "fr": "Cambriolage du Musée d'Art"
   },
   "s2_poursuite": {
-   "fr": "La Poursuite",
-   "en": "La Poursuite"
+   "fr": "La Poursuite"
   },
   "s3_racket": {
-   "fr": "Racket en Bande Organisée",
-   "en": "Racket en Bande Organisée"
+   "fr": "Racket en Bande Organisée"
   },
   "s4_raft": {
-   "fr": "L'Évasion du Raft",
-   "en": "L'Évasion du Raft"
+   "fr": "L'Évasion du Raft"
   },
   "s5_rotatives": {
-   "fr": "Arrêtez les Rotatives !",
-   "en": "Arrêtez les Rotatives !"
+   "fr": "Arrêtez les Rotatives !"
   },
   "fne_villain_hammerhead": {
-   "fr": "Hammerhead",
-   "en": "Hammerhead"
+   "fr": "Hammerhead"
   },
   "fne_villain_bullseye": {
-   "fr": "Bullseye",
-   "en": "Bullseye"
+   "fr": "Bullseye"
   },
   "fne_villain_electro": {
-   "fr": "Electro",
-   "en": "Electro"
+   "fr": "Electro"
   },
   "fne_villain_homme_pourpre": {
-   "fr": "L'Homme Pourpre",
-   "en": "L'Homme Pourpre"
+   "fr": "L'Homme Pourpre"
   },
   "fne_villain_mary_typhoide": {
-   "fr": "Mary Typhoïde",
-   "en": "Mary Typhoïde"
+   "fr": "Mary Typhoïde"
   },
   "fne_face_mary_a": {
-   "fr": "Mary Typhoïde (A)",
-   "en": "Mary Typhoïde (A)"
+   "fr": "Mary Typhoïde (A)"
   },
   "fne_face_bloody_a": {
-   "fr": "Bloody Mary (A)",
-   "en": "Bloody Mary (A)"
+   "fr": "Bloody Mary (A)"
   },
   "fne_face_mary_b": {
-   "fr": "Mary Typhoïde (B)",
-   "en": "Mary Typhoïde (B)"
+   "fr": "Mary Typhoïde (B)"
   },
   "fne_face_bloody_b": {
-   "fr": "Bloody Mary (B)",
-   "en": "Bloody Mary (B)"
+   "fr": "Bloody Mary (B)"
   }
  },
  "notice": {
@@ -694,8 +680,7 @@
   {
    "id": "s1_musee",
    "name": {
-    "fr": "Cambriolage du Musée d'Art",
-    "en": "Cambriolage du Musée d'Art"
+    "fr": "Cambriolage du Musée d'Art"
    },
    "flavour": {
     "fr": "Une alarme silencieuse au Musée d'Art, et un service de sécurité qui ne répond plus. Les voleurs n'ont pas pris la peine de couvrir leurs traces : on dirait qu'ils voulaient être remarqués.",
@@ -920,8 +905,7 @@
   {
    "id": "s2_poursuite",
    "name": {
-    "fr": "La Poursuite",
-    "en": "La Poursuite"
+    "fr": "La Poursuite"
    },
    "flavour": {
     "fr": "Une voiture de sport jaune file vers le sud à travers Hell's Kitchen, et le tunnel n'est plus très loin. Sortie de la ville, elle sera introuvable — il faut lui couper la route.",
@@ -1146,8 +1130,7 @@
   {
    "id": "s3_racket",
    "name": {
-    "fr": "Racket en Bande Organisée",
-    "en": "Racket en Bande Organisée"
+    "fr": "Racket en Bande Organisée"
    },
    "flavour": {
     "fr": "Des voyous armés de battes mettent une boutique de quartier en pièces pendant que le propriétaire se cache derrière son comptoir. Ils appellent ça des pénalités de retard.",
@@ -1372,8 +1355,7 @@
   {
    "id": "s4_raft",
    "name": {
-    "fr": "L'Évasion du Raft",
-    "en": "L'Évasion du Raft"
+    "fr": "L'Évasion du Raft"
    },
    "flavour": {
     "fr": "Quelqu'un a franchi les grilles du Raft avec un passe d'accès intégral et ouvre les cellules une à une. Les détenus que vous avez mis là se retournent contre vous.",
@@ -1598,8 +1580,7 @@
   {
    "id": "s5_rotatives",
    "name": {
-    "fr": "Arrêtez les Rotatives !",
-    "en": "Arrêtez les Rotatives !"
+    "fr": "Arrêtez les Rotatives !"
    },
    "flavour": {
     "fr": "Les bureaux du Daily Bugle sont pris d'assaut et le rédacteur en chef est quelque part à l'intérieur, ligoté. Derrière la porte, quelqu'un s'amuse.",
@@ -1824,8 +1805,7 @@
   {
    "id": "s6_caid",
    "name": {
-    "fr": "Le Caïd",
-    "en": "Le Caïd"
+    "fr": "Le Caïd"
    },
    "flavour": {
     "fr": "Toute cette vague de crimes était orchestrée, et la rue vous en tient pour responsables. Une seule personne pouvait monter une campagne pareille contre vous : Le Caïd.",

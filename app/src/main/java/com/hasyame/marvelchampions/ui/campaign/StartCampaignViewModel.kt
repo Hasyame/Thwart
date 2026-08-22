@@ -9,6 +9,8 @@ import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.TranslationCoverage
+import com.hasyame.marvelchampions.domain.campaign.template.translationCoverage
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckProblem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.hasyame.marvelchampions.data.repository.CollectionRepository
@@ -33,6 +35,8 @@ data class StartCampaignUiState(
     val isLoading: Boolean = true,
     /** Campaign names follow the card language, like the rest of the campaign. */
     val localeCode: String = CardLocale.FRENCH.code,
+    /** How much of each campaign's own text is written, by template id. */
+    val coverage: Map<String, TranslationCoverage> = emptyMap(),
 )
 
 @HiltViewModel
@@ -68,6 +72,10 @@ class StartCampaignViewModel @Inject constructor(
                 val templates = bundled.filter { it.packCode.isNullOrBlank() || it.packCode in owned }
                 state.value = StartCampaignUiState(
                     templates = templates,
+                    // Counted here rather than in the composable: it walks the
+                    // whole template, and the list is rebuilt on every deck
+                    // change.
+                    coverage = templates.associate { it.id to it.translationCoverage() },
                     candidates = decks.map { deck ->
                         val rules = builderRepository.heroRules(deck.heroCode, locale)
                         RosterCandidate(
