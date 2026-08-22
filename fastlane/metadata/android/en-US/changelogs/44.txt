@@ -1,0 +1,24 @@
+Civil War, played the way it was meant to be: two teams against each other.
+
+Competitive mode is on the Play tab. Each team builds a scenario and hands it
+to the other, so the app asks what each side is facing: the enemy's leader, and
+the enemy's pick of main schemes out of the four their side offers. Then both
+boards sit on one screen, because the question that mode asks is which side is
+further along, and that cannot be answered while each half is on a different
+phone.
+
+Ending a round advances both boards together. The rulebook keeps the two sides
+in step, and a game does not end until both have played the same number of
+phases. If it comes down to a tie, the five tie-breaks are listed in the order
+you apply them.
+
+Civil War also works properly in ordinary play now. It puts a leader where every
+other box puts a villain, and the app was only looking for villains, so counting
+health in a Civil War game found nothing at all. Leaders count now.
+
+Campaigns you do not own the box for are no longer offered. Choosing one only
+led to a setup step naming cards you do not have.
+
+NeXt Evolution draws two more things the book leaves to chance: the order the
+seven Marauders arrive in, and which of the three Sinister Experiments is
+removed from the game.

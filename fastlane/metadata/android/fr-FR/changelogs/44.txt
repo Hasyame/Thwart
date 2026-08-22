@@ -1,0 +1,25 @@
+Civil War, comme elle est faite pour être jouée : deux équipes l'une contre l'autre.
+
+Le mode compétitif est dans l'onglet Jouer. Chaque équipe construit un scénario
+et le donne à l'autre : l'application demande donc ce que chaque camp affronte,
+le leader de l'adversaire et les manigances principales qu'il a choisies parmi
+les quatre de son camp. Ensuite les deux tableaux tiennent sur un seul écran,
+parce que la question de ce mode est de savoir qui est le plus avancé, et on ne
+peut pas y répondre si chaque moitié est sur un téléphone différent.
+
+Finir un round fait avancer les deux tableaux ensemble. Le livret garde les deux
+camps au même rythme, et une partie ne se termine pas tant que les deux n'ont
+pas joué le même nombre de phases. En cas d'égalité, les cinq critères de
+départage sont listés dans l'ordre où on les applique.
+
+Civil War fonctionne aussi correctement en jeu normal. Elle met un leader là où
+toutes les autres boîtes mettent un méchant, et l'application ne cherchait que
+des méchants : compter les points de vie dans une partie Civil War ne trouvait
+donc rien du tout. Les leaders comptent désormais.
+
+Les campagnes dont vous n'avez pas la boîte ne sont plus proposées. Les choisir
+ne menait qu'à une étape de mise en place nommant des cartes que vous n'avez pas.
+
+Next Evolution tire deux choses de plus que le livret laisse au hasard : l'ordre
+d'arrivée des sept Maraudeurs, et laquelle des trois Sinistres Expériences
+quitte la partie.
