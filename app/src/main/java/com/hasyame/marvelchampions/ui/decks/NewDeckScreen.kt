@@ -38,6 +38,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,7 +110,7 @@ fun NewDeckScreen(
                             FilterChip(
                                 selected = aspect in state.chosenAspects,
                                 onClick = { viewModel.toggleAspect(aspect) },
-                                label = { Text(aspect.replaceFirstChar(Char::uppercase)) },
+                                label = { Text(aspectLabel(aspect)) },
                             )
                         }
                     }

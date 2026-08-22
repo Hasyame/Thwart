@@ -44,6 +44,7 @@ import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckText
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckTextCard
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 import com.hasyame.marvelchampions.ui.util.shareText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -207,7 +208,8 @@ fun DeckDetailScreen(
                         supportingContent = {
                             Text(
                                 DeckRepository.parseAspects(contents.deck.aspects)
-                                    .joinToString(" / ") { it.replaceFirstChar(Char::uppercase) },
+                                    .map { aspectLabel(it) }
+                                    .joinToString(" / "),
                             )
                         },
                         modifier = Modifier.clickable { onCardClick(contents.deck.heroCode) },

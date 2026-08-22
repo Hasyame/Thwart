@@ -40,6 +40,7 @@ import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.repository.DeckImportError
 import com.hasyame.marvelchampions.data.repository.DeckRepository
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,9 +112,8 @@ fun DecksScreen(
                                     listOfNotNull(
                                         deck.heroName,
                                         DeckRepository.parseAspects(deck.aspects)
-                                            .joinToString(" / ") { aspect ->
-                                                aspect.replaceFirstChar(Char::uppercase)
-                                            }
+                                            .map { aspect -> aspectLabel(aspect) }
+                                            .joinToString(" / ")
                                             .takeIf { it.isNotBlank() },
                                     ).joinToString(" · "),
                                 )

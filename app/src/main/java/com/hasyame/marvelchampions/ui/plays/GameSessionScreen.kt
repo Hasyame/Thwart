@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -30,7 +31,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -39,12 +39,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.runtime.rememberCoroutineScope
-import com.hasyame.marvelchampions.ui.photos.TablePhotoButton
-import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
-import com.hasyame.marvelchampions.ui.photos.rememberTablePhotoCapture
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -57,10 +54,14 @@ import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.halftone
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
-import com.hasyame.marvelchampions.domain.play.Encounter
-import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
+import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
+import com.hasyame.marvelchampions.ui.photos.TablePhotoButton
+import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
+import com.hasyame.marvelchampions.ui.photos.rememberTablePhotoCapture
+import com.hasyame.marvelchampions.ui.util.KeepScreenOn
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 import kotlinx.coroutines.delay
 
 /**
@@ -315,7 +316,7 @@ private fun SetupPhase(
                             viewModel.addHero(heroCode, aspect)
                             pendingHero = null
                         },
-                        label = { Text(aspect.replaceFirstChar(Char::uppercase)) },
+                        label = { Text(aspectLabel(aspect)) },
                     )
                 }
             }
@@ -331,7 +332,7 @@ private fun SetupPhase(
                     headlineContent = {
                         Text(state.names.heroes[hero.heroCode] ?: hero.heroCode)
                     },
-                    supportingContent = { Text(hero.aspect.replaceFirstChar(Char::uppercase)) },
+                    supportingContent = { Text(aspectLabel(hero.aspect)) },
                     trailingContent = {
                         IconButton(onClick = { viewModel.removeHero(index) }) {
                             Icon(
@@ -423,10 +424,10 @@ private fun BriefingPhase(
                 state.heroes.takeIf { it.isNotEmpty() }?.let { heroes ->
                     BriefingRow(
                         label = stringResource(R.string.randomizer_heroes),
-                        value = heroes.joinToString(", ") { hero ->
+                        value = heroes.map { hero ->
                             (state.names.heroes[hero.heroCode] ?: hero.heroCode) +
-                                " · " + hero.aspect.replaceFirstChar(Char::uppercase)
-                        },
+                                " · " + aspectLabel(hero.aspect)
+                        }.joinToString(", "),
                     )
                 }
             }

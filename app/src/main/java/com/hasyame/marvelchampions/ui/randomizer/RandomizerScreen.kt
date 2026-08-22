@@ -1,5 +1,12 @@
 package com.hasyame.marvelchampions.ui.randomizer
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,19 +40,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.clickable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -61,6 +61,7 @@ import com.hasyame.marvelchampions.data.repository.RandomizerRepository
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.DrawField
 import com.hasyame.marvelchampions.ui.plays.PlaysViewModel
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -473,17 +474,6 @@ private fun difficultyLabel(difficulty: Difficulty): String = stringResource(
     },
 )
 
-@Composable
-private fun aspectLabel(aspect: String): String = stringResource(
-    when (aspect) {
-        "aggression" -> R.string.aspect_aggression
-        "justice" -> R.string.aspect_justice
-        "leadership" -> R.string.aspect_leadership
-        "protection" -> R.string.aspect_protection
-        "pool" -> R.string.aspect_pool
-        else -> R.string.randomizer_none
-    },
-)
 
 /** Heroes as code-and-aspect pairs, which is what the session route carries. */
 private fun com.hasyame.marvelchampions.domain.randomizer.RandomizerDraw.asSessionHeroes(): String =
