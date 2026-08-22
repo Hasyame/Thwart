@@ -279,7 +279,7 @@
     <string name="campaign_scheme_setup">Mise en place de la manigance principale</string>
     <string name="campaign_villain_deck_label">Deck du méchant</string>
     <string name="campaign_main_scheme_label">Deck manigance principale</string>
-    <string name="campaign_encounter_sets_label">Deck rencontre</string>
+    <string name="campaign_encounter_sets_label">Deck Rencontre</string>
     <string name="campaign_questions_title">Quelques questions</string>
     <string name="campaign_validate">Valider</string>
     <string name="campaign_bravo">Bravo !</string>
@@ -389,7 +389,7 @@
     <string name="campaign_choose_cards">Choisir des cartes (%1$d)</string>
     <string name="action_done">Terminé</string>
     <string name="card_origin">Provenance</string>
-    <string name="card_encounter_set">Set rencontre : %1$s</string>
+    <string name="card_encounter_set">Set de rencontre : %1$s</string>
     <string name="settings_theme">Thème</string>
     <string name="settings_theme_system">Système</string>
     <string name="settings_theme_light">Clair</string>
@@ -454,7 +454,7 @@
     <string name="villain_step_minions">Activation des sbires</string>
     <string name="villain_step_deal">Attribuer des cartes Rencontre</string>
     <string name="villain_step_reveal">Révéler les cartes Rencontre</string>
-    <string name="villain_step_pass">Passer le pion Premier Joueur et mettre fin au round</string>
+    <string name="villain_step_pass">Passer le pion Premier joueur et mettre fin au round</string>
     <string name="session_long_break">Faire une longue pause</string>
     <string name="action_close">Fermer</string>
     <string name="paused_game_title">Une partie vous attend</string>
@@ -579,8 +579,8 @@
     <string name="session_end_round">Terminer le round</string>
     <string name="session_keep_awake">Garder l\'écran allumé</string>
     <string name="campaign_villains_struck">Ce tour, les méchants frappent : %1$s</string>
-    <string name="campaign_pressure">Menace %1$d / 3</string>
-    <string name="campaign_pressure_critical">Menace %1$d / 3 — une de plus et il tombe</string>
+    <string name="campaign_pressure">Pression %1$d / 3</string>
+    <string name="campaign_pressure_critical">Pression %1$d / 3 — une de plus et le lieu tombe</string>
     <string name="campaign_environment_title">Les méchants font progresser deux lieux.</string>
     <string name="campaign_environment_last">Un seul lieu restant. Il encaisse deux fois.</string>
     <string name="campaign_environment_achieved">ACHEVÉ</string>

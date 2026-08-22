@@ -136,7 +136,7 @@
   }
  },
  "notice": {
-  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Peur de Rien restent nécessaires pour jouer.\n\nL'application tire pour vous les environnements et le SUBORDONNÉ de chaque mission, et tient le compte de la pression. Une mission qui atteint trois marqueurs est perdue : elle sort de la campagne. Le Caïd sera d'autant mieux préparé que vous aurez achevé de missions.\n\nLes noms de cartes viennent de la boîte française, la seule dont dispose le développeur. La traduction anglaise du reste est en cours.",
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Peur de Rien restent nécessaires pour jouer.\n\nL'application tire pour vous les environnements et le SUBORDONNÉ de chaque mission, et tient le compte de la pression. Une mission qui atteint trois marqueurs est perdue : elle sort de la campagne. Le Caïd est d'autant mieux préparé que vous achevez de missions : celles que vous perdez ne le renforcent pas.\n\nLes noms de cartes viennent de la boîte française, la seule dont dispose le développeur. La traduction anglaise du reste est en cours.",
   "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Fear No Evil box are still needed to play.\n\nThe app draws the environments and each mission's SUBORDINATE for you, and keeps count of the pressure. A mission that reaches three marks is lost and leaves the campaign. Kingpin is the better prepared for every mission you achieve, not for the ones you lose.\n\nCard names and the campaign's own terms come from the French box, the only one the developer has, so they may not match the official English printing. English wording for the rest is on its way."
  },
  "villainPool": [
@@ -746,7 +746,7 @@
     },
     {
      "text": {
-      "fr": "deck Rencontre : \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus le set du méchant.",
+      "fr": "Deck Rencontre : \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"Cambriolage du Musée d'Art\", \"Policiers\", \"Le Hibou\", \"Standard\", plus the villain's set."
      }
     }
@@ -972,7 +972,7 @@
     },
     {
      "text": {
-      "fr": "deck Rencontre : \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus le set du méchant.",
+      "fr": "Deck Rencontre : \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"La Poursuite\", \"Policiers\", \"Conduite\", \"Standard\", plus the villain's set."
      }
     }
@@ -1198,7 +1198,7 @@
     },
     {
      "text": {
-      "fr": "deck Rencontre : \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
+      "fr": "Deck Rencontre : \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"Racket en Bande Organisée\", \"Désastres\", \"Mafia des Survêtes\", \"Standard\", plus the villain's set."
      }
     }
@@ -1424,7 +1424,7 @@
     },
     {
      "text": {
-      "fr": "deck Rencontre : \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus le set du méchant.",
+      "fr": "Deck Rencontre : \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"L'Évasion du Raft\", \"Le Hibou\", \"Tombstone\", \"Standard\", plus the villain's set."
      }
     }
@@ -1650,7 +1650,7 @@
     },
     {
      "text": {
-      "fr": "deck Rencontre : \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
+      "fr": "Deck Rencontre : \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus le set du méchant.",
       "en": "Encounter deck: \"Arrêtez les Rotatives !\", \"Tombstone\", \"Mafia des Survêtes\", \"Standard\", plus the villain's set."
      }
     }
@@ -1867,7 +1867,7 @@
     },
     {
      "text": {
-      "fr": "deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
+      "fr": "Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
       "en": "Encounter deck: \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\"."
      }
     },

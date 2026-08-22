@@ -593,7 +593,7 @@ def scenario(scenario_id, name_fr, name_en, counter):
                 % (q(SCENARIO_DECKS[scenario_id][0]), NOTES_EN[SCENARIO_DECKS[scenario_id][1]]),
             )},
             {"text": text(
-                "deck Rencontre : %s, plus le set du méchant."
+                "Deck Rencontre : %s, plus le set du méchant."
                 % q_all(SCENARIO_DECKS[scenario_id][2]),
                 "Encounter deck: %s, plus the villain's set."
                 % q_all(SCENARIO_DECKS[scenario_id][2]),
@@ -635,7 +635,7 @@ def kingpin():
                 "Main scheme deck: \"King's Gambit\", \"End Game\".",
             )},
             {"text": text(
-                "deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
+                "Deck Rencontre : \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
                 "Encounter deck: \"Le Caïd\", \"Tombstone\", \"Mafia des Survêtes\".",
             )},
             {"text": text("Ce scénario n'utilise pas le set Standard.",
@@ -793,7 +793,8 @@ def build():
             "L'application tire pour vous les environnements et le SUBORDONNÉ de "
             "chaque mission, et tient le compte de la pression. Une mission qui "
             "atteint trois marqueurs est perdue : elle sort de la campagne. Le "
-            "Caïd sera d'autant mieux préparé que vous aurez achevé de missions."
+            "Caïd est d'autant mieux préparé que vous achevez de missions : celles "
+            "que vous perdez ne le renforcent pas."
             "\n\n"
             "Les noms de cartes viennent de la boîte française, la seule dont "
             "dispose le développeur. La traduction anglaise du reste est en cours.",

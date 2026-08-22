@@ -46,6 +46,7 @@ import com.hasyame.marvelchampions.core.designsystem.component.CardTypeBadge
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckProblem
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -344,6 +345,8 @@ private fun problemMessage(problem: DeckProblem): String = when (problem) {
     // where "your aspects are uneven" leaves the player counting.
     is DeckProblem.UnbalancedAspects -> stringResource(
         R.string.decks_problem_unbalanced_aspects,
-        problem.counts.entries.joinToString(", ") { "${it.key} ${it.value}" },
+        problem.counts.entries
+            .map { "${aspectLabel(it.key)} ${it.value}" }
+            .joinToString(", "),
     )
 }
