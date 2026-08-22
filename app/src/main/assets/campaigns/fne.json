@@ -1438,7 +1438,7 @@
     },
     {
      "text": {
-      "fr": "Carte Tenace à chaque sbire PRISONNIER ; à 2 cases, aussi un boost face cachée.",
+      "fr": "Carte d'état Tenace à chaque sbire PRISONNIER ; à 2 cases, aussi une carte de boost face cachée.",
       "en": "Tough on each PRISONER minion; at 2 boxes, a facedown boost as well."
      },
      "when": {
@@ -1902,7 +1902,7 @@
     },
     {
      "text": {
-      "fr": "3 environnements ACHEVÉ ou plus : carte Tenace à chaque sbire en jeu.",
+      "fr": "3 environnements ACHEVÉ ou plus : carte d'état Tenace à chaque sbire en jeu.",
       "en": "3+ ACHEVÉ environments: a Tough status card on each minion in play."
      },
      "when": {

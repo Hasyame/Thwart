@@ -455,7 +455,7 @@ scenarios.append({
         {
             "text": t(
                 "Campagne Experte Uniquement : ces héros étaient engagés avec un ennemi "
-                "et se distribuent chacun une carte rencontre",
+                "et se distribuent chacun une carte Rencontre",
                 "Expert: these heroes were engaged with an enemy and each deal themselves "
                 "an encounter card",
             ),

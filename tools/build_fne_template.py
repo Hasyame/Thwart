@@ -66,7 +66,7 @@ PRESSURE_SETUP = {
         "Place 1 threat per ticked box on every main scheme (2 in Expert).",
     ),
     "s4_raft": text(
-        "Carte Tenace à chaque sbire PRISONNIER ; à 2 cases, aussi un boost face cachée.",
+        "Carte d'état Tenace à chaque sbire PRISONNIER ; à 2 cases, aussi une carte de boost face cachée.",
         "Tough on each PRISONER minion; at 2 boxes, a facedown boost as well.",
     ),
     "s5_rotatives": text(
@@ -642,7 +642,7 @@ def kingpin():
             )},
             {
                 "text": text(
-                    "3 environnements ACHEVÉ ou plus : carte Tenace à chaque sbire en jeu.",
+                    "3 environnements ACHEVÉ ou plus : carte d'état Tenace à chaque sbire en jeu.",
                     "3+ ACHEVÉ environments: a Tough status card on each minion in play.",
                 ),
                 "when": {"countTrue": "acheve", "countAtLeast": 3},

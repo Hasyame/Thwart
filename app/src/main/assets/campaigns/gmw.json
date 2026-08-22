@@ -14,7 +14,7 @@
   "en": "The Galaxy's Most Wanted"
  },
  "notice": {
-  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Convoitise Galactique restent nécessaires pour jouer.\n\nL'application tient la boutique et le registre à votre place : vos crédits et vos achats, les cartes joueur placées dans La Collection, les Artefacts Galactiques de votre pile de victoire, les jetons évasion, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte Convoitise Galactique restent nécessaires pour jouer.\n\nL'application tient la boutique et le registre à votre place : vos crédits et vos achats, les cartes joueur placées dans La Collection, les Artefacts Galactiques de votre pile de victoire, les jetons Fuite, et en campagne experte les points de vie de chaque héros entre les parties.",
   "en": "Unofficial, reconstructed for the app: the rulebook and cards from The Galaxy's Most Wanted box are still needed to play.\n\nThe app runs the market and keeps the log for you: your credits and purchases, the player cards put into The Collection, the Galactic Artifacts in your victory display, the escape tokens, and in an expert campaign each hero's hit points between games."
  },
  "packCode": "gmw",
@@ -227,7 +227,7 @@
   {
    "id": "s1_badoon",
    "name": {
-    "fr": "La confrérie des Badoon",
+    "fr": "La Confrérie des Badoon",
     "en": "Brotherhood of Badoon"
    },
    "victoryLabel": {
@@ -317,7 +317,7 @@
       "id": "schemeAt1B",
       "type": "boolean",
       "label": {
-       "fr": "La manigance principale est-elle en 1B ? ({card:16061a})",
+       "fr": "La manigance principale est-elle au stade 1B ? ({card:16061a})",
        "en": "Is the main scheme on stage 1B? ({card:16061a})"
       },
       "cards": [
@@ -416,7 +416,7 @@
   {
    "id": "s2_museum",
    "name": {
-    "fr": "Infiltrer le musée",
+    "fr": "Infiltrer le Musée",
     "en": "Infiltrate the Museum"
    },
    "victoryLabel": {
@@ -510,7 +510,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -667,7 +667,7 @@
   {
    "id": "s3_escape",
    "name": {
-    "fr": "Fuir le musée",
+    "fr": "Fuir le Musée",
     "en": "Escape the Museum"
    },
    "victoryLabel": {
@@ -731,7 +731,7 @@
     },
     {
      "text": {
-      "fr": "Retirez ces cartes de la partie : elles ne peuvent pas être jouées durant ce scénario. Puis piochez jusqu'à votre taille de main",
+      "fr": "Retirez ces cartes de la partie, puis piochez jusqu'à votre taille de main",
       "en": "Remove these cards from the game — they cannot be played this scenario. Then draw up to hand size"
      },
      "showCardList": "collection",
@@ -786,7 +786,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -1007,7 +1007,7 @@
     },
     {
      "text": {
-      "fr": "Placez 1 jeton évasion sur le Vaisseau de Nebula",
+      "fr": "Placez 1 jeton Fuite sur le Vaisseau de Nebula",
       "en": "Place 1 evasion counter on Nebula’s Ship"
      },
      "cards": [
@@ -1020,7 +1020,7 @@
     },
     {
      "text": {
-      "fr": "Donnez 1 carte rencontre face cachée au premier joueur",
+      "fr": "Attribuez 1 carte Rencontre face cachée au premier joueur",
       "en": "Deal the first player 1 facedown encounter card"
      },
      "cards": [
@@ -1033,7 +1033,7 @@
     },
     {
      "text": {
-      "fr": "Donnez 1 carte boost face cachée à Nebula",
+      "fr": "Donnez 1 carte de boost face cachée à Nebula",
       "en": "Give Nebula 1 facedown boost card"
      },
      "cards": [
@@ -1046,7 +1046,7 @@
     },
     {
      "text": {
-      "fr": "Donnez un statut « tough » à Nebula",
+      "fr": "Donnez une carte d'état Tenace à Nebula",
       "en": "Give Nebula a tough status card"
      },
      "cards": [
@@ -1116,7 +1116,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -1166,7 +1166,7 @@
       "id": "fewEvasion",
       "type": "boolean",
       "label": {
-       "fr": "Y a-t-il au plus 1 jeton évasion sur le Vaisseau de Nebula ?",
+       "fr": "Y a-t-il au plus 1 jeton Fuite sur le Vaisseau de Nebula ?",
        "en": "Is there at most 1 evasion counter on Nebula’s Ship?"
       }
      },
@@ -1174,7 +1174,7 @@
       "id": "schemeAt1B",
       "type": "boolean",
       "label": {
-       "fr": "La manigance principale est-elle en 1B ? ({card:16091a})",
+       "fr": "La manigance principale est-elle au stade 1B ? ({card:16091a})",
        "en": "Is the main scheme on stage 1B? ({card:16091a})"
       },
       "cards": [
@@ -1185,7 +1185,7 @@
       "id": "evasionCount",
       "type": "number",
       "label": {
-       "fr": "Combien de jetons évasion sur le Vaisseau de Nebula ?",
+       "fr": "Combien de jetons Fuite sur le Vaisseau de Nebula ?",
        "en": "How many evasion counters are on Nebula’s Ship?"
       }
      },
@@ -1461,7 +1461,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Experte Uniquement : dépensez 1 crédit pour revenir aux points de vie imprimés",
+      "fr": "Campagne Experte Uniquement : soustrayez 1 crédit pour soigner votre identité jusqu'à sa valeur de points de vie imprimée",
       "en": "Expert campaign: spend 1 unit to heal to printed hit points"
      },
      "when": {
@@ -1498,7 +1498,7 @@
     },
     {
      "text": {
-      "fr": "Campagne Experte Uniquement : une défaite ici fait perdre la campagne",
+      "fr": "Campagne Experte Uniquement : si les joueurs perdent cette partie, Ronan récupère la Pierre du Pouvoir et la campagne est perdue",
       "en": "Expert campaign: losing here loses the campaign"
      },
      "when": {
