@@ -86,6 +86,9 @@ data object RandomizerGraph
 data object RandomizerRoute
 
 @Serializable
+data object VersusRoute
+
+@Serializable
 data object SettingsGraph
 
 @Serializable

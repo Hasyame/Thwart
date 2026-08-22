@@ -603,4 +603,20 @@
     </plurals>
     <string name="about_privacy">Politique de confidentialité</string>
     <string name="about_privacy_url">https://hasyame.github.io/Thwart/confidentialite.html</string>
+    <string name="versus_setup_title">Partie compétitive</string>
+    <string name="versus_setup_intro">Chaque équipe construit un scénario et le donne à l’autre : ce qu’une équipe affronte ici, c’est le leader et les manigances de l’adversaire.</string>
+    <string name="versus_faces">Cette équipe affronte :</string>
+    <string name="versus_players">Joueurs dans cette équipe : %1$d</string>
+    <string name="versus_start">Commencer la partie</string>
+    <string name="versus_end_round">Finir le round sur les deux tableaux</string>
+    <string name="versus_who_won">Qui a gagné ?</string>
+    <string name="versus_tie">Égalité</string>
+    <string name="versus_again">Une autre partie</string>
+    <string name="versus_tiebreak_title">Départages, dans l’ordre</string>
+    <string name="versus_tiebreak_1">L’équipe dont le deck manigance principale adverse n’a pas dépassé le stade 1B.</string>
+    <string name="versus_tiebreak_2">L’équipe avec le moins de sbires et de manigances annexes dans sa zone.</string>
+    <string name="versus_tiebreak_3">L’équipe avec le moins de menace sur la manigance principale de sa zone.</string>
+    <string name="versus_tiebreak_4">L’équipe dont les identités ont le plus de points de vie restants.</string>
+    <string name="versus_tiebreak_5">L’équipe avec le moins d’attachements sur son leader.</string>
+    <string name="versus_subtitle">Deux équipes, deux tableaux, un seul appareil.</string>
 </resources>

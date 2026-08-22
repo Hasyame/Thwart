@@ -64,6 +64,7 @@ fun PlayScreen(
     onRandomDraw: () -> Unit,
     onOwnSetup: () -> Unit,
     onCampaigns: () -> Unit,
+    onVersus: () -> Unit,
     onResumeCampaign: (String) -> Unit,
     viewModel: CampaignListViewModel = hiltViewModel(),
 ) {
@@ -147,6 +148,15 @@ fun PlayScreen(
                 title = stringResource(R.string.play_campaign),
                 subtitle = stringResource(R.string.play_campaign_detail),
                 onClick = onCampaigns,
+            )
+
+            // Civil War and Synthezoid Smackdown only: two teams, two boards,
+            // one device between them.
+            Choice(
+                icon = Icons.Filled.PlayArrow,
+                title = stringResource(R.string.versus_setup_title),
+                subtitle = stringResource(R.string.versus_subtitle),
+                onClick = onVersus,
             )
         }
     }

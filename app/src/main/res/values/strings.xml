@@ -581,4 +581,20 @@
     </plurals>
     <string name="about_privacy">Privacy policy</string>
     <string name="about_privacy_url" translatable="true">https://hasyame.github.io/Thwart/privacy.html</string>
+    <string name="versus_setup_title">Versus game</string>
+    <string name="versus_setup_intro">Each team builds a scenario and hands it to the other, so what a team faces here is the enemy leader and the enemy schemes.</string>
+    <string name="versus_faces">This team faces:</string>
+    <string name="versus_players">Players on this team: %1$d</string>
+    <string name="versus_start">Start the game</string>
+    <string name="versus_end_round">End the round on both boards</string>
+    <string name="versus_who_won">Who won?</string>
+    <string name="versus_tie">A tie</string>
+    <string name="versus_again">Another game</string>
+    <string name="versus_tiebreak_title">Tie-breaks, in order</string>
+    <string name="versus_tiebreak_1">The team whose enemy main scheme deck did not advance past stage 1B.</string>
+    <string name="versus_tiebreak_2">The team with the fewest minions and side schemes in their area.</string>
+    <string name="versus_tiebreak_3">The team with the least threat on the main scheme in their area.</string>
+    <string name="versus_tiebreak_4">The team whose identities have the most hit points left.</string>
+    <string name="versus_tiebreak_5">The team with the fewest attachments on their leader.</string>
+    <string name="versus_subtitle">Two teams, two boards, one device between them.</string>
 </resources>

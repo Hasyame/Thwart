@@ -43,6 +43,52 @@ class EncounterRepository @Inject constructor(
         }
 
     /**
+     * What a side can put on the board, for the versus setup to offer.
+     *
+     * The code travels with the name because the setup has to hand the choice
+     * back to [versusBoard], and a name is not enough to look a card up by.
+     */
+    suspend fun versusSchemes(sideCode: String): List<VersusScheme> =
+        withContext(ioDispatcher) {
+            val locale = preferences.cardLocale.first()
+            cardDao.getVersusSchemes(sideCode, locale.code).map { card ->
+                VersusScheme(
+                    code = card.code,
+                    name = card.name,
+                    stage = card.stage.orEmpty(),
+                )
+            }
+        }
+
+    /**
+     * One board of a versus game: the leader you face, and the schemes it runs.
+     *
+     * Both halves are chosen rather than derived. The leader comes from the
+     * enemy team's build and the schemes are their pick out of the four their
+     * side offers, so nothing here can be worked out from the other.
+     */
+    suspend fun versusBoard(
+        leaderCode: String,
+        schemeCodes: List<String>,
+        players: Int,
+    ): EncounterSetup = withContext(ioDispatcher) {
+        val locale = preferences.cardLocale.first()
+        val leaderRows = cardDao.getScenarioSides(leaderCode, locale.code)
+        val schemes = cardDao.getCardsByCodes(schemeCodes)
+            .filter { it.locale == locale.code }
+            // Keep the order the caller asked for: stage 1 then stage 2, not
+            // whatever order the query happened to return them in.
+            .sortedBy { schemeCodes.indexOf(it.code) }
+
+        EncounterSetup(
+            villain = leaderRows.filter { it.typeCode in VILLAIN_TYPES && !it.doubleSided }
+                .map(::villainSide),
+            scheme = schemes.map(::schemeSide),
+            players = players.coerceAtLeast(1),
+        )
+    }
+
+    /**
      * A versus scenario's side and leader, or null for an ordinary scenario.
      *
      * The randomiser builds the pair's code, and this reads it back. Kept
@@ -127,3 +173,10 @@ class EncounterRepository @Inject constructor(
         const val MAIN_SCHEME = "main_scheme"
     }
 }
+
+/** One main scheme a versus side can bring, as the setup screen offers it. */
+data class VersusScheme(
+    val code: String,
+    val name: String,
+    val stage: String,
+)

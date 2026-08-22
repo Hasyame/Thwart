@@ -23,6 +23,7 @@ import com.hasyame.marvelchampions.ui.plays.PlaysScreen
 import com.hasyame.marvelchampions.ui.rules.RulesScreen
 import com.hasyame.marvelchampions.ui.play.PlayScreen
 import com.hasyame.marvelchampions.ui.randomizer.RandomizerScreen
+import com.hasyame.marvelchampions.ui.versus.VersusScreen
 import com.hasyame.marvelchampions.ui.settings.AboutScreen
 import com.hasyame.marvelchampions.ui.settings.SettingsScreen
 
@@ -108,10 +109,14 @@ fun MarvelChampionsNavHost(
                     onRandomDraw = { navController.navigate(RandomizerRoute) },
                     onOwnSetup = { navController.navigate(GameSessionRoute()) },
                     onCampaigns = { navController.navigate(CampaignRoute) },
+                    onVersus = { navController.navigate(VersusRoute) },
                     onResumeCampaign = { runId ->
                         navController.navigate(CampaignRunRoute(runId))
                     },
                 )
+            }
+            composable<VersusRoute> {
+                VersusScreen(onBack = { navController.popBackStack() })
             }
             composable<RandomizerRoute> {
                 RandomizerScreen(

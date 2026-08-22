@@ -278,6 +278,27 @@ interface CardDao {
     )
     suspend fun getVersusSides(locale: String): List<CardSetSummary>
 
+    /**
+     * The main schemes a versus side can bring, numbers side only.
+     *
+     * A side carries four stage 1s and four stage 2s, and the players pick one
+     * of each when they build their scenario. Every stage 1 happens to print
+     * the same threat and every stage 2 the same star, so the choice does not
+     * change the counting, but it does change what the board is called.
+     */
+    @Query(
+        """
+        SELECT * FROM cards
+        WHERE locale = :locale
+          AND cardSetCode = :sideCode
+          AND typeCode = 'main_scheme'
+          AND doubleSided = 0
+          AND stage LIKE '%B'
+        ORDER BY stage, setPosition
+        """,
+    )
+    suspend fun getVersusSchemes(sideCode: String, locale: String): List<CardEntity>
+
     /** Hero identities, which are cards rather than sets. */
     @Query(
         """
