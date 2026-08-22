@@ -45,11 +45,11 @@
   {
    "id": "s1_ebony_maw",
    "name": {
-    "fr": "Ebony Maw",
+    "fr": "Mâchoire d'Ébène",
     "en": "Ebony Maw"
    },
    "flavour": {
-    "fr": "Ebony Maw assiège Knowhere pour y prendre la Pierre de Pouvoir. Le Corps de Knowhere ne tiendra pas seul.",
+    "fr": "Mâchoire d'Ébène assiège Nulle-Part pour y prendre la Pierre du Pouvoir. Cosmo et les défenseurs de la station ne tiendront pas seuls.",
     "en": "Ebony Maw is storming Knowhere for the Power Stone. The Knowhere Corps will not hold on their own."
    },
    "victoryLabel": {
@@ -85,7 +85,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Mettre cette manigance annexe en jeu",
+      "fr": "Mettez en jeu cette manigance annexe",
       "en": "Put this side scheme into play"
      },
      "cards": [
@@ -94,7 +94,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette manigance annexe dans le deck rencontre",
+      "fr": "Mélangez cette manigance annexe dans le deck Rencontre",
       "en": "Shuffle this side scheme into the encounter deck"
      },
      "cards": [
@@ -108,7 +108,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -127,7 +127,7 @@
       "id": "knowhere1B",
       "type": "boolean",
       "label": {
-       "fr": "Avez-vous complété l'étape 1B de la manigance principale ?",
+       "fr": "La manigance principale « Les Pierres d'Infinité 1B » a-t-elle été achevée ?",
        "en": "Did you complete main scheme stage 1B?"
       },
       "cards": [
@@ -189,11 +189,11 @@
   {
    "id": "s2_tower_defense",
    "name": {
-    "fr": "Tower Defense",
+    "fr": "Défense de la Tour",
     "en": "Tower Defense"
    },
    "flavour": {
-    "fr": "Corvus Glaive et Proxima Midnight frappent la Tour des Avengers pour s'emparer de la Pierre de Réalité.",
+    "fr": "Corvus Glaive et Proxima Minuit frappent la Tour des Avengers pour s'emparer de la Pierre de la Réalité.",
     "en": "Corvus Glaive and Proxima Midnight strike Avengers Tower to seize the Reality Stone."
    },
    "victoryLabel": {
@@ -232,7 +232,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Mettre {card:21100} en jeu sur sa face Stronghold, et lui attacher {card:21101} à la manigance 2B",
+      "fr": "Mettez {card:21100} en jeu sur sa face PLACE FORTE, et attachez {card:21101} au stade 2B",
       "en": "Put {card:21100} into play on its Stronghold side, and attach {card:21101} to scheme 2B"
      },
      "cards": [
@@ -242,7 +242,7 @@
     },
     {
      "text": {
-      "fr": "Pour durcir la partie, placer des dégâts par joueur sur {card:21100} :\n  Standard : 1 par joueur\n  Expert : 2 par joueur\n  Héroïque : 3 par joueur",
+      "fr": "Pour augmenter la difficulté, placez des dégâts par joueur sur {card:21100} :\n  Standard : 1 par joueur\n  Expert : 2 par joueur\n  Héroïque : 3 par joueur",
       "en": "To make it harder, place damage per player on {card:21100}:\n  Standard: 1 per player\n  Expert: 2 per player\n  Heroic: 3 per player"
      },
      "cards": [
@@ -251,7 +251,7 @@
     },
     {
      "text": {
-      "fr": "Mettre cette manigance annexe en jeu",
+      "fr": "Mettez en jeu cette manigance annexe",
       "en": "Put this side scheme into play"
      },
      "cards": [
@@ -260,7 +260,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette manigance annexe dans le deck rencontre",
+      "fr": "Mélangez cette manigance annexe dans le deck Rencontre",
       "en": "Shuffle this side scheme into the encounter deck"
      },
      "cards": [
@@ -273,7 +273,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -283,7 +283,7 @@
     },
     {
      "text": {
-      "fr": "Expert : placer un pion accélération sur une manigance principale pour soigner un héros à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
       "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
@@ -312,7 +312,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -342,7 +342,7 @@
       "id": "towerDamaged",
       "type": "boolean",
       "label": {
-       "fr": "Avez-vous retourné {card:21100} sur sa face Damaged ?",
+       "fr": "La Tour des Avengers a-t-elle le trait ENDOMMAGÉ ?",
        "en": "Did you flip {card:21100} to its Damaged side?"
       },
       "cards": [
@@ -413,7 +413,7 @@
     "en": "Thanos"
    },
    "flavour": {
-    "fr": "Thanos tient les six Pierres. Il reste une seule occasion de l'arrêter, à bord de Sanctuary.",
+    "fr": "Thanos tient les six Pierres d'Infinité. Il reste une seule occasion de l'arrêter, à bord du Sanctuaire.",
     "en": "Thanos holds all six Stones. There is one chance left to stop him, aboard Sanctuary."
    },
    "victoryLabel": {
@@ -450,7 +450,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Attacher l'Infinity Gauntlet à Thanos, puis mélanger les six Pierres à part, face cachée",
+      "fr": "Attachez le Gant de l'Infini à Thanos, puis mélangez les six Pierres d'Infinité et mettez-les de côté, face cachée",
       "en": "Attach the Infinity Gauntlet to Thanos, then shuffle the six Stones aside, facedown"
      },
      "cards": [
@@ -459,7 +459,7 @@
     },
     {
      "text": {
-      "fr": "Mettre cette manigance annexe en jeu",
+      "fr": "Mettez en jeu cette manigance annexe",
       "en": "Put this side scheme into play"
      },
      "cards": [
@@ -468,7 +468,7 @@
     },
     {
      "text": {
-      "fr": "Mettre cet allié en jeu sous le contrôle du premier joueur",
+      "fr": "Mettez cet allié en jeu sous le contrôle du premier joueur",
       "en": "Put this ally into play under the first player's control"
      },
      "cards": [
@@ -481,7 +481,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette manigance annexe dans le deck rencontre",
+      "fr": "Mélangez cette manigance annexe dans le deck Rencontre",
       "en": "Shuffle this side scheme into the encounter deck"
      },
      "cards": [
@@ -507,7 +507,7 @@
     },
     {
      "text": {
-      "fr": "Mettre ce sbire en jeu, engagé avec le premier joueur",
+      "fr": "Mettez ce sbire en jeu, engagé avec le premier joueur",
       "en": "Put this minion into play engaged with the first player"
      },
      "cards": [
@@ -520,7 +520,7 @@
     },
     {
      "text": {
-      "fr": "Infliger 3 dégâts à chaque identité : la Tour des Avengers était endommagée",
+      "fr": "Infligez 3 dégâts à chaque identité : la Tour des Avengers avait le trait ENDOMMAGÉ",
       "en": "Deal 3 damage to each identity: Avengers Tower was left damaged"
      },
      "when": {
@@ -530,7 +530,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -540,7 +540,7 @@
     },
     {
      "text": {
-      "fr": "Expert : placer un pion accélération sur une manigance principale pour soigner un héros à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
       "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
@@ -569,7 +569,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -588,7 +588,7 @@
       "id": "infinityStones1B",
       "type": "boolean",
       "label": {
-       "fr": "Avez-vous complété l'étape 1B de la manigance principale ?",
+       "fr": "La manigance principale « Les Pierres d'Infinité 1B » a-t-elle été achevée ?",
        "en": "Did you complete main scheme stage 1B?"
       },
       "cards": [
@@ -651,7 +651,7 @@
     "en": "Hela"
    },
    "flavour": {
-    "fr": "Loki a pris le trône d'Asgard et jeté Odin en Hel. Sans le Père de Tout, personne n'arrêtera le trickster.",
+    "fr": "Loki a pris le trône d'Asgard et livré Odin à Hela. Sans le Père de Toute Chose, personne n'arrêtera le Dieu de la Malice.",
     "en": "Loki has taken Asgard's throne and cast Odin into Hel. Without the All-Father, nobody stops the trickster."
    },
    "victoryLabel": {
@@ -684,7 +684,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Mettre cette manigance annexe en jeu",
+      "fr": "Mettez en jeu cette manigance annexe",
       "en": "Put this side scheme into play"
      },
      "cards": [
@@ -693,7 +693,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -738,7 +738,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -748,7 +748,7 @@
     },
     {
      "text": {
-      "fr": "Expert : placer un pion accélération sur une manigance principale pour soigner un héros à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
       "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
@@ -777,7 +777,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      },
@@ -862,7 +862,7 @@
     "en": "Loki"
    },
    "flavour": {
-    "fr": "Odin est libre, mais Loki garde le trône et le Gantelet. Tout se joue au Royaume d'Or.",
+    "fr": "Odin est libre, mais Loki garde le trône et le Gant de l'Infini. Tout se joue au Royaume Doré.",
     "en": "Odin is free, but Loki keeps the throne and the Gauntlet. It ends in the Golden Realm."
    },
    "victoryLabel": {
@@ -904,7 +904,7 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Toucher la carte pour voir quel Loki affronter en premier ; mettre les quatre autres de côté, hors jeu",
+      "fr": "Touchez la carte pour voir quel Loki vous affrontez en premier ; mettez les quatre autres de côté, hors jeu",
       "en": "Tap the card to see which Loki you face first; set the other four aside, out of play"
      },
      "draw": {
@@ -920,13 +920,13 @@
     },
     {
      "text": {
-      "fr": "Choisir combien de Loki doivent être vaincus pour gagner :\n  Recrue : 1\n  Standard : 2\n  Expert : 3\n  Héroïque : 4",
+      "fr": "Choisissez combien de Loki doivent être vaincus pour gagner :\n  Débutant : 1\n  Standard : 2\n  Expert : 3\n  Héroïque : 4",
       "en": "Choose how many Lokis must be defeated to win:\n  Rookie: 1\n  Standard: 2\n  Expert: 3\n  Heroic: 4"
      }
     },
     {
      "text": {
-      "fr": "Mettre cette manigance annexe en jeu",
+      "fr": "Mettez en jeu cette manigance annexe",
       "en": "Put this side scheme into play"
      },
      "cards": [
@@ -935,7 +935,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger cette traîtrise dans le deck rencontre",
+      "fr": "Mélangez cette traîtrise dans le deck Rencontre",
       "en": "Shuffle this treachery into the encounter deck"
      },
      "cards": [
@@ -980,7 +980,7 @@
     },
     {
      "text": {
-      "fr": "Chaque joueur met un exemplaire de cette amélioration en jeu, face Setup",
+      "fr": "Chaque joueur met en jeu un exemplaire de cette amélioration, face Mise en Place visible",
       "en": "Each player puts one copy of this upgrade into play, Setup side up"
      },
      "cards": [
@@ -993,7 +993,7 @@
     },
     {
      "text": {
-      "fr": "Mettre Odin en jeu sur sa face King",
+      "fr": "Mettez Odin en jeu, face ROI visible",
       "en": "Put Odin into play on his King side"
      },
      "cards": [
@@ -1006,7 +1006,7 @@
     },
     {
      "text": {
-      "fr": "Expert : une défaite ici perd la campagne",
+      "fr": "Campagne Experte Uniquement : si les joueurs perdent cette partie, Loki régnera sur tout l'univers et les joueurs auront perdu la campagne",
       "en": "Expert: losing here loses the campaign"
      },
      "when": {
@@ -1015,7 +1015,7 @@
     },
     {
      "text": {
-      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
       "en": "Expert: set each hero's hit points to the value below"
      },
      "when": {
@@ -1025,7 +1025,7 @@
     },
     {
      "text": {
-      "fr": "Expert : placer un pion accélération sur une manigance principale pour soigner un héros à fond",
+      "fr": "Campagne Experte Uniquement : chaque joueur peut placer 1 pion Accélération sur la manigance principale.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
       "en": "Expert: place an acceleration token on a main scheme to heal a hero to full"
      },
      "when": {
@@ -1054,7 +1054,7 @@
       "id": "vp",
       "type": "number",
       "label": {
-       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "fr": "Combien de points de victoire y a-t-il dans la zone de victoire ?",
        "en": "How many victory points did you accumulate?"
       }
      }

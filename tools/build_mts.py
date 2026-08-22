@@ -28,6 +28,9 @@ SUMMONED_BACK = "21188"
 LOKIS = ["21160", "21161", "21162", "21163", "21164"]
 
 
+NL = chr(10)
+
+
 def t(fr, en):
     return {"fr": fr, "en": en}
 
@@ -47,7 +50,7 @@ def vp_prompt():
         "id": "vp",
         "type": "number",
         "label": t(
-            "Combien de points de victoire avez-vous accumulés ?",
+            "Combien de points de victoire y a-t-il dans la zone de victoire ?",
             "How many victory points did you accumulate?",
         ),
     }
@@ -76,7 +79,7 @@ def expert_steps():
     return [
         {
             "text": t(
-                "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+                "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
                 "Expert: set each hero's hit points to the value below",
             ),
             "when": {"difficulty": "expert"},
@@ -84,8 +87,9 @@ def expert_steps():
         },
         {
             "text": t(
-                "Expert : placer un pion accélération sur une manigance principale "
-                "pour soigner un héros à fond",
+                "Campagne Experte Uniquement : chaque joueur peut placer 1 pion "
+                "Accélération sur la manigance principale." + NL +
+                "Cela soigne son identité jusqu'à sa valeur de points de vie maximale.",
                 "Expert: place an acceleration token on a main scheme to heal a hero to full",
             ),
             "when": {"difficulty": "expert"},
@@ -125,7 +129,7 @@ def system_shock_step():
 def security_breach_step():
     return {
         "text": t(
-            "Mélanger cette manigance annexe dans le deck rencontre",
+            "Mélangez cette manigance annexe dans le deck Rencontre",
             "Shuffle this side scheme into the encounter deck",
         ),
         "cards": [SECURITY_BREACH],
@@ -148,10 +152,10 @@ scenarios = []
 # ---------------------------------------------------------------- scenario 1
 scenarios.append({
     "id": "s1_ebony_maw",
-    "name": t("Ebony Maw", "Ebony Maw"),
+    "name": t("Mâchoire d'Ébène", "Ebony Maw"),
     "flavour": t(
-        "Ebony Maw assiège Knowhere pour y prendre la Pierre de Pouvoir. Le Corps de Knowhere "
-        "ne tiendra pas seul.",
+        "Mâchoire d'Ébène assiège Nulle-Part pour y prendre la Pierre du Pouvoir. Cosmo et "
+        "les défenseurs de la station ne tiendront pas seuls.",
         "Ebony Maw is storming Knowhere for the Power Stone. The Knowhere Corps will not hold "
         "on their own.",
     ),
@@ -165,14 +169,14 @@ scenarios.append({
     "campaignSetup": [
         {
             "text": t(
-                "Mettre cette manigance annexe en jeu",
+                "Mettez en jeu cette manigance annexe",
                 "Put this side scheme into play",
             ),
             "cards": ["21180a"],
         },
         {
             "text": t(
-                "Mélanger cette manigance annexe dans le deck rencontre",
+                "Mélangez cette manigance annexe dans le deck Rencontre",
                 "Shuffle this side scheme into the encounter deck",
             ),
             "cards": [SECURITY_BREACH],
@@ -194,7 +198,7 @@ scenarios.append({
                 "id": "knowhere1B",
                 "type": "boolean",
                 "label": t(
-                    "Avez-vous complété l'étape 1B de la manigance principale ?",
+                    "La manigance principale « Les Pierres d'Infinité 1B » a-t-elle été achevée ?",
                     "Did you complete main scheme stage 1B?",
                 ),
                 "cards": ["21074a"],
@@ -224,10 +228,10 @@ scenarios.append({
 # ---------------------------------------------------------------- scenario 2
 scenarios.append({
     "id": "s2_tower_defense",
-    "name": t("Tower Defense", "Tower Defense"),
+    "name": t("Défense de la Tour", "Tower Defense"),
     "flavour": t(
-        "Corvus Glaive et Proxima Midnight frappent la Tour des Avengers pour s'emparer de la "
-        "Pierre de Réalité.",
+        "Corvus Glaive et Proxima Minuit frappent la Tour des Avengers pour s'emparer de la "
+        "Pierre de la Réalité.",
         "Corvus Glaive and Proxima Midnight strike Avengers Tower to seize the Reality Stone.",
     ),
     "victoryLabel": t("Le Black Order est vaincu !", "The Black Order is beaten!"),
@@ -243,8 +247,8 @@ scenarios.append({
     "campaignSetup": [
         {
             "text": t(
-                "Mettre {card:21100} en jeu sur sa face Stronghold, et lui attacher "
-                "{card:21101} à la manigance 2B",
+                "Mettez {card:21100} en jeu sur sa face PLACE FORTE, et attachez "
+                "{card:21101} au stade 2B",
                 "Put {card:21100} into play on its Stronghold side, and attach {card:21101} "
                 "to scheme 2B",
             ),
@@ -252,7 +256,7 @@ scenarios.append({
         },
         {
             "text": t(
-                "Pour durcir la partie, placer des dégâts par joueur sur {card:21100} :\n"
+                "Pour augmenter la difficulté, placez des dégâts par joueur sur {card:21100} :\n"
                 "  Standard : 1 par joueur\n"
                 "  Expert : 2 par joueur\n"
                 "  Héroïque : 3 par joueur",
@@ -265,7 +269,7 @@ scenarios.append({
         },
         {
             "text": t(
-                "Mettre cette manigance annexe en jeu",
+                "Mettez en jeu cette manigance annexe",
                 "Put this side scheme into play",
             ),
             "cards": ["21182a"],
@@ -297,7 +301,7 @@ scenarios.append({
                 "id": "towerDamaged",
                 "type": "boolean",
                 "label": t(
-                    "Avez-vous retourné {card:21100} sur sa face Damaged ?",
+                    "La Tour des Avengers a-t-elle le trait ENDOMMAGÉ ?",
                     "Did you flip {card:21100} to its Damaged side?",
                 ),
                 "cards": ["21100"],
@@ -330,8 +334,8 @@ scenarios.append({
     "id": "s3_thanos",
     "name": t("Thanos", "Thanos"),
     "flavour": t(
-        "Thanos tient les six Pierres. Il reste une seule occasion de l'arrêter, à bord de "
-        "Sanctuary.",
+        "Thanos tient les six Pierres d'Infinité. Il reste une seule occasion de l'arrêter, "
+        "à bord du Sanctuaire.",
         "Thanos holds all six Stones. There is one chance left to stop him, aboard Sanctuary.",
     ),
     "victoryLabel": t("Thanos est vaincu !", "Thanos is beaten!"),
@@ -346,22 +350,22 @@ scenarios.append({
     "campaignSetup": [
         {
             "text": t(
-                "Attacher l'Infinity Gauntlet à Thanos, puis mélanger les six Pierres à part, "
-                "face cachée",
+                "Attachez le Gant de l'Infini à Thanos, puis mélangez les six Pierres "
+                "d'Infinité et mettez-les de côté, face cachée",
                 "Attach the Infinity Gauntlet to Thanos, then shuffle the six Stones aside, facedown",
             ),
             "cards": ["21129"],
         },
         {
             "text": t(
-                "Mettre cette manigance annexe en jeu",
+                "Mettez en jeu cette manigance annexe",
                 "Put this side scheme into play",
             ),
             "cards": ["21184a"],
         },
         {
             "text": t(
-                "Mettre cet allié en jeu sous le contrôle du premier joueur",
+                "Mettez cet allié en jeu sous le contrôle du premier joueur",
                 "Put this ally into play under the first player's control",
             ),
             "cards": [COSMO],
@@ -371,7 +375,7 @@ scenarios.append({
         shawarma_step(),
         {
             "text": t(
-                "Mettre ce sbire en jeu, engagé avec le premier joueur",
+                "Mettez ce sbire en jeu, engagé avec le premier joueur",
                 "Put this minion into play engaged with the first player",
             ),
             "cards": [BLACK_SWAN],
@@ -379,7 +383,7 @@ scenarios.append({
         },
         {
             "text": t(
-                "Infliger 3 dégâts à chaque identité : la Tour des Avengers était endommagée",
+                "Infligez 3 dégâts à chaque identité : la Tour des Avengers avait le trait ENDOMMAGÉ",
                 "Deal 3 damage to each identity: Avengers Tower was left damaged",
             ),
             "when": flag("towerDamaged"),
@@ -401,7 +405,7 @@ scenarios.append({
                 "id": "infinityStones1B",
                 "type": "boolean",
                 "label": t(
-                    "Avez-vous complété l'étape 1B de la manigance principale ?",
+                    "La manigance principale « Les Pierres d'Infinité 1B » a-t-elle été achevée ?",
                     "Did you complete main scheme stage 1B?",
                 ),
                 "cards": ["21114a"],
@@ -428,8 +432,8 @@ scenarios.append({
     "id": "s4_hela",
     "name": t("Hela", "Hela"),
     "flavour": t(
-        "Loki a pris le trône d'Asgard et jeté Odin en Hel. Sans le Père de Tout, personne "
-        "n'arrêtera le trickster.",
+        "Loki a pris le trône d'Asgard et livré Odin à Hela. Sans le Père de Toute Chose, "
+        "personne n'arrêtera le Dieu de la Malice.",
         "Loki has taken Asgard's throne and cast Odin into Hel. Without the All-Father, nobody "
         "stops the trickster.",
     ),
@@ -443,14 +447,14 @@ scenarios.append({
     "campaignSetup": [
         {
             "text": t(
-                "Mettre cette manigance annexe en jeu",
+                "Mettez en jeu cette manigance annexe",
                 "Put this side scheme into play",
             ),
             "cards": ["21186a"],
         },
         {
             "text": t(
-                "Mélanger cette traîtrise dans le deck rencontre",
+                "Mélangez cette traîtrise dans le deck Rencontre",
                 "Shuffle this treachery into the encounter deck",
             ),
             "cards": [SUMMONED_BACK],
@@ -507,7 +511,7 @@ scenarios.append({
     "id": "s5_loki",
     "name": t("Loki", "Loki"),
     "flavour": t(
-        "Odin est libre, mais Loki garde le trône et le Gantelet. Tout se joue au Royaume d'Or.",
+        "Odin est libre, mais Loki garde le trône et le Gant de l'Infini. Tout se joue au Royaume Doré.",
         "Odin is free, but Loki keeps the throne and the Gauntlet. It ends in the Golden Realm.",
     ),
     "victoryLabel": t("Loki est vaincu !", "Loki is beaten!"),
@@ -522,8 +526,8 @@ scenarios.append({
     "campaignSetup": [
         {
             "text": t(
-                "Toucher la carte pour voir quel Loki affronter en premier ; mettre les "
-                "quatre autres de côté, hors jeu",
+                "Touchez la carte pour voir quel Loki vous affrontez en premier ; mettez "
+                "les quatre autres de côté, hors jeu",
                 "Tap the card to see which Loki you face first; set the other four aside, "
                 "out of play",
             ),
@@ -531,8 +535,8 @@ scenarios.append({
         },
         {
             "text": t(
-                "Choisir combien de Loki doivent être vaincus pour gagner :\n"
-                "  Recrue : 1\n"
+                "Choisissez combien de Loki doivent être vaincus pour gagner :\n"
+                "  Débutant : 1\n"
                 "  Standard : 2\n"
                 "  Expert : 3\n"
                 "  Héroïque : 4",
@@ -545,14 +549,14 @@ scenarios.append({
         },
         {
             "text": t(
-                "Mettre cette manigance annexe en jeu",
+                "Mettez en jeu cette manigance annexe",
                 "Put this side scheme into play",
             ),
             "cards": ["21189a"],
         },
         {
             "text": t(
-                "Mélanger cette traîtrise dans le deck rencontre",
+                "Mélangez cette traîtrise dans le deck Rencontre",
                 "Shuffle this treachery into the encounter deck",
             ),
             "cards": [SUMMONED_BACK],
@@ -562,7 +566,7 @@ scenarios.append({
         infinity_stones_step(),
         {
             "text": t(
-                "Chaque joueur met un exemplaire de cette amélioration en jeu, face Setup",
+                "Chaque joueur met en jeu un exemplaire de cette amélioration, face Mise en Place visible",
                 "Each player puts one copy of this upgrade into play, Setup side up",
             ),
             "cards": [NORN_STONE],
@@ -570,7 +574,7 @@ scenarios.append({
         },
         {
             "text": t(
-                "Mettre Odin en jeu sur sa face King",
+                "Mettez Odin en jeu, face ROI visible",
                 "Put Odin into play on his King side",
             ),
             "cards": [ODIN],
@@ -578,7 +582,7 @@ scenarios.append({
         },
         {
             "text": t(
-                "Expert : une défaite ici perd la campagne",
+                "Campagne Experte Uniquement : si les joueurs perdent cette partie, Loki régnera sur tout l'univers et les joueurs auront perdu la campagne",
                 "Expert: losing here loses the campaign",
             ),
             "when": {"difficulty": "expert"},
