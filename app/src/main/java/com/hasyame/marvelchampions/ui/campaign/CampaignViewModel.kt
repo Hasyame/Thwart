@@ -3,6 +3,9 @@ package com.hasyame.marvelchampions.ui.campaign
 import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
+import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.repository.CollectionRepository
+import com.hasyame.marvelchampions.data.settings.AppPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
@@ -31,8 +34,24 @@ data class CampaignListUiState(
 class CampaignListViewModel @Inject constructor(
     private val repository: CampaignRepository,
     private val pausedGameDao: PausedGameDao,
+    private val cardDao: CardDao,
+    private val collectionRepository: CollectionRepository,
+    private val preferences: AppPreferences,
     val photoStore: PhotoStore,
 ) : ViewModel() {
+
+    /**
+     * Whether a versus box is owned, which decides if the mode is offered.
+     *
+     * A pack holding leader cards is a versus pack, read off the cards rather
+     * than kept as a list to maintain by hand.
+     */
+    val hasVersusPack: StateFlow<Boolean> = collectionRepository.observeOwnedCodes()
+        .map { owned ->
+            val locale = preferences.currentCardLocale()
+            cardDao.getLeaders(locale.code).any { it.packCode in owned }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
     /**
      * The game put away on a long break, if there is one.

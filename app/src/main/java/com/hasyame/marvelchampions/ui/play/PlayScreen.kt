@@ -70,6 +70,7 @@ fun PlayScreen(
 ) {
     val summaries by viewModel.summaries.collectAsStateWithLifecycle()
     val paused by viewModel.pausedGame.collectAsStateWithLifecycle()
+    val hasVersusPack by viewModel.hasVersusPack.collectAsStateWithLifecycle()
     var showPaused by remember { mutableStateOf(false) }
     val inProgress = summaries.filterNot { it.entity.finished }
 
@@ -151,13 +152,16 @@ fun PlayScreen(
             )
 
             // Civil War and Synthezoid Smackdown only: two teams, two boards,
-            // one device between them.
-            Choice(
-                icon = Icons.Filled.PlayArrow,
-                title = stringResource(R.string.versus_setup_title),
-                subtitle = stringResource(R.string.versus_subtitle),
-                onClick = onVersus,
-            )
+            // one device between them. Hidden without one of those boxes,
+            // because the setup screen would have no leaders to offer.
+            if (hasVersusPack) {
+                Choice(
+                    icon = Icons.Filled.PlayArrow,
+                    title = stringResource(R.string.versus_setup_title),
+                    subtitle = stringResource(R.string.versus_subtitle),
+                    onClick = onVersus,
+                )
+            }
         }
     }
 }
