@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.allSetupSteps
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidator
+import com.hasyame.marvelchampions.domain.campaign.template.translationCoverage
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import com.hasyame.marvelchampions.domain.campaign.template.PromptType
@@ -197,6 +198,26 @@ class BundledCampaignsTest {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    fun `every campaign reports a translation coverage the page can show`() {
+        // The campaign page prints these two numbers for whichever campaign is
+        // selected, so a template that threw or produced nonsense would show up
+        // as a crash or a wrong claim in front of a player.
+        templates().forEach { (name, template) ->
+            val coverage = template.translationCoverage()
+            assertTrue(
+                "$name reports French ${coverage.frenchPercent}%",
+                coverage.frenchPercent in 0..100,
+            )
+            assertTrue(
+                "$name reports English ${coverage.englishPercent}%",
+                coverage.englishPercent in 0..100,
+            )
+            // Every campaign is written in French first; none should be short.
+            assertEquals("$name is not fully written in French", 100, coverage.frenchPercent)
         }
     }
 
