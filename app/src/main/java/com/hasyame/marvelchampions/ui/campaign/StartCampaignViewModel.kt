@@ -11,6 +11,8 @@ import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckProblem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.hasyame.marvelchampions.data.repository.CollectionRepository
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,6 +40,7 @@ class StartCampaignViewModel @Inject constructor(
     private val campaignRepository: CampaignRepository,
     private val deckRepository: DeckRepository,
     private val builderRepository: DeckBuilderRepository,
+    private val collectionRepository: CollectionRepository,
     private val preferences: AppPreferences,
 ) : ViewModel() {
 
@@ -52,9 +55,17 @@ class StartCampaignViewModel @Inject constructor(
         // was to restart the app.
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
-            val templates = campaignRepository.bundledTemplates()
+            val bundled = campaignRepository.bundledTemplates()
 
-            deckRepository.observeDecks().collect { decks ->
+            // Owned packs are collected alongside the decks: a player who ticks
+            // a box in the collection while this screen is alive should find
+            // its campaign waiting when they come back, the same way an
+            // imported deck appears.
+            combine(
+                deckRepository.observeDecks(),
+                collectionRepository.observeOwnedCodes(),
+            ) { decks, owned -> decks to owned }.collect { (decks, owned) ->
+                val templates = bundled.filter { it.packCode.isNullOrBlank() || it.packCode in owned }
                 state.value = StartCampaignUiState(
                     templates = templates,
                     candidates = decks.map { deck ->
