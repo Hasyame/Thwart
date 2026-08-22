@@ -7,7 +7,7 @@
   "en": "Age of Apocalypse"
  },
  "notice": {
-  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ère d'Apocalypse restent nécessaires pour jouer.\n\nL'application tire pour vous l'ordre des quatre Cavaliers et l'OVERSEER de chaque partie, retient les MISSIONS déjà jouées et les OVERSEERS vaincus, et tient le registre : points de victoire, sort du Professeur, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ère d'Apocalypse restent nécessaires pour jouer.\n\nL'application tire pour vous l'ordre des Quatre Cavaliers et le sbire HIÉRARQUE de chaque partie, retient les manigances annexes MISSION déjà jouées et les HIÉRARQUES vaincus, et tient le registre : points de victoire, sort du Professeur, et en campagne experte les points de vie de chaque identité entre les parties.",
   "en": "Unofficial, reconstructed for the app: the rulebook and cards from the Age of Apocalypse box are still needed to play.\n\nThe app draws the order of the four Horsemen and each game's OVERSEER for you, remembers which MISSIONS have been played and which OVERSEERS were defeated, and keeps the log: victory points, what became of the Professor, and in an expert campaign each hero's hit points between games."
  },
  "packCode": "aoa",
@@ -70,7 +70,7 @@
   "standardIII": [
    {
     "text": {
-     "fr": "Choisir Standard I ou Standard III (identique pour tous les scénarios)",
+     "fr": "Choisissez Standard I ou Standard III (identique pour tous les scénarios)",
      "en": "Choose Standard I or Standard III (same for every scenario)"
     }
    }
@@ -78,7 +78,7 @@
   "missions": [
    {
     "text": {
-     "fr": "Mélanger le set modulaire Age of Apocalypse dans le deck rencontre",
+     "fr": "Mélangez le set modulaire Ère d'Apocalypse dans le deck Rencontre",
      "en": "Shuffle the Age of Apocalypse modular set into the encounter deck"
     }
    },
@@ -100,7 +100,7 @@
    },
    {
     "text": {
-     "fr": "Jouer avec la MISSION {mission} — Mettre de côté chaque exemplaire de l'amélioration Desperate Measures",
+     "fr": "Jouez avec la MISSION {mission} — Mettez de côté chaque exemplaire de l'amélioration {card:45176}",
      "en": "Play with the MISSION {mission} — Set each copy of the Desperate Measures upgrade aside"
     },
     "cards": [
@@ -112,7 +112,7 @@
    },
    {
     "text": {
-     "fr": "Jouer avec la MISSION {mission} — Chaque joueur mélange un exemplaire de Panicked Refugees dans son deck",
+     "fr": "Jouez avec la MISSION {mission} — Chaque joueur mélange un exemplaire de {card:45178} dans son deck",
      "en": "Play with the MISSION {mission} — Each player shuffles a copy of Panicked Refugees into their deck"
     },
     "cards": [
@@ -124,7 +124,7 @@
    },
    {
     "text": {
-     "fr": "Jouer avec la MISSION {mission} — Mélanger North American Sea Wall dans le deck rencontre",
+     "fr": "Jouez avec la MISSION {mission} — Mélangez {card:45177} dans le deck Rencontre",
      "en": "Play with the MISSION {mission} — Shuffle the North American Sea Wall side scheme into the encounter deck"
     },
     "cards": [
@@ -136,7 +136,7 @@
    },
    {
     "text": {
-     "fr": "Jouer avec la MISSION {mission} — Mettre de côté chaque allié de campagne",
+     "fr": "Jouez avec la MISSION {mission} — Mettez de côté chaque allié de campagne",
      "en": "Play with the MISSION {mission} — Set each campaign ally aside"
     },
     "cards": [
@@ -148,7 +148,7 @@
    },
    {
     "text": {
-     "fr": "Chaque joueur peut mélanger 1 Desperate Measures dans son deck, hors taille minimale",
+     "fr": "Chaque joueur peut mélanger 1 {card:45176} dans son deck, hors taille minimale",
      "en": "Each player may shuffle 1 Desperate Measures into their deck, outside the minimum"
     },
     "cards": [
@@ -161,7 +161,7 @@
    },
    {
     "text": {
-     "fr": "Retirer chaque exemplaire de Desperate Measures de la campagne",
+     "fr": "Retirez de la campagne chaque exemplaire de {card:45176}",
      "en": "Remove each copy of Desperate Measures from the campaign"
     },
     "cards": [
@@ -174,7 +174,7 @@
    },
    {
     "text": {
-     "fr": "Panicked Refugees retirée. Chaque joueur ajoute 1 amélioration au choix, hors taille minimale",
+     "fr": "{card:45178} retirée. Chaque joueur ajoute 1 amélioration de n'importe quelle affinité, hors taille minimale",
      "en": "Panicked Refugees removed. Each player adds 1 upgrade of any aspect, outside the minimum"
     },
     "cards": [
@@ -187,7 +187,7 @@
    },
    {
     "text": {
-     "fr": "Chaque joueur mélange un exemplaire de Panicked Refugees dans son deck",
+     "fr": "Chaque joueur mélange un exemplaire de {card:45178} dans son deck",
      "en": "Each player shuffles a copy of Panicked Refugees into their deck"
     },
     "cards": [
@@ -200,7 +200,7 @@
    },
    {
     "text": {
-     "fr": "Sea Wall retirée. Chaque joueur ajoute 1 soutien au choix, hors taille minimale",
+     "fr": "{card:45177} retirée. Chaque joueur ajoute 1 soutien de n'importe quelle affinité, hors taille minimale",
      "en": "Sea Wall removed. Each player adds 1 support of any aspect, outside the minimum"
     },
     "cards": [
@@ -213,7 +213,7 @@
    },
    {
     "text": {
-     "fr": "Mélanger North American Sea Wall dans le deck rencontre pendant la mise en place",
+     "fr": "Mélangez {card:45177} dans le deck Rencontre lors de la mise en place",
      "en": "Shuffle North American Sea Wall into the encounter deck during setup"
     },
     "cards": [
@@ -239,7 +239,7 @@
    },
    {
     "text": {
-     "fr": "Retirer chaque allié de campagne de la campagne",
+     "fr": "Retirez de la campagne chaque allié de campagne",
      "en": "Remove each campaign ally from the campaign"
     },
     "cards": [
@@ -252,7 +252,7 @@
    },
    {
     "text": {
-     "fr": "Ajouter cet OVERSEER à la zone de mission et poser la carte Mission Rules à côté",
+     "fr": "Ajoutez ce sbire HIÉRARQUE à la zone de mission et placez près de lui la carte Règles de Mission",
      "en": "Add this OVERSEER minion to the mission area and put Mission Rules beside it"
     },
     "draw": {
@@ -278,7 +278,7 @@
    },
    {
     "text": {
-     "fr": "Chaque joueur cherche un allié dans son deck et le prend en main",
+     "fr": "Chaque joueur cherche un allié dans son deck et l'ajoute à sa main",
      "en": "Each player searches their deck for an ally and takes it into hand"
     }
    }
@@ -286,7 +286,7 @@
   "expertHp": [
    {
     "text": {
-     "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+     "fr": "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
      "en": "Expert: set each hero's hit points to the value below"
     },
     "when": {
@@ -296,7 +296,7 @@
    },
    {
     "text": {
-     "fr": "Expert : placer 3 menaces sur la MISSION pour soigner un héros à fond",
+     "fr": "Campagne Experte Uniquement : chaque joueur peut placer 3 menaces sur la MISSION.\nCela soigne son identité jusqu'à sa valeur de points de vie maximale.",
      "en": "Expert: place 3 threat on the MISSION to heal a hero to full"
     },
     "when": {
@@ -329,7 +329,7 @@
     "en": "Unus"
    },
    "flavour": {
-    "fr": "X-Force est bloquée dans une ligne temporelle où Apocalypse règne, et le prélat Unus les a déjà trouvés.",
+    "fr": "La X-Force est prise au piège d'une ligne chronologique où règne Apocalypse, et le prélat Unus les a déjà trouvés.",
     "en": "X-Force is stranded in a timeline ruled by Apocalypse, and the prelate Unus has already found them."
    },
    "victoryLabel": {
@@ -367,8 +367,8 @@
     },
     {
      "text": {
-      "fr": "Mettre Gene Pool en jeu et y placer la menace de la difficulté choisie :\n  Escarmouche : 0\n  Standard : 1 par joueur\n  Expert : 2 par joueur\n  Héroïque : 3 par joueur",
-      "en": "Put Gene Pool into play and place the threat for your difficulty on it:\n  Skirmish: 0\n  Standard: 1 per player\n  Expert: 2 per player\n  Heroic: 3 per player"
+      "fr": "Mettez {card:45071} en jeu et placez-y la menace de la difficulté choisie :\n  Escarmouche : 0\n  Standard : 1 par joueur\n  Expert : 2 par joueur\n  Héroïque : 3 par joueur",
+      "en": "Put {card:45071} into play and place the threat for your difficulty on it:\n  Skirmish: 0\n  Standard: 1 per player\n  Expert: 2 per player\n  Heroic: 3 per player"
      },
      "cards": [
       "45071"
@@ -392,7 +392,7 @@
       "id": "missionDefeated",
       "type": "boolean",
       "label": {
-       "fr": "La MISSION {mission} a-t-elle été déjouée ?",
+       "fr": "La manigance annexe MISSION {mission} a-t-elle été déjouée ?",
        "en": "Was the MISSION {mission} defeated?"
       }
      },
@@ -400,7 +400,7 @@
       "id": "overseerDefeated",
       "type": "boolean",
       "label": {
-       "fr": "L'OVERSEER {overseer} a-t-il été vaincu ?",
+       "fr": "Le sbire HIÉRARQUE {overseer} a-t-il été vaincu ?",
        "en": "Was the OVERSEER {overseer} defeated?"
       }
      },
@@ -580,7 +580,7 @@
     "en": "Four Horsemen"
    },
    "flavour": {
-    "fr": "Magneto accueille X-Force au quartier général des X-Men. Apocalypse le trouve aussitôt et lance ses quatre cavaliers.",
+    "fr": "Magnéto accueille la X-Force au quartier général secret des X-Men. Apocalypse les trouve aussitôt et lance ses Quatre Cavaliers.",
     "en": "Magneto takes X-Force into the X-Men's headquarters. Apocalypse finds it at once and sends his four horsemen."
    },
    "victoryLabel": {
@@ -644,7 +644,7 @@
     },
     {
      "text": {
-      "fr": "Donner le marqueur d'activation au méchant le plus à gauche",
+      "fr": "Donnez le marqueur d'activation au méchant le plus à gauche",
       "en": "Give the active counter to the leftmost villain"
      }
     },
@@ -669,7 +669,7 @@
       "id": "missionDefeated",
       "type": "boolean",
       "label": {
-       "fr": "La MISSION {mission} a-t-elle été déjouée ?",
+       "fr": "La manigance annexe MISSION {mission} a-t-elle été déjouée ?",
        "en": "Was the MISSION {mission} defeated?"
       }
      },
@@ -677,7 +677,7 @@
       "id": "overseerDefeated",
       "type": "boolean",
       "label": {
-       "fr": "L'OVERSEER {overseer} a-t-il été vaincu ?",
+       "fr": "Le sbire HIÉRARQUE {overseer} a-t-il été vaincu ?",
        "en": "Was the OVERSEER {overseer} defeated?"
       }
      },
@@ -857,7 +857,7 @@
     "en": "Apocalypse"
    },
    "flavour": {
-    "fr": "Les X-Men marchent sur la citadelle d'Apocalypse, à travers le cœur de son empire et ses prélats les plus solides.",
+    "fr": "Les X-Men marchent sur la citadelle d'Apocalypse, à travers le cœur de son empire et ses plus puissants prélats.",
     "en": "The X-Men march on Apocalypse's citadel, through the heart of his empire and his strongest prelates."
    },
    "victoryLabel": {
@@ -895,7 +895,7 @@
     },
     {
      "text": {
-      "fr": "Commencer Apocalypse sur la face (II) — face (I) pour une partie plus facile",
+      "fr": "Commencez Apocalypse sur la face (II) — face (I) pour une partie plus facile",
       "en": "Start Apocalypse on side (II) — side (I) for an easier game"
      },
      "cards": [
@@ -923,7 +923,7 @@
       "id": "missionDefeated",
       "type": "boolean",
       "label": {
-       "fr": "La MISSION {mission} a-t-elle été déjouée ?",
+       "fr": "La manigance annexe MISSION {mission} a-t-elle été déjouée ?",
        "en": "Was the MISSION {mission} defeated?"
       }
      },
@@ -931,7 +931,7 @@
       "id": "overseerDefeated",
       "type": "boolean",
       "label": {
-       "fr": "L'OVERSEER {overseer} a-t-il été vaincu ?",
+       "fr": "Le sbire HIÉRARQUE {overseer} a-t-il été vaincu ?",
        "en": "Was the OVERSEER {overseer} defeated?"
       }
      },
@@ -1107,19 +1107,19 @@
   {
    "id": "s4_dark_beast",
    "name": {
-    "fr": "Dark Beast",
+    "fr": "Le Fauve Noir",
     "en": "Dark Beast"
    },
    "flavour": {
-    "fr": "Sous la citadelle se trouve une machine à voyager dans le temps, et le Fauve qui la manœuvre n'est pas le leur.",
+    "fr": "Sous la citadelle se trouve une machine à voyager dans le temps, et le Fauve qui la manœuvre n'est pas le leur : c'est Le Fauve Noir.",
     "en": "Beneath the citadel is a time machine, and the Beast operating it is not theirs."
    },
    "victoryLabel": {
-    "fr": "Dark Beast est vaincu !",
+    "fr": "Le Fauve Noir est vaincu !",
     "en": "Dark Beast is beaten!"
    },
    "defeatLabel": {
-    "fr": "Dark Beast vous a vaincus !",
+    "fr": "Le Fauve Noir vous a vaincus !",
     "en": "Dark Beast has beaten you!"
    },
    "baseSetup": {
@@ -1170,7 +1170,7 @@
       "id": "missionDefeated",
       "type": "boolean",
       "label": {
-       "fr": "La MISSION {mission} a-t-elle été déjouée ?",
+       "fr": "La manigance annexe MISSION {mission} a-t-elle été déjouée ?",
        "en": "Was the MISSION {mission} defeated?"
       }
      },
@@ -1178,7 +1178,7 @@
       "id": "overseerDefeated",
       "type": "boolean",
       "label": {
-       "fr": "L'OVERSEER {overseer} a-t-il été vaincu ?",
+       "fr": "Le sbire HIÉRARQUE {overseer} a-t-il été vaincu ?",
        "en": "Was the OVERSEER {overseer} defeated?"
       }
      },
@@ -1397,7 +1397,7 @@
     },
     {
      "text": {
-      "fr": "Mettre Ancient Ritual en jeu",
+      "fr": "Mettez {card:45163} en jeu",
       "en": "Put Ancient Ritual into play"
      },
      "cards": [
@@ -1406,7 +1406,7 @@
     },
     {
      "text": {
-      "fr": "Commencer Apocalypse sur sa face BIOMORPH",
+      "fr": "Commencez Apocalypse sur sa face BIOMORPH",
       "en": "Start Apocalypse on his BIOMORPH side"
      },
      "cards": [
@@ -1415,19 +1415,19 @@
     },
     {
      "text": {
-      "fr": "Le Professeur X ne peut pas entrer en jeu cette partie",
+      "fr": "Le Professeur X ne peut pas entrer en jeu durant cette partie",
       "en": "Professor X cannot enter play this game"
      }
     },
     {
      "text": {
-      "fr": "Mélanger le set modulaire Age of Apocalypse dans le deck rencontre",
+      "fr": "Mélangez le set modulaire Ère d'Apocalypse dans le deck Rencontre",
       "en": "Shuffle the Age of Apocalypse modular set into the encounter deck"
      }
     },
     {
      "text": {
-      "fr": "Jouer avec cette MISSION et suivre sa mise en place dans le journal de campagne",
+      "fr": "Jouez avec cette MISSION et suivez sa mise en place dans le journal de campagne",
       "en": "Play with this MISSION side scheme and follow its setup in the campaign log"
      },
      "cards": [
@@ -1436,7 +1436,7 @@
     },
     {
      "text": {
-      "fr": "Ajouter cet OVERSEER à la zone de mission et poser la carte Mission Rules à côté",
+      "fr": "Ajoutez ce sbire HIÉRARQUE à la zone de mission et placez près de lui la carte Règles de Mission",
       "en": "Add this OVERSEER minion to the mission area and put Mission Rules beside it"
      },
      "draw": {
@@ -1462,13 +1462,13 @@
     },
     {
      "text": {
-      "fr": "Chaque joueur cherche un allié dans son deck et le prend en main",
+      "fr": "Chaque joueur cherche un allié dans son deck et l'ajoute à sa main",
       "en": "Each player searches their deck for an ally and takes it into hand"
      }
     },
     {
      "text": {
-      "fr": "Chaque joueur peut mélanger 1 Desperate Measures dans son deck, hors taille minimale",
+      "fr": "Chaque joueur peut mélanger 1 {card:45176} dans son deck, hors taille minimale",
       "en": "Each player may shuffle 1 Desperate Measures into their deck, outside the minimum"
      },
      "cards": [
@@ -1481,7 +1481,7 @@
     },
     {
      "text": {
-      "fr": "Retirer chaque exemplaire de Desperate Measures de la campagne",
+      "fr": "Retirez de la campagne chaque exemplaire de {card:45176}",
       "en": "Remove each copy of Desperate Measures from the campaign"
      },
      "cards": [
@@ -1494,7 +1494,7 @@
     },
     {
      "text": {
-      "fr": "Panicked Refugees retirée. Chaque joueur ajoute 1 amélioration au choix, hors taille minimale",
+      "fr": "{card:45178} retirée. Chaque joueur ajoute 1 amélioration de n'importe quelle affinité, hors taille minimale",
       "en": "Panicked Refugees removed. Each player adds 1 upgrade of any aspect, outside the minimum"
      },
      "cards": [
@@ -1507,7 +1507,7 @@
     },
     {
      "text": {
-      "fr": "Chaque joueur mélange un exemplaire de Panicked Refugees dans son deck",
+      "fr": "Chaque joueur mélange un exemplaire de {card:45178} dans son deck",
       "en": "Each player shuffles a copy of Panicked Refugees into their deck"
      },
      "cards": [
@@ -1520,7 +1520,7 @@
     },
     {
      "text": {
-      "fr": "Sea Wall retirée. Chaque joueur ajoute 1 soutien au choix, hors taille minimale",
+      "fr": "{card:45177} retirée. Chaque joueur ajoute 1 soutien de n'importe quelle affinité, hors taille minimale",
       "en": "Sea Wall removed. Each player adds 1 support of any aspect, outside the minimum"
      },
      "cards": [
@@ -1533,7 +1533,7 @@
     },
     {
      "text": {
-      "fr": "Mélanger North American Sea Wall dans le deck rencontre pendant la mise en place",
+      "fr": "Mélangez {card:45177} dans le deck Rencontre lors de la mise en place",
       "en": "Shuffle North American Sea Wall into the encounter deck during setup"
      },
      "cards": [
@@ -1559,7 +1559,7 @@
     },
     {
      "text": {
-      "fr": "Retirer chaque allié de campagne de la campagne",
+      "fr": "Retirez de la campagne chaque allié de campagne",
       "en": "Remove each campaign ally from the campaign"
      },
      "cards": [

@@ -13,6 +13,9 @@ OVERSEERS = ["45179a", "45180a", "45181a", "45182a", "45183a"]
 MISSION_TEAM = "45171a"
 
 
+NL = chr(10)
+
+
 def t(fr, en):
     return {"fr": fr, "en": en}
 
@@ -20,7 +23,7 @@ def t(fr, en):
 def standard_iii_step():
     return {
         "text": t(
-            "Choisir Standard I ou Standard III (identique pour tous les scénarios)",
+            "Choisissez Standard I ou Standard III (identique pour tous les scénarios)",
             "Choose Standard I or Standard III (same for every scenario)",
         ),
     }
@@ -31,7 +34,7 @@ def mission_steps(scenario_number):
     return [
         {
             "text": t(
-                "Mélanger le set modulaire Age of Apocalypse dans le deck rencontre",
+                "Mélangez le set modulaire Ère d'Apocalypse dans le deck Rencontre",
                 "Shuffle the Age of Apocalypse modular set into the encounter deck",
             ),
         },
@@ -44,7 +47,7 @@ def mission_steps(scenario_number):
     ] + mission_setup_steps() + mission_legacy_steps() + [
         {
             "text": t(
-                "Ajouter cet OVERSEER à la zone de mission et poser la carte Mission Rules à côté",
+                "Ajoutez ce sbire HIÉRARQUE à la zone de mission et placez près de lui la carte Règles de Mission",
                 "Add this OVERSEER minion to the mission area and put Mission Rules beside it",
             ),
             "draw": {"id": "overseer", "from": OVERSEERS, "excluding": "overseersDefeated"},
@@ -58,7 +61,7 @@ def mission_steps(scenario_number):
         },
         {
             "text": t(
-                "Chaque joueur cherche un allié dans son deck et le prend en main",
+                "Chaque joueur cherche un allié dans son deck et l'ajoute à sa main",
                 "Each player searches their deck for an ally and takes it into hand",
             ),
         },
@@ -71,7 +74,7 @@ def expert_steps(first_scenario=False):
     if not first_scenario:
         steps.append({
             "text": t(
-                "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+                "Campagne Experte Uniquement : fixez les points de vie de chaque joueur à la valeur indiquée dans le registre de campagne",
                 "Expert: set each hero's hit points to the value below",
             ),
             "when": {"difficulty": "expert"},
@@ -79,7 +82,9 @@ def expert_steps(first_scenario=False):
         })
         steps.append({
             "text": t(
-                "Expert : placer 3 menaces sur la MISSION pour soigner un héros à fond",
+                "Campagne Experte Uniquement : chaque joueur peut placer 3 menaces "
+                "sur la MISSION." + NL +
+                "Cela soigne son identité jusqu'à sa valeur de points de vie maximale.",
                 "Expert: place 3 threat on the MISSION to heal a hero to full",
             ),
             "when": {"difficulty": "expert"},
@@ -115,7 +120,7 @@ def mission_outcome_prompts(scenario_number):
             "id": "missionDefeated",
             "type": "boolean",
             "label": t(
-                "La MISSION {mission} a-t-elle été déjouée ?",
+                "La manigance annexe MISSION {mission} a-t-elle été déjouée ?",
                 "Was the MISSION {mission} defeated?",
             ),
         },
@@ -123,7 +128,7 @@ def mission_outcome_prompts(scenario_number):
             "id": "overseerDefeated",
             "type": "boolean",
             "label": t(
-                "L'OVERSEER {overseer} a-t-il été vaincu ?",
+                "Le sbire HIÉRARQUE {overseer} a-t-il été vaincu ?",
                 "Was the OVERSEER {overseer} defeated?",
             ),
         },
@@ -167,35 +172,35 @@ def mission_outcome_effects():
 MISSION_RULES = [
     # (code, flag stem, setup fr/en, defeated fr/en, failed fr/en)
     ("45166a", "seattle",
-     ("Mettre de côté chaque exemplaire de l'amélioration Desperate Measures",
+     ("Mettez de côté chaque exemplaire de l'amélioration {card:45176}",
       "Set each copy of the Desperate Measures upgrade aside"),
-     ("Chaque joueur peut mélanger 1 Desperate Measures dans son deck, hors taille minimale",
+     ("Chaque joueur peut mélanger 1 {card:45176} dans son deck, hors taille minimale",
       "Each player may shuffle 1 Desperate Measures into their deck, outside the minimum"),
-     ("Retirer chaque exemplaire de Desperate Measures de la campagne",
+     ("Retirez de la campagne chaque exemplaire de {card:45176}",
       "Remove each copy of Desperate Measures from the campaign")),
 
     ("45167a", "evacuate",
-     ("Chaque joueur mélange un exemplaire de Panicked Refugees dans son deck",
+     ("Chaque joueur mélange un exemplaire de {card:45178} dans son deck",
       "Each player shuffles a copy of Panicked Refugees into their deck"),
-     ("Panicked Refugees retirée. Chaque joueur ajoute 1 amélioration au choix, hors taille minimale",
+     ("{card:45178} retirée. Chaque joueur ajoute 1 amélioration de n'importe quelle affinité, hors taille minimale",
       "Panicked Refugees removed. Each player adds 1 upgrade of any aspect, outside the minimum"),
-     ("Chaque joueur mélange un exemplaire de Panicked Refugees dans son deck",
+     ("Chaque joueur mélange un exemplaire de {card:45178} dans son deck",
       "Each player shuffles a copy of Panicked Refugees into their deck")),
 
     ("45168a", "seawall",
-     ("Mélanger North American Sea Wall dans le deck rencontre",
+     ("Mélangez {card:45177} dans le deck Rencontre",
       "Shuffle the North American Sea Wall side scheme into the encounter deck"),
-     ("Sea Wall retirée. Chaque joueur ajoute 1 soutien au choix, hors taille minimale",
+     ("{card:45177} retirée. Chaque joueur ajoute 1 soutien de n'importe quelle affinité, hors taille minimale",
       "Sea Wall removed. Each player adds 1 support of any aspect, outside the minimum"),
-     ("Mélanger North American Sea Wall dans le deck rencontre pendant la mise en place",
+     ("Mélangez {card:45177} dans le deck Rencontre lors de la mise en place",
       "Shuffle North American Sea Wall into the encounter deck during setup")),
 
     ("45169a", "lostmutants",
-     ("Mettre de côté chaque allié de campagne",
+     ("Mettez de côté chaque allié de campagne",
       "Set each campaign ally aside"),
      ("Chaque joueur ajoute un allié de campagne à son deck, hors taille minimale",
       "Each player adds a campaign ally to their deck, outside the minimum"),
-     ("Retirer chaque allié de campagne de la campagne",
+     ("Retirez de la campagne chaque allié de campagne",
       "Remove each campaign ally from the campaign")),
 ]
 
@@ -205,7 +210,7 @@ def mission_setup_steps():
     return [
         {
             "text": t(
-                "Jouer avec la MISSION {mission} — " + setup[0],
+                "Jouez avec la MISSION {mission} — " + setup[0],
                 "Play with the MISSION {mission} — " + setup[1],
             ),
             "cards": [code],
@@ -254,8 +259,8 @@ scenarios.append({
     "id": "s1_unus",
     "name": t("Unus", "Unus"),
     "flavour": t(
-        "X-Force est bloquée dans une ligne temporelle où Apocalypse règne, et le prélat Unus "
-        "les a déjà trouvés.",
+        "La X-Force est prise au piège d'une ligne chronologique où règne Apocalypse, et le "
+        "prélat Unus les a déjà trouvés.",
         "X-Force is stranded in a timeline ruled by Apocalypse, and the prelate Unus has "
         "already found them.",
     ),
@@ -270,12 +275,12 @@ scenarios.append({
         {"include": "standardIII"},
         {
             "text": t(
-                "Mettre Gene Pool en jeu et y placer la menace de la difficulté choisie :\n"
+                "Mettez {card:45071} en jeu et placez-y la menace de la difficulté choisie :\n"
                 "  Escarmouche : 0\n"
                 "  Standard : 1 par joueur\n"
                 "  Expert : 2 par joueur\n"
                 "  Héroïque : 3 par joueur",
-                "Put Gene Pool into play and place the threat for your difficulty on it:\n"
+                "Put {card:45071} into play and place the threat for your difficulty on it:\n"
                 "  Skirmish: 0\n"
                 "  Standard: 1 per player\n"
                 "  Expert: 2 per player\n"
@@ -297,8 +302,8 @@ scenarios.append({
     "id": "s2_four_horsemen",
     "name": t("Les Quatre Cavaliers", "Four Horsemen"),
     "flavour": t(
-        "Magneto accueille X-Force au quartier général des X-Men. Apocalypse le trouve aussitôt "
-        "et lance ses quatre cavaliers.",
+        "Magnéto accueille la X-Force au quartier général secret des X-Men. Apocalypse les "
+        "trouve aussitôt et lance ses Quatre Cavaliers.",
         "Magneto takes X-Force into the X-Men's headquarters. Apocalypse finds it at once and "
         "sends his four horsemen.",
     ),
@@ -335,7 +340,7 @@ scenarios.append({
         },
         {
             "text": t(
-                "Donner le marqueur d'activation au méchant le plus à gauche",
+                "Donnez le marqueur d'activation au méchant le plus à gauche",
                 "Give the active counter to the leftmost villain",
             ),
         },
@@ -354,7 +359,7 @@ scenarios.append({
     "name": t("Apocalypse", "Apocalypse"),
     "flavour": t(
         "Les X-Men marchent sur la citadelle d'Apocalypse, à travers le cœur de son empire et "
-        "ses prélats les plus solides.",
+        "ses plus puissants prélats.",
         "The X-Men march on Apocalypse's citadel, through the heart of his empire and his "
         "strongest prelates.",
     ),
@@ -371,7 +376,7 @@ scenarios.append({
         {"include": "standardIII"},
         {
             "text": t(
-                "Commencer Apocalypse sur la face (II) — face (I) pour une partie plus facile",
+                "Commencez Apocalypse sur la face (II) — face (I) pour une partie plus facile",
                 "Start Apocalypse on side (II) — side (I) for an easier game",
             ),
             "cards": ["45101a"],
@@ -388,14 +393,14 @@ scenarios.append({
 # ---------------------------------------------------------------- scenario 4
 scenarios.append({
     "id": "s4_dark_beast",
-    "name": t("Dark Beast", "Dark Beast"),
+    "name": t("Le Fauve Noir", "Dark Beast"),
     "flavour": t(
         "Sous la citadelle se trouve une machine à voyager dans le temps, et le Fauve qui la "
-        "manœuvre n'est pas le leur.",
+        "manœuvre n'est pas le leur : c'est Le Fauve Noir.",
         "Beneath the citadel is a time machine, and the Beast operating it is not theirs.",
     ),
-    "victoryLabel": t("Dark Beast est vaincu !", "Dark Beast is beaten!"),
-    "defeatLabel": t("Dark Beast vous a vaincus !", "Dark Beast has beaten you!"),
+    "victoryLabel": t("Le Fauve Noir est vaincu !", "Dark Beast is beaten!"),
+    "defeatLabel": t("Le Fauve Noir vous a vaincus !", "Dark Beast has beaten you!"),
     "baseSetup": {
         "villainDeck": {"standard": ["45118", "45119"], "expert": ["45119", "45120"]},
         "mainScheme": ["45121a"],
@@ -435,40 +440,40 @@ scenarios.append({
         {"include": "standardIII"},
         {
             "text": t(
-                "Mettre Ancient Ritual en jeu",
+                "Mettez {card:45163} en jeu",
                 "Put Ancient Ritual into play",
             ),
             "cards": ["45163"],
         },
         {
             "text": t(
-                "Commencer Apocalypse sur sa face BIOMORPH",
+                "Commencez Apocalypse sur sa face BIOMORPH",
                 "Start Apocalypse on his BIOMORPH side",
             ),
             "cards": ["45184a"],
         },
         {
             "text": t(
-                "Le Professeur X ne peut pas entrer en jeu cette partie",
+                "Le Professeur X ne peut pas entrer en jeu durant cette partie",
                 "Professor X cannot enter play this game",
             ),
         },
         {
             "text": t(
-                "Mélanger le set modulaire Age of Apocalypse dans le deck rencontre",
+                "Mélangez le set modulaire Ère d'Apocalypse dans le deck Rencontre",
                 "Shuffle the Age of Apocalypse modular set into the encounter deck",
             ),
         },
         {
             "text": t(
-                "Jouer avec cette MISSION et suivre sa mise en place dans le journal de campagne",
+                "Jouez avec cette MISSION et suivez sa mise en place dans le journal de campagne",
                 "Play with this MISSION side scheme and follow its setup in the campaign log",
             ),
             "cards": [PROTECT_THE_PROFESSOR],
         },
         {
             "text": t(
-                "Ajouter cet OVERSEER à la zone de mission et poser la carte Mission Rules à côté",
+                "Ajoutez ce sbire HIÉRARQUE à la zone de mission et placez près de lui la carte Règles de Mission",
                 "Add this OVERSEER minion to the mission area and put Mission Rules beside it",
             ),
             "draw": {"id": "overseer", "from": OVERSEERS, "excluding": "overseersDefeated"},
@@ -482,7 +487,7 @@ scenarios.append({
         },
         {
             "text": t(
-                "Chaque joueur cherche un allié dans son deck et le prend en main",
+                "Chaque joueur cherche un allié dans son deck et l'ajoute à sa main",
                 "Each player searches their deck for an ally and takes it into hand",
             ),
         },
@@ -526,7 +531,7 @@ template = {
     # Shown before the campaign starts: what this is, what it still
     # needs from you, and what the app takes off your hands.
     "notice": t(
-        "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ère d'Apocalypse restent nécessaires pour jouer.\n\nL'application tire pour vous l'ordre des quatre Cavaliers et l'OVERSEER de chaque partie, retient les MISSIONS déjà jouées et les OVERSEERS vaincus, et tient le registre : points de victoire, sort du Professeur, et en campagne experte les points de vie de chaque héros entre les parties.",
+        "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ère d'Apocalypse restent nécessaires pour jouer.\n\nL'application tire pour vous l'ordre des Quatre Cavaliers et le sbire HIÉRARQUE de chaque partie, retient les manigances annexes MISSION déjà jouées et les HIÉRARQUES vaincus, et tient le registre : points de victoire, sort du Professeur, et en campagne experte les points de vie de chaque identité entre les parties.",
         "Unofficial, reconstructed for the app: the rulebook and cards from the Age of Apocalypse box are still needed to play.\n\nThe app draws the order of the four Horsemen and each game's OVERSEER for you, remembers which MISSIONS have been played and which OVERSEERS were defeated, and keeps the log: victory points, what became of the Professor, and in an expert campaign each hero's hit points between games.",
     ),
     "packCode": "aoa",
