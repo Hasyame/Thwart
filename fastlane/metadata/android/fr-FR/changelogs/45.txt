@@ -1,0 +1,7 @@
+Une correction à la version d'hier.
+
+La partie compétitive était proposée à tout le monde, y compris à qui ne possède
+ni Civil War ni Synthezoid Smackdown. Sans l'une de ces boîtes, l'écran de mise
+en place n'a aucun leader à proposer : l'entrée ne menait donc nulle part. Elle
+n'apparaît désormais que si vous possédez une boîte qui la permet, comme c'est
+déjà le cas pour les campagnes.

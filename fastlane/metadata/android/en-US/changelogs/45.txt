@@ -1,0 +1,6 @@
+A correction to yesterday's release.
+
+The versus game was offered to everyone, including people who own neither Civil
+War nor Synthezoid Smackdown. Without one of those boxes the setup screen has no
+leaders to choose from, so the entry led nowhere. It is now shown only when you
+own a box that supports it, the same way campaigns are.
