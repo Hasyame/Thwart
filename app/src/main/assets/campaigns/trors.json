@@ -1,893 +1,893 @@
 {
-  "_note": "Mechanics only, written for this app: no rules text and no text from the campaign book. Card codes are MarvelCDB codes for pack 'trors'. Four card lists rather than one pool, because the campaign log remembers four different things and scenario 5 has to tell them apart. Flags are read with countTrue because the engine files a flag under the scenario that set it.",
-  "id": "trors",
-  "schemaVersion": 1,
-  "name": {
-    "fr": "L'Ascension du Crâne Rouge",
-    "en": "The Rise of Red Skull"
+ "_note": "Mechanics only, written for this app: no rules text and no text from the campaign book. Card codes are MarvelCDB codes for pack 'trors'. Four card lists rather than one pool, because the campaign log remembers four different things and scenario 5 has to tell them apart. Flags are read with countTrue because the engine files a flag under the scenario that set it.",
+ "id": "trors",
+ "schemaVersion": 1,
+ "name": {
+  "fr": "L'Ascension du Crâne Rouge",
+  "en": "The Rise of Red Skull"
+ },
+ "notice": {
+  "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ascension du Crâne Rouge restent nécessaires pour jouer.\n\nL'application tient le registre à votre place : l'amélioration TECH de chaque joueur, les alliés libérés ou restés prisonniers, les améliorations Basic attachées, les pions retard, et en campagne experte les points de vie de chaque héros entre les parties.",
+  "en": "Unofficial, reconstructed for the app: the rulebook and cards from The Rise of Red Skull box are still needed to play.\n\nThe app keeps the log for you: each player's TECH upgrade, the allies freed or left imprisoned, the Basic upgrades attached, the delay counters, and in an expert campaign each hero's hit points between games."
+ },
+ "packCode": "trors",
+ "difficulties": [
+  "standard",
+  "expert"
+ ],
+ "counters": [
+  {
+   "id": "hp",
+   "scope": "hero",
+   "initial": 0,
+   "maxFrom": "heroCard.health",
+   "activeWhen": {
+    "difficulty": "expert"
+   }
   },
-  "notice": {
-    "fr": "Campagne non officielle, reconstituée pour l'application : le livret et les cartes de la boîte L'Ascension du Crâne Rouge restent nécessaires pour jouer.\n\nL'application tient le registre à votre place : l'amélioration TECH de chaque joueur, les alliés libérés ou restés prisonniers, les améliorations Basic attachées, les pions retard, et en campagne experte les points de vie de chaque héros entre les parties.",
-    "en": "Unofficial, reconstructed for the app: the rulebook and cards from The Rise of Red Skull box are still needed to play.\n\nThe app keeps the log for you: each player's TECH upgrade, the allies freed or left imprisoned, the Basic upgrades attached, the delay counters, and in an expert campaign each hero's hit points between games."
+  {
+   "id": "delay",
+   "scope": "campaign",
+   "initial": 0
+  }
+ ],
+ "flagSets": [
+  {
+   "id": "hydraPrison"
+  }
+ ],
+ "cardLists": [
+  {
+   "id": "experimental",
+   "scope": "campaign"
   },
-  "packCode": "trors",
-  "difficulties": [
-    "standard",
-    "expert"
-  ],
-  "counters": [
+  {
+   "id": "tech",
+   "scope": "campaign"
+  },
+  {
+   "id": "conditions",
+   "scope": "campaign"
+  },
+  {
+   "id": "rescued",
+   "scope": "campaign"
+  },
+  {
+   "id": "imprisoned",
+   "scope": "campaign"
+  }
+ ],
+ "startScenarioId": "s1_crossbones",
+ "scenarios": [
+  {
+   "id": "s1_crossbones",
+   "name": {
+    "fr": "Crossbones",
+    "en": "Crossbones"
+   },
+   "flavour": {
+    "fr": "Crossbones jette une armée d'Hydra sur le Projet P.E.G.A.S.U.S. Les armes expérimentales du site ne doivent pas tomber entre ses mains.",
+    "en": "Crossbones throws a Hydra army at Project P.E.G.A.S.U.S. The experimental weapons held there must not fall into his hands."
+   },
+   "victoryLabel": {
+    "fr": "Crossbones est vaincu !",
+    "en": "Crossbones is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Crossbones vous a vaincus !",
+    "en": "Crossbones has beaten you!"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "04058",
+      "04059"
+     ],
+     "expert": [
+      "04059",
+      "04060"
+     ]
+    },
+    "mainScheme": [
+     "04061a",
+     "04062a",
+     "04063a"
+    ],
+    "encounterSets": [
+     "crossbones",
+     "exper_weapon",
+     "hydra_assault",
+     "weap_master",
+     "hydra_patrol",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
     {
-      "id": "hp",
-      "scope": "hero",
-      "initial": 0,
-      "maxFrom": "heroCard.health",
-      "activeWhen": {
-        "difficulty": "expert"
+     "text": {
+      "fr": "Les identités choisies pour cette campagne sont fixées : elles ne peuvent pas changer avant la fin",
+      "en": "The identities chosen for this campaign are fixed: they cannot change before the end"
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you accumulate?"
       }
-    },
-    {
-      "id": "delay",
-      "scope": "campaign",
-      "initial": 0
-    }
-  ],
-  "flagSets": [
-    {
-      "id": "hydraPrison"
-    }
-  ],
-  "cardLists": [
-    {
-      "id": "experimental",
-      "scope": "campaign"
-    },
-    {
+     },
+     {
       "id": "tech",
-      "scope": "campaign"
+      "type": "perHeroCardSelect",
+      "label": {
+       "fr": "Quelle amélioration TECH chaque joueur ajoute-t-il à son deck ?",
+       "en": "Which TECH upgrade does each player add to their deck?"
+      },
+      "cards": [
+       "04155",
+       "04156",
+       "04157",
+       "04158"
+      ],
+      "min": 1
+     },
+     {
+      "id": "experimental",
+      "type": "cardSelect",
+      "label": {
+       "fr": "Quels attachements EXPERIMENTAL sont entrés en jeu ?",
+       "en": "Which EXPERIMENTAL attachments entered play?"
+      },
+      "cards": [
+       "04072",
+       "04073",
+       "04074",
+       "04075"
+      ]
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "fr": "Points de vie restants",
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "addCardsFromAnswer",
+      "from": "tech",
+      "cardList": "tech"
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "from": "experimental",
+      "cardList": "experimental"
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "goto": "s2_absorbing_man"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s1_crossbones"
+     }
+    ]
+   }
+  },
+  {
+   "id": "s2_absorbing_man",
+   "name": {
+    "fr": "Absorbing Man",
+    "en": "Absorbing Man"
+   },
+   "flavour": {
+    "fr": "Madame Hydra file avec la Pierre d'Infinité. Absorbing Man est payé pour vous retarder, et il n'a besoin que de temps.",
+    "en": "Madame Hydra is away with the Infinity Stone. Absorbing Man is paid to delay you, and delay is all he needs."
+   },
+   "victoryLabel": {
+    "fr": "Absorbing Man est vaincu !",
+    "en": "Absorbing Man is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Absorbing Man vous a vaincus !",
+    "en": "Absorbing Man has beaten you!"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "04076",
+      "04077"
+     ],
+     "expert": [
+      "04077",
+      "04078"
+     ]
+    },
+    "mainScheme": [
+     "04079a"
+    ],
+    "encounterSets": [
+     "absorbing_man",
+     "hydra_patrol",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
+      "en": "Each player searches their deck for Setup cards and puts them into play"
+     }
     },
     {
+     "text": {
+      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
+     },
+     "showCardList": "experimental",
+     "when": {
+      "cardList": "experimental",
+      "minSize": 1
+     }
+    },
+    {
+     "text": {
+      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "en": "Expert: set each hero's hit points to the value below"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "showCounter": "hp"
+    },
+    {
+     "text": {
+      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "action": {
+      "id": "heal",
+      "label": {
+       "fr": "Soigner",
+       "en": "Heal"
+      },
+      "perHero": true,
+      "effects": [
+       {
+        "op": "setHeroCounter",
+        "counter": "hp",
+        "value": 999
+       }
+      ]
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you accumulate?"
+      }
+     },
+     {
+      "id": "delayCounters",
+      "type": "number",
+      "label": {
+       "fr": "Combien de pions retard sur la manigance principale ?",
+       "en": "How many delay counters on the main scheme?"
+      },
+      "cards": [
+       "04079a"
+      ]
+     },
+     {
       "id": "conditions",
-      "scope": "campaign"
+      "type": "cardSelect",
+      "label": {
+       "fr": "Quelle amélioration Basic chaque joueur attache-t-il à son identité ?",
+       "en": "Which Basic upgrade does each player attach to their identity?"
+      },
+      "cards": [
+       "04159a",
+       "04160a",
+       "04161a",
+       "04162a"
+      ]
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "fr": "Points de vie restants",
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setCounter",
+      "counter": "delay",
+      "from": "delayCounters"
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "from": "conditions",
+      "cardList": "conditions"
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "goto": "s3_taskmaster"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s2_absorbing_man"
+     }
+    ]
+   }
+  },
+  {
+   "id": "s3_taskmaster",
+   "name": {
+    "fr": "Taskmaster",
+    "en": "Taskmaster"
+   },
+   "flavour": {
+    "fr": "New York est passée sous bannière Hydra. Taskmaster en est le chef de la police, et il fait du porte-à-porte.",
+    "en": "New York now flies the Hydra banner. Taskmaster is its chief of police, and he is going door to door."
+   },
+   "victoryLabel": {
+    "fr": "Taskmaster est vaincu !",
+    "en": "Taskmaster is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Taskmaster vous a vaincus !",
+    "en": "Taskmaster has beaten you!"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "04093",
+      "04094"
+     ],
+     "expert": [
+      "04094",
+      "04095"
+     ]
+    },
+    "mainScheme": [
+     "04096a"
+    ],
+    "encounterSets": [
+     "taskmaster",
+     "hydra_patrol",
+     "weap_master",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
+      "en": "Each player searches their deck for Setup cards and puts them into play"
+     }
     },
     {
+     "text": {
+      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
+     },
+     "showCardList": "experimental",
+     "when": {
+      "cardList": "experimental",
+      "minSize": 1
+     }
+    },
+    {
+     "text": {
+      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "en": "Expert: set each hero's hit points to the value below"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "showCounter": "hp"
+    },
+    {
+     "text": {
+      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "action": {
+      "id": "heal",
+      "label": {
+       "fr": "Soigner",
+       "en": "Heal"
+      },
+      "perHero": true,
+      "effects": [
+       {
+        "op": "setHeroCounter",
+        "counter": "hp",
+        "value": 999
+       }
+      ]
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you accumulate?"
+      }
+     },
+     {
       "id": "rescued",
-      "scope": "campaign"
+      "type": "cardSelect",
+      "label": {
+       "fr": "Quels alliés avez-vous libérés ?",
+       "en": "Which allies did you rescue?"
+      },
+      "cards": [
+       "04097",
+       "04098",
+       "04099",
+       "04100"
+      ]
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "fr": "Points de vie restants",
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "addCardsFromAnswer",
+      "from": "rescued",
+      "cardList": "rescued"
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "goto": "s4_zola"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s3_taskmaster"
+     }
+    ]
+   }
+  },
+  {
+   "id": "s4_zola",
+   "name": {
+    "fr": "Zola",
+    "en": "Zola"
+   },
+   "flavour": {
+    "fr": "Ellis Island est devenue le laboratoire d'Arnim Zola, et sa prison. Les captifs de Taskmaster y ont été livrés.",
+    "en": "Ellis Island is Arnim Zola's laboratory now, and his prison. Taskmaster's captives were delivered there."
+   },
+   "victoryLabel": {
+    "fr": "Zola est vaincu !",
+    "en": "Zola is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Zola vous a vaincus !",
+    "en": "Zola has beaten you!"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "04109",
+      "04110"
+     ],
+     "expert": [
+      "04110",
+      "04111"
+     ]
+    },
+    "mainScheme": [
+     "04112a",
+     "04113a"
+    ],
+    "encounterSets": [
+     "zola",
+     "hydra_assault",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
+      "en": "Each player searches their deck for Setup cards and puts them into play"
+     }
     },
     {
+     "text": {
+      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
+     },
+     "showCardList": "experimental",
+     "when": {
+      "cardList": "experimental",
+      "minSize": 1
+     }
+    },
+    {
+     "text": {
+      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "en": "Expert: set each hero's hit points to the value below"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "showCounter": "hp"
+    },
+    {
+     "text": {
+      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "action": {
+      "id": "heal",
+      "label": {
+       "fr": "Soigner",
+       "en": "Heal"
+      },
+      "perHero": true,
+      "effects": [
+       {
+        "op": "setHeroCounter",
+        "counter": "hp",
+        "value": 999
+       }
+      ]
+     }
+    }
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you accumulate?"
+      }
+     },
+     {
+      "id": "engaged",
+      "type": "perHeroBoolean",
+      "label": {
+       "fr": "Ce héros était-il engagé avec un ennemi ?",
+       "en": "Was this hero engaged with an enemy?"
+      }
+     },
+     {
+      "id": "prisonInPlay",
+      "type": "boolean",
+      "label": {
+       "fr": "{card:04122} était-elle encore en jeu ?",
+       "en": "Was {card:04122} still in play?"
+      },
+      "cards": [
+       "04122"
+      ]
+     },
+     {
       "id": "imprisoned",
-      "scope": "campaign"
+      "type": "cardSelect",
+      "label": {
+       "fr": "Quels alliés sont restés sous {card:04122} ?",
+       "en": "Which allies were left underneath {card:04122}?"
+      },
+      "cards": [
+       "04097",
+       "04098",
+       "04099",
+       "04100"
+      ],
+      "when": {
+       "answer": "prisonInPlay"
+      }
+     },
+     {
+      "id": "hpPerHero",
+      "type": "perHeroNumber",
+      "label": {
+       "fr": "Points de vie restants",
+       "en": "Remaining hit points"
+      },
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "op": "setFlag",
+      "flag": "hydraPrison",
+      "from": "prisonInPlay"
+     },
+     {
+      "op": "addCardsFromAnswer",
+      "from": "imprisoned",
+      "cardList": "imprisoned"
+     },
+     {
+      "op": "setHeroCounter",
+      "counter": "hp",
+      "from": "hpPerHero",
+      "when": {
+       "difficulty": "expert"
+      }
+     }
+    ],
+    "next": [
+     {
+      "goto": "s5_red_skull"
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s4_zola"
+     }
+    ]
+   }
+  },
+  {
+   "id": "s5_red_skull",
+   "name": {
+    "fr": "Red Skull",
+    "en": "Red Skull"
+   },
+   "flavour": {
+    "fr": "La Maison-Blanche est la forteresse du Crâne Rouge, et ses scientifiques achèvent la machine de Zola. Après, le monde entier.",
+    "en": "The White House is Red Skull's fortress, and his scientists are finishing Zola's machine. After that, the whole world."
+   },
+   "victoryLabel": {
+    "fr": "Hydra est vaincue !",
+    "en": "Hydra is beaten!"
+   },
+   "defeatLabel": {
+    "fr": "Le Crâne Rouge vous a vaincus !",
+    "en": "Red Skull has beaten you!"
+   },
+   "baseSetup": {
+    "villainDeck": {
+     "standard": [
+      "04125",
+      "04126"
+     ],
+     "expert": [
+      "04126",
+      "04127"
+     ]
+    },
+    "mainScheme": [
+     "04128a",
+     "04129a"
+    ],
+    "encounterSets": [
+     "red_skull",
+     "hydra_assault",
+     "hydra_patrol",
+     "standard"
+    ]
+   },
+   "campaignSetup": [
+    {
+     "text": {
+      "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
+      "en": "Each player searches their deck for Setup cards and puts them into play"
+     }
+    },
+    {
+     "text": {
+      "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
+      "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
+     },
+     "showCardList": "experimental",
+     "when": {
+      "cardList": "experimental",
+      "minSize": 1
+     }
+    },
+    {
+     "text": {
+      "fr": "Placer sur la manigance principale autant de menace que de pions retard notés",
+      "en": "Place as much threat on the main scheme as the delay counters recorded"
+     },
+     "showCounter": "delay",
+     "when": {
+      "difficulty": "standard"
+     }
+    },
+    {
+     "text": {
+      "fr": "Expert : placer cette menace par joueur sur la manigance principale",
+      "en": "Expert: place this much threat per player on the main scheme"
+     },
+     "showCounter": "delay",
+     "when": {
+      "difficulty": "expert"
+     }
+    },
+    {
+     "text": {
+      "fr": "Chaque joueur en forme héros retourne son amélioration Basic sur sa face Improved : la prison est tombée",
+      "en": "Each player in hero form flips their Basic upgrade to its Improved side: the prison fell"
+     },
+     "showCardList": "conditions",
+     "when": {
+      "countTrue": "hydraPrison",
+      "countAtMost": 0
+     }
+    },
+    {
+     "text": {
+      "fr": "Ces alliés sont restés prisonniers : ils ne peuvent figurer dans aucun deck",
+      "en": "These allies were left imprisoned: they cannot be in any deck"
+     },
+     "showCardList": "imprisoned",
+     "when": {
+      "cardList": "imprisoned",
+      "minSize": 1
+     }
+    },
+    {
+     "text": {
+      "fr": "Expert : ces héros étaient engagés avec un ennemi et se distribuent chacun une carte rencontre",
+      "en": "Expert: these heroes were engaged with an enemy and each deal themselves an encounter card"
+     },
+     "showHeroesWith": "engaged",
+     "when": {
+      "difficulty": "expert"
+     }
+    },
+    {
+     "text": {
+      "fr": "Expert : une défaite ici perd la campagne",
+      "en": "Expert: losing here loses the campaign"
+     },
+     "when": {
+      "difficulty": "expert"
+     }
+    },
+    {
+     "text": {
+      "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
+      "en": "Expert: set each hero's hit points to the value below"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "showCounter": "hp"
+    },
+    {
+     "text": {
+      "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
+      "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
+     },
+     "when": {
+      "difficulty": "expert"
+     },
+     "action": {
+      "id": "heal",
+      "label": {
+       "fr": "Soigner",
+       "en": "Heal"
+      },
+      "perHero": true,
+      "effects": [
+       {
+        "op": "setHeroCounter",
+        "counter": "hp",
+        "value": 999
+       }
+      ]
+     }
     }
-  ],
-  "startScenarioId": "s1_crossbones",
-  "scenarios": [
-    {
-      "id": "s1_crossbones",
-      "name": {
-        "fr": "Crossbones",
-        "en": "Crossbones"
-      },
-      "flavour": {
-        "fr": "Crossbones jette une armée d'Hydra sur le Projet P.E.G.A.S.U.S. Les armes expérimentales du site ne doivent pas tomber entre ses mains.",
-        "en": "Crossbones throws a Hydra army at Project P.E.G.A.S.U.S. The experimental weapons held there must not fall into his hands."
-      },
-      "victoryLabel": {
-        "fr": "Crossbones est vaincu !",
-        "en": "Crossbones is beaten!"
-      },
-      "defeatLabel": {
-        "fr": "Crossbones vous a vaincus !",
-        "en": "Crossbones has beaten you!"
-      },
-      "baseSetup": {
-        "villainDeck": {
-          "standard": [
-            "04058",
-            "04059"
-          ],
-          "expert": [
-            "04059",
-            "04060"
-          ]
-        },
-        "mainScheme": [
-          "04061a",
-          "04062a",
-          "04063a"
-        ],
-        "encounterSets": [
-          "crossbones",
-          "exper_weapon",
-          "hydra_assault",
-          "weap_master",
-          "hydra_patrol",
-          "standard"
-        ]
-      },
-      "campaignSetup": [
-        {
-          "text": {
-            "fr": "Les identités choisies pour cette campagne sont fixées : elles ne peuvent pas changer avant la fin",
-            "en": "The identities chosen for this campaign are fixed: they cannot change before the end"
-          }
-        }
-      ],
-      "onVictory": {
-        "prompts": [
-          {
-            "id": "vp",
-            "type": "number",
-            "label": {
-              "fr": "Combien de points de victoire avez-vous accumulés ?",
-              "en": "How many victory points did you accumulate?"
-            }
-          },
-          {
-            "id": "tech",
-            "type": "perHeroCardSelect",
-            "label": {
-              "fr": "Quelle amélioration TECH chaque joueur ajoute-t-il à son deck ?",
-              "en": "Which TECH upgrade does each player add to their deck?"
-            },
-            "cards": [
-              "04155",
-              "04156",
-              "04157",
-              "04158"
-            ],
-            "min": 1
-          },
-          {
-            "id": "experimental",
-            "type": "cardSelect",
-            "label": {
-              "fr": "Quels attachements EXPERIMENTAL sont entrés en jeu ?",
-              "en": "Which EXPERIMENTAL attachments entered play?"
-            },
-            "cards": [
-              "04072",
-              "04073",
-              "04074",
-              "04075"
-            ]
-          },
-          {
-            "id": "hpPerHero",
-            "type": "perHeroNumber",
-            "label": {
-              "fr": "Points de vie restants",
-              "en": "Remaining hit points"
-            },
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "effects": [
-          {
-            "op": "addCardsFromAnswer",
-            "from": "tech",
-            "cardList": "tech"
-          },
-          {
-            "op": "addCardsFromAnswer",
-            "from": "experimental",
-            "cardList": "experimental"
-          },
-          {
-            "op": "setHeroCounter",
-            "counter": "hp",
-            "from": "hpPerHero",
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "next": [
-          {
-            "goto": "s2_absorbing_man"
-          }
-        ]
-      },
-      "onDefeat": {
-        "next": [
-          {
-            "goto": "s1_crossbones"
-          }
-        ]
+   ],
+   "onVictory": {
+    "prompts": [
+     {
+      "id": "vp",
+      "type": "number",
+      "label": {
+       "fr": "Combien de points de victoire avez-vous accumulés ?",
+       "en": "How many victory points did you accumulate?"
       }
-    },
-    {
-      "id": "s2_absorbing_man",
-      "name": {
-        "fr": "Absorbing Man",
-        "en": "Absorbing Man"
-      },
-      "flavour": {
-        "fr": "Madame Hydra file avec la Pierre d'Infinité. Absorbing Man est payé pour vous retarder, et il n'a besoin que de temps.",
-        "en": "Madame Hydra is away with the Infinity Stone. Absorbing Man is paid to delay you, and delay is all he needs."
-      },
-      "victoryLabel": {
-        "fr": "Absorbing Man est vaincu !",
-        "en": "Absorbing Man is beaten!"
-      },
-      "defeatLabel": {
-        "fr": "Absorbing Man vous a vaincus !",
-        "en": "Absorbing Man has beaten you!"
-      },
-      "baseSetup": {
-        "villainDeck": {
-          "standard": [
-            "04076",
-            "04077"
-          ],
-          "expert": [
-            "04077",
-            "04078"
-          ]
-        },
-        "mainScheme": [
-          "04079a"
-        ],
-        "encounterSets": [
-          "absorbing_man",
-          "hydra_patrol",
-          "standard"
-        ]
-      },
-      "campaignSetup": [
-        {
-          "text": {
-            "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
-            "en": "Each player searches their deck for Setup cards and puts them into play"
-          }
-        },
-        {
-          "text": {
-            "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
-            "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
-          },
-          "showCardList": "experimental",
-          "when": {
-            "cardList": "experimental",
-            "minSize": 1
-          }
-        },
-        {
-          "text": {
-            "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
-            "en": "Expert: set each hero's hit points to the value below"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "showCounter": "hp"
-        },
-        {
-          "text": {
-            "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
-            "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "action": {
-            "id": "heal",
-            "label": {
-              "fr": "Soigner",
-              "en": "Heal"
-            },
-            "perHero": true,
-            "effects": [
-              {
-                "op": "setHeroCounter",
-                "counter": "hp",
-                "value": 999
-              }
-            ]
-          }
-        }
-      ],
-      "onVictory": {
-        "prompts": [
-          {
-            "id": "vp",
-            "type": "number",
-            "label": {
-              "fr": "Combien de points de victoire avez-vous accumulés ?",
-              "en": "How many victory points did you accumulate?"
-            }
-          },
-          {
-            "id": "delayCounters",
-            "type": "number",
-            "label": {
-              "fr": "Combien de pions retard sur la manigance principale ?",
-              "en": "How many delay counters on the main scheme?"
-            },
-            "cards": [
-              "04079a"
-            ]
-          },
-          {
-            "id": "conditions",
-            "type": "cardSelect",
-            "label": {
-              "fr": "Quelle amélioration Basic chaque joueur attache-t-il à son identité ?",
-              "en": "Which Basic upgrade does each player attach to their identity?"
-            },
-            "cards": [
-              "04159a",
-              "04160a",
-              "04161a",
-              "04162a"
-            ]
-          },
-          {
-            "id": "hpPerHero",
-            "type": "perHeroNumber",
-            "label": {
-              "fr": "Points de vie restants",
-              "en": "Remaining hit points"
-            },
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "effects": [
-          {
-            "op": "setCounter",
-            "counter": "delay",
-            "from": "delayCounters"
-          },
-          {
-            "op": "addCardsFromAnswer",
-            "from": "conditions",
-            "cardList": "conditions"
-          },
-          {
-            "op": "setHeroCounter",
-            "counter": "hp",
-            "from": "hpPerHero",
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "next": [
-          {
-            "goto": "s3_taskmaster"
-          }
-        ]
-      },
-      "onDefeat": {
-        "next": [
-          {
-            "goto": "s2_absorbing_man"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s3_taskmaster",
-      "name": {
-        "fr": "Taskmaster",
-        "en": "Taskmaster"
-      },
-      "flavour": {
-        "fr": "New York est passée sous bannière Hydra. Taskmaster en est le chef de la police, et il fait du porte-à-porte.",
-        "en": "New York now flies the Hydra banner. Taskmaster is its chief of police, and he is going door to door."
-      },
-      "victoryLabel": {
-        "fr": "Taskmaster est vaincu !",
-        "en": "Taskmaster is beaten!"
-      },
-      "defeatLabel": {
-        "fr": "Taskmaster vous a vaincus !",
-        "en": "Taskmaster has beaten you!"
-      },
-      "baseSetup": {
-        "villainDeck": {
-          "standard": [
-            "04093",
-            "04094"
-          ],
-          "expert": [
-            "04094",
-            "04095"
-          ]
-        },
-        "mainScheme": [
-          "04096a"
-        ],
-        "encounterSets": [
-          "taskmaster",
-          "hydra_patrol",
-          "weap_master",
-          "standard"
-        ]
-      },
-      "campaignSetup": [
-        {
-          "text": {
-            "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
-            "en": "Each player searches their deck for Setup cards and puts them into play"
-          }
-        },
-        {
-          "text": {
-            "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
-            "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
-          },
-          "showCardList": "experimental",
-          "when": {
-            "cardList": "experimental",
-            "minSize": 1
-          }
-        },
-        {
-          "text": {
-            "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
-            "en": "Expert: set each hero's hit points to the value below"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "showCounter": "hp"
-        },
-        {
-          "text": {
-            "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
-            "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "action": {
-            "id": "heal",
-            "label": {
-              "fr": "Soigner",
-              "en": "Heal"
-            },
-            "perHero": true,
-            "effects": [
-              {
-                "op": "setHeroCounter",
-                "counter": "hp",
-                "value": 999
-              }
-            ]
-          }
-        }
-      ],
-      "onVictory": {
-        "prompts": [
-          {
-            "id": "vp",
-            "type": "number",
-            "label": {
-              "fr": "Combien de points de victoire avez-vous accumulés ?",
-              "en": "How many victory points did you accumulate?"
-            }
-          },
-          {
-            "id": "rescued",
-            "type": "cardSelect",
-            "label": {
-              "fr": "Quels alliés avez-vous libérés ?",
-              "en": "Which allies did you rescue?"
-            },
-            "cards": [
-              "04097",
-              "04098",
-              "04099",
-              "04100"
-            ]
-          },
-          {
-            "id": "hpPerHero",
-            "type": "perHeroNumber",
-            "label": {
-              "fr": "Points de vie restants",
-              "en": "Remaining hit points"
-            },
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "effects": [
-          {
-            "op": "addCardsFromAnswer",
-            "from": "rescued",
-            "cardList": "rescued"
-          },
-          {
-            "op": "setHeroCounter",
-            "counter": "hp",
-            "from": "hpPerHero",
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "next": [
-          {
-            "goto": "s4_zola"
-          }
-        ]
-      },
-      "onDefeat": {
-        "next": [
-          {
-            "goto": "s3_taskmaster"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s4_zola",
-      "name": {
-        "fr": "Zola",
-        "en": "Zola"
-      },
-      "flavour": {
-        "fr": "Ellis Island est devenue le laboratoire d'Arnim Zola, et sa prison. Les captifs de Taskmaster y ont été livrés.",
-        "en": "Ellis Island is Arnim Zola's laboratory now, and his prison. Taskmaster's captives were delivered there."
-      },
-      "victoryLabel": {
-        "fr": "Zola est vaincu !",
-        "en": "Zola is beaten!"
-      },
-      "defeatLabel": {
-        "fr": "Zola vous a vaincus !",
-        "en": "Zola has beaten you!"
-      },
-      "baseSetup": {
-        "villainDeck": {
-          "standard": [
-            "04109",
-            "04110"
-          ],
-          "expert": [
-            "04110",
-            "04111"
-          ]
-        },
-        "mainScheme": [
-          "04112a",
-          "04113a"
-        ],
-        "encounterSets": [
-          "zola",
-          "hydra_assault",
-          "standard"
-        ]
-      },
-      "campaignSetup": [
-        {
-          "text": {
-            "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
-            "en": "Each player searches their deck for Setup cards and puts them into play"
-          }
-        },
-        {
-          "text": {
-            "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
-            "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
-          },
-          "showCardList": "experimental",
-          "when": {
-            "cardList": "experimental",
-            "minSize": 1
-          }
-        },
-        {
-          "text": {
-            "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
-            "en": "Expert: set each hero's hit points to the value below"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "showCounter": "hp"
-        },
-        {
-          "text": {
-            "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
-            "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "action": {
-            "id": "heal",
-            "label": {
-              "fr": "Soigner",
-              "en": "Heal"
-            },
-            "perHero": true,
-            "effects": [
-              {
-                "op": "setHeroCounter",
-                "counter": "hp",
-                "value": 999
-              }
-            ]
-          }
-        }
-      ],
-      "onVictory": {
-        "prompts": [
-          {
-            "id": "vp",
-            "type": "number",
-            "label": {
-              "fr": "Combien de points de victoire avez-vous accumulés ?",
-              "en": "How many victory points did you accumulate?"
-            }
-          },
-          {
-            "id": "engaged",
-            "type": "perHeroBoolean",
-            "label": {
-              "fr": "Ce héros était-il engagé avec un ennemi ?",
-              "en": "Was this hero engaged with an enemy?"
-            }
-          },
-          {
-            "id": "prisonInPlay",
-            "type": "boolean",
-            "label": {
-              "fr": "{card:04122} était-elle encore en jeu ?",
-              "en": "Was {card:04122} still in play?"
-            },
-            "cards": [
-              "04122"
-            ]
-          },
-          {
-            "id": "imprisoned",
-            "type": "cardSelect",
-            "label": {
-              "fr": "Quels alliés sont restés sous {card:04122} ?",
-              "en": "Which allies were left underneath {card:04122}?"
-            },
-            "cards": [
-              "04097",
-              "04098",
-              "04099",
-              "04100"
-            ],
-            "when": {
-              "answer": "prisonInPlay"
-            }
-          },
-          {
-            "id": "hpPerHero",
-            "type": "perHeroNumber",
-            "label": {
-              "fr": "Points de vie restants",
-              "en": "Remaining hit points"
-            },
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "effects": [
-          {
-            "op": "setFlag",
-            "flag": "hydraPrison",
-            "from": "prisonInPlay"
-          },
-          {
-            "op": "addCardsFromAnswer",
-            "from": "imprisoned",
-            "cardList": "imprisoned"
-          },
-          {
-            "op": "setHeroCounter",
-            "counter": "hp",
-            "from": "hpPerHero",
-            "when": {
-              "difficulty": "expert"
-            }
-          }
-        ],
-        "next": [
-          {
-            "goto": "s5_red_skull"
-          }
-        ]
-      },
-      "onDefeat": {
-        "next": [
-          {
-            "goto": "s4_zola"
-          }
-        ]
-      }
-    },
-    {
-      "id": "s5_red_skull",
-      "name": {
-        "fr": "Red Skull",
-        "en": "Red Skull"
-      },
-      "flavour": {
-        "fr": "La Maison-Blanche est la forteresse du Crâne Rouge, et ses scientifiques achèvent la machine de Zola. Après, le monde entier.",
-        "en": "The White House is Red Skull's fortress, and his scientists are finishing Zola's machine. After that, the whole world."
-      },
-      "victoryLabel": {
-        "fr": "Hydra est vaincue !",
-        "en": "Hydra is beaten!"
-      },
-      "defeatLabel": {
-        "fr": "Le Crâne Rouge vous a vaincus !",
-        "en": "Red Skull has beaten you!"
-      },
-      "baseSetup": {
-        "villainDeck": {
-          "standard": [
-            "04125",
-            "04126"
-          ],
-          "expert": [
-            "04126",
-            "04127"
-          ]
-        },
-        "mainScheme": [
-          "04128a",
-          "04129a"
-        ],
-        "encounterSets": [
-          "red_skull",
-          "hydra_assault",
-          "hydra_patrol",
-          "standard"
-        ]
-      },
-      "campaignSetup": [
-        {
-          "text": {
-            "fr": "Chaque joueur cherche dans son deck les cartes Mise en place et les met en jeu",
-            "en": "Each player searches their deck for Setup cards and puts them into play"
-          }
-        },
-        {
-          "text": {
-            "fr": "Mélanger dans le deck rencontre chaque attachement EXPERIMENTAL noté",
-            "en": "Shuffle each recorded EXPERIMENTAL attachment into the encounter deck"
-          },
-          "showCardList": "experimental",
-          "when": {
-            "cardList": "experimental",
-            "minSize": 1
-          }
-        },
-        {
-          "text": {
-            "fr": "Placer sur la manigance principale autant de menace que de pions retard notés",
-            "en": "Place as much threat on the main scheme as the delay counters recorded"
-          },
-          "showCounter": "delay",
-          "when": {
-            "difficulty": "standard"
-          }
-        },
-        {
-          "text": {
-            "fr": "Expert : placer cette menace par joueur sur la manigance principale",
-            "en": "Expert: place this much threat per player on the main scheme"
-          },
-          "showCounter": "delay",
-          "when": {
-            "difficulty": "expert"
-          }
-        },
-        {
-          "text": {
-            "fr": "Chaque joueur en forme héros retourne son amélioration Basic sur sa face Improved : la prison est tombée",
-            "en": "Each player in hero form flips their Basic upgrade to its Improved side: the prison fell"
-          },
-          "showCardList": "conditions",
-          "when": {
-            "countTrue": "hydraPrison",
-            "countAtMost": 0
-          }
-        },
-        {
-          "text": {
-            "fr": "Ces alliés sont restés prisonniers : ils ne peuvent figurer dans aucun deck",
-            "en": "These allies were left imprisoned: they cannot be in any deck"
-          },
-          "showCardList": "imprisoned",
-          "when": {
-            "cardList": "imprisoned",
-            "minSize": 1
-          }
-        },
-        {
-          "text": {
-            "fr": "Expert : ces héros étaient engagés avec un ennemi et se distribuent chacun une carte rencontre",
-            "en": "Expert: these heroes were engaged with an enemy and each deal themselves an encounter card"
-          },
-          "showHeroesWith": "engaged",
-          "when": {
-            "difficulty": "expert"
-          }
-        },
-        {
-          "text": {
-            "fr": "Expert : une défaite ici perd la campagne",
-            "en": "Expert: losing here loses the campaign"
-          },
-          "when": {
-            "difficulty": "expert"
-          }
-        },
-        {
-          "text": {
-            "fr": "Expert : régler les points de vie de chaque héros sur la valeur ci-dessous",
-            "en": "Expert: set each hero's hit points to the value below"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "showCounter": "hp"
-        },
-        {
-          "text": {
-            "fr": "Expert : chaque joueur peut ajouter 1 obligation aléatoire de son set Campagne Expert à son deck pour se soigner à fond",
-            "en": "Expert: each player may add 1 random obligation from their Expert Campaign set to their deck to heal to full"
-          },
-          "when": {
-            "difficulty": "expert"
-          },
-          "action": {
-            "id": "heal",
-            "label": {
-              "fr": "Soigner",
-              "en": "Heal"
-            },
-            "perHero": true,
-            "effects": [
-              {
-                "op": "setHeroCounter",
-                "counter": "hp",
-                "value": 999
-              }
-            ]
-          }
-        }
-      ],
-      "onVictory": {
-        "prompts": [
-          {
-            "id": "vp",
-            "type": "number",
-            "label": {
-              "fr": "Combien de points de victoire avez-vous accumulés ?",
-              "en": "How many victory points did you accumulate?"
-            }
-          }
-        ],
-        "effects": [],
-        "next": [
-          {
-            "end": true
-          }
-        ]
-      },
-      "onDefeat": {
-        "next": [
-          {
-            "goto": "s5_red_skull"
-          }
-        ]
-      }
-    }
-  ]
+     }
+    ],
+    "effects": [],
+    "next": [
+     {
+      "end": true
+     }
+    ]
+   },
+   "onDefeat": {
+    "next": [
+     {
+      "goto": "s5_red_skull"
+     }
+    ]
+   }
+  }
+ ]
 }
