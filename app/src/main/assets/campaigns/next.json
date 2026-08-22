@@ -110,6 +110,25 @@
         },
         {
           "text": {
+            "en": "The Marauders arrive in this order.",
+            "fr": "Les Maraudeurs arrivent dans cet ordre."
+          },
+          "draw": {
+            "id": "marauderOrder",
+            "from": [
+              "40070a",
+              "40071a",
+              "40072a",
+              "40073a",
+              "40074a",
+              "40075a",
+              "40076a"
+            ],
+            "count": 7
+          }
+        },
+        {
+          "text": {
             "en": "Choose one campaign player side scheme you have not chosen before, and put it into play.",
             "fr": "Choisissez une manigance annexe joueur de campagne que vous n'avez pas encore choisie, et mettez-la en jeu."
           },
@@ -1600,6 +1619,21 @@
           "when": {
             "counter": "hopeDamage",
             "atLeast": 1
+          }
+        },
+        {
+          "text": {
+            "en": "These two Sinister Experiments are played, in this order.\nThe third leaves the game.",
+            "fr": "Ces deux Sinistres Expériences sont jouées, dans cet ordre.\nLa troisième quitte la partie."
+          },
+          "draw": {
+            "id": "experiments",
+            "from": [
+              "40140a",
+              "40141a",
+              "40142a"
+            ],
+            "count": 2
           }
         },
         {

@@ -55,6 +55,10 @@ SIDE_SCHEMES = [
     ("40195a", "40195b", "40202", "Prepare Defenses"),
 ]
 
+# The three stage 2 mains for Mister Sinister. Two are played, in a random
+# order, and the third leaves the game.
+SINISTER_EXPERIMENTS = ["40140a", "40141a", "40142a"]
+
 HOPE_SUMMERS = "40204"
 TELEPORTED_AWAY = "40146"
 STRYFES_GRASP = "40168a"
@@ -70,6 +74,10 @@ BLACK_TOM = "40134"
 # ---------------------------------------------------------------------------
 
 FR = {
+    'These two Sinister Experiments are played, in this order.\nThe third leaves the game.':
+        'Ces deux Sinistres Expériences sont jouées, dans cet ordre.\nLa troisième quitte la partie.',
+    'The Marauders arrive in this order.':
+        'Les Maraudeurs arrivent dans cet ordre.',
     "Remove these Marauders from the game before resolving the main scheme's setup.\nMinions of the same name stay in the encounter deck.":
         'Retirez ces Maraudeurs de la partie avant de résoudre la mise en place de la manigance principale.\nLes sbires du même nom restent dans le deck Rencontre.',
     'Unofficial, reconstructed for the app: the rulebook and cards from the NeXt Evolution box are still needed to play.\n\nThe app keeps the campaign log for you. Which player side schemes you have already chosen, which environments you earned by beating them, the encounter cards they dragged into the deck for good, which Marauders were routed, and how much damage Hope Summers is carrying.\n\nThe side scheme each scenario is a choice, not a draw, so the app offers the ones you have not used and records what you pick rather than picking for you.\n\nExpert is the expert campaign: the harder villain stages, and hit points that carry from one scenario to the next.':
@@ -386,6 +394,11 @@ def build():
             "campaignSetup": (
                 [{"text": t("Hope Summers cannot be in any player's deck for "
                             "this campaign."), "cards": [HOPE_SUMMERS]}]
+                + [{
+                    "text": t("The Marauders arrive in this order."),
+                    "draw": {"id": "marauderOrder", "from": MARAUDERS_A,
+                             "count": len(MARAUDERS_A)},
+                }]
                 + choose_side_scheme("s1_morlock_siege")
                 + [{"text": t("Defeat 3 of the 7 Marauders to win.")}]
             ),
@@ -488,6 +501,13 @@ def build():
                               "the last scenario either on her, or as that "
                               "much threat on Teleported Away."),
                     "when": {"counter": "hopeDamage", "atLeast": 1},
+                }]
+                + [{
+                    "text": t("These two Sinister Experiments are played, in "
+                              "this order." + NL +
+                              "The third leaves the game."),
+                    "draw": {"id": "experiments", "from": SINISTER_EXPERIMENTS,
+                             "count": 2},
                 }]
                 + choose_side_scheme("s4_mister_sinister")
                 + expert_steps()
