@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -250,8 +251,13 @@ private fun DrawCard(state: RandomizerUiState, viewModel: RandomizerViewModel) {
             }
             DrawRow(
                 label = stringResource(R.string.randomizer_difficulty),
-                value = state.draw.difficulty?.let { difficultyLabel(it) }
-                    ?: stringResource(R.string.randomizer_none),
+                value = state.draw.difficulty?.let { drawn ->
+                    // The extras read as part of the difficulty, because at the
+                    // table that is what they are: more cards in the same deck.
+                    (listOf(drawn) + state.draw.extraDifficulties)
+                        .map { difficultyLabel(it) }
+                        .joinToString(" + ")
+                } ?: stringResource(R.string.randomizer_none),
                 field = DrawField.DIFFICULTY,
                 state = state,
                 viewModel = viewModel,
@@ -428,6 +434,31 @@ private fun FiltersCard(state: RandomizerUiState, viewModel: RandomizerViewModel
                         label = { Text(difficultyLabel(difficulty)) },
                     )
                 }
+            }
+
+            // Off unless asked for. Standard II and Expert II are extra
+            // encounter cards a table chooses to shuffle in, so a draw that
+            // handed them over unprompted would be setting up a harder game
+            // than anybody agreed to.
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.randomizer_extra_difficulty),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Text(
+                        text = stringResource(R.string.randomizer_extra_difficulty_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(
+                    checked = state.filters.includeExtraDifficulty,
+                    onCheckedChange = viewModel::setIncludeExtraDifficulty,
+                )
             }
 
             Text(

@@ -599,4 +599,6 @@
     <string name="versus_subtitle">Two teams, two boards, one device between them.</string>
     <string name="campaign_translation_coverage">This campaign is written %1$d%% in French and %2$d%% in English.</string>
     <string name="choose_no_match">Nothing matches that.</string>
+    <string name="randomizer_extra_difficulty">Add extra difficulty packs</string>
+    <string name="randomizer_extra_difficulty_hint">The draw may also shuffle in difficulty sets beyond the one it picks, such as Standard II or Expert II.</string>
 </resources>

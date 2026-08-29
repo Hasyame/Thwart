@@ -621,4 +621,6 @@
     <string name="versus_subtitle">Deux équipes, deux tableaux, un seul appareil.</string>
     <string name="campaign_translation_coverage">Cette campagne est écrite à %1$d %% en français et à %2$d %% en anglais.</string>
     <string name="choose_no_match">Aucun résultat.</string>
+    <string name="randomizer_extra_difficulty">Ajouter des sets de difficulté supplémentaires</string>
+    <string name="randomizer_extra_difficulty_hint">Le tirage peut aussi mélanger des sets de difficulté en plus de celui qu\'il choisit, comme Standard II ou Expert II.</string>
 </resources>

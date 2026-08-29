@@ -58,6 +58,69 @@ class ScenarioRandomizerTest {
     )
 
     @Test
+    fun `extra difficulty sets are never drawn unless asked for`() {
+        // The default matters more than the feature: a table that never touches
+        // the switch must keep getting the difficulty the box describes.
+        repeat(50) { seed ->
+            assertTrue(draw(seed = seed).extraDifficulties.isEmpty())
+        }
+    }
+
+    @Test
+    fun `extra difficulty sets are owned, allowed, and not the one already drawn`() {
+        val owned = RandomizerPools(
+            scenarios = pools.scenarios,
+            modularSets = pools.modularSets,
+            heroes = pools.heroes,
+            aspects = pools.aspects,
+            difficulties = listOf(
+                Difficulty.STANDARD_I,
+                Difficulty.EXPERT_I,
+                Difficulty.STANDARD_II,
+            ),
+        )
+        repeat(50) { seed ->
+            val result = draw(
+                filters = RandomizerFilters(includeExtraDifficulty = true),
+                pools = owned,
+                seed = seed,
+            )
+            result.extraDifficulties.forEach { extra ->
+                assertTrue("drew an unowned set", extra in owned.difficulties)
+                // Shuffling in the set already in the deck is not a thing you
+                // can do at a table.
+                assertTrue("drew the main difficulty again", extra != result.difficulty)
+            }
+            assertEquals(
+                "the same set twice",
+                result.extraDifficulties.size,
+                result.extraDifficulties.toSet().size,
+            )
+        }
+    }
+
+    @Test
+    fun `the switch can actually produce an extra set`() {
+        // Guards the opposite mistake from the default test: a switch that is
+        // wired up but never yields anything would pass everything above.
+        val owned = RandomizerPools(
+            scenarios = pools.scenarios,
+            modularSets = pools.modularSets,
+            heroes = pools.heroes,
+            aspects = pools.aspects,
+            difficulties = Difficulty.entries,
+        )
+        val everProduced = (0..50).any { seed ->
+            draw(
+                filters = RandomizerFilters(includeExtraDifficulty = true),
+                pools = owned,
+                seed = seed,
+            ).extraDifficulties.isNotEmpty()
+        }
+        assertTrue("the switch never gave an extra set in 51 draws", everProduced)
+    }
+
+    @Test
     fun `a draw only uses scenarios from the pool`() {
         repeat(50) { seed ->
             val result = draw(seed = seed)

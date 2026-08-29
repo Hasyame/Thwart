@@ -245,6 +245,10 @@ class RandomizerViewModel @Inject constructor(
         filters.value = filters.value.copy(allowedDifficulties = allowed)
     }
 
+    fun setIncludeExtraDifficulty(include: Boolean) {
+        filters.value = filters.value.copy(includeExtraDifficulty = include)
+    }
+
     fun setPlayerRange(min: Int, max: Int) {
         filters.value = filters.value.copy(minPlayers = min, maxPlayers = max)
     }

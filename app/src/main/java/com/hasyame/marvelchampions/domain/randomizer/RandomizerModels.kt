@@ -100,6 +100,16 @@ data class RandomizerFilters(
      */
     val excludedModularSets: Set<String> = emptySet(),
     val allowedDifficulties: Set<Difficulty> = Difficulty.entries.toSet(),
+    /**
+     * Whether the draw may also hand out difficulty sets beyond the one it
+     * picked, which is how a table asks for a harder game than the box.
+     *
+     * Off, because it is not what the game means by a difficulty: Standard II
+     * and Expert II are extra encounter cards you choose to shuffle in, and a
+     * randomiser that did it unasked would be setting up a game nobody agreed
+     * to.
+     */
+    val includeExtraDifficulty: Boolean = false,
     val minPlayers: Int = 1,
     val maxPlayers: Int = 4,
 )
@@ -118,6 +128,8 @@ data class HeroAssignment(
 data class RandomizerDraw(
     val scenarioCode: String? = null,
     val difficulty: Difficulty? = null,
+    /** Difficulty sets shuffled in on top of [difficulty]. Usually empty. */
+    val extraDifficulties: List<Difficulty> = emptyList(),
     val modularSetCodes: List<String> = emptyList(),
     val playerCount: Int = 1,
     val heroes: List<HeroAssignment> = emptyList(),

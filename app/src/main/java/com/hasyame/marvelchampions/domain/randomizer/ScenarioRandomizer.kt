@@ -62,6 +62,21 @@ object ScenarioRandomizer {
                 ?: pools.difficulties.randomOrNull(random)
         }
 
+        // Extra difficulty sets, only when asked for. Anything from none to all
+        // of them: the point of the switch is a game that might be harder than
+        // the box, and a fixed number would make it the same harder every time.
+        // The one already drawn is excluded, since you cannot shuffle in a set
+        // that is already in the deck.
+        val extraDifficulties = if (!filters.includeExtraDifficulty) {
+            emptyList()
+        } else {
+            pools.difficulties
+                .filter { it != difficulty && it in filters.allowedDifficulties }
+                .shuffled(random)
+                .take(random.nextInt(0, pools.difficulties.size.coerceAtLeast(1)))
+                .sorted()
+        }
+
         val playerCount = if (DrawField.PLAYER_COUNT in locked) {
             previous.playerCount
         } else {
@@ -108,6 +123,7 @@ object ScenarioRandomizer {
         return RandomizerDraw(
             scenarioCode = scenarioCode,
             difficulty = difficulty,
+            extraDifficulties = extraDifficulties,
             modularSetCodes = modularSetCodes,
             playerCount = playerCount,
             heroes = heroes,
