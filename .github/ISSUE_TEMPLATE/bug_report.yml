@@ -1,0 +1,69 @@
+name: Something is wrong
+description: A crash, a wrong instruction, a step that contradicts your booklet, anything that does not behave
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time. You do not need to fill in every box:
+        answer what you can and leave the rest.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: In your own words. "The app said X, I expected Y" is perfect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to see it again
+      description: |
+        The path you took through the app, as far as you remember. If it happened
+        in a campaign, please say which campaign and which scenario.
+      placeholder: |
+        1. Play tab, My own setup
+        2. Chose Mad Titan's Shadow, scenario 2
+        3. The setup step said ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Which language is your app in
+      description: Wording problems are almost always specific to one language.
+      options:
+        - French
+        - English
+        - Not relevant
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Settings, at the bottom. Something like 1.29.0.
+    validations:
+      required: false
+
+  - type: input
+    id: device
+    attributes:
+      label: Phone and Android version
+      placeholder: Pixel 7, Android 15
+    validations:
+      required: false
+
+  - type: textarea
+    id: booklet
+    attributes:
+      label: If this is about a campaign or a rule, what does your booklet say
+      description: |
+        The printed booklet wins over the app, always. If you can quote the line
+        and the page number, that is exactly what I need to fix it.
+    validations:
+      required: false

@@ -22,6 +22,7 @@ app in French with English cards, or the other way round.
 - [Versioning](#versioning)
 - [Build it yourself](#build-it-yourself)
 - [Card data](#card-data)
+- [Helping out](#helping-out)
 - [Licence](#licence)
 - [Legal](#legal)
 
@@ -375,6 +376,32 @@ Card and pack data comes from the [MarvelCDB](https://marvelcdb.com) public API,
 maintained by its contributors. The snapshot bundled into the APK is generated at
 build time by `./gradlew fetchCardSeed` and is **not** committed to this
 repository. See [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
+
+## Helping out
+
+Corrections and translations are the most useful thing anybody can send, and
+neither needs any programming.
+
+If a setup step reads badly, contradicts your printed booklet, or is still in
+the wrong language, [open an
+issue](https://github.com/Hasyame/Thwart/issues/new/choose) and say which
+campaign, which scenario, and what your booklet says. That is the hard part
+done; applying it is easy.
+
+If you would like to change something yourself, [CONTRIBUTING.md](CONTRIBUTING.md)
+explains how, from the beginning, assuming no previous open source experience.
+You will need JDK 21 and the Android SDK for API 37; the Gradle wrapper handles
+the rest.
+
+Two things worth knowing before you start:
+
+- Pull requests go to the **`dev`** branch, not `main`.
+- Most campaign files are generated from scripts in `tools/`, so editing the
+  JSON in `assets/campaigns/` by hand gets overwritten. The exception is Galaxy's
+  Most Wanted, which has no generator.
+
+Security problems should go to [SECURITY.md](SECURITY.md) rather than a public
+issue.
 
 ## Licence
 

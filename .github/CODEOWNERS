@@ -1,0 +1,10 @@
+# Every change is reviewed by me. There is one maintainer, so this is less about
+# routing and more about making sure nothing can be merged without a review once
+# the branch rules require one.
+*       @Hasyame
+
+# Called out separately so it is obvious in the pull request which files are the
+# sensitive ones: a change here changes what CI runs, or what gets signed.
+/.github/        @Hasyame
+/app/build.gradle.kts    @Hasyame
+/gradle/         @Hasyame
