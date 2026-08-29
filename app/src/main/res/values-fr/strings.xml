@@ -624,4 +624,8 @@
     <string name="session_choose">Choisir</string>
     <string name="session_standard_set">Set Standard joué avec</string>
     <string name="session_standard_set_hint">L\'Expert se mélange avec un set Standard : choisissez lequel.</string>
+    <string name="paused_game_resume">Reprendre cette partie</string>
+    <string name="paused_game_stopped_at">Arrêté au stade du méchant</string>
+    <string name="paused_round">Stade %1$d</string>
+    <string name="paused_villain_life">Points de vie restants du méchant</string>
 </resources>

@@ -83,6 +83,7 @@ fun GameSessionScreen(
     heroes: String? = null,
     modularSets: String? = null,
     autoStart: Boolean = false,
+    resumeId: String? = null,
     onOpenPlays: () -> Unit,
     viewModel: GameSessionViewModel = hiltViewModel(),
 ) {
@@ -98,8 +99,14 @@ fun GameSessionScreen(
     }
 
     // A draw handed over from the randomiser, applied once.
-    LaunchedEffect(scenarioCode, difficulty, heroes, modularSets) {
-        viewModel.prefill(scenarioCode, difficulty, heroes, modularSets, autoStart)
+    LaunchedEffect(scenarioCode, difficulty, heroes, modularSets, resumeId) {
+        // The two are exclusive. A paused game brings its own scenario, heroes
+        // and difficulty, and taking half from the route is how they disagree.
+        if (resumeId != null) {
+            viewModel.resume(resumeId)
+        } else {
+            viewModel.prefill(scenarioCode, difficulty, heroes, modularSets, autoStart)
+        }
     }
 
     // Only while the clock is actually running, so a paused or finished game
@@ -526,6 +533,29 @@ private fun BriefingPhase(
                         value = sets.joinToString(", ") { state.names.modularSets[it] ?: it },
                     )
                 }
+                // What the table wrote down when they stopped. This is the
+                // reason the pause was worth taking, and it is printed with the
+                // rest of the setup because rebuilding the board is the setup.
+                state.resumedFrom?.let { saved ->
+                    BriefingRow(
+                        label = stringResource(R.string.paused_game_stopped_at),
+                        value = stringResource(R.string.paused_round, saved.villainStage),
+                    )
+                    if (saved.villainLife > 0) {
+                        BriefingRow(
+                            label = stringResource(R.string.paused_villain_life),
+                            value = saved.villainLife.toString(),
+                        )
+                    }
+                    saved.heroLives.split(",").filter { it.isNotBlank() }.forEach { entry ->
+                        val parts = entry.split("|")
+                        BriefingRow(
+                            label = parts.getOrNull(0).orEmpty(),
+                            value = parts.getOrNull(1).orEmpty(),
+                        )
+                    }
+                }
+
                 state.heroes.takeIf { it.isNotEmpty() }?.let { heroes ->
                     BriefingRow(
                         label = stringResource(R.string.randomizer_heroes),

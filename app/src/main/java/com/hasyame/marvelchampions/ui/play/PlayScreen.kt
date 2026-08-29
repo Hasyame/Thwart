@@ -66,6 +66,7 @@ fun PlayScreen(
     onCampaigns: () -> Unit,
     onVersus: () -> Unit,
     onResumeCampaign: (String) -> Unit,
+    onResumePausedGame: (String) -> Unit,
     viewModel: CampaignListViewModel = hiltViewModel(),
 ) {
     val summaries by viewModel.summaries.collectAsStateWithLifecycle()
@@ -86,6 +87,10 @@ fun PlayScreen(
                     showPaused = false
                 },
                 onClose = { showPaused = false },
+                onResume = {
+                    showPaused = false
+                    onResumePausedGame(game.id)
+                },
             )
         }
     }
@@ -210,6 +215,7 @@ private fun PausedGameRecap(
     photoStore: PhotoStore,
     onForget: () -> Unit,
     onClose: () -> Unit,
+    onResume: () -> Unit,
 ) {
     // heroLives is code|life; the names it should show are in heroes as code|name.
     val heroNames = game.heroes.split(",")
@@ -257,7 +263,11 @@ private fun PausedGameRecap(
             }
         },
         confirmButton = {
-            TextButton(onClick = onClose) { Text(stringResource(R.string.action_close)) }
+            // The point of stopping this way is coming back to it, so carrying
+            // on is the main action rather than something beside "forget".
+            TextButton(onClick = onResume) {
+                Text(stringResource(R.string.paused_game_resume))
+            }
         },
         dismissButton = {
             TextButton(onClick = onForget) {

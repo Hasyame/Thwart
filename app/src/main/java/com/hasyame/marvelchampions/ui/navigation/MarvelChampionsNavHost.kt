@@ -108,6 +108,9 @@ fun MarvelChampionsNavHost(
                 PlayScreen(
                     onRandomDraw = { navController.navigate(RandomizerRoute) },
                     onOwnSetup = { navController.navigate(GameSessionRoute()) },
+                    onResumePausedGame = { pausedId ->
+                        navController.navigate(GameSessionRoute(resumeId = pausedId))
+                    },
                     onCampaigns = { navController.navigate(CampaignRoute) },
                     onVersus = { navController.navigate(VersusRoute) },
                     onResumeCampaign = { runId ->
@@ -145,6 +148,7 @@ fun MarvelChampionsNavHost(
                     heroes = args.heroes,
                     modularSets = args.modularSets,
                     autoStart = args.autoStart,
+                    resumeId = args.resumeId,
                     onBack = { navController.popBackStack() },
                     onOpenPlays = { navController.navigate(PlaysRoute) },
                 )

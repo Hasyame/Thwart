@@ -602,4 +602,8 @@
     <string name="session_choose">Choose</string>
     <string name="session_standard_set">Standard set played with it</string>
     <string name="session_standard_set_hint">Expert is shuffled in with a Standard set, so choose which one.</string>
+    <string name="paused_game_resume">Carry on with this game</string>
+    <string name="paused_game_stopped_at">Stopped at villain stage</string>
+    <string name="paused_round">Stage %1$d</string>
+    <string name="paused_villain_life">Villain life left</string>
 </resources>

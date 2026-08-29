@@ -132,4 +132,12 @@ data class GameSessionRoute(
      * randomiser just made for them.
      */
     val autoStart: Boolean = false,
+    /**
+     * The paused game to pick up, when the player is coming back to one.
+     *
+     * Everything else on this route stays null then: the saved game holds its
+     * own scenario, heroes and difficulty, and reading them from two places is
+     * how they end up disagreeing.
+     */
+    val resumeId: String? = null,
 )

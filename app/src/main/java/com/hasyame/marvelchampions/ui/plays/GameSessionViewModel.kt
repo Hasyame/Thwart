@@ -20,6 +20,7 @@ import com.hasyame.marvelchampions.data.repository.SchemeBriefing
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.play.Encounter
+import com.hasyame.marvelchampions.domain.play.EncounterProgress
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
@@ -82,6 +83,24 @@ data class LongBreakDraft(
 fun SessionHero.displayName(names: Map<String, String>): String =
     heroName ?: names[heroCode] ?: heroCode
 
+/**
+ * Where the villain stood when the game was put away.
+ *
+ * The table wrote down the stage and the life left on it, so the damage is the
+ * difference from that stage's printed total. Without a printed total to work
+ * from, the life is carried as a manual figure instead, which is what the
+ * tracker already does for a scenario it cannot read.
+ */
+private fun PausedGameEntity.progress(setup: EncounterSetup): EncounterProgress {
+    val index = (villainStage - 1).coerceIn(0, (setup.villain.size - 1).coerceAtLeast(0))
+    val printed = setup.villain.getOrNull(index)?.totalFor(setup.players)
+    return EncounterProgress(
+        villainIndex = index,
+        damage = if (printed != null) (printed - villainLife).coerceAtLeast(0) else 0,
+        manualVillainHealth = if (printed == null && villainLife > 0) villainLife else null,
+    )
+}
+
 /** Which part of the screen is showing. */
 enum class SessionPhase {
     /** Choosing the game. */
@@ -139,6 +158,14 @@ data class GameSessionUiState(
     val photos: List<String> = emptyList(),
     /** Non-null while the game is being put away for a long break. */
     val longBreak: LongBreakDraft? = null,
+    /**
+     * What was written down when this game was put away, when it is one being
+     * picked back up.
+     *
+     * Kept so the briefing can print it: the table has to rebuild the board
+     * from those notes, and they are the reason the pause was worth taking.
+     */
+    val resumedFrom: PausedGameEntity? = null,
     /**
      * Who takes the first turn, as an index into [heroes]. Drawn when the game
      * starts and null in solo, where the question does not arise.
@@ -279,6 +306,74 @@ class GameSessionViewModel @Inject constructor(
         // to fetch out of the boxes and how the scenario is laid out.
         if (autoStart) {
             start()
+        }
+    }
+
+    /**
+     * Picks up a game that was put away for a long break.
+     *
+     * Lands on the briefing rather than straight into play. The board is in a
+     * box or on a shelf, and the notes the table left themselves have to be
+     * read before anybody can carry on, which is exactly what the briefing is
+     * for.
+     *
+     * The clock comes back where it stopped, so the record still says how long
+     * the game actually took rather than how long this sitting took.
+     */
+    fun resume(pausedId: String) {
+        if (prefilled) {
+            return
+        }
+        prefilled = true
+
+        viewModelScope.launch {
+            // There is only ever one paused game, so this reads it and checks
+            // it is the one the player tapped rather than one saved since.
+            val saved = pausedGameDao.current()?.takeIf { it.id == pausedId } ?: return@launch
+            val locale = preferences.currentCardLocale()
+            val pools = randomizerRepository.loadPools(locale)
+            val names = randomizerRepository.loadNames(locale)
+
+            // The names were stored with the heroes, because a pack can be
+            // unticked between putting a game away and coming back to it, and
+            // a seat reading "01001a" helps nobody.
+            val heroes = saved.heroes.split(",")
+                .filter { it.isNotBlank() }
+                .map { entry ->
+                    val parts = entry.split("|")
+                    SessionHero(
+                        heroCode = parts[0],
+                        aspect = "",
+                        heroName = parts.getOrNull(1),
+                    )
+                }
+
+            val expert = Difficulty.entries
+                .firstOrNull { it.name.lowercase() == saved.difficulty }
+                ?.isExpert == true
+            val setup = encounterRepository.setupFor(
+                scenarioCode = saved.scenarioCode,
+                players = heroes.size.coerceAtLeast(1),
+                expert = expert,
+            )
+
+            state.value = state.value.copy(
+                pools = pools,
+                names = names,
+                scenarioCode = saved.scenarioCode,
+                difficulty = saved.difficulty,
+                heroes = heroes,
+                modularSetCodes = saved.modularSetCodes.split(",").filter { it.isNotBlank() },
+                photos = saved.photos.split(",").filter { it.isNotBlank() },
+                briefing = randomizerRepository.schemeBriefing(saved.scenarioCode, locale),
+                encounter = Encounter(setup = setup, progress = saved.progress(setup)),
+                trackEncounter = setup.isUsable,
+                elapsedMillis = saved.elapsedMillis,
+                timer = TimerState(accumulatedMillis = saved.elapsedMillis),
+                resumedFrom = saved,
+                phase = SessionPhase.BRIEFING,
+                isLoading = false,
+            )
         }
     }
 
