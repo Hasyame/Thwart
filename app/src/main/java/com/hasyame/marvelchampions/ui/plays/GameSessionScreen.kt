@@ -712,7 +712,7 @@ private fun PlayingPhase(
                     )
                     Text(
                         text = state.heroes.joinToString(" · ") {
-                            state.names.heroes[it.heroCode] ?: it.heroCode
+                            it.displayName(state.names.heroes)
                         },
                         style = MaterialTheme.typography.labelMedium,
                         textAlign = TextAlign.Center,
@@ -741,7 +741,7 @@ private fun PlayingPhase(
                     Text(
                         text = stringResource(
                             R.string.session_first_player,
-                            state.names.heroes[hero.heroCode] ?: hero.heroCode,
+                            hero.displayName(state.names.heroes),
                         ),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary,

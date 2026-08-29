@@ -63,6 +63,7 @@ fun EncounterPanel(
                     reached = encounter.villainDefeated,
                     advanceLabel = stringResource(R.string.session_flip_villain),
                     onAdvance = if (encounter.isFinalVillainStage) null else onAdvanceVillain,
+                    flavour = VitalFlavour.BLOOD,
                 )
             }
 
@@ -79,6 +80,7 @@ fun EncounterPanel(
                     reached = encounter.schemeComplete,
                     advanceLabel = stringResource(R.string.session_advance_scheme),
                     onAdvance = if (encounter.isFinalSchemeStage) null else onAdvanceScheme,
+                    flavour = VitalFlavour.ELECTRIC,
                 )
             }
 
@@ -129,6 +131,7 @@ private fun CounterRow(
     reached: Boolean,
     advanceLabel: String,
     onAdvance: (() -> Unit)?,
+    flavour: VitalFlavour,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(text = title, style = MaterialTheme.typography.titleSmall)
@@ -149,6 +152,9 @@ private fun CounterRow(
                 MaterialTheme.colorScheme.onSurface
             },
         )
+        // Read across a table by people who are not holding the phone, so the
+        // bar carries where a digit changing does not.
+        VitalBar(value = value, total = total, flavour = flavour)
         Text(
             text = unit,
             style = MaterialTheme.typography.labelSmall,
