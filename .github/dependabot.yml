@@ -1,0 +1,54 @@
+version: 2
+
+# Grouped and monthly rather than individual and weekly.
+#
+# A solo maintainer with a pull request per library per week stops reading them,
+# and an unread security update is worse than none: it is a false sense that
+# somebody is watching. One batch a month gets opened, read and merged.
+#
+# Security updates ignore this schedule and arrive immediately, which is the
+# behaviour worth having.
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    # Pull requests land on dev, like every other contribution. main only ever
+    # receives merges from dev.
+    target-branch: dev
+    commit-message:
+      prefix: "chore"
+      include: scope
+    groups:
+      # AndroidX and Compose move together and are tested together. Twenty
+      # separate pull requests for one BOM bump is noise, not diligence.
+      androidx:
+        patterns:
+          - "androidx.*"
+          - "com.android.*"
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "org.jetbrains.kotlinx*"
+      # Everything else, so a new dependency is not silently unwatched.
+      other:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "androidx.*"
+          - "com.android.*"
+          - "org.jetbrains.kotlin*"
+          - "org.jetbrains.kotlinx*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    target-branch: dev
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns:
+          - "*"
