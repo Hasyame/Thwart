@@ -60,7 +60,7 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
         ExcludedScenarioEntity::class,
         PausedGameEntity::class,
     ],
-    version = 15,
+    version = 16,
     exportSchema = true,
     // Both migrations so far only add a table, so Room can generate them from
     // the exported schemas. Anything that alters an existing table needs a
@@ -80,6 +80,7 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
         AutoMigration(from = 12, to = 13),
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15),
+        AutoMigration(from = 15, to = 16),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {

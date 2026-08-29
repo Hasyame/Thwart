@@ -41,6 +41,17 @@ data class PlayEntity(
     val difficulty: String,
 
     /**
+     * Difficulty sets shuffled in on top of [difficulty], comma separated.
+     *
+     * Empty for almost every play, and for every play recorded before the
+     * custom setup could ask for them. Kept apart from [difficulty] rather than
+     * appended to it so the statistics keep grouping by the difficulty that was
+     * actually chosen, instead of growing a row per combination.
+     */
+    @ColumnInfo(defaultValue = "")
+    val extraDifficulties: String = "",
+
+    /**
      * The hero of the first seat, kept for display and for BoardGameGeek.
      *
      * Not what the statistics count any more. Counting per hero from this field

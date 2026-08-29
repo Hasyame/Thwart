@@ -543,6 +543,7 @@ class GameSessionViewModel @Inject constructor(
                     scenarioCode = scenarioCode,
                     scenarioName = current.names.scenarios[scenarioCode] ?: scenarioCode,
                     difficulty = current.difficulty,
+                    extraDifficulties = current.extraDifficulties.joinToString(","),
                     heroCode = first.heroCode,
                     heroName = first.displayName(current.names.heroes),
                     aspects = current.heroes.map { it.aspect }.distinct().joinToString(", "),
