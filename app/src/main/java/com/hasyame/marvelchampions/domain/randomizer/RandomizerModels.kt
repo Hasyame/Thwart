@@ -20,6 +20,22 @@ enum class Difficulty(val packCode: String) {
     STANDARD_III("aoa"),
     EXPERT_I("core"),
     EXPERT_II("hood"),
+    ;
+
+    /**
+     * An Expert set is never played on its own.
+     *
+     * Expert mode is the Expert set shuffled into the encounter deck *with* a
+     * Standard set, not in place of one, so choosing Expert leaves a second
+     * question to answer: which Standard goes with it.
+     */
+    val isExpert: Boolean get() = this == EXPERT_I || this == EXPERT_II
+
+    val isStandard: Boolean get() = !isExpert
+
+    companion object {
+        val standards: List<Difficulty> get() = entries.filter { it.isStandard }
+    }
 }
 
 /** A field of the draw. Each one can be locked and rerolled on its own. */
@@ -100,16 +116,6 @@ data class RandomizerFilters(
      */
     val excludedModularSets: Set<String> = emptySet(),
     val allowedDifficulties: Set<Difficulty> = Difficulty.entries.toSet(),
-    /**
-     * Whether the draw may also hand out difficulty sets beyond the one it
-     * picked, which is how a table asks for a harder game than the box.
-     *
-     * Off, because it is not what the game means by a difficulty: Standard II
-     * and Expert II are extra encounter cards you choose to shuffle in, and a
-     * randomiser that did it unasked would be setting up a game nobody agreed
-     * to.
-     */
-    val includeExtraDifficulty: Boolean = false,
     val minPlayers: Int = 1,
     val maxPlayers: Int = 4,
 )
@@ -128,8 +134,13 @@ data class HeroAssignment(
 data class RandomizerDraw(
     val scenarioCode: String? = null,
     val difficulty: Difficulty? = null,
-    /** Difficulty sets shuffled in on top of [difficulty]. Usually empty. */
-    val extraDifficulties: List<Difficulty> = emptyList(),
+    /**
+     * The Standard set that goes with [difficulty] when it is an Expert one.
+     *
+     * Null for a Standard difficulty, which needs no companion, and non-null
+     * for an Expert one, which is never played without a Standard set.
+     */
+    val standardSet: Difficulty? = null,
     val modularSetCodes: List<String> = emptyList(),
     val playerCount: Int = 1,
     val heroes: List<HeroAssignment> = emptyList(),

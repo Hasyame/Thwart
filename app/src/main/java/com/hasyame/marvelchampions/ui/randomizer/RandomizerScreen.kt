@@ -65,6 +65,7 @@ import com.hasyame.marvelchampions.ui.plays.PlaysViewModel
 import com.hasyame.marvelchampions.ui.util.ChoiceOption
 import com.hasyame.marvelchampions.ui.util.ChooseValueDialog
 import com.hasyame.marvelchampions.ui.util.aspectLabel
+import com.hasyame.marvelchampions.ui.util.difficultyLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -252,9 +253,9 @@ private fun DrawCard(state: RandomizerUiState, viewModel: RandomizerViewModel) {
             DrawRow(
                 label = stringResource(R.string.randomizer_difficulty),
                 value = state.draw.difficulty?.let { drawn ->
-                    // The extras read as part of the difficulty, because at the
-                    // table that is what they are: more cards in the same deck.
-                    (listOf(drawn) + state.draw.extraDifficulties)
+                    // An Expert draw reads with the Standard set it is played
+                    // with, because at the table they are one pile of cards.
+                    listOfNotNull(drawn, state.draw.standardSet)
                         .map { difficultyLabel(it) }
                         .joinToString(" + ")
                 } ?: stringResource(R.string.randomizer_none),
@@ -436,30 +437,6 @@ private fun FiltersCard(state: RandomizerUiState, viewModel: RandomizerViewModel
                 }
             }
 
-            // Off unless asked for. Standard II and Expert II are extra
-            // encounter cards a table chooses to shuffle in, so a draw that
-            // handed them over unprompted would be setting up a harder game
-            // than anybody agreed to.
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.randomizer_extra_difficulty),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Text(
-                        text = stringResource(R.string.randomizer_extra_difficulty_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Switch(
-                    checked = state.filters.includeExtraDifficulty,
-                    onCheckedChange = viewModel::setIncludeExtraDifficulty,
-                )
-            }
 
             Text(
                 text = stringResource(R.string.randomizer_excluded_aspects),
@@ -495,18 +472,6 @@ private fun FiltersCard(state: RandomizerUiState, viewModel: RandomizerViewModel
         }
     }
 }
-
-@Composable
-private fun difficultyLabel(difficulty: Difficulty): String = stringResource(
-    when (difficulty) {
-        Difficulty.STANDARD_I -> R.string.difficulty_standard_i
-        Difficulty.STANDARD_II -> R.string.difficulty_standard_ii
-        Difficulty.STANDARD_III -> R.string.difficulty_standard_iii
-        Difficulty.EXPERT_I -> R.string.difficulty_expert_i
-        Difficulty.EXPERT_II -> R.string.difficulty_expert_ii
-    },
-)
-
 
 /** Heroes as code-and-aspect pairs, which is what the session route carries. */
 private fun com.hasyame.marvelchampions.domain.randomizer.RandomizerDraw.asSessionHeroes(): String =

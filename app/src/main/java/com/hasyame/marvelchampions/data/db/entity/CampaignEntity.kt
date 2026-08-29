@@ -31,6 +31,13 @@ data class CampaignRunEntity(
      */
     @ColumnInfo(defaultValue = "") val name: String = "",
     val difficulty: String,
+    /**
+     * The Standard set played alongside an expert campaign. Empty otherwise.
+     *
+     * Fixed for the whole run, like the difficulty and the roster: the sets in
+     * the encounter deck are not something a table changes between scenarios.
+     */
+    @ColumnInfo(defaultValue = "") val standardSet: String = "",
     val createdAt: Long,
     val finished: Boolean = false,
     /** The template JSON as imported, so a run stays readable if the file moves. */

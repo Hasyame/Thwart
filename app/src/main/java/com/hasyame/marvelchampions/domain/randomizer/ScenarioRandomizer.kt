@@ -62,19 +62,17 @@ object ScenarioRandomizer {
                 ?: pools.difficulties.randomOrNull(random)
         }
 
-        // Extra difficulty sets, only when asked for. Anything from none to all
-        // of them: the point of the switch is a game that might be harder than
-        // the box, and a fixed number would make it the same harder every time.
-        // The one already drawn is excluded, since you cannot shuffle in a set
-        // that is already in the deck.
-        val extraDifficulties = if (!filters.includeExtraDifficulty) {
-            emptyList()
+        // An Expert set is played with a Standard set, so drawing Expert leaves
+        // a second draw to make. A Standard difficulty needs no companion.
+        val standardSet = if (difficulty?.isExpert != true) {
+            null
         } else {
             pools.difficulties
-                .filter { it != difficulty && it in filters.allowedDifficulties }
-                .shuffled(random)
-                .take(random.nextInt(0, pools.difficulties.size.coerceAtLeast(1)))
-                .sorted()
+                .filter { it.isStandard && it in filters.allowedDifficulties }
+                .randomOrNull(random)
+                // Every Standard excluded by the filter still leaves the game
+                // needing one, and a draw that cannot be set up is not a draw.
+                ?: pools.difficulties.filter { it.isStandard }.randomOrNull(random)
         }
 
         val playerCount = if (DrawField.PLAYER_COUNT in locked) {
@@ -123,7 +121,7 @@ object ScenarioRandomizer {
         return RandomizerDraw(
             scenarioCode = scenarioCode,
             difficulty = difficulty,
-            extraDifficulties = extraDifficulties,
+            standardSet = standardSet,
             modularSetCodes = modularSetCodes,
             playerCount = playerCount,
             heroes = heroes,

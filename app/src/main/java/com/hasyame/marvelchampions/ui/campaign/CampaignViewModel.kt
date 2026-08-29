@@ -130,7 +130,14 @@ class CampaignListViewModel @Inject constructor(
     ) {
         val template = _importedTemplate.value?.template ?: return
         viewModelScope.launch {
-            val runId = repository.startRun(template, difficulty, deckIds, name)
+            // An imported template starts without the expert question being
+            // asked, so no Standard set is recorded for it.
+            val runId = repository.startRun(
+                template = template,
+                difficulty = difficulty,
+                deckIds = deckIds,
+                name = name,
+            )
             _importedTemplate.value = null
             onStarted(runId)
         }

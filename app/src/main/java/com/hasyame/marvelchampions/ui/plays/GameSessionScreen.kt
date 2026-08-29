@@ -64,6 +64,7 @@ import com.hasyame.marvelchampions.ui.util.ChoiceOption
 import com.hasyame.marvelchampions.ui.util.ChooseValueDialog
 import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.ui.util.aspectLabel
+import com.hasyame.marvelchampions.ui.util.labelRes
 import kotlinx.coroutines.delay
 
 /**
@@ -278,35 +279,32 @@ private fun SetupPhase(
             }
         }
 
-        // Extra difficulty sets, nothing ticked to begin with. These are more
-        // encounter cards shuffled into the same deck, which is something a
-        // table chooses to do, not a difficulty of its own.
-        val extras = state.pools.difficulties
-            .filter { it.name.lowercase() != state.difficulty }
-        if (extras.isNotEmpty()) {
+        // An Expert set is shuffled in with a Standard set, never on its own,
+        // so choosing Expert leaves a second question. It only appears then,
+        // because for a Standard difficulty there is nothing to ask.
+        if (state.isExpertDifficulty) {
+            val standards = state.pools.difficulties.filter { it.isStandard }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                PickerSection(stringResource(R.string.session_extra_difficulty)) {
-                    extras.forEach { difficulty ->
+                PickerSection(stringResource(R.string.session_standard_set)) {
+                    standards.forEach { difficulty ->
                         val stored = difficulty.name.lowercase()
                         FilterChip(
-                            selected = stored in state.extraDifficulties,
-                            onClick = {
-                                viewModel.setExtraDifficulties(
-                                    if (stored in state.extraDifficulties) {
-                                        state.extraDifficulties - stored
-                                    } else {
-                                        state.extraDifficulties + stored
-                                    },
-                                )
-                            },
+                            selected = state.standardSet == stored,
+                            onClick = { viewModel.setStandardSet(stored) },
                             label = { Text(stringResource(difficulty.labelRes())) },
                         )
                     }
                 }
                 Text(
-                    text = stringResource(R.string.session_extra_difficulty_hint),
+                    text = stringResource(R.string.session_standard_set_hint),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    // Turns to the error colour while unanswered, because the
+                    // start button is disabled and the reason must be visible.
+                    color = if (state.standardSet == null) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                 )
             }
         }
@@ -505,12 +503,12 @@ private fun BriefingPhase(
                         value = it,
                     )
                 }
-                // Main difficulty and anything shuffled in with it, on one
-                // line: at the table they are one pile of encounter cards, and
-                // splitting them into two rows made the extras look optional
-                // once the game had already started.
+                // The difficulty and, for an Expert one, the Standard set it
+                // is played with, on one line: at the table they are one pile
+                // of encounter cards, and two rows made the Standard set look
+                // optional once the game had already started.
                 val difficultyNames = (
-                    listOf(state.difficulty) + state.extraDifficulties
+                    listOfNotNull(state.difficulty, state.standardSet)
                     ).mapNotNull { stored ->
                     Difficulty.entries.firstOrNull { it.name.lowercase() == stored }
                 }.map { stringResource(it.labelRes()) }
@@ -838,16 +836,6 @@ private fun PlayingPhase(
             }
         }
     }
-}
-
-/** The game's own names for its four difficulties. */
-
-private fun Difficulty.labelRes(): Int = when (this) {
-    Difficulty.STANDARD_I -> R.string.difficulty_standard_i
-    Difficulty.STANDARD_II -> R.string.difficulty_standard_ii
-        Difficulty.STANDARD_III -> R.string.difficulty_standard_iii
-    Difficulty.EXPERT_I -> R.string.difficulty_expert_i
-    Difficulty.EXPERT_II -> R.string.difficulty_expert_ii
 }
 
 private const val TICK_MILLIS = 1_000L

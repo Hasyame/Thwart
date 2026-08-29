@@ -41,15 +41,16 @@ data class PlayEntity(
     val difficulty: String,
 
     /**
-     * Difficulty sets shuffled in on top of [difficulty], comma separated.
+     * The Standard set played alongside [difficulty], when that was an Expert
+     * one. Empty otherwise.
      *
-     * Empty for almost every play, and for every play recorded before the
-     * custom setup could ask for them. Kept apart from [difficulty] rather than
-     * appended to it so the statistics keep grouping by the difficulty that was
-     * actually chosen, instead of growing a row per combination.
+     * Expert mode is the Expert set shuffled in with a Standard set, so the
+     * difficulty alone does not describe the game that was played. Kept apart
+     * from [difficulty] rather than folded into it so the statistics keep
+     * grouping by the difficulty chosen, rather than growing a row per pairing.
      */
     @ColumnInfo(defaultValue = "")
-    val extraDifficulties: String = "",
+    val standardSet: String = "",
 
     /**
      * The hero of the first seat, kept for display and for BoardGameGeek.

@@ -117,10 +117,13 @@ data class GameSessionUiState(
     val difficulty: String = Difficulty.STANDARD_I.name.lowercase(),
     val heroes: List<SessionHero> = emptyList(),
     /**
-     * Difficulty sets shuffled in on top of [difficulty]. Empty unless asked
-     * for: these are extra encounter cards, not a difficulty of their own.
+     * The Standard set that goes with [difficulty] when it is an Expert one.
+     *
+     * Null while the question is unanswered, which is why an Expert difficulty
+     * with no Standard chosen cannot start: it is not a setup anybody can put
+     * on a table.
      */
-    val extraDifficulties: List<String> = emptyList(),
+    val standardSet: String? = null,
     /** The player's own decks, which is what a seat is chosen from. */
     val decks: List<SavedDeckEntity> = emptyList(),
     /** Modular sets shuffled into the encounter deck. */
@@ -162,8 +165,23 @@ data class GameSessionUiState(
      */
     val keepAwake: Boolean = true,
 ) {
-    /** A game needs somewhere to happen and someone to play it. */
-    val canStart: Boolean get() = scenarioCode != null && heroes.isNotEmpty()
+    /** A game needs somewhere to happen, someone to play it, and a legal setup. */
+    val canStart: Boolean
+        get() = scenarioCode != null && heroes.isNotEmpty() && difficultyIsComplete
+
+    /**
+     * False while an Expert difficulty has no Standard set chosen.
+     *
+     * Expert is played with a Standard set shuffled in, never on its own, so
+     * until that is answered the setup describes a game that cannot happen.
+     */
+    val difficultyIsComplete: Boolean
+        get() = !isExpertDifficulty || standardSet != null
+
+    val isExpertDifficulty: Boolean
+        get() = Difficulty.entries
+            .firstOrNull { it.name.lowercase() == difficulty }
+            ?.isExpert == true
 }
 
 /**
@@ -269,13 +287,21 @@ class GameSessionViewModel @Inject constructor(
     }
 
     fun setDifficulty(difficulty: String) {
-        // Whatever becomes the main difficulty leaves the extras: its cards are
-        // in the deck once, and a list claiming otherwise is a setup nobody can
-        // carry out.
+        val isExpert = Difficulty.entries
+            .firstOrNull { it.name.lowercase() == difficulty }
+            ?.isExpert == true
         state.value = state.value.copy(
             difficulty = difficulty,
-            extraDifficulties = state.value.extraDifficulties - difficulty,
+            // A Standard difficulty has no companion, so a leftover one from an
+            // earlier Expert choice would put a set on the table that nobody
+            // asked for.
+            standardSet = if (isExpert) state.value.standardSet else null,
         )
+    }
+
+    /** The Standard set shuffled in alongside an Expert difficulty. */
+    fun setStandardSet(standardSet: String) {
+        state.value = state.value.copy(standardSet = standardSet)
     }
 
     /** Replaces the modular sets outright, which is what the picker returns. */
@@ -299,10 +325,6 @@ class GameSessionViewModel @Inject constructor(
                 heroName = deck.heroName,
             ),
         )
-    }
-
-    fun setExtraDifficulties(difficulties: List<String>) {
-        state.value = state.value.copy(extraDifficulties = difficulties)
     }
 
     fun removeHero(index: Int) {
@@ -543,7 +565,7 @@ class GameSessionViewModel @Inject constructor(
                     scenarioCode = scenarioCode,
                     scenarioName = current.names.scenarios[scenarioCode] ?: scenarioCode,
                     difficulty = current.difficulty,
-                    extraDifficulties = current.extraDifficulties.joinToString(","),
+                    standardSet = current.standardSet.orEmpty(),
                     heroCode = first.heroCode,
                     heroName = first.displayName(current.names.heroes),
                     aspects = current.heroes.map { it.aspect }.distinct().joinToString(", "),

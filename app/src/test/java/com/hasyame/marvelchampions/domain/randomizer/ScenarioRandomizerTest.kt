@@ -58,66 +58,58 @@ class ScenarioRandomizerTest {
     )
 
     @Test
-    fun `extra difficulty sets are never drawn unless asked for`() {
-        // The default matters more than the feature: a table that never touches
-        // the switch must keep getting the difficulty the box describes.
-        repeat(50) { seed ->
-            assertTrue(draw(seed = seed).extraDifficulties.isEmpty())
-        }
-    }
-
-    @Test
-    fun `extra difficulty sets are owned, allowed, and not the one already drawn`() {
-        val owned = RandomizerPools(
-            scenarios = pools.scenarios,
-            modularSets = pools.modularSets,
-            heroes = pools.heroes,
-            aspects = pools.aspects,
-            difficulties = listOf(
-                Difficulty.STANDARD_I,
-                Difficulty.EXPERT_I,
-                Difficulty.STANDARD_II,
-            ),
-        )
-        repeat(50) { seed ->
-            val result = draw(
-                filters = RandomizerFilters(includeExtraDifficulty = true),
-                pools = owned,
-                seed = seed,
-            )
-            result.extraDifficulties.forEach { extra ->
-                assertTrue("drew an unowned set", extra in owned.difficulties)
-                // Shuffling in the set already in the deck is not a thing you
-                // can do at a table.
-                assertTrue("drew the main difficulty again", extra != result.difficulty)
+    fun `an Expert draw always comes with a Standard set`() {
+        // Expert mode is the Expert set shuffled in with a Standard set, never
+        // on its own. A draw that names only Expert is a setup nobody can put
+        // on a table.
+        val owned = pools.copy(difficulties = Difficulty.entries)
+        var expertsSeen = 0
+        repeat(200) { seed ->
+            val result = draw(pools = owned, seed = seed)
+            if (result.difficulty?.isExpert == true) {
+                expertsSeen++
+                assertNotNull(
+                    "drew ${result.difficulty} with no Standard set",
+                    result.standardSet,
+                )
+                assertTrue(
+                    "the companion ${result.standardSet} is not a Standard set",
+                    result.standardSet?.isStandard == true,
+                )
             }
-            assertEquals(
-                "the same set twice",
-                result.extraDifficulties.size,
-                result.extraDifficulties.toSet().size,
-            )
+        }
+        // Guards the test itself: if no Expert were ever drawn, everything
+        // above would pass without checking anything.
+        assertTrue("no Expert difficulty came up in 200 draws", expertsSeen > 0)
+    }
+
+    @Test
+    fun `a Standard draw has no companion`() {
+        val owned = pools.copy(difficulties = Difficulty.entries)
+        repeat(200) { seed ->
+            val result = draw(pools = owned, seed = seed)
+            if (result.difficulty?.isStandard == true) {
+                assertNull(
+                    "a Standard difficulty was given a second set",
+                    result.standardSet,
+                )
+            }
         }
     }
 
     @Test
-    fun `the switch can actually produce an extra set`() {
-        // Guards the opposite mistake from the default test: a switch that is
-        // wired up but never yields anything would pass everything above.
-        val owned = RandomizerPools(
-            scenarios = pools.scenarios,
-            modularSets = pools.modularSets,
-            heroes = pools.heroes,
-            aspects = pools.aspects,
-            difficulties = Difficulty.entries,
+    fun `the Standard companion respects the collection`() {
+        // Owning Expert II without owning the Hood's Standard II is ordinary:
+        // the companion still has to be a set the table can field.
+        val owned = pools.copy(
+            difficulties = listOf(Difficulty.STANDARD_I, Difficulty.EXPERT_II),
         )
-        val everProduced = (0..50).any { seed ->
-            draw(
-                filters = RandomizerFilters(includeExtraDifficulty = true),
-                pools = owned,
-                seed = seed,
-            ).extraDifficulties.isNotEmpty()
+        repeat(50) { seed ->
+            val result = draw(pools = owned, seed = seed)
+            if (result.difficulty?.isExpert == true) {
+                assertEquals(Difficulty.STANDARD_I, result.standardSet)
+            }
         }
-        assertTrue("the switch never gave an extra set in 51 draws", everProduced)
     }
 
     @Test

@@ -4,22 +4,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
+import com.hasyame.marvelchampions.data.repository.CollectionRepository
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
-import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.TranslationCoverage
 import com.hasyame.marvelchampions.domain.campaign.template.translationCoverage
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckProblem
+import com.hasyame.marvelchampions.domain.model.CardLocale
+import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.hasyame.marvelchampions.data.repository.CollectionRepository
-import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /** A deck offered for the roster, with whether it may actually be used. */
 data class RosterCandidate(
@@ -37,6 +38,11 @@ data class StartCampaignUiState(
     val localeCode: String = CardLocale.FRENCH.code,
     /** How much of each campaign's own text is written, by template id. */
     val coverage: Map<String, TranslationCoverage> = emptyMap(),
+    /**
+     * Standard sets the collection can field, offered when the campaign is
+     * played on expert. Each one arrived in a particular box.
+     */
+    val standardSets: List<Difficulty> = emptyList(),
 )
 
 @HiltViewModel
@@ -76,6 +82,7 @@ class StartCampaignViewModel @Inject constructor(
                     // whole template, and the list is rebuilt on every deck
                     // change.
                     coverage = templates.associate { it.id to it.translationCoverage() },
+                    standardSets = Difficulty.standards.filter { it.packCode in owned },
                     candidates = decks.map { deck ->
                         val rules = builderRepository.heroRules(deck.heroCode, locale)
                         RosterCandidate(
@@ -103,6 +110,7 @@ class StartCampaignViewModel @Inject constructor(
     fun start(
         template: CampaignTemplate,
         difficulty: String,
+        standardSet: String,
         deckIds: List<String>,
         name: String,
         choices: Map<String, String>,
@@ -117,7 +125,14 @@ class StartCampaignViewModel @Inject constructor(
         }
         viewModelScope.launch {
             onStarted(
-                campaignRepository.startRun(template, difficulty, roster, name, choices),
+                campaignRepository.startRun(
+                    template = template,
+                    difficulty = difficulty,
+                    standardSet = standardSet,
+                    deckIds = roster,
+                    name = name,
+                    choices = choices,
+                ),
             )
         }
     }

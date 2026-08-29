@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 16,
-    "identityHash": "1bc21d00c54a59c3cb468d6d5f5a7354",
+    "identityHash": "f7f620890f2ba86765888c046dab6028",
     "entities": [
       {
         "tableName": "cards",
@@ -963,7 +963,7 @@
       },
       {
         "tableName": "campaign_runs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `templateId` TEXT NOT NULL, `templateName` TEXT NOT NULL, `name` TEXT NOT NULL DEFAULT '', `difficulty` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `finished` INTEGER NOT NULL, `templateJson` TEXT NOT NULL, `timerAccumulatedMillis` INTEGER NOT NULL, `timerRunningSince` INTEGER, `timerScenarioId` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `templateId` TEXT NOT NULL, `templateName` TEXT NOT NULL, `name` TEXT NOT NULL DEFAULT '', `difficulty` TEXT NOT NULL, `standardSet` TEXT NOT NULL DEFAULT '', `createdAt` INTEGER NOT NULL, `finished` INTEGER NOT NULL, `templateJson` TEXT NOT NULL, `timerAccumulatedMillis` INTEGER NOT NULL, `timerRunningSince` INTEGER, `timerScenarioId` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -995,6 +995,13 @@
             "columnName": "difficulty",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "standardSet",
+            "columnName": "standardSet",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "createdAt",
@@ -1109,7 +1116,7 @@
       },
       {
         "tableName": "plays",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `playedAt` INTEGER NOT NULL, `scenarioCode` TEXT NOT NULL, `scenarioName` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `extraDifficulties` TEXT NOT NULL DEFAULT '', `heroCode` TEXT NOT NULL, `heroName` TEXT NOT NULL, `aspects` TEXT NOT NULL, `otherHeroes` TEXT NOT NULL, `roster` TEXT NOT NULL DEFAULT '[]', `players` INTEGER NOT NULL, `won` INTEGER NOT NULL, `elapsedMillis` INTEGER NOT NULL, `notes` TEXT NOT NULL, `location` TEXT NOT NULL DEFAULT '', `victoryPoints` INTEGER NOT NULL DEFAULT 0, `campaignRunId` TEXT, `reportedToBgg` INTEGER NOT NULL, `photos` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `playedAt` INTEGER NOT NULL, `scenarioCode` TEXT NOT NULL, `scenarioName` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `standardSet` TEXT NOT NULL DEFAULT '', `heroCode` TEXT NOT NULL, `heroName` TEXT NOT NULL, `aspects` TEXT NOT NULL, `otherHeroes` TEXT NOT NULL, `roster` TEXT NOT NULL DEFAULT '[]', `players` INTEGER NOT NULL, `won` INTEGER NOT NULL, `elapsedMillis` INTEGER NOT NULL, `notes` TEXT NOT NULL, `location` TEXT NOT NULL DEFAULT '', `victoryPoints` INTEGER NOT NULL DEFAULT 0, `campaignRunId` TEXT, `reportedToBgg` INTEGER NOT NULL, `photos` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -1142,8 +1149,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "extraDifficulties",
-            "columnName": "extraDifficulties",
+            "fieldPath": "standardSet",
+            "columnName": "standardSet",
             "affinity": "TEXT",
             "notNull": true,
             "defaultValue": "''"
@@ -1432,7 +1439,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1bc21d00c54a59c3cb468d6d5f5a7354')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f7f620890f2ba86765888c046dab6028')"
     ]
   }
 }

@@ -41,6 +41,7 @@ import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.chooserName
+import com.hasyame.marvelchampions.ui.util.labelRes
 
 /**
  * The language the app is being displayed in.
@@ -82,13 +83,21 @@ fun StartCampaignScreen(
     var choices by remember { mutableStateOf(mapOf<String, String>()) }
     var name by remember { mutableStateOf("") }
     var difficulty by remember { mutableStateOf("") }
+    // Only asked for, and only required, when the campaign is played on expert.
+    var standardSet by remember { mutableStateOf<String?>(null) }
     var roster by remember { mutableStateOf(emptyList<String>()) }
 
     val template: CampaignTemplate? =
         state.templates.firstOrNull { it.id == chosenTemplateId } ?: state.templates.firstOrNull()
     val difficulties = template?.difficulties.orEmpty()
     val effectiveDifficulty = difficulty.ifBlank { difficulties.firstOrNull().orEmpty() }
-    val canStart = template != null && roster.isNotEmpty() && effectiveDifficulty.isNotBlank()
+    // An expert campaign with no Standard set chosen describes a deck nobody
+    // can build, so it cannot start any more than a campaign with no heroes.
+    val needsStandardSet = effectiveDifficulty == EXPERT && state.standardSets.isNotEmpty()
+    val canStart = template != null &&
+        roster.isNotEmpty() &&
+        effectiveDifficulty.isNotBlank() &&
+        (!needsStandardSet || standardSet != null)
 
     Scaffold(
         topBar = {
@@ -279,10 +288,45 @@ fun StartCampaignScreen(
                 )
             }
 
+            // An expert campaign shuffles the Expert set in with a Standard
+            // set, so which Standard is a second question, asked once because
+            // it is fixed for the whole run like everything else here.
+            if (needsStandardSet) {
+                Section(stringResource(R.string.session_standard_set)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        state.standardSets.forEach { set ->
+                            val stored = set.name.lowercase()
+                            FilterChip(
+                                selected = standardSet == stored,
+                                onClick = { standardSet = stored },
+                                label = { Text(stringResource(set.labelRes())) },
+                            )
+                        }
+                    }
+                    Text(
+                        text = stringResource(R.string.session_standard_set_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (standardSet == null) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    )
+                }
+            }
+
             Button(
                 onClick = {
                     template?.let {
-                        viewModel.start(it, effectiveDifficulty, roster, name, choices, onStarted)
+                        viewModel.start(
+                            it,
+                            effectiveDifficulty,
+                            standardSet.orEmpty(),
+                            roster,
+                            name,
+                            choices,
+                            onStarted,
+                        )
                     }
                 },
                 enabled = canStart,
@@ -303,6 +347,9 @@ private fun Section(title: String, content: @Composable () -> Unit) {
         content()
     }
 }
+
+/** The campaign templates' own word for the harder mode. */
+private const val EXPERT = "expert"
 
 /** A blank line between the campaign's own notice and the app's. */
 private const val NOTICE_GAP = "\n\n"
