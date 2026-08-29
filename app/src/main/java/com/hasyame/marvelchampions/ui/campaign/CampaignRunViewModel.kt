@@ -248,7 +248,14 @@ class CampaignRunViewModel @Inject constructor(
             .firstOrNull { it.locale == locale.code }
             ?.cardSetCode
             ?: return EncounterSetup()
-        return encounterRepository.setupFor(setCode, run.state.heroes.size.coerceAtLeast(1))
+        // The campaigns use the game's own word for the harder mode, and an
+        // expert campaign plays the same later stages a one-off expert game
+        // does.
+        return encounterRepository.setupFor(
+            scenarioCode = setCode,
+            players = run.state.heroes.size.coerceAtLeast(1),
+            expert = run.state.difficulty.equals("expert", ignoreCase = true),
+        )
     }
 
     private fun updateEncounter(transform: Encounter.() -> Encounter) {

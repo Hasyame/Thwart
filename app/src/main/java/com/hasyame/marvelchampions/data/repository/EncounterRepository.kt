@@ -5,11 +5,12 @@ import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
 import com.hasyame.marvelchampions.domain.play.EncounterSide
+import com.hasyame.marvelchampions.domain.play.VillainStages
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * The numbers a scenario puts on the table, read from the cards.
@@ -25,7 +26,12 @@ class EncounterRepository @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
-    suspend fun setupFor(scenarioCode: String, players: Int): EncounterSetup =
+    suspend fun setupFor(
+        scenarioCode: String,
+        players: Int,
+        /** Expert plays the last two stages where Standard plays the first two. */
+        expert: Boolean = false,
+    ): EncounterSetup =
         withContext(ioDispatcher) {
             val locale = preferences.cardLocale.first()
             versusHalves(scenarioCode)?.let { (side, leader) ->
@@ -35,6 +41,8 @@ class EncounterRepository @Inject constructor(
 
             EncounterSetup(
                 villain = rows.filter { it.typeCode in VILLAIN_TYPES && !it.doubleSided }
+                    // Standard walks the first two stages, Expert the last two.
+                    .let { VillainStages.select(it, expert, { c -> c.name }, { c -> c.stage }) }
                     .map(::villainSide),
                 scheme = rows.filter { it.typeCode == MAIN_SCHEME && it.isNumbersSide }
                     .map(::schemeSide),

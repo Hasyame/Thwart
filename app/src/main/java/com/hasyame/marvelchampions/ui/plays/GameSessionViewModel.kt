@@ -427,7 +427,11 @@ class GameSessionViewModel @Inject constructor(
             // Read into locals before touching the state: the same stale-read
             // trap the pools above are commented for.
             val setup = if (tracking) {
-                encounterRepository.setupFor(scenario, current.heroes.size.coerceAtLeast(1))
+                encounterRepository.setupFor(
+                    scenarioCode = scenario,
+                    players = current.heroes.size.coerceAtLeast(1),
+                    expert = current.isExpertDifficulty,
+                )
             } else {
                 EncounterSetup()
             }
