@@ -125,6 +125,14 @@ data class GameSessionRoute(
     val heroes: String? = null,
     val modularSets: String? = null,
     /**
+     * The Standard set an Expert difficulty is played with.
+     *
+     * Carried because an Expert game is not a complete setup without it: the
+     * session refuses to start, and a draw that arrives incomplete lands the
+     * player back on the setup page having chosen nothing.
+     */
+    val standardSet: String? = null,
+    /**
      * True when the game is already decided and the clock should simply start.
      *
      * A draw arrives complete — scenario, difficulty, heroes, modular sets —

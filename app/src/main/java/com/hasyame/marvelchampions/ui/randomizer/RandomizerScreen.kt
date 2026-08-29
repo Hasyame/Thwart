@@ -76,6 +76,7 @@ fun RandomizerScreen(
         heroes: String,
         modularSets: String,
         difficulty: String,
+        standardSet: String,
     ) -> Unit,
     viewModel: RandomizerViewModel = hiltViewModel(),
     playsViewModel: PlaysViewModel = hiltViewModel(),
@@ -168,6 +169,9 @@ fun RandomizerScreen(
                                 // Dropped before, so a rolled Expert II game
                                 // was filed as Standard I.
                                 state.draw.difficulty?.name?.lowercase().orEmpty(),
+                                // An Expert draw is not a complete setup
+                                // without the Standard set it rolled with it.
+                                state.draw.standardSet?.name?.lowercase().orEmpty(),
                             )
                         },
                         enabled = state.draw.isComplete,

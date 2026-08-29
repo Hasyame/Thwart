@@ -86,7 +86,10 @@ fun ChooseValueDialog(
         title = { Text(title) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                if (limit > 1) {
+                // Only when the limit is a real bound. Int.MAX_VALUE is how a
+                // caller says "as many as you like", and printing it asked the
+                // player to choose up to 2147483647 modular sets.
+                if (limit > 1 && limit < Int.MAX_VALUE) {
                     Text(
                         text = stringResource(R.string.randomizer_choose_hint, limit),
                         style = MaterialTheme.typography.bodySmall,

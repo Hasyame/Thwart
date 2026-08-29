@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -82,6 +83,7 @@ fun GameSessionScreen(
     difficulty: String? = null,
     heroes: String? = null,
     modularSets: String? = null,
+    standardSet: String? = null,
     autoStart: Boolean = false,
     resumeId: String? = null,
     onOpenPlays: () -> Unit,
@@ -99,13 +101,20 @@ fun GameSessionScreen(
     }
 
     // A draw handed over from the randomiser, applied once.
-    LaunchedEffect(scenarioCode, difficulty, heroes, modularSets, resumeId) {
+    LaunchedEffect(scenarioCode, difficulty, heroes, modularSets, standardSet, resumeId) {
         // The two are exclusive. A paused game brings its own scenario, heroes
         // and difficulty, and taking half from the route is how they disagree.
         if (resumeId != null) {
             viewModel.resume(resumeId)
         } else {
-            viewModel.prefill(scenarioCode, difficulty, heroes, modularSets, autoStart)
+            viewModel.prefill(
+                scenarioCode = scenarioCode,
+                difficulty = difficulty,
+                heroes = heroes,
+                modularSets = modularSets,
+                standardSet = standardSet,
+                autoStart = autoStart,
+            )
         }
     }
 
@@ -452,11 +461,25 @@ private enum class SetupPicker { SCENARIO, MODULAR_SETS }
  */
 @Composable
 private fun ChosenRow(label: String, value: String?, onClick: () -> Unit) {
-    ListItem(
-        overlineContent = { Text(label) },
-        headlineContent = { Text(value ?: stringResource(R.string.session_choose)) },
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-    )
+    // A button rather than a tappable row. As a list item it read as text, and
+    // a player had no reason to think the answer was behind it.
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(label, style = MaterialTheme.typography.labelLarge)
+        OutlinedButton(
+            onClick = onClick,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(
+                text = value ?: stringResource(R.string.session_choose),
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Start,
+            )
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = null,
+            )
+        }
+    }
 }
 
 @Composable

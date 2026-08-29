@@ -275,6 +275,7 @@ class GameSessionViewModel @Inject constructor(
         difficulty: String?,
         heroes: String?,
         modularSets: String? = null,
+        standardSet: String? = null,
         autoStart: Boolean = false,
     ) {
         if (prefilled) {
@@ -299,6 +300,10 @@ class GameSessionViewModel @Inject constructor(
             modularSetCodes = modularSets.orEmpty().split(",")
                 .filter { it.isNotBlank() }
                 .ifEmpty { state.value.modularSetCodes },
+            // Without this an Expert draw is an incomplete setup, start()
+            // refuses it, and autoStart silently drops the player on the setup
+            // page having chosen nothing.
+            standardSet = standardSet?.takeIf { it.isNotBlank() } ?: state.value.standardSet,
         )
 
         // A draw arrives complete, so there is nothing to choose: it goes
