@@ -1,0 +1,10 @@
+Setting up your own game is rebuilt: you pick a deck instead of describing a
+hero and an aspect, and scenarios and modular sets are searchable rather than a
+wall of chips.
+
+Expert now asks which Standard set goes with it, because that is how the box
+plays it. The tracker follows suit: a villain printed I, II and III is played I
+then II on Standard, II then III on Expert. All three used to be offered.
+
+A game put away for a long break can be picked up again, with your notes and the
+clock where you left them.
