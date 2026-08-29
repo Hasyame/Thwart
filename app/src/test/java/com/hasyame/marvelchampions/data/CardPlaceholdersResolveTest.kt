@@ -10,6 +10,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -40,6 +41,15 @@ class CardPlaceholdersResolveTest {
     private fun asset(path: String): String =
         context().assets.open(path).bufferedReader().use { it.readText() }
 
+    /**
+     * True when the card seed has been fetched into assets.
+     *
+     * `assets/seed` is gitignored and downloaded by `./gradlew fetchCardSeed`,
+     * so it is present on a development machine and absent on a clean runner.
+     */
+    private fun seedPresent(): Boolean =
+        context().assets.list("seed").orEmpty().any { it.endsWith(".json") }
+
     /** Card codes the app ships, from the seed the database is built from. */
     private fun seededCodes(file: String): Set<String> {
         val root = json.parseToJsonElement(asset("seed/$file"))
@@ -59,12 +69,16 @@ class CardPlaceholdersResolveTest {
             is JsonObject -> element.values.forEach { strings(it, into) }
             is JsonArray -> element.forEach { strings(it, into) }
             is JsonPrimitive -> if (element.isString) into.add(element.content)
-            else -> Unit
         }
     }
 
     @Test
     fun `every card placeholder names a card the app can find`() {
+        // Skipped, not failed, when the seed has not been fetched: without it
+        // there is nothing to check the codes against, and a test that cannot
+        // run is not the same as a test that found a problem.
+        assumeTrue("card seed not fetched, run ./gradlew fetchCardSeed", seedPresent())
+
         val known = seededCodes("cards_fr.json") + seededCodes("cards_en.json")
         assertTrue("no seed cards were loaded, the test would pass vacuously", known.size > 1000)
 
