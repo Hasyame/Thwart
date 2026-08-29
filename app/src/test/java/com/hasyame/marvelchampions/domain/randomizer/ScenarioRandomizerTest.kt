@@ -113,6 +113,25 @@ class ScenarioRandomizerTest {
     }
 
     @Test
+    fun `a locked Expert difficulty still gets a Standard set`() {
+        // Locking the difficulty is how a player says "I want Expert". The draw
+        // must still bring the Standard set it is played with, or pressing Play
+        // hands the session a setup it will refuse.
+        val owned = pools.copy(difficulties = Difficulty.entries)
+        repeat(50) { seed ->
+            val result = draw(
+                previous = RandomizerDraw(difficulty = Difficulty.EXPERT_I),
+                locked = setOf(DrawField.DIFFICULTY),
+                pools = owned,
+                seed = seed,
+            )
+            assertEquals(Difficulty.EXPERT_I, result.difficulty)
+            assertNotNull("locked Expert came back without a Standard", result.standardSet)
+            assertTrue(result.standardSet?.isStandard == true)
+        }
+    }
+
+    @Test
     fun `a draw only uses scenarios from the pool`() {
         repeat(50) { seed ->
             val result = draw(seed = seed)

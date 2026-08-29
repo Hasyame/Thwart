@@ -171,15 +171,42 @@ class RandomizerViewModel @Inject constructor(
      * so a player who looked at the modular sets found they had quietly stopped
      * rerolling and no longer knew why.
      */
+    /**
+     * A Standard set the collection can field, for an Expert difficulty.
+     *
+     * Falls back past the filter when every Standard has been excluded: the
+     * game still needs one, and a setup nobody can put on a table is worse than
+     * one that ignores a preference.
+     */
+    private fun standardCompanion(): Difficulty? {
+        val owned = pools.value.difficulties.filter { it.isStandard }
+        return owned.filter { it in filters.value.allowedDifficulties }.randomOrNull()
+            ?: owned.randomOrNull()
+    }
+
     fun choose(field: DrawField, values: List<String>) {
         val current = draw.value
         draw.value = when (field) {
             DrawField.SCENARIO -> current.copy(scenarioCode = values.firstOrNull())
-            DrawField.DIFFICULTY -> current.copy(
-                difficulty = values.firstOrNull()
+            DrawField.DIFFICULTY -> {
+                val picked = values.firstOrNull()
                     ?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
-                    ?: current.difficulty,
-            )
+                    ?: current.difficulty
+                current.copy(
+                    difficulty = picked,
+                    // An Expert set is played with a Standard set, so choosing
+                    // Expert leaves a second thing to decide. This is the
+                    // randomiser, so it decides: a draw that stopped and asked
+                    // the player to complete it would be asking them to do the
+                    // one job the screen exists to do. Rolling changes it, and
+                    // the row shows both, so nothing is hidden.
+                    standardSet = when {
+                        picked?.isExpert != true -> null
+                        current.standardSet != null -> current.standardSet
+                        else -> standardCompanion()
+                    },
+                )
+            }
 
             DrawField.MODULAR_SETS -> current.copy(
                 // Mandatory sets belong to the scenario, not the draw, so they
