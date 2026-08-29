@@ -121,15 +121,15 @@ jobs:
       # F-Droid refuses artifacts whose source it cannot verify, so a committed
       # .jar, .aar or .so gets the app rejected weeks later, by email.
       - name: No pre-compiled binaries
-        run: tools/ci/check-no-binaries.sh
+        run: bash tools/ci/check-no-binaries.sh
 
       # A proprietary dependency is the other way to be rejected. The blocklist
       # lives in a file, so extending it does not mean editing a workflow.
       - name: No proprietary dependencies
-        run: tools/ci/check-dependencies.sh
+        run: bash tools/ci/check-dependencies.sh
 
       # F-Droid builds from tags and installs by versionCode. A tag whose
       # versionCode did not move is an update no existing user can install.
       - name: versionCode moved
         if: github.event_name == 'pull_request'
-        run: tools/ci/check-version-code.sh "origin/${{ github.base_ref }}"
+        run: bash tools/ci/check-version-code.sh "origin/${{ github.base_ref }}"
