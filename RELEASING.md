@@ -53,6 +53,21 @@ The APK lands in `app/build/outputs/apk/debug/`.
 
 F-Droid picks it up from the tag on its own. There is nothing to submit.
 
+## Betas
+
+A tag with a suffix is a beta: `v1.30.0-beta.1`. The release workflow sees the
+dash, publishes it as a GitHub pre-release, and it never becomes "Latest".
+
+Tag betas on `dev`, stable releases on `main`. Both take the same workflow,
+the same protected environment and the same signing key, because a beta APK is
+still an APK signed by you and installed on somebody's phone.
+
+Testers are pointed at [docs/BETA.md](docs/BETA.md), which explains Obtainium
+and, first of all, taking a backup.
+
+**F-Droid must be told to ignore these tags.** Its metadata reads every tag
+unless given a pattern, so without the change below your betas ship to everyone.
+
 ## The one thing that is not automatic
 
 F-Droid builds from source and signs with **their** key, not yours. An APK
