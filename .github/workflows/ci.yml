@@ -1,34 +1,52 @@
 name: CI
 
+# Deliberately `pull_request` and not `pull_request_target`. The second one runs
+# in the context of this repository, with a writable token and access to
+# secrets, while checking out the contributor's code. That is how a fork pull
+# request ends up running arbitrary code with the maintainer's credentials.
+# Nothing here needs it.
 on:
-  push:
-    branches: ["**"]
   pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
   workflow_dispatch:
 
+# Successive pushes to the same branch cancel the older run rather than queue
+# behind it.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Least privilege for every job in the file. Nothing here writes to the
+# repository, and nothing here may ever touch the signing key: signing happens
+# only on a tag, in the release workflow, which a pull request cannot trigger.
+permissions:
+  contents: read
+
 jobs:
   build:
-    name: Lint and unit tests
+    name: Build and test
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
+      # Actions are pinned to a commit, not a tag. A tag can be repointed at any
+      # commit by whoever owns that repository, and an action runs with this
+      # workflow's token.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v5.7.0
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
         with:
           distribution: temurin
           java-version: "21"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
-
-      - name: Lint
-        run: ./gradlew --no-daemon lintDebug
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          # Only trusted branches write to the shared cache. A fork pull request
+          # reads it, and so cannot poison what later runs restore.
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Unit tests
         run: ./gradlew --no-daemon testDebugUnitTest
@@ -38,11 +56,80 @@ jobs:
 
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: reports
-          path: |
-            app/build/reports/lint-results-*.html
-            app/build/reports/tests/**
+          name: test-reports
+          path: app/build/reports/tests/**
           if-no-files-found: ignore
           retention-days: 7
+
+  lint:
+    name: Android Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+
+      # warningsAsErrors is on in app/build.gradle.kts, so MissingTranslation is
+      # already an error here: a string added in one language and not the other
+      # fails, rather than shipping half translated.
+      - name: Lint
+        run: ./gradlew --no-daemon lintDebug
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: lint-report
+          path: app/build/reports/lint-results-*.html
+          if-no-files-found: ignore
+          retention-days: 7
+
+  fdroid:
+    name: F-Droid compliance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # The versionCode check compares against the base branch, which a
+          # shallow clone does not have.
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+
+      # F-Droid refuses artifacts whose source it cannot verify, so a committed
+      # .jar, .aar or .so gets the app rejected weeks later, by email.
+      - name: No pre-compiled binaries
+        run: tools/ci/check-no-binaries.sh
+
+      # A proprietary dependency is the other way to be rejected. The blocklist
+      # lives in a file, so extending it does not mean editing a workflow.
+      - name: No proprietary dependencies
+        run: tools/ci/check-dependencies.sh
+
+      # F-Droid builds from tags and installs by versionCode. A tag whose
+      # versionCode did not move is an update no existing user can install.
+      - name: versionCode moved
+        if: github.event_name == 'pull_request'
+        run: tools/ci/check-version-code.sh "origin/${{ github.base_ref }}"

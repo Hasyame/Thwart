@@ -1,0 +1,50 @@
+# Maven coordinate prefixes F-Droid will not accept.
+#
+# F-Droid builds only free software, and a dependency from this list gets the
+# whole app rejected. The rejection arrives weeks later, by email, long after
+# the pull request that caused it was merged, which is why this is checked here
+# instead.
+#
+# One prefix per line, matched against the start of `group:artifact`. Blank
+# lines and lines starting with # are ignored.
+#
+# To allow something that matches a prefix but is genuinely free, add it to
+# tools/ci/proprietary-allowed.txt rather than weakening a line here.
+
+# Google Play Services and everything that pulls it in
+com.google.android.gms
+com.google.android.play
+com.google.firebase
+com.google.mlkit
+com.google.android.libraries
+
+# Advertising and attribution
+com.google.android.ads
+com.applovin
+com.facebook.android
+com.appsflyer
+io.branch
+
+# Analytics and crash reporting
+com.crashlytics
+io.fabric
+com.google.analytics
+com.mixpanel
+com.amplitude
+io.sentry
+com.microsoft.appcenter
+com.newrelic
+com.datadoghq
+
+# In-app billing and payments
+com.android.billingclient
+com.stripe
+com.braintreepayments
+
+# Maps and location, the proprietary ones
+com.mapbox
+com.here.sdk
+
+# Push messaging
+com.onesignal
+com.urbanairship

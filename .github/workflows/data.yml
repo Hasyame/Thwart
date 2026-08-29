@@ -1,0 +1,73 @@
+name: Campaign data
+
+# The checks that need the card seed.
+#
+# `assets/seed` is gitignored and fetched from MarvelCDB, so these cannot run in
+# the ordinary pull request pipeline without making every contributor's build
+# depend on somebody else's API being up. They run here instead: on changes that
+# could actually break them, and on a schedule so that a change at MarvelCDB
+# gets noticed here rather than by a player mid-campaign.
+on:
+  pull_request:
+    branches: [dev, main]
+    paths:
+      - "app/src/main/assets/campaigns/**"
+      - "tools/build_*.py"
+      - "app/src/main/java/com/hasyame/marvelchampions/domain/campaign/**"
+      - ".github/workflows/data.yml"
+  schedule:
+    # Weekly. The card database is the thing that moves under us, and it moves
+    # in weeks rather than hours.
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate campaign data
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+
+      # Without this the placeholder checks skip themselves, which is the right
+      # behaviour on a developer's machine and useless here.
+      - name: Fetch the card seed
+        run: ./gradlew --no-daemon fetchCardSeed
+
+      # These validate every bundled campaign: that it parses, that its steps
+      # stay mechanical, that every {card:CODE} resolves against the real card
+      # database, and that nothing is missing a French half.
+      - name: Campaign and card checks
+        run: |
+          ./gradlew --no-daemon testDebugUnitTest \
+            --tests "*BundledCampaignsTest*" \
+            --tests "*CardPlaceholdersResolveTest*" \
+            --tests "*TemplateValidatorTest*" \
+            --tests "*TranslationCoverageTest*"
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: campaign-data-reports
+          path: app/build/reports/tests/**
+          if-no-files-found: ignore
+          retention-days: 7
