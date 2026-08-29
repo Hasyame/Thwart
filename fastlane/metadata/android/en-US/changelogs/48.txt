@@ -1,0 +1,10 @@
+A fix for yesterday's release.
+
+Rolling a random game on an Expert difficulty could not be played: pressing Play
+appeared to do nothing and left you on the setup page. It now goes straight to
+the briefing, with the Standard set the Expert one is played with.
+
+The modular set picker offered to let you choose up to 2147483647 of them.
+
+Choosing a scenario or a modular set looked like plain text rather than
+something you could tap. Both are buttons now.

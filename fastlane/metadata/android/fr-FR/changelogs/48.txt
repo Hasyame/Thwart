@@ -1,0 +1,11 @@
+Une correction de la version d'hier.
+
+Une partie aléatoire tirée en difficulté Expert ne pouvait pas être lancée :
+appuyer sur Jouer semblait ne rien faire et laissait sur la page de mise en
+place. Elle va désormais droit au briefing, avec le set Standard qui accompagne
+l'Expert.
+
+Le choix des sets modulaires proposait d'en sélectionner jusqu'à 2147483647.
+
+Choisir un scénario ou un set modulaire ressemblait à du texte plutôt qu'à un
+élément cliquable. Ce sont des boutons.
