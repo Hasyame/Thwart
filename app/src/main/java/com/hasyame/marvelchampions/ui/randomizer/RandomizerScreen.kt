@@ -61,6 +61,8 @@ import com.hasyame.marvelchampions.data.repository.RandomizerRepository
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.DrawField
 import com.hasyame.marvelchampions.ui.plays.PlaysViewModel
+import com.hasyame.marvelchampions.ui.util.ChoiceOption
+import com.hasyame.marvelchampions.ui.util.ChooseValueDialog
 import com.hasyame.marvelchampions.ui.util.aspectLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -327,7 +329,7 @@ private fun DrawRow(
 
     if (choosing) {
         val options = state.optionsFor(field)
-        ChooseDrawValueDialog(
+        ChooseValueDialog(
             title = label,
             options = options,
             selected = state.selectionFor(field),
@@ -486,10 +488,10 @@ private fun com.hasyame.marvelchampions.domain.randomizer.RandomizerDraw.asSessi
  * does not own is not offered here either.
  */
 @Composable
-private fun RandomizerUiState.optionsFor(field: DrawField): List<DrawOption> = when (field) {
+private fun RandomizerUiState.optionsFor(field: DrawField): List<ChoiceOption> = when (field) {
     DrawField.SCENARIO -> pools.scenarios
         .map {
-            DrawOption(
+            ChoiceOption(
                 id = it.code,
                 label = names.scenarios[it.code] ?: it.code,
                 detail = names.packs[it.packCode],
@@ -502,11 +504,11 @@ private fun RandomizerUiState.optionsFor(field: DrawField): List<DrawOption> = w
     // let you pick one you had just excluded.
     DrawField.DIFFICULTY -> pools.difficulties
         .filter { it in filters.allowedDifficulties }
-        .map { DrawOption(it.name, difficultyLabel(it)) }
+        .map { ChoiceOption(it.name, difficultyLabel(it)) }
 
     DrawField.MODULAR_SETS -> pools.modularSets
         .map {
-            DrawOption(
+            ChoiceOption(
                 id = it.code,
                 label = names.modularSets[it.code] ?: it.code,
                 detail = names.packs[it.packCode],
@@ -514,13 +516,13 @@ private fun RandomizerUiState.optionsFor(field: DrawField): List<DrawOption> = w
         }
         .sortedBy { it.label }
 
-    DrawField.PLAYER_COUNT -> (1..MAX_PLAYERS).map { DrawOption(it.toString(), it.toString()) }
+    DrawField.PLAYER_COUNT -> (1..MAX_PLAYERS).map { ChoiceOption(it.toString(), it.toString()) }
 
     DrawField.HEROES -> pools.heroes
-        .map { DrawOption(it.code, names.heroes[it.code] ?: it.code) }
+        .map { ChoiceOption(it.code, names.heroes[it.code] ?: it.code) }
         .sortedBy { it.label }
 
-    DrawField.ASPECTS -> pools.aspects.map { DrawOption(it, aspectLabel(it)) }
+    DrawField.ASPECTS -> pools.aspects.map { ChoiceOption(it, aspectLabel(it)) }
 }
 
 /** What the row currently holds, so the picker opens on it. */
@@ -535,3 +537,11 @@ private fun RandomizerUiState.selectionFor(field: DrawField): List<String> = whe
 
 /** Marvel Champions seats four. */
 private const val MAX_PLAYERS = 4
+
+/** How many values a field takes. */
+fun DrawField.pickLimit(playerCount: Int): Int = when (this) {
+    DrawField.SCENARIO, DrawField.DIFFICULTY, DrawField.PLAYER_COUNT -> 1
+    DrawField.HEROES, DrawField.ASPECTS -> playerCount
+    // No sensible cap: a scenario can take one modular set or five.
+    DrawField.MODULAR_SETS -> Int.MAX_VALUE
+}

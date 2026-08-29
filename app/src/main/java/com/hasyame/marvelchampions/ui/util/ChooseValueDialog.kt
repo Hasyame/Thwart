@@ -1,4 +1,4 @@
-package com.hasyame.marvelchampions.ui.randomizer
+package com.hasyame.marvelchampions.ui.util
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,23 +11,24 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hasyame.marvelchampions.R
-import com.hasyame.marvelchampions.domain.randomizer.DrawField
+import java.text.Normalizer
 
-/** One option a row can be set to: what is stored, and what is read. */
-data class DrawOption(
+/** One option a picker can be set to: what is stored, and what is read. */
+data class ChoiceOption(
     val id: String,
     val label: String,
     /**
@@ -42,12 +43,13 @@ data class DrawOption(
 )
 
 /**
- * Picks a value for one row of the draw.
+ * Picks one or several values from a list that may be long.
  *
- * The randomiser answers "what shall I play", but part of the answer is often
- * already settled — a hero somebody wants to try, a scenario the group agreed
- * on — and only the rest wants rolling. Choosing here locks the row, so the
- * next Roll builds around it instead of throwing it away.
+ * Used by the randomiser, where choosing a value locks that row of the draw,
+ * and by the custom game setup, where it is simply how you pick. Both face the
+ * same problem once a collection is complete: sixty scenarios and eighty
+ * modular sets do not fit in a row of chips, and scrolling a wall of them to
+ * find one you already know the name of is the worst way to ask.
  *
  * [limit] is how many may be picked: one for a scenario or a difficulty,
  * several for heroes and modular sets. When it is one the list behaves as a
@@ -55,9 +57,9 @@ data class DrawOption(
  * choice is a tap nobody needs.
  */
 @Composable
-fun ChooseDrawValueDialog(
+fun ChooseValueDialog(
     title: String,
-    options: List<DrawOption>,
+    options: List<ChoiceOption>,
     selected: List<String>,
     limit: Int,
     onDismiss: () -> Unit,
@@ -72,6 +74,12 @@ fun ChooseDrawValueDialog(
     // the dialog looked responsive and did nothing.
     val picked = remember { mutableStateListOf<String>().apply { addAll(selected) } }
     var tooMany by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
+
+    val searchable = options.size > SEARCH_THRESHOLD
+    val shown = remember(options, query) {
+        if (query.isBlank()) options else options.filter { it.matches(query) }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -89,8 +97,24 @@ fun ChooseDrawValueDialog(
                         },
                     )
                 }
+                if (searchable) {
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        singleLine = true,
+                        placeholder = { Text(stringResource(R.string.cards_search_hint)) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                if (shown.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.choose_no_match),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 LazyColumn(Modifier.heightIn(max = 400.dp)) {
-                    items(options, key = { it.id }) { option ->
+                    items(shown, key = { it.id }) { option ->
                         val isPicked = option.id in picked
                         ListItem(
                             headlineContent = { Text(option.label) },
@@ -129,7 +153,8 @@ fun ChooseDrawValueDialog(
             if (limit > 1) {
                 TextButton(
                     onClick = { onConfirm(picked.toList()) },
-                    enabled = picked.isNotEmpty(),
+                    // An empty confirm is a real answer here: it is how you
+                    // clear the modular sets you had picked.
                 ) { Text(stringResource(R.string.randomizer_choose_confirm)) }
             }
         },
@@ -141,10 +166,24 @@ fun ChooseDrawValueDialog(
     )
 }
 
-/** How many values a field takes. */
-fun DrawField.pickLimit(playerCount: Int): Int = when (this) {
-    DrawField.SCENARIO, DrawField.DIFFICULTY, DrawField.PLAYER_COUNT -> 1
-    DrawField.HEROES, DrawField.ASPECTS -> playerCount
-    // No sensible cap: a scenario can take one modular set or five.
-    DrawField.MODULAR_SETS -> Int.MAX_VALUE
+/** Long enough that scrolling beats reading, short enough not to nag. */
+private const val SEARCH_THRESHOLD = 10
+
+private fun ChoiceOption.matches(query: String): Boolean {
+    val needle = query.fold()
+    return label.fold().contains(needle) || detail?.fold()?.contains(needle) == true
 }
+
+/**
+ * Lower case and stripped of accents, so "machoire" finds "Mâchoire".
+ *
+ * Half the card names in French carry an accent and nobody types them into a
+ * search box. Matching literally means the search works for the names that
+ * need it least.
+ */
+private fun String.fold(): String =
+    Normalizer.normalize(this, Normalizer.Form.NFD)
+        .replace(ACCENTS, "")
+        .lowercase()
+
+private val ACCENTS = Regex("\\p{Mn}+")
