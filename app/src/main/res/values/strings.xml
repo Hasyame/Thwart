@@ -457,9 +457,6 @@
     <string name="plays_stat_campaign">Campaign</string>
     <string name="session_title">New game</string>
     <string name="session_scenario">Scenario</string>
-    <string name="session_difficulty">Difficulty</string>
-    <string name="session_hero">Add a hero</string>
-    <string name="session_aspect">…with which aspect?</string>
     <string name="session_table">At the table</string>
     <string name="session_start">Start playing</string>
     <string name="session_play">Play</string>
@@ -601,4 +598,10 @@
     <string name="choose_no_match">Nothing matches that.</string>
     <string name="randomizer_extra_difficulty">Add extra difficulty packs</string>
     <string name="randomizer_extra_difficulty_hint">The draw may also shuffle in difficulty sets beyond the one it picks, such as Standard II or Expert II.</string>
+    <string name="session_main_difficulty">Main difficulty</string>
+    <string name="session_extra_difficulty">Extra difficulty packs</string>
+    <string name="session_extra_difficulty_hint">Optional. These sets are shuffled into the encounter deck on top of the main difficulty.</string>
+    <string name="session_decks">Decks at the table</string>
+    <string name="session_no_decks">No decks yet. Import or build one in the Decks tab, then come back.</string>
+    <string name="session_choose">Choose</string>
 </resources>

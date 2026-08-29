@@ -477,9 +477,6 @@
     <string name="plays_stat_campaign">Campagne</string>
     <string name="session_title">Nouvelle partie</string>
     <string name="session_scenario">Scénario</string>
-    <string name="session_difficulty">Difficulté</string>
-    <string name="session_hero">Ajouter un héros</string>
-    <string name="session_aspect">…avec quelle affinité ?</string>
     <string name="session_table">À la table</string>
     <string name="session_start">Commencer la partie</string>
     <string name="session_play">Jouer</string>
@@ -623,4 +620,10 @@
     <string name="choose_no_match">Aucun résultat.</string>
     <string name="randomizer_extra_difficulty">Ajouter des sets de difficulté supplémentaires</string>
     <string name="randomizer_extra_difficulty_hint">Le tirage peut aussi mélanger des sets de difficulté en plus de celui qu\'il choisit, comme Standard II ou Expert II.</string>
+    <string name="session_main_difficulty">Difficulté principale</string>
+    <string name="session_extra_difficulty">Sets de difficulté supplémentaires</string>
+    <string name="session_extra_difficulty_hint">Facultatif. Ces sets sont mélangés dans le deck Rencontre en plus de la difficulté principale.</string>
+    <string name="session_decks">Decks à la table</string>
+    <string name="session_no_decks">Aucun deck pour l\'instant. Importez-en un ou construisez-en un dans l\'onglet Decks, puis revenez.</string>
+    <string name="session_choose">Choisir</string>
 </resources>

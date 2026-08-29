@@ -60,6 +60,8 @@ import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.ui.photos.TablePhotoButton
 import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
 import com.hasyame.marvelchampions.ui.photos.rememberTablePhotoCapture
+import com.hasyame.marvelchampions.ui.util.ChoiceOption
+import com.hasyame.marvelchampions.ui.util.ChooseValueDialog
 import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.ui.util.aspectLabel
 import kotlinx.coroutines.delay
@@ -240,7 +242,9 @@ private fun SetupPhase(
     viewModel: GameSessionViewModel,
     modifier: Modifier = Modifier,
 ) {
-    var pendingHero by remember { mutableStateOf<String?>(null) }
+    // Which long list is being picked from, if any. Scenarios and modular sets
+    // used to be rows of chips, which is fine at ten and unusable at eighty.
+    var choosing by remember { mutableStateOf<SetupPicker?>(null) }
 
     Column(
         modifier
@@ -258,19 +262,9 @@ private fun SetupPhase(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        PickerSection(stringResource(R.string.session_scenario)) {
-            state.pools.scenarios.forEach { scenario ->
-                FilterChip(
-                    selected = state.scenarioCode == scenario.code,
-                    onClick = { viewModel.setScenario(scenario.code) },
-                    label = {
-                        Text(state.names.scenarios[scenario.code] ?: scenario.code)
-                    },
-                )
-            }
-        }
-
-        PickerSection(stringResource(R.string.session_difficulty)) {
+        // The order follows how a table decides: how hard, then what we are
+        // playing, then what goes in the deck, then who is playing it.
+        PickerSection(stringResource(R.string.session_main_difficulty)) {
             // The same rule as the randomiser: a difficulty is a set of
             // encounter cards that came in a box, so only the ones the
             // collection can field are offered.
@@ -284,39 +278,74 @@ private fun SetupPhase(
             }
         }
 
-        PickerSection(stringResource(R.string.session_modular_sets)) {
-            state.pools.modularSets.forEach { set ->
-                FilterChip(
-                    selected = set.code in state.modularSetCodes,
-                    onClick = { viewModel.toggleModularSet(set.code) },
-                    label = { Text(state.names.modularSets[set.code] ?: set.code) },
+        // Extra difficulty sets, nothing ticked to begin with. These are more
+        // encounter cards shuffled into the same deck, which is something a
+        // table chooses to do, not a difficulty of its own.
+        val extras = state.pools.difficulties
+            .filter { it.name.lowercase() != state.difficulty }
+        if (extras.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PickerSection(stringResource(R.string.session_extra_difficulty)) {
+                    extras.forEach { difficulty ->
+                        val stored = difficulty.name.lowercase()
+                        FilterChip(
+                            selected = stored in state.extraDifficulties,
+                            onClick = {
+                                viewModel.setExtraDifficulties(
+                                    if (stored in state.extraDifficulties) {
+                                        state.extraDifficulties - stored
+                                    } else {
+                                        state.extraDifficulties + stored
+                                    },
+                                )
+                            },
+                            label = { Text(stringResource(difficulty.labelRes())) },
+                        )
+                    }
+                }
+                Text(
+                    text = stringResource(R.string.session_extra_difficulty_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
 
-        // Hero then aspect, in that order: picking a hero first and an aspect
-        // second is how a player actually decides, and it keeps the chip list
-        // to one long list rather than every hero-aspect pairing.
-        PickerSection(stringResource(R.string.session_hero)) {
-            state.pools.heroes.forEach { hero ->
-                FilterChip(
-                    selected = pendingHero == hero.code,
-                    onClick = { pendingHero = if (pendingHero == hero.code) null else hero.code },
-                    label = { Text(state.names.heroes[hero.code] ?: hero.code) },
-                )
-            }
-        }
+        ChosenRow(
+            label = stringResource(R.string.session_scenario),
+            value = state.scenarioCode?.let { state.names.scenarios[it] ?: it },
+            onClick = { choosing = SetupPicker.SCENARIO },
+        )
 
-        pendingHero?.let { heroCode ->
-            PickerSection(stringResource(R.string.session_aspect)) {
-                state.pools.aspects.forEach { aspect ->
+        ChosenRow(
+            label = stringResource(R.string.session_modular_sets),
+            value = state.modularSetCodes
+                .takeIf { it.isNotEmpty() }
+                ?.map { state.names.modularSets[it] ?: it }
+                ?.joinToString(", "),
+            onClick = { choosing = SetupPicker.MODULAR_SETS },
+        )
+
+        // Decks rather than heroes: a seat at this table is a deck somebody
+        // built, and asking for a hero and an aspect separately made the player
+        // describe a deck they already have.
+        Text(
+            text = stringResource(R.string.session_decks),
+            style = MaterialTheme.typography.labelLarge,
+        )
+        if (state.decks.isEmpty()) {
+            Text(
+                text = stringResource(R.string.session_no_decks),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                state.decks.forEach { deck ->
                     FilterChip(
-                        selected = false,
-                        onClick = {
-                            viewModel.addHero(heroCode, aspect)
-                            pendingHero = null
-                        },
-                        label = { Text(aspectLabel(aspect)) },
+                        selected = state.heroes.any { it.deckId == deck.id },
+                        onClick = { viewModel.addDeck(deck) },
+                        label = { Text(deck.name) },
                     )
                 }
             }
@@ -328,11 +357,24 @@ private fun SetupPhase(
                 style = MaterialTheme.typography.titleSmall,
             )
             state.heroes.forEachIndexed { index, hero ->
+                val heroName = hero.displayName(state.names.heroes)
+                val aspects = hero.aspect.split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .map { aspectLabel(it) }
+                    .joinToString(" / ")
                 ListItem(
-                    headlineContent = {
-                        Text(state.names.heroes[hero.heroCode] ?: hero.heroCode)
+                    // The deck name is what the player recognises, so it leads
+                    // when there is one. A seat from a randomiser draw has none.
+                    headlineContent = { Text(hero.deckName ?: heroName) },
+                    supportingContent = {
+                        Text(
+                            listOfNotNull(
+                                heroName.takeIf { hero.deckName != null },
+                                aspects.takeIf { it.isNotEmpty() },
+                            ).joinToString(" · "),
+                        )
                     },
-                    supportingContent = { Text(aspectLabel(hero.aspect)) },
                     trailingContent = {
                         IconButton(onClick = { viewModel.removeHero(index) }) {
                             Icon(
@@ -351,6 +393,65 @@ private fun SetupPhase(
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.session_start)) }
     }
+
+    when (choosing) {
+        SetupPicker.SCENARIO -> ChooseValueDialog(
+            title = stringResource(R.string.session_scenario),
+            options = state.pools.scenarios.map {
+                ChoiceOption(
+                    id = it.code,
+                    label = state.names.scenarios[it.code] ?: it.code,
+                    detail = state.names.packs[it.packCode],
+                )
+            }.sortedBy { it.label },
+            selected = listOfNotNull(state.scenarioCode),
+            limit = 1,
+            onDismiss = { choosing = null },
+            onConfirm = { picked ->
+                picked.firstOrNull()?.let(viewModel::setScenario)
+                choosing = null
+            },
+        )
+
+        SetupPicker.MODULAR_SETS -> ChooseValueDialog(
+            title = stringResource(R.string.session_modular_sets),
+            options = state.pools.modularSets.map {
+                ChoiceOption(
+                    id = it.code,
+                    label = state.names.modularSets[it.code] ?: it.code,
+                    detail = state.names.packs[it.packCode],
+                )
+            }.sortedBy { it.label },
+            selected = state.modularSetCodes,
+            limit = Int.MAX_VALUE,
+            onDismiss = { choosing = null },
+            onConfirm = { picked ->
+                viewModel.setModularSets(picked)
+                choosing = null
+            },
+        )
+
+        null -> Unit
+    }
+}
+
+/** The long lists on the setup screen, each picked in a dialog of its own. */
+private enum class SetupPicker { SCENARIO, MODULAR_SETS }
+
+/**
+ * One decision, showing what it is currently set to.
+ *
+ * Reads as a settings row rather than a wall of chips, which is what makes a
+ * complete collection usable: the answer is visible, and the list only appears
+ * when you go looking for it.
+ */
+@Composable
+private fun ChosenRow(label: String, value: String?, onClick: () -> Unit) {
+    ListItem(
+        overlineContent = { Text(label) },
+        headlineContent = { Text(value ?: stringResource(R.string.session_choose)) },
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+    )
 }
 
 @Composable
@@ -404,14 +505,20 @@ private fun BriefingPhase(
                         value = it,
                     )
                 }
+                // Main difficulty and anything shuffled in with it, on one
+                // line: at the table they are one pile of encounter cards, and
+                // splitting them into two rows made the extras look optional
+                // once the game had already started.
+                val difficultyNames = (
+                    listOf(state.difficulty) + state.extraDifficulties
+                    ).mapNotNull { stored ->
+                    Difficulty.entries.firstOrNull { it.name.lowercase() == stored }
+                }.map { stringResource(it.labelRes()) }
                 BriefingRow(
                     label = stringResource(R.string.randomizer_difficulty),
-                    value = stringResource(
-                        Difficulty.entries
-                            .firstOrNull { it.name.lowercase() == state.difficulty }
-                            ?.labelRes()
-                            ?: R.string.difficulty_standard_i,
-                    ),
+                    value = difficultyNames
+                        .ifEmpty { listOf(stringResource(R.string.difficulty_standard_i)) }
+                        .joinToString(" + "),
                 )
                 // The sets that were drawn, which is the part a player cannot
                 // work out from the scenario alone.
@@ -425,8 +532,12 @@ private fun BriefingPhase(
                     BriefingRow(
                         label = stringResource(R.string.randomizer_heroes),
                         value = heroes.map { hero ->
-                            (state.names.heroes[hero.heroCode] ?: hero.heroCode) +
-                                " · " + aspectLabel(hero.aspect)
+                            val aspects = hero.aspect.split(",")
+                                .map { it.trim() }
+                                .filter { it.isNotEmpty() }
+                                .map { aspectLabel(it) }
+                                .joinToString(" / ")
+                            hero.displayName(state.names.heroes) + " · " + aspects
                         }.joinToString(", "),
                     )
                 }

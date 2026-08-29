@@ -2,36 +2,60 @@ package com.hasyame.marvelchampions.ui.plays
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
+import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
+import com.hasyame.marvelchampions.data.db.entity.PausedPhase
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero
+import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.db.entity.VillainStep
+import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.data.repository.DeckRepository
+import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
 import com.hasyame.marvelchampions.data.repository.PlayRepository
 import com.hasyame.marvelchampions.data.repository.RandomizerNames
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
 import com.hasyame.marvelchampions.data.repository.SchemeBriefing
-import com.hasyame.marvelchampions.data.repository.EncounterRepository
-import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
-import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
-import com.hasyame.marvelchampions.data.db.entity.PausedPhase
-import com.hasyame.marvelchampions.data.db.entity.VillainStep
-import java.util.UUID
-import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
-import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-/** One player at the table: who they are and which aspect they brought. */
-data class SessionHero(val heroCode: String, val aspect: String)
+/**
+ * One player at the table: who they are and which aspect they brought.
+ *
+ * [aspect] holds every aspect of the deck, comma separated, because a deck can
+ * genuinely be two of them and the statistics already split this field on
+ * commas. [deckName] is what the player recognises, so it is what the table
+ * list shows; it is absent when a hero was picked directly rather than through
+ * a deck, which is how a randomiser draw arrives.
+ */
+data class SessionHero(
+    val heroCode: String,
+    val aspect: String,
+    val deckId: String? = null,
+    val deckName: String? = null,
+    /**
+     * The hero's name as the deck states it.
+     *
+     * Not looked up: the name table is built from the cards the collection can
+     * field, and a deck imported from MarvelCDB can name a hero that table has
+     * never heard of. Without this the seat read "61001a" and the play was
+     * filed under that.
+     */
+    val heroName: String? = null,
+)
 /**
  * What is being written down while a game is put away.
  *
@@ -48,6 +72,15 @@ data class LongBreakDraft(
     val villainStage: Int = 1,
 )
 
+
+/**
+ * The hero's name: what the deck says, then what the cards say, then the code.
+ *
+ * The code is the last resort and should never be seen, but showing it beats
+ * showing nothing when a pack has gone missing from the collection.
+ */
+fun SessionHero.displayName(names: Map<String, String>): String =
+    heroName ?: names[heroCode] ?: heroCode
 
 /** Which part of the screen is showing. */
 enum class SessionPhase {
@@ -83,6 +116,13 @@ data class GameSessionUiState(
      */
     val difficulty: String = Difficulty.STANDARD_I.name.lowercase(),
     val heroes: List<SessionHero> = emptyList(),
+    /**
+     * Difficulty sets shuffled in on top of [difficulty]. Empty unless asked
+     * for: these are extra encounter cards, not a difficulty of their own.
+     */
+    val extraDifficulties: List<String> = emptyList(),
+    /** The player's own decks, which is what a seat is chosen from. */
+    val decks: List<SavedDeckEntity> = emptyList(),
     /** Modular sets shuffled into the encounter deck. */
     val modularSetCodes: List<String> = emptyList(),
     val timer: TimerState = TimerState(),
@@ -139,6 +179,7 @@ class GameSessionViewModel @Inject constructor(
     private val playRepository: PlayRepository,
     private val encounterRepository: EncounterRepository,
     private val preferences: AppPreferences,
+    private val deckRepository: DeckRepository,
     val photoStore: PhotoStore,
     private val pausedGameDao: PausedGameDao,
 ) : ViewModel() {
@@ -167,6 +208,14 @@ class GameSessionViewModel @Inject constructor(
                 names = names,
                 isLoading = false,
             )
+        }
+        // Collected rather than read once: a player sent to the Decks tab
+        // because they had none must find the new one waiting when they come
+        // back, not an empty list until the app restarts.
+        viewModelScope.launch {
+            deckRepository.observeDecks().collect { decks ->
+                state.value = state.value.copy(decks = decks)
+            }
         }
     }
 
@@ -220,21 +269,40 @@ class GameSessionViewModel @Inject constructor(
     }
 
     fun setDifficulty(difficulty: String) {
-        state.value = state.value.copy(difficulty = difficulty)
-    }
-
-    /** Modular sets are a free choice: some scenarios take one, some several. */
-    fun toggleModularSet(code: String) {
-        val current = state.value.modularSetCodes
+        // Whatever becomes the main difficulty leaves the extras: its cards are
+        // in the deck once, and a list claiming otherwise is a setup nobody can
+        // carry out.
         state.value = state.value.copy(
-            modularSetCodes = if (code in current) current - code else current + code,
+            difficulty = difficulty,
+            extraDifficulties = state.value.extraDifficulties - difficulty,
         )
     }
 
-    fun addHero(heroCode: String, aspect: String) {
+    /** Replaces the modular sets outright, which is what the picker returns. */
+    fun setModularSets(codes: List<String>) {
+        state.value = state.value.copy(modularSetCodes = codes)
+    }
+
+    /**
+     * Seats a deck.
+     *
+     * The same deck twice is allowed on purpose: two people at one table can
+     * bring the same list, and refusing it would be the app inventing a rule.
+     */
+    fun addDeck(deck: SavedDeckEntity) {
         state.value = state.value.copy(
-            heroes = state.value.heroes + SessionHero(heroCode, aspect),
+            heroes = state.value.heroes + SessionHero(
+                heroCode = deck.heroCode,
+                aspect = DeckRepository.parseAspects(deck.aspects).joinToString(", "),
+                deckId = deck.id,
+                deckName = deck.name,
+                heroName = deck.heroName,
+            ),
         )
+    }
+
+    fun setExtraDifficulties(difficulties: List<String>) {
+        state.value = state.value.copy(extraDifficulties = difficulties)
     }
 
     fun removeHero(index: Int) {
@@ -476,7 +544,7 @@ class GameSessionViewModel @Inject constructor(
                     scenarioName = current.names.scenarios[scenarioCode] ?: scenarioCode,
                     difficulty = current.difficulty,
                     heroCode = first.heroCode,
-                    heroName = current.names.heroes[first.heroCode] ?: first.heroCode,
+                    heroName = first.displayName(current.names.heroes),
                     aspects = current.heroes.map { it.aspect }.distinct().joinToString(", "),
                     otherHeroes = current.heroes.drop(1)
                         .joinToString(", ") { current.names.heroes[it.heroCode] ?: it.heroCode },
@@ -486,7 +554,7 @@ class GameSessionViewModel @Inject constructor(
                     roster = current.heroes.map {
                         PlayHero(
                             code = it.heroCode,
-                            name = current.names.heroes[it.heroCode] ?: it.heroCode,
+                            name = it.displayName(current.names.heroes),
                             aspect = it.aspect,
                         )
                     },
