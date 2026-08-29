@@ -55,15 +55,24 @@ F-Droid picks it up from the tag on its own. There is nothing to submit.
 
 ## Betas
 
-A tag with a suffix is a beta: `v1.30.0-beta.1`. The release workflow sees the
-dash, publishes it as a GitHub pre-release, and it never becomes "Latest".
+A tag with a suffix is a beta: `v1.30.0-beta.1`. Tag betas on `dev`, stable
+releases on `main`.
 
-Tag betas on `dev`, stable releases on `main`. Both take the same workflow,
-the same protected environment and the same signing key, because a beta APK is
-still an APK signed by you and installed on somebody's phone.
+Both take the same workflow, the same protected environment, the same signing
+key and the same checks, because a beta APK is still an APK signed by you and
+installed on somebody's phone.
 
-Testers are pointed at [docs/BETA.md](docs/BETA.md), which explains Obtainium
-and, first of all, taking a backup.
+They differ only at the end. **A beta is never published.** The signed APK is
+uploaded as a workflow artifact, which only you can download, and you hand it to
+supporters yourself. A GitHub pre-release would be public: the releases page
+lists it, and anyone running Obtainium with prereleases enabled would get it.
+
+So the beta ritual is: tag, approve the run, download the artifact from the
+Actions tab, attach it to a patrons-only Patreon post. Testers are pointed at
+[docs/BETA.md](docs/BETA.md), which starts by telling them to take a backup.
+
+The tag itself is public, because tags always are. That is fine: it says a beta
+exists without giving anybody the binary.
 
 **F-Droid must be told to ignore these tags.** Its metadata reads every tag
 unless given a pattern, so without the change below your betas ship to everyone.

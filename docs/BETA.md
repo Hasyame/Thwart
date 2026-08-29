@@ -1,106 +1,98 @@
 # Trying the beta
 
 Thank you for helping. A beta is a version of Thwart that is finished enough to
-play with, but has not been given to everybody yet. You get it a little early,
-and in exchange you tell me what is broken.
+play with, but has not been given to everybody yet. You get it early, and in
+exchange you tell me what is broken.
 
-You do not need a GitHub account, and you do not need to understand any of the
-rest of this repository.
+Betas are not on the releases page and are not in F-Droid. They go to the people
+supporting the project on [Patreon](https://www.patreon.com/c/Hasyame), which is
+what that support is for. You will not find them by looking, and that is
+deliberate.
+
+You do not need a GitHub account and you do not need to understand anything else
+in this repository.
 
 ---
 
 ## Before anything else: save a backup
 
-**Do this once, now, and again before each beta.**
+**Do this now, and again before every beta you install.**
 
 In Thwart: **Réglages** (Settings), then **Sauvegarde** (Backup), then
-**Enregistrer une sauvegarde** (Save a backup). Put the file somewhere you will
-find it again, in your files, your email to yourself, a cloud drive, anywhere
-that is not only this phone.
+**Enregistrer une sauvegarde** (Save a backup). Put the file somewhere that is
+not only this phone: your files, a cloud drive, an email to yourself.
 
-A beta is a version that has been tested less than a release. That is the whole
-point of you having it. If one goes wrong and eats your campaigns, the backup is
-what brings them back, and there is no other copy: the app has no account and no
-server.
-
----
-
-## The easy way: Obtainium
-
-Obtainium is a small free app that watches this project and tells you when there
-is something new. Set it up once and you never have to visit GitHub again.
-
-1. Install **Obtainium** from
-   [F-Droid](https://f-droid.org/packages/dev.imranr.obtainium/) or from
-   [its own releases page](https://github.com/ImranR98/Obtainium/releases).
-2. Open it, tap **Add App**.
-3. Paste this address:
-
-   ```
-   https://github.com/Hasyame/Thwart
-   ```
-
-4. Turn **on** the option named "Include prereleases". This is the only setting
-   that matters. Without it Obtainium gives you the ordinary releases and you
-   will never see a beta.
-5. Tap **Add**.
-
-From then on Obtainium notifies you when a beta appears, and updating is one
-tap.
-
-## The manual way
-
-If you would rather not install anything extra:
-
-1. Go to <https://github.com/Hasyame/Thwart/releases>
-2. Betas are the ones marked **Pre-release**, with a version like
-   `1.30.0-beta.1`.
-3. Under **Assets**, tap the file ending in `.apk`.
-4. Your phone will ask whether to allow installing from your browser. Say yes.
-   You can turn it off again afterwards.
+A beta has been tested less than a release. That is the entire point of you
+having it. If one goes wrong and takes your campaigns with it, that backup is
+the only way back, because the app has no account and no server. There is no
+copy anywhere else.
 
 ---
+
+## Installing it
+
+You will get the `.apk` file directly, posted for supporters on Patreon. There
+is no app store and nothing to sign up for.
+
+1. Download the file on your phone. Patreon will save it to your Downloads.
+2. Open it. Android will ask whether to allow installing apps from Patreon or
+   from your browser. Say yes. You can turn it off again afterwards.
+3. It installs **over** your existing Thwart and keeps your collection, decks
+   and campaigns. It is the same app, not a second copy.
+
+That last point is on purpose. A beta in a separate app would start empty, and
+the most useful thing you can do is carry on a campaign you were already
+playing and notice when something is wrong.
 
 ## Going back to the normal version
 
-If a beta is causing you trouble, install the latest ordinary release from the
-same page, or wait for F-Droid to offer it. It installs over the beta and your
-data stays where it is.
+If a beta is causing trouble, install the current version from
+[F-Droid](https://f-droid.org/packages/com.hasyame.marvelchampions/) or the
+[releases page](https://github.com/Hasyame/Thwart/releases), whichever you
+normally use.
 
-If you want to go back to an *older* version than the one you have, Android will
-refuse to install it over the newer one. You would have to uninstall first,
-which deletes your campaigns, and then restore from the backup you made at the
-top of this page. This is the situation the backup exists for.
+One catch: Android refuses to install an **older** version over a newer one. If
+the beta was 1.30.0 and the public version is still 1.29.0, you have to
+uninstall first, which deletes everything, and then restore the backup you made
+at the top of this page. This is the situation that backup exists for.
 
 ---
 
 ## Telling me what happened
 
-Anything at all is useful, including "I could not work out how to install it".
+Anything is useful, including "I could not work out how to install it".
 
-- On GitHub: [open an
-  issue](https://github.com/Hasyame/Thwart/issues/new/choose) and mention that
-  you are on a beta and which one.
-- Not on GitHub, or would rather not be: **marvelchampcompanion@proton.me**.
+- Reply on the Patreon post the beta came from. That is the least effort and it
+  is where I will be looking.
+- Or, if you use GitHub, [open an
+  issue](https://github.com/Hasyame/Thwart/issues/new/choose) and say which beta
+  you are on.
+- Or email **marvelchampcompanion@proton.me**.
 
-Useful to include, when you can:
+Worth including when you can:
 
-- Which beta (Settings shows the version at the bottom, for example
-  `1.30.0-beta.1`)
-- Which campaign and scenario, if it happened during one
-- What you expected, and what happened instead
-- Your phone and Android version
+- Which beta. Settings shows the version at the bottom, like `1.30.0-beta.1`.
+- Which campaign and which scenario, if it happened during one.
+- What you expected, and what happened instead.
+- Your phone and Android version.
 
-A vague report is much better than no report. I would rather read "something
-went wrong on the Nebula scenario, I cannot remember exactly what" and go
-looking, than never hear about it.
+A vague report beats no report. I would far rather read "something went wrong on
+the Nebula scenario, I cannot remember exactly what" and go looking, than never
+hear about it.
 
 ---
 
 ## What I am asking of you
 
-Nothing formal. Play as you normally would. The value you provide is that you
-are using it on a real phone, in a real game, in a way I did not think to try.
+Nothing formal, and no schedule. Play as you normally would. What you provide
+that I cannot is a real phone, a real table and a real campaign, used in a way I
+did not think to try.
 
-Betas do not come on a schedule. There may be one a month, or three in a week,
-or none for a while.
+There may be one beta in a month, three in a week, or none for a while.
+
+## Please do not pass it on
+
+The build you receive is signed with my key, so a phone treats it as genuinely
+mine. Sharing it further would put an unreviewed version into the hands of people
+who did not agree to test anything, under my name. Point them at F-Droid, or at
+the Patreon page if they would like to test too.
