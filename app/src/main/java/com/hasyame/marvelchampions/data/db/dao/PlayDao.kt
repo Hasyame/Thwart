@@ -84,14 +84,28 @@ interface PlayDao {
      * Solo against multiplayer.
      *
      * Worth its own split because the win rates differ enormously, and a
-     * single blended figure describes neither: a player who wins two thirds
-     * solo and a third in a group is not a 50% player at anything.
+     * single blended figure describes none of them: a player who wins two
+     * thirds solo and a third at a full table is not a 50% player at anything.
+     *
+     * Split by the count rather than solo against everything else, because two
+     * players and four are not the same game: the villain carries twice the
+     * health and the scheme fills twice as fast.
+     *
+     * The last bucket should never appear. Marvel Champions is a one to four
+     * player game, so anything above that is a game recorded wrongly, and a row
+     * saying so is more use than silently folding it into the fours.
      */
     @Query(
         """
-        SELECT CASE WHEN players <= 1 THEN 'solo' ELSE 'group' END AS `key`,
+        SELECT CASE
+                 WHEN players <= 1 THEN 'players_1'
+                 WHEN players = 2 THEN 'players_2'
+                 WHEN players = 3 THEN 'players_3'
+                 WHEN players = 4 THEN 'players_4'
+                 ELSE 'players_5plus'
+               END AS `key`,
                COUNT(*) AS played, SUM(won) AS won, SUM(elapsedMillis) AS totalMillis
-        FROM plays GROUP BY `key` ORDER BY played DESC
+        FROM plays GROUP BY `key` ORDER BY `key`
         """,
     )
     fun observeBySoloOrGroup(): Flow<List<WinRateRow>>

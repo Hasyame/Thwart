@@ -1,0 +1,8 @@
+Two changes to the Stats page.
+
+Solo or group is now a row per table size: solo, two players or two hands,
+three, and four. Two players and four are not the same game, and one
+blended figure described neither.
+
+The history is paged, ten games at a time, with the total still shown
+beside the heading. A long history no longer buries everything above it.

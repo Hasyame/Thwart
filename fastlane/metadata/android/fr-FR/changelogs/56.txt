@@ -1,0 +1,9 @@
+Deux changements sur la page Parties.
+
+Solo ou en groupe devient une ligne par nombre de joueurs : solo, deux
+joueurs ou deux mains, trois, puis quatre. Une partie à deux et une partie
+à quatre ne sont pas le même jeu, et un chiffre unique ne décrivait ni
+l’une ni l’autre.
+
+L’historique est paginé, dix parties à la fois, le total restant affiché
+à côté du titre. Un long historique n’enterre plus tout ce qui le précède.

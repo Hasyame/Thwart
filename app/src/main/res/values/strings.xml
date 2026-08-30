@@ -538,7 +538,7 @@
     <string name="cards_favourite_remove">Remove from favourites</string>
     <string name="decks_share">Share this deck</string>
     <string name="decks_share_no_app">No app on this device can share text.</string>
-    <string name="plays_by_players">Solo or group</string>
+    <string name="plays_by_players">By table size</string>
     <string name="plays_by_hero_aspect">Hero and aspect together</string>
     <string name="plays_aspects_chart">Aspects you play</string>
     <string name="plays_metric_label">Showing</string>
@@ -565,8 +565,14 @@
     <string name="settings_images_summary">Card text already works offline; pictures are fetched the first time you open a card. Download them now and every card in your collection will show at a table with no signal. Hundreds of files — best on wi-fi.</string>
     <string name="settings_images_download">Download images for my packs</string>
     <string name="settings_images_running">Downloading %1$s</string>
+    <string name="plays_page_previous">Previous</string>
+    <string name="plays_page_next">Next</string>
+    <string name="plays_page_of">Page %1$d of %2$d</string>
     <string name="plays_players_solo">Solo</string>
-    <string name="plays_players_group">Group</string>
+    <string name="plays_players_two">Two players or two hands</string>
+    <string name="plays_players_three">Three players</string>
+    <string name="plays_players_four">Four players</string>
+    <string name="plays_players_more">More than four</string>
     <string name="session_first_player">First player: %1$s</string>
     <string name="settings_crash_report">Report the last crash</string>
     <string name="settings_crash_report_summary">The app closed unexpectedly. Sending this helps get it fixed — it stays on your phone until you do.</string>

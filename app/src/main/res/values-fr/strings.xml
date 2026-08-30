@@ -560,7 +560,7 @@
     <string name="cards_favourite_remove">Retirer des favoris</string>
     <string name="decks_share">Partager ce deck</string>
     <string name="decks_share_no_app">Aucune application de cet appareil ne peut partager du texte.</string>
-    <string name="plays_by_players">Solo ou en groupe</string>
+    <string name="plays_by_players">Par nombre de joueurs</string>
     <string name="plays_by_hero_aspect">Héros et affinité ensemble</string>
     <string name="plays_aspects_chart">Les affinités que vous jouez</string>
     <string name="plays_metric_label">Afficher</string>
@@ -586,8 +586,14 @@
     <string name="settings_images_summary">Le texte des cartes fonctionne déjà hors ligne ; les images sont téléchargées à la première ouverture d\'une carte. Téléchargez-les maintenant et toutes les cartes de votre collection s\'afficheront sans réseau. Des centaines de fichiers : préférez le wi-fi.</string>
     <string name="settings_images_download">Télécharger les images de mes extensions</string>
     <string name="settings_images_running">Téléchargement %1$s</string>
+    <string name="plays_page_previous">Précédent</string>
+    <string name="plays_page_next">Suivant</string>
+    <string name="plays_page_of">Page %1$d sur %2$d</string>
     <string name="plays_players_solo">Solo</string>
-    <string name="plays_players_group">En groupe</string>
+    <string name="plays_players_two">Deux joueurs ou deux mains</string>
+    <string name="plays_players_three">Trois joueurs</string>
+    <string name="plays_players_four">Quatre joueurs</string>
+    <string name="plays_players_more">Plus de quatre</string>
     <string name="session_first_player">Premier joueur : %1$s</string>
     <string name="settings_crash_report">Signaler le dernier plantage</string>
     <string name="settings_crash_report_summary">L\'application s\'est fermée inopinément. L\'envoyer aide à corriger le problème — le rapport reste sur votre téléphone jusque-là.</string>

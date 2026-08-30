@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import kotlinx.coroutines.launch
 import com.hasyame.marvelchampions.core.designsystem.component.ComicEmptyState
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.aspectColor
@@ -106,6 +109,7 @@ fun PlaysScreen(
     var fullSections by rememberSaveable { mutableStateOf(emptySet<String>()) }
     var sort by rememberSaveable { mutableStateOf(StatSort.ALPHABETICAL) }
     var query by rememberSaveable { mutableStateOf("") }
+    var historyPage by rememberSaveable { mutableStateOf(0) }
     // What each box is measuring, by box. Kept per box because the useful
     // question differs: which aspect you reach for is a share, whether a hero
     // wins is a rate.
@@ -142,7 +146,25 @@ fun PlaysScreen(
         val tables = StatTable.entries.map { it to it.rowsOf(state) }.filter { it.second.isNotEmpty() }
         val historyTitle = stringResource(R.string.plays_history)
 
-        LazyColumn(Modifier.fillMaxSize().padding(padding)) {
+        val pageCount = ((state.plays.size + HISTORY_PAGE - 1) / HISTORY_PAGE).coerceAtLeast(1)
+        // Clamped rather than remembered blindly: deleting the last game on the
+        // last page would otherwise leave the list showing a page that has
+        // stopped existing.
+        val page = historyPage.coerceIn(0, pageCount - 1)
+        val pagePlays = state.plays.drop(page * HISTORY_PAGE).take(HISTORY_PAGE)
+
+        // Where the history heading sits in the list, counted from the items
+        // added below it. Derived rather than searched for: the conditions are
+        // the same ones three lines down, so the two cannot drift apart without
+        // both being edited at once.
+        val historyIndex = 1 +
+            (if (state.byAspect.isNotEmpty()) 1 else 0) +
+            (if (tables.isNotEmpty()) 1 else 0) +
+            tables.size
+        val listState = rememberLazyListState()
+        val scope = rememberCoroutineScope()
+
+        LazyColumn(Modifier.fillMaxSize().padding(padding), state = listState) {
             item(key = "overall") { Overall(state) }
             if (state.byAspect.isNotEmpty()) {
                 item(key = "aspects") {
@@ -196,9 +218,16 @@ fun PlaysScreen(
             }
 
             item(key = "history-title") {
-                SectionHeading(historyTitle)
+                SectionHeading(
+                    title = historyTitle,
+                    trailing = pluralStringResource(
+                        R.plurals.plays_section_entries,
+                        state.plays.size,
+                        state.plays.size,
+                    ),
+                )
             }
-            items(state.plays, key = { it.id }) { play ->
+            items(pagePlays, key = { it.id }) { play ->
                 PlayRow(
                     play = play,
                     photoStore = viewModel.photoStore,
@@ -206,6 +235,20 @@ fun PlaysScreen(
                     onReport = { viewModel.reportLater(play.id) },
                 )
                 HorizontalDivider()
+            }
+            if (pageCount > 1) {
+                item(key = "history-pager") {
+                    HistoryPager(
+                        page = page,
+                        pageCount = pageCount,
+                        onPage = {
+                            historyPage = it
+                            // Turning a page and landing halfway down it reads
+                            // as nothing having happened.
+                            scope.launch { listState.animateScrollToItem(historyIndex) }
+                        },
+                    )
+                }
             }
         }
     }
@@ -430,14 +473,30 @@ private fun TableControls(
 }
 
 @Composable
-private fun SectionHeading(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 4.dp),
-    )
+private fun SectionHeading(title: String, trailing: String? = null) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        // The whole count, not the page's: paging should never be mistaken for
+        // having fewer games than you have.
+        trailing?.let {
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = it,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
 }
 
 @Composable
@@ -868,6 +927,41 @@ private fun WinRateItem(
     )
 }
 
+/**
+ * Ten games to a page, and the means to reach the rest.
+ *
+ * Ten because it is about a screenful: enough that paging is not constant, few
+ * enough that a page is a thing you read rather than a thing you scroll. The
+ * whole count stays in the heading, so paging never hides how much is there.
+ */
+@Composable
+private fun HistoryPager(
+    page: Int,
+    pageCount: Int,
+    onPage: (Int) -> Unit,
+) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextButton(onClick = { onPage(page - 1) }, enabled = page > 0) {
+            Text(stringResource(R.string.plays_page_previous))
+        }
+        Text(
+            text = stringResource(R.string.plays_page_of, page + 1, pageCount),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        TextButton(onClick = { onPage(page + 1) }, enabled = page < pageCount - 1) {
+            Text(stringResource(R.string.plays_page_next))
+        }
+    }
+}
+
+/** A screenful, near enough. */
+private const val HISTORY_PAGE = 10
+
 @Composable
 private fun PlayRow(
     play: PlayEntity,
@@ -985,8 +1079,11 @@ private fun readableKey(key: String): String {
         return parts.joinToString(PAIR)
     }
     return when (key) {
-        "solo" -> stringResource(R.string.plays_players_solo)
-        "group" -> stringResource(R.string.plays_players_group)
+        "players_1" -> stringResource(R.string.plays_players_solo)
+        "players_2" -> stringResource(R.string.plays_players_two)
+        "players_3" -> stringResource(R.string.plays_players_three)
+        "players_4" -> stringResource(R.string.plays_players_four)
+        "players_5plus" -> stringResource(R.string.plays_players_more)
         "standard_i" -> stringResource(R.string.difficulty_standard_i)
         "standard_ii" -> stringResource(R.string.difficulty_standard_ii)
         "expert_i" -> stringResource(R.string.difficulty_expert_i)
