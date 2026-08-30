@@ -121,42 +121,30 @@ jobs:
           keyPassword=$KEY_PASSWORD
           EOF
 
-      # The bundled card database. It is gitignored, so a checkout does not
-      # have it and assembleRelease will happily build without it: the app
-      # installs, opens, and has no cards at all until the player runs a
-      # sync. Nobody upgrading would notice, because their database is
-      # already on the device, which is exactly why this shipped three times
-      # before anyone saw it.
-      - name: Fetch the card seed
-        run: ./gradlew --no-daemon fetchCardSeed
-
       - name: Assemble release
         env:
           MCC_KEYSTORE_PROPERTIES: ${{ runner.temp }}/signing/keystore.properties
         run: ./gradlew --no-daemon assembleRelease
 
-      # Belt as well as braces: the fetch above can succeed and still leave
-      # nothing useful behind if MarvelCDB changes shape. This is the check
-      # that would have caught it, so it guards the artefact rather than the
-      # step that produces it.
-      - name: The APK carries the cards
+      # No card data goes in the package, and this is what keeps it that way.
+      #
+      # The cards belong to MarvelCDB and change when they change: baking a
+      # snapshot into a signed APK means shipping somebody else's content and
+      # shipping it stale. It also made the build depend on a third party being
+      # up, which is exactly how it failed the one time it was tried here.
+      #
+      # F-Droid builds from a clean checkout where the seed is gitignored, so
+      # its packages never carried it either. The app fetches the cards on first
+      # launch instead, and every build behaves the same wherever it came from.
+      - name: No card data in the package
         run: |
           APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
-          for LOCALE in en fr; do
-            ENTRY="assets/seed/cards_${LOCALE}.json"
-            SIZE=$(unzip -l "$APK" "$ENTRY" | awk -v e="$ENTRY" '$4 == e {print $1}')
-            if [ -z "$SIZE" ]; then
-              echo "$ENTRY is missing. This build would install with no cards."
-              exit 1
-            fi
-            # A seed that parses but holds nothing is the same failure with a
-            # file in the way. The real ones are several megabytes.
-            if [ "$SIZE" -lt 1000000 ]; then
-              echo "$ENTRY is only $SIZE bytes. That is not the card database."
-              exit 1
-            fi
-            echo "$ENTRY: $SIZE bytes."
-          done
+          if unzip -l "$APK" | grep -q 'assets/seed/'; then
+            echo "This APK carries bundled card data. It should not."
+            unzip -l "$APK" | grep 'assets/seed/'
+            exit 1
+          fi
+          echo "No bundled card data, as intended."
 
       # Proves the APK is signed by the real key rather than the debug one. The
       # build warns loudly in that case, but a warning in a log nobody reads is

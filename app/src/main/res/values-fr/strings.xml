@@ -521,6 +521,14 @@
     <string name="cards_update_message">MarvelCDB possède des cartes que cet appareil n\'a pas encore : %1$s.\n\nLe téléchargement prend quelques minutes et nécessite une connexion. Vous pouvez le faire plus tard depuis les Réglages.</string>
     <string name="cards_update_download">Télécharger</string>
     <string name="cards_update_ignore">Pas maintenant</string>
+    <string name="first_run_title">Un téléchargement, puis c\'est bon</string>
+    <string name="first_run_body">Thwart a besoin de la liste des cartes avant de pouvoir vous aider à jouer. Elle vient de MarvelCDB, pèse environ 1,5 Mo et prend quelques secondes. Ensuite, l\'application fonctionne sans connexion.</string>
+    <string name="first_run_download">Récupérer les cartes</string>
+    <string name="first_run_working">Récupération des cartes. Cela peut prendre une minute sur une connexion lente.</string>
+    <string name="first_run_failed">Cela n\'a pas fonctionné. Vérifiez votre connexion et réessayez.</string>
+    <string name="first_run_failed_detail">Cela n\'a pas fonctionné : %1$s</string>
+    <string name="first_run_retry">Réessayer</string>
+    <string name="first_run_skip">Plus tard, aller à l\'application</string>
     <string name="settings_backup">Sauvegarde</string>
     <string name="settings_backup_summary">Cette application n\'a ni compte ni serveur : cet appareil contient donc l\'unique copie de votre collection, de vos decks, de vos campagnes et de votre historique. Enregistrez une sauvegarde ailleurs.</string>
     <string name="settings_backup_export">Enregistrer une sauvegarde</string>

@@ -100,15 +100,14 @@ whole chain works end to end. After that it can be left alone.
 ## One consequence to remember
 
 Reproducible builds were declined at submission, because the release APKs built
-here bundle a card snapshot fetched from MarvelCDB and their buildserver has no
-network, so the two can never match byte for byte.
+here bundled a card snapshot fetched from MarvelCDB and their buildserver has no
+network, so the two could never match byte for byte.
 
-Which means **the F-Droid build ships with an empty card database**. It opens on
-Settings and waits for the player to run the first card update; it does not
-download on its own. Worth testing that path before a release rather than
-assuming it, since it is not the build anybody here installs — clone the tag
-into a clean directory, run `assembleRelease` **without** `fetchCardSeed`, and
-launch the result.
+**That reason is gone.** Since 1.33.0 no card data is packaged at all: the app
+fetches the card list on first launch, and the release workflow refuses to
+publish an APK carrying any. The F-Droid package and the GitHub release are now
+the same app doing the same thing, so reproducible builds are worth asking for
+again. Nobody has yet.
 
 That means **F-Droid signs its build with F-Droid's key**, and the GitHub APK is
 signed with yours. Android will not let one replace the other: a player moving

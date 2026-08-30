@@ -62,6 +62,13 @@ fun MarvelChampionsApp(
             contentAlignment = Alignment.Center,
         ) { CircularProgressIndicator() }
 
+        StartupState.NeedsCards -> FirstRunCardsScreen(
+            state = viewModel.cardDownload.collectAsStateWithLifecycle().value,
+            onDownload = viewModel::startCardDownload,
+            onSkip = viewModel::skipCardDownload,
+            onFinished = viewModel::cardDownloadFinished,
+        )
+
         is StartupState.Ready -> AppContent(
             // A shared deck link wins over the first-run collection prompt:
             // the user asked for something specific.

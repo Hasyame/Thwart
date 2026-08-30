@@ -373,9 +373,12 @@ which looks exactly like the failure this command is meant to detect.
 ## Card data
 
 Card and pack data comes from the [MarvelCDB](https://marvelcdb.com) public API,
-maintained by its contributors. The snapshot bundled into the APK is generated at
-build time by `./gradlew fetchCardSeed` and is **not** committed to this
-repository. See [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
+maintained by its contributors. None of it is committed to this repository and
+none of it goes into a package: the app fetches the card list on first launch
+and refreshes it when you ask. `./gradlew fetchCardSeed` puts a local copy in
+`app/src/main/assets/seed/` for running the campaign validation tests against
+real card codes; that copy is gitignored. See
+[docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
 ## Helping out
 
@@ -436,19 +439,26 @@ what the app works with, not to suggest it comes from the publisher.
 
 No card images, card text, or campaign book text is stored in this repository.
 
-The release APK is a different matter and worth being plain about. It bundles a
-snapshot of the MarvelCDB card data, around 13 MB of card text in both
-languages, so the app is usable offline the moment it is installed. That
-snapshot is fetched by `./gradlew fetchCardSeed` at packaging time and is
-deliberately never committed, but it is inside the APK you download from the
-releases page.
+The Rules tab is not transcribed from the rulebooks. Its text comes from
+[deejimy's bilingual reference](https://deejimy.github.io/mc-reference/),
+compiled from rulebook v1.8 and released by its author under CC0, and it is used
+and credited on those terms. Nothing in this app was copied out of a Fantasy
+Flight publication.
 
-A build made without it works too, with one extra step. The app notices the
-snapshot is absent, opens on Settings and waits to be told to fetch the cards. It
-does not download them on its own, and nothing in this app does. That is what
-F-Droid ships, since F-Droid builds from this source and the snapshot is not in
-it. So the F-Droid build and the GitHub release differ: the same code, but one
-arrives with the cards and the other asks first.
+No card data is in the released package either. The cards belong to MarvelCDB
+and change when MarvelCDB changes, so a snapshot signed into an APK would be
+both somebody else's content and out of date the week after. The app asks for
+the card list on first launch instead, about 1.5 MB, and works offline from then
+on. It is asked for, not taken: the screen says what it is fetching and offers
+to go on without it.
+
+Earlier releases did bundle that snapshot, which is also why the F-Droid package
+and the GitHub release used to be the same code behaving differently. They no
+longer do. Every build now behaves the same way wherever it came from, and the
+release workflow refuses to publish an APK that carries card data.
+
+`./gradlew fetchCardSeed` still exists, for running the campaign validation
+tests against real card codes. Its output is gitignored and goes in no package.
 
 How a new version reaches F-Droid, which is by itself from the git tag, is in
 [fdroid/RELEASING.md](fdroid/RELEASING.md). The one-time submission is in

@@ -501,6 +501,14 @@
     <string name="cards_update_message">MarvelCDB has cards this device has not got yet: %1$s.\n\nDownloading takes a few minutes and needs a connection. You can always do it later from Settings.</string>
     <string name="cards_update_download">Download</string>
     <string name="cards_update_ignore">Not now</string>
+    <string name="first_run_title">One download to go</string>
+    <string name="first_run_body">Thwart needs the card list before it can help you play. It comes from MarvelCDB, weighs about 1.5 MB, and takes a few seconds. After this the app works without a connection.</string>
+    <string name="first_run_download">Get the cards</string>
+    <string name="first_run_working">Fetching the cards. This can take a minute on a slow connection.</string>
+    <string name="first_run_failed">That did not work. Check your connection and try again.</string>
+    <string name="first_run_failed_detail">That did not work: %1$s</string>
+    <string name="first_run_retry">Try again</string>
+    <string name="first_run_skip">Not now, go to the app</string>
     <string name="settings_backup">Backup</string>
     <string name="settings_backup_summary">This app has no account and no server, so this device holds the only copy of your collection, decks, campaigns and play history. Save a backup somewhere else.</string>
     <string name="settings_backup_export">Save a backup</string>
