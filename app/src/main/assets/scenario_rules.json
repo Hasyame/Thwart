@@ -215,7 +215,9 @@
       "modularCount": 1,
       "mandatoryModulars": [],
       "recommendedModulars": [],
-      "needsReview": true
+      "modularPacks": [
+        "mojo"
+      ]
     },
     {
       "code": "mansion_attack",
@@ -249,7 +251,11 @@
       "packCode": "mojo",
       "modularCount": 1,
       "mandatoryModulars": [],
-      "recommendedModulars": []
+      "recommendedModulars": [],
+      "modularPacks": [
+        "mojo"
+      ],
+      "modularCountPerHero": 1
     },
     {
       "code": "morlock_siege",
@@ -375,7 +381,10 @@
       "packCode": "mojo",
       "modularCount": 3,
       "mandatoryModulars": [],
-      "recommendedModulars": []
+      "recommendedModulars": [],
+      "modularPacks": [
+        "mojo"
+      ]
     },
     {
       "code": "stryfe",
@@ -418,7 +427,8 @@
       "packCode": "aos",
       "modularCount": 1,
       "mandatoryModulars": [],
-      "recommendedModulars": []
+      "recommendedModulars": [],
+      "modularCountPerHero": 1
     },
     {
       "code": "tower_defense",

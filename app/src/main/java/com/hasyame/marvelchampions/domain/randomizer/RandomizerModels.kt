@@ -85,9 +85,18 @@ data class ScenarioRule(
      * Packs its modular sets may come from. Empty means anything owned.
      *
      * Civil War and She-Hulk share a pool that is legal only in their own
-     * games, and the sets in it must not turn up anywhere else.
+     * games, and the sets in it must not turn up anywhere else. MojoMania is
+     * the other direction: its three scenarios draw only from their own pack,
+     * while its sets stay legal everywhere else.
      */
     val modularPacks: List<String> = emptyList(),
+    /**
+     * Modular sets added per player, on top of [modularCount].
+     *
+     * MojoMania takes one set plus one for each hero, so a solo game uses two
+     * and a four-player game five. Everything else is a flat count.
+     */
+    val modularCountPerHero: Int = 0,
 )
 
 /** Everything the user owns, already filtered to owned packs. */

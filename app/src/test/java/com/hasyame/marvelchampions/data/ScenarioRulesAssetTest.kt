@@ -74,11 +74,42 @@ class ScenarioRulesAssetTest {
     }
 
     @Test
-    fun `only a genuinely unknowable setup needs review`() {
-        // Magog draws a random set from a pack the app cannot enumerate, which
-        // is a real unknown. Everything else parsed.
+    fun `every scenario now parses`() {
+        // Magog was the last entry needing review, on the grounds that it drew
+        // from a pack the app could not enumerate. It could: "from the
+        // MojoMania scenario pack" names a pack, and the generator resolves it
+        // like any other reference.
         val review = read().scenarios.filter { it.needsReview == true }.map { it.code }
-        assertEquals(listOf("magog"), review)
+        assertEquals(emptyList<String>(), review)
+    }
+
+    @Test
+    fun `a scenario that names its own pool records it`() {
+        // All three MojoMania scenarios draw only from their own pack. Two of
+        // them said so in a plain sentence and were silently recorded as
+        // drawing from the whole collection, which is a setup the player cannot
+        // put on the table.
+        val scenarios = read().scenarios
+        listOf("magog", "mojo", "spiral").forEach { code ->
+            assertEquals(
+                "$code draws only from the MojoMania pack",
+                listOf("mojo"),
+                scenarios.single { it.code == code }.modularPacks,
+            )
+        }
+    }
+
+    @Test
+    fun `a scenario that scales with the table records the per-player set`() {
+        // "Choose 1 modular set, plus 1[per_hero] additional modular sets."
+        // Recorded as a flat 1, a four-player game got two sets instead of
+        // five, and nothing said so.
+        val scenarios = read().scenarios
+        listOf("mojo", "thunderbolts").forEach { code ->
+            val scenario = scenarios.single { it.code == code }
+            assertEquals("$code adds a set per player", 1, scenario.modularCountPerHero)
+            assertEquals("$code starts from one set", 1, scenario.modularCount)
+        }
     }
 
     @Test

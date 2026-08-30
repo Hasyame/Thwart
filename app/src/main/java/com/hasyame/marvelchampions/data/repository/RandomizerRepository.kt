@@ -142,7 +142,14 @@ class RandomizerRepository @Inject constructor(
                 mandatoryModulars = dto.mandatoryModulars,
                 recommendedModulars = dto.recommendedModulars,
                 needsReview = dto.needsReview,
-                modularPacks = if (dto.packCode in restricted) restricted else emptyList(),
+                // A scenario that names its own pool says so on its card, and
+                // that is more specific than the versus rule inferred from the
+                // pack. MojoMania is read this way; Civil War still is not,
+                // because its restriction is not written on the scheme.
+                modularPacks = dto.modularPacks.ifEmpty {
+                    if (dto.packCode in restricted) restricted else emptyList()
+                },
+                modularCountPerHero = dto.modularCountPerHero,
             )
         }
 

@@ -101,6 +101,7 @@ object ScenarioRandomizer {
                 ),
                 rule,
                 mandatory,
+                playerCount,
                 random,
             )
         }
@@ -153,6 +154,7 @@ object ScenarioRandomizer {
         pools: RandomizerPools,
         rule: ScenarioRule?,
         mandatory: List<String>,
+        playerCount: Int,
         random: Random,
     ): List<String> {
         if (rule == null) {
@@ -162,11 +164,13 @@ object ScenarioRandomizer {
         // Civil War takes three or four, decided at the table, so the count is
         // itself part of the draw. Everything else has max equal to count and
         // this settles on the one number.
-        val wanted = if (rule.modularCountMax > rule.modularCount) {
+        val base = if (rule.modularCountMax > rule.modularCount) {
             random.nextInt(rule.modularCount, rule.modularCountMax + 1)
         } else {
             rule.modularCount
         }
+        // MojoMania adds a set per player on top of that.
+        val wanted = base + rule.modularCountPerHero * playerCount
         // Mandatory sets already count towards the scenario's total, so only
         // the shortfall is drawn at random.
         val remaining = (wanted - chosen.size).coerceAtLeast(0)
