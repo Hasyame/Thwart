@@ -2,11 +2,13 @@ package com.hasyame.marvelchampions.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
@@ -26,6 +28,8 @@ import com.hasyame.marvelchampions.ui.navigation.MarvelChampionsNavHost
 import com.hasyame.marvelchampions.ui.navigation.SettingsGraph
 import com.hasyame.marvelchampions.ui.navigation.TopLevelDestination
 import com.hasyame.marvelchampions.ui.navigation.isOn
+import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.data.sync.CardUpdate
 import com.hasyame.marvelchampions.ui.navigation.navigateToTopLevelDestination
 
 /**
@@ -40,6 +44,17 @@ fun MarvelChampionsApp(
     viewModel: AppStartViewModel = hiltViewModel(),
 ) {
     val startupState by viewModel.startupState.collectAsStateWithLifecycle()
+    val newCards by viewModel.newCards.collectAsStateWithLifecycle()
+
+    // Over whatever is on screen, because it is a question rather than a
+    // screen of its own, and the answer is one tap either way.
+    if (newCards.isNotEmpty()) {
+        NewCardsDialog(
+            updates = newCards,
+            onDownload = viewModel::downloadNewCards,
+            onIgnore = viewModel::ignoreNewCards,
+        )
+    }
 
     when (val startup = startupState) {
         StartupState.Loading -> Box(
@@ -133,4 +148,44 @@ private fun AppContent(
             onSharedLinkHandled = onSharedLinkHandled,
         )
     }
+}
+
+/**
+ * "There are cards you have not got. Fetch them?"
+ *
+ * Named rather than counted: a player knows what Sinister Motives is and does
+ * not know what 214 cards means. Ignoring is remembered per pack, so saying no
+ * once does not mean being asked again at every launch, while a pack released
+ * later still gets offered.
+ */
+@Composable
+private fun NewCardsDialog(
+    updates: List<CardUpdate>,
+    onDownload: () -> Unit,
+    onIgnore: () -> Unit,
+) {
+    AlertDialog(
+        // Only the buttons dismiss it. A stray tap outside would otherwise
+        // count as a silent no on something worth a deliberate answer.
+        onDismissRequest = {},
+        title = { Text(stringResource(R.string.cards_update_title)) },
+        text = {
+            Text(
+                stringResource(
+                    R.string.cards_update_message,
+                    updates.joinToString { it.name },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onDownload) {
+                Text(stringResource(R.string.cards_update_download))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onIgnore) {
+                Text(stringResource(R.string.cards_update_ignore))
+            }
+        },
+    )
 }

@@ -517,6 +517,10 @@
     <string name="session_modular_sets">Sets modulaires</string>
     <string name="plays_delete_title">Supprimer cette partie ?</string>
     <string name="plays_delete_message">La partie contre %1$s sera retirée de votre historique et de vos statistiques. Cette action est irréversible et ne supprime rien sur BoardGameGeek.</string>
+    <string name="cards_update_title">De nouvelles cartes sont disponibles</string>
+    <string name="cards_update_message">MarvelCDB possède des cartes que cet appareil n\'a pas encore : %1$s.\n\nLe téléchargement prend quelques minutes et nécessite une connexion. Vous pouvez le faire plus tard depuis les Réglages.</string>
+    <string name="cards_update_download">Télécharger</string>
+    <string name="cards_update_ignore">Pas maintenant</string>
     <string name="settings_backup">Sauvegarde</string>
     <string name="settings_backup_summary">Cette application n\'a ni compte ni serveur : cet appareil contient donc l\'unique copie de votre collection, de vos decks, de vos campagnes et de votre historique. Enregistrez une sauvegarde ailleurs.</string>
     <string name="settings_backup_export">Enregistrer une sauvegarde</string>

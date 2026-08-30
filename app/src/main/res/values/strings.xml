@@ -497,6 +497,10 @@
     <string name="session_modular_sets">Modular sets</string>
     <string name="plays_delete_title">Delete this game?</string>
     <string name="plays_delete_message">The game against %1$s will be removed from your history and your statistics. This cannot be undone, and it does not remove anything from BoardGameGeek.</string>
+    <string name="cards_update_title">New cards are available</string>
+    <string name="cards_update_message">MarvelCDB has cards this device has not got yet: %1$s.\n\nDownloading takes a few minutes and needs a connection. You can always do it later from Settings.</string>
+    <string name="cards_update_download">Download</string>
+    <string name="cards_update_ignore">Not now</string>
     <string name="settings_backup">Backup</string>
     <string name="settings_backup_summary">This app has no account and no server, so this device holds the only copy of your collection, decks, campaigns and play history. Save a backup somewhere else.</string>
     <string name="settings_backup_export">Save a backup</string>

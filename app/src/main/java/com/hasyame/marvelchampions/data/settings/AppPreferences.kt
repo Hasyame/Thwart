@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
@@ -110,6 +111,20 @@ class AppPreferences @Inject constructor(
         context.dataStore.edit { it[KEY_CARD_LOCALE] = locale.code }
     }
 
+    /**
+     * Packs the player has been offered and turned down.
+     *
+     * Kept so the question is asked once per pack rather than every time the
+     * app opens. A pack that appears later is still offered.
+     */
+    val dismissedPacks: Flow<Set<String>> = context.dataStore.data.map { preferences ->
+        preferences[KEY_DISMISSED_PACKS].orEmpty()
+    }
+
+    suspend fun setDismissedPacks(codes: Set<String>) {
+        context.dataStore.edit { it[KEY_DISMISSED_PACKS] = codes }
+    }
+
     suspend fun setLastCardSync(epochMillis: Long) {
         context.dataStore.edit { it[KEY_LAST_SYNC] = epochMillis }
     }
@@ -136,5 +151,6 @@ class AppPreferences @Inject constructor(
         private val KEY_THEME = stringPreferencesKey("theme_choice")
         private val KEY_PLAY_LOCATION = stringPreferencesKey("play_location")
         private val KEY_TRACK_ENCOUNTER = booleanPreferencesKey("track_encounter")
+        private val KEY_DISMISSED_PACKS = stringSetPreferencesKey("dismissed_packs")
     }
 }

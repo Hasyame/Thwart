@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.repository.FirstRunInitializer
 import com.hasyame.marvelchampions.data.repository.FirstRunOutcome
+import com.hasyame.marvelchampions.data.sync.CardSyncManager
+import com.hasyame.marvelchampions.data.sync.CardUpdate
+import com.hasyame.marvelchampions.data.sync.CardUpdateChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,12 +38,25 @@ sealed interface StartupState {
 @HiltViewModel
 class AppStartViewModel @Inject constructor(
     private val firstRunInitializer: FirstRunInitializer,
+    private val updateChecker: CardUpdateChecker,
+    private val syncManager: CardSyncManager,
 ) : ViewModel() {
 
     private val state = MutableStateFlow<StartupState>(StartupState.Loading)
     val startupState: StateFlow<StartupState> = state.asStateFlow()
 
     private val collectionPrompt = FirstRunPrompt()
+
+    private val updates = MutableStateFlow<List<CardUpdate>>(emptyList())
+
+    /**
+     * Packs MarvelCDB has that this device has not, if any.
+     *
+     * Empty while the check is in flight, and empty for good if it fails,
+     * so the app opens at its usual speed and says nothing when there is
+     * nothing to say.
+     */
+    val newCards: StateFlow<List<CardUpdate>> = updates.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -53,7 +69,27 @@ class AppStartViewModel @Inject constructor(
                 openCollectionFirst = outcome == FirstRunOutcome.SEEDED,
                 startInSettings = outcome != FirstRunOutcome.ALREADY_READY,
             )
+            // After the app is on screen, not before. This is a network
+            // call, and nobody should wait on MarvelCDB to reach their
+            // own cards. A first run is skipped: it has just finished
+            // populating itself and has nothing to compare against.
+            if (outcome == FirstRunOutcome.ALREADY_READY) {
+                updates.value = updateChecker.check()
+            }
         }
+    }
+
+    /** Yes: fetch them, through the same refresh the Settings button uses. */
+    fun downloadNewCards() {
+        updates.value = emptyList()
+        syncManager.start()
+    }
+
+    /** No: remember which packs were turned down, and stop asking. */
+    fun ignoreNewCards() {
+        val turnedDown = updates.value
+        updates.value = emptyList()
+        viewModelScope.launch { updateChecker.dismiss(turnedDown) }
     }
 
     /**

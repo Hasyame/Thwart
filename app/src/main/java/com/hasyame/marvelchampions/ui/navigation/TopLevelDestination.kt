@@ -3,10 +3,8 @@ package com.hasyame.marvelchampions.ui.navigation
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.hasyame.marvelchampions.R
@@ -35,13 +33,13 @@ enum class TopLevelDestination(
     CARDS(
         route = CardsRoute::class,
         graphRoute = CardsGraph::class,
-        icon = Icons.Filled.Search,
+        icon = NavigationIcons.Card,
         labelRes = R.string.destination_cards,
     ),
     DECKS(
         route = DecksRoute::class,
         graphRoute = DecksGraph::class,
-        icon = Icons.AutoMirrored.Filled.List,
+        icon = NavigationIcons.Deck,
         labelRes = R.string.destination_decks,
     ),
     PLAY(
