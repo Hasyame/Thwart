@@ -1,44 +1,54 @@
 package com.hasyame.marvelchampions.ui.plays
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
-import com.hasyame.marvelchampions.data.photos.PhotoStore
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -46,9 +56,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicEmptyState
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
+import com.hasyame.marvelchampions.core.designsystem.component.aspectColor
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.db.dao.WinRateRow
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
+import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 import java.text.DateFormat
 import java.util.Date
 
@@ -58,6 +72,10 @@ import java.util.Date
  * Statistics first, history below: after a few dozen games the interesting
  * question is "which heroes actually win for me", not "what did I play in
  * March".
+ *
+ * The tables are behind headed boxes that open when tapped. Six tables laid out
+ * end to end is a page nobody reaches the bottom of, and only one of them is
+ * ever the one you came for.
  *
  * [onBack] is null when this is a tab root: a top level destination has nothing
  * to go back to, and an arrow there is a lie.
@@ -74,6 +92,11 @@ fun PlaysScreen(
     // Deleting a play cannot be undone and the history is the whole point of
     // the screen, so it asks — the same courtesy a campaign already gets.
     var confirmDelete by remember { mutableStateOf<PlayEntity?>(null) }
+
+    // Survives rotation: opening a table, turning the phone and finding it shut
+    // again is the screen forgetting what you were reading.
+    var openSections by rememberSaveable { mutableStateOf(setOf(StatTable.HERO.name)) }
+    var sort by rememberSaveable { mutableStateOf(StatSort.ALPHABETICAL) }
 
     Scaffold(
         topBar = {
@@ -101,34 +124,38 @@ fun PlaysScreen(
             return@Scaffold
         }
 
-        // Resolved out here: the lazy list scope is not composable, so a
-        // stringResource call inside it does not compile.
-        val sections = listOf(
-            stringResource(R.string.plays_by_hero) to state.byHero,
-            stringResource(R.string.plays_by_aspect) to state.byAspect,
-            stringResource(R.string.plays_by_scenario) to state.byScenario,
-            stringResource(R.string.plays_by_difficulty) to state.byDifficulty,
-            // Solo and group win rates differ enormously; a blended figure
-            // describes neither.
-            stringResource(R.string.plays_by_players) to state.bySoloOrGroup,
-            // The pairing a player actually asks about: not how Justice does,
-            // but how Justice does for this hero.
-            stringResource(R.string.plays_by_hero_aspect) to state.byHeroAspect,
-        )
+        val tables = StatTable.entries.map { it to it.rowsOf(state) }.filter { it.second.isNotEmpty() }
         val historyTitle = stringResource(R.string.plays_history)
 
         LazyColumn(Modifier.fillMaxSize().padding(padding)) {
-            item { Overall(state) }
+            item(key = "overall") { Overall(state) }
+            if (state.byAspect.isNotEmpty()) {
+                item(key = "aspects") { AspectChart(state.byAspect) }
+            }
+            if (tables.isNotEmpty()) {
+                item(key = "sort") { SortRow(sort = sort, onSort = { sort = it }) }
+            }
 
-            sections.forEach { (title, rows) -> winRateSection(title, rows) }
+            tables.forEach { (table, rows) ->
+                item(key = table.name) {
+                    StatSection(
+                        table = table,
+                        rows = rows,
+                        sort = sort,
+                        expanded = table.name in openSections,
+                        onToggle = {
+                            openSections = if (table.name in openSections) {
+                                openSections - table.name
+                            } else {
+                                openSections + table.name
+                            }
+                        },
+                    )
+                }
+            }
 
-            item {
-                Text(
-                    text = historyTitle,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(16.dp),
-                )
+            item(key = "history-title") {
+                SectionHeading(historyTitle)
             }
             items(state.plays, key = { it.id }) { play ->
                 PlayRow(
@@ -194,6 +221,68 @@ fun PlaysScreen(
     }
 }
 
+/** The six breakdowns, each its own box. */
+private enum class StatTable(val titleRes: Int) {
+    HERO(R.string.plays_by_hero),
+    ASPECT(R.string.plays_by_aspect),
+    SCENARIO(R.string.plays_by_scenario),
+    DIFFICULTY(R.string.plays_by_difficulty),
+    // Solo and group win rates differ enormously; a blended figure describes
+    // neither.
+    PLAYERS(R.string.plays_by_players),
+    // The pairing a player actually asks about: not how Justice does, but how
+    // Justice does for this hero.
+    HERO_ASPECT(R.string.plays_by_hero_aspect),
+    ;
+
+    fun rowsOf(state: PlaysUiState): List<WinRateRow> = when (this) {
+        HERO -> state.byHero
+        ASPECT -> state.byAspect
+        SCENARIO -> state.byScenario
+        DIFFICULTY -> state.byDifficulty
+        PLAYERS -> state.bySoloOrGroup
+        HERO_ASPECT -> state.byHeroAspect
+    }
+}
+
+private enum class StatSort(val labelRes: Int) {
+    ALPHABETICAL(R.string.plays_sort_alpha),
+    MOST_PLAYED(R.string.plays_sort_played),
+    BEST_RATE(R.string.plays_sort_rate),
+}
+
+@Composable
+private fun SortRow(sort: StatSort, onSort: (StatSort) -> Unit) {
+    Column(Modifier.padding(start = 12.dp, end = 12.dp, top = 4.dp)) {
+        Text(
+            text = stringResource(R.string.plays_sort_label),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 6.dp),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            StatSort.entries.forEach { option ->
+                FilterChip(
+                    selected = sort == option,
+                    onClick = { onSort(option) },
+                    label = { Text(stringResource(option.labelRes)) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeading(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 4.dp),
+    )
+}
+
 @Composable
 private fun Overall(state: PlaysUiState) {
     ComicPanel(Modifier.fillMaxWidth().padding(12.dp)) {
@@ -239,6 +328,177 @@ private fun Overall(state: PlaysUiState) {
         }
     }
 }
+
+/**
+ * Which aspects actually get played, in the colours the game prints them.
+ *
+ * The win-rate table answers "does Justice win for me"; this answers "do I
+ * ever pick anything but Justice", which the table cannot show because it
+ * sorts the question away. Ordered by plays because a chart is about size.
+ */
+@Composable
+private fun AspectChart(rows: List<WinRateRow>) {
+    val ordered = remember(rows) { rows.sortedByDescending { it.played } }
+    val most = ordered.firstOrNull()?.played ?: 0
+    if (most <= 0) {
+        return
+    }
+
+    ComicPanel(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(
+                text = stringResource(R.string.plays_aspects_chart),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            ordered.forEach { row ->
+                AspectBar(row = row, most = most)
+            }
+        }
+    }
+}
+
+@Composable
+private fun AspectBar(row: WinRateRow, most: Int) {
+    val label = aspectLabel(row.key)
+    val colour = aspectColor(row.key) ?: MaterialTheme.colorScheme.primary
+    val share = if (most <= 0) 0f else row.played.toFloat() / most.toFloat()
+
+    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(label, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                // Plays and win rate together: the longest bar being the one
+                // you win least with is the interesting case, and it is
+                // invisible if the chart only counts.
+                text = "${row.played}  ·  ${percent(row.won, row.played)}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(BAR_HEIGHT)
+                .clip(RoundedCornerShape(percent = 50))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth(share)
+                    .height(BAR_HEIGHT)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(colour),
+            )
+        }
+    }
+}
+
+/**
+ * A headed box holding one table, shut until tapped.
+ *
+ * The whole header is the target rather than the chevron: a 48dp strip across
+ * the screen is what a thumb actually hits, and a chevron alone is a dot.
+ */
+@Composable
+private fun StatSection(
+    table: StatTable,
+    rows: List<WinRateRow>,
+    sort: StatSort,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+) {
+    val title = stringResource(table.titleRes)
+    val turn by animateFloatAsState(if (expanded) 180f else 0f, label = "chevron")
+
+    ComicPanel(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
+        Column {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary)
+                    .clickable(
+                        onClick = onToggle,
+                        onClickLabel = stringResource(
+                            if (expanded) R.string.plays_section_hide else R.string.plays_section_show,
+                        ),
+                    )
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = pluralStringResource(
+                        R.plurals.plays_section_entries,
+                        rows.size,
+                        rows.size,
+                    ),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+                Spacer(Modifier.width(8.dp))
+                Icon(
+                    Icons.Filled.KeyboardArrowDown,
+                    // The row already announces what tapping it does, so the
+                    // chevron would only repeat it.
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.rotate(turn),
+                )
+            }
+
+            AnimatedVisibility(expanded) {
+                // A Column rather than nested lazy items: a table this size is
+                // cheap to measure, and nesting a scroller inside the page
+                // scroller is how a list stops scrolling with the thumb.
+                Column {
+                    sortedRows(rows, sort).forEach { (label, row) ->
+                        WinRateItem(label = label, row = row)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * The rows, labelled in the reader's language and put in the chosen order.
+ *
+ * Alphabetical is the default because a table you are looking something up in
+ * has to be one you can look something up in. The other two orders answer
+ * different questions and are a tap away.
+ */
+@Composable
+private fun sortedRows(rows: List<WinRateRow>, sort: StatSort): List<Pair<String, WinRateRow>> {
+    // A for loop, not a map: readableKey resolves string resources, so it can
+    // only be called from a composable body.
+    val labelled = ArrayList<Pair<String, WinRateRow>>(rows.size)
+    for (row in rows) {
+        labelled += readableKey(row.key) to row
+    }
+    return when (sort) {
+        StatSort.ALPHABETICAL -> labelled.sortedBy { it.first.lowercase() }
+        StatSort.MOST_PLAYED -> labelled.sortedWith(
+            compareByDescending<Pair<String, WinRateRow>> { it.second.played }
+                .thenBy { it.first.lowercase() },
+        )
+        // Ties broken by plays, so thirty games at 60% sit above one game at
+        // 60% rather than landing wherever the query happened to put them.
+        StatSort.BEST_RATE -> labelled.sortedWith(
+            compareByDescending<Pair<String, WinRateRow>> { rate(it.second) }
+                .thenByDescending { it.second.played },
+        )
+    }
+}
+
+private fun rate(row: WinRateRow): Double =
+    if (row.played == 0) 0.0 else row.won.toDouble() / row.played
 
 /**
  * How much of a bar is won.
@@ -291,35 +551,8 @@ private fun RowScope.Stat(value: String, label: String) {
     }
 }
 
-private fun androidx.compose.foundation.lazy.LazyListScope.winRateSection(
-    title: String,
-    rows: List<WinRateRow>,
-) {
-    if (rows.isEmpty()) {
-        return
-    }
-    item {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
-        )
-    }
-    // Most played first. Sorted by rate, a hero won with once sat at the top on
-    // 100% above one played thirty times, which is the opposite of what the
-    // list is for.
-    val ordered = rows.sortedWith(
-        compareByDescending<WinRateRow> { it.played }
-            .thenByDescending { if (it.played == 0) 0.0 else it.won.toDouble() / it.played },
-    )
-    items(ordered, key = { "$title-${it.key}" }) { row ->
-        WinRateItem(row)
-    }
-}
-
 /**
- * One line of the list: who, how well, and how much.
+ * One line of a table: who, how well, and how much.
  *
  * The three facts used to be one run of right-aligned text, "67%  (8/12)  ·  1h
  * 11m", which is four separators competing with the name for the same line. The
@@ -327,15 +560,18 @@ private fun androidx.compose.foundation.lazy.LazyListScope.winRateSection(
  * the hours stay because "time spent with this hero" is a thing people want.
  */
 @Composable
-private fun WinRateItem(row: WinRateRow) {
+private fun WinRateItem(label: String, row: WinRateRow) {
     ListItem(
+        // The box behind it is already a surface; a second one on every row
+        // draws a border around each line.
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         headlineContent = {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(readableKey(row.key))
+                Text(label)
                 Text(
                     text = percent(row.won, row.played),
                     style = MaterialTheme.typography.labelLarge,
@@ -345,7 +581,11 @@ private fun WinRateItem(row: WinRateRow) {
         },
         supportingContent = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                WinBar(won = row.won, played = row.played)
+                // Decorative here: the line below states the same counts in
+                // words, and a screen reader announcing a bar twice is noise.
+                Box(Modifier.clearAndSetSemantics { }) {
+                    WinBar(won = row.won, played = row.played)
+                }
                 Text(
                     text = pluralStringResource(
                         R.plurals.plays_row_detail,
@@ -452,23 +692,56 @@ private fun duration(millis: Long): String {
     }
 }
 
+/** The separator PlayStats uses to pair a hero with an aspect. */
+private const val PAIR = " · "
+
 /**
  * Turns a grouping key into something a person reads.
  *
  * Some keys are machine tokens: the solo and group split comes straight out of
- * a CASE expression, and difficulty is stored as the enum name so that two
- * screens agree on it. Both were being shown raw — "group", "standard_i" —
- * and neither is translated.
+ * a CASE expression, difficulty is stored as the enum name so that two screens
+ * agree on it, and an aspect travels as its MarvelCDB identifier, which is
+ * English. All three were being shown raw — "group", "standard_i",
+ * "aggression" — and none is translated.
+ *
+ * The hero-with-aspect table pairs two of those with a separator, so each half
+ * is resolved on its own.
  */
 @Composable
-private fun readableKey(key: String): String = when (key) {
-    "solo" -> stringResource(R.string.plays_players_solo)
-    "group" -> stringResource(R.string.plays_players_group)
-    "standard_i" -> stringResource(R.string.difficulty_standard_i)
-    "standard_ii" -> stringResource(R.string.difficulty_standard_ii)
-    "expert_i" -> stringResource(R.string.difficulty_expert_i)
-    "expert_ii" -> stringResource(R.string.difficulty_expert_ii)
-    // A campaign records its own difficulty word, and heroes, aspects and
-    // scenarios are already names. Those pass through as they are.
-    else -> key.replaceFirstChar(Char::uppercase)
+private fun readableKey(key: String): String {
+    if (PAIR in key) {
+        // A for loop, because resolving each half calls a composable and
+        // joinToString's lambda is not one.
+        val parts = ArrayList<String>(2)
+        for (part in key.split(PAIR)) {
+            parts += readableKey(part)
+        }
+        return parts.joinToString(PAIR)
+    }
+    return when (key) {
+        "solo" -> stringResource(R.string.plays_players_solo)
+        "group" -> stringResource(R.string.plays_players_group)
+        "standard_i" -> stringResource(R.string.difficulty_standard_i)
+        "standard_ii" -> stringResource(R.string.difficulty_standard_ii)
+        "expert_i" -> stringResource(R.string.difficulty_expert_i)
+        "expert_ii" -> stringResource(R.string.difficulty_expert_ii)
+        in ASPECT_CODES -> aspectLabel(key)
+        // A campaign records its own difficulty word, and heroes and scenarios
+        // are already names. Those pass through as they are.
+        else -> key.replaceFirstChar(Char::uppercase)
+    }
 }
+
+/**
+ * The aspect identifiers, so a hero named after one is not renamed.
+ *
+ * Matching on the set rather than asking aspectLabel to decide keeps the
+ * fallback where it belongs: anything not listed here is somebody's name.
+ */
+private val ASPECT_CODES = setOf(
+    "aggression",
+    "justice",
+    "leadership",
+    "protection",
+    "pool",
+)

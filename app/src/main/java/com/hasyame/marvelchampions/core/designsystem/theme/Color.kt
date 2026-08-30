@@ -93,6 +93,9 @@ val AspectAggression = Color(0xFFC0392B)
 val AspectJustice = Color(0xFFD4A017)
 val AspectLeadership = Color(0xFF2E6DA4)
 val AspectProtection = Color(0xFF3E8E5A)
+// Deadpool's own aspect, and the only one the game prints in his own colours
+// rather than one of the four. Kept clear of Aggression's red.
+val AspectPool = Color(0xFF8E44AD)
 val AspectBasic = Color(0xFF7A7A7A)
 
 // --- card types -------------------------------------------------------------

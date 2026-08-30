@@ -10,6 +10,7 @@ import com.hasyame.marvelchampions.core.designsystem.theme.AspectAggression
 import com.hasyame.marvelchampions.core.designsystem.theme.AspectBasic
 import com.hasyame.marvelchampions.core.designsystem.theme.AspectJustice
 import com.hasyame.marvelchampions.core.designsystem.theme.AspectLeadership
+import com.hasyame.marvelchampions.core.designsystem.theme.AspectPool
 import com.hasyame.marvelchampions.core.designsystem.theme.AspectProtection
 
 /**
@@ -44,6 +45,7 @@ fun aspectColor(factionCode: String?): Color? = when (factionCode?.lowercase()) 
     "justice" -> AspectJustice
     "leadership" -> AspectLeadership
     "protection" -> AspectProtection
+    "pool" -> AspectPool
     "basic" -> AspectBasic
     // Hero and encounter cards have no aspect, so they get no stripe rather
     // than a misleading one.

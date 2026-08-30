@@ -563,6 +563,18 @@
     <string name="decks_share_no_app">Aucune application de cet appareil ne peut partager du texte.</string>
     <string name="plays_by_players">Solo ou en groupe</string>
     <string name="plays_by_hero_aspect">Héros et affinité ensemble</string>
+    <string name="plays_aspects_chart">Les affinités que vous jouez</string>
+    <string name="plays_sort_label">Trier les tableaux par</string>
+    <string name="plays_sort_alpha">A–Z</string>
+    <string name="plays_sort_played">Les plus jouées</string>
+    <string name="plays_sort_rate">Meilleur taux</string>
+    <string name="plays_section_show">Afficher ce tableau</string>
+    <string name="plays_section_hide">Masquer ce tableau</string>
+    <plurals name="plays_section_entries">
+        <item quantity="one">%1$d entrée</item>
+        <item quantity="many">%1$d d\'entrées</item>
+        <item quantity="other">%1$d entrées</item>
+    </plurals>
     <string name="settings_images">Images hors ligne</string>
     <string name="settings_images_summary">Le texte des cartes fonctionne déjà hors ligne ; les images sont téléchargées à la première ouverture d\'une carte. Téléchargez-les maintenant et toutes les cartes de votre collection s\'afficheront sans réseau. Des centaines de fichiers : préférez le wi-fi.</string>
     <string name="settings_images_download">Télécharger les images de mes extensions</string>

@@ -541,6 +541,17 @@
     <string name="decks_share_no_app">No app on this device can share text.</string>
     <string name="plays_by_players">Solo or group</string>
     <string name="plays_by_hero_aspect">Hero and aspect together</string>
+    <string name="plays_aspects_chart">Aspects you play</string>
+    <string name="plays_sort_label">Sort tables by</string>
+    <string name="plays_sort_alpha">A–Z</string>
+    <string name="plays_sort_played">Most played</string>
+    <string name="plays_sort_rate">Best win rate</string>
+    <string name="plays_section_show">Show this table</string>
+    <string name="plays_section_hide">Hide this table</string>
+    <plurals name="plays_section_entries">
+        <item quantity="one">%1$d entry</item>
+        <item quantity="other">%1$d entries</item>
+    </plurals>
     <string name="settings_images">Card images offline</string>
     <string name="settings_images_summary">Card text already works offline; pictures are fetched the first time you open a card. Download them now and every card in your collection will show at a table with no signal. Hundreds of files — best on wi-fi.</string>
     <string name="settings_images_download">Download images for my packs</string>
