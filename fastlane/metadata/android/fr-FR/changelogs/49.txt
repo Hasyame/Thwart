@@ -1,0 +1,7 @@
+Perdre un scénario proposait un bouton Continuer dans toutes les campagnes,
+alors que seule Fear No Evil possède cette règle : un contrat raté y quitte la
+campagne et le reste se poursuit. Ailleurs, le bouton ne réglait rien. Il
+n'apparaît désormais que dans la campagne concernée, laissant rejouer, faire
+une pause, et abandonner la campagne.
+
+Côté technique : Compose, Gradle et les autres bibliothèques sont à jour.

@@ -1,0 +1,7 @@
+Losing a scenario offered a Continue button in every campaign, but only Fear
+No Evil has that rule: there, a failed job leaves the campaign and the rest
+goes on. Everywhere else the button settled nothing. It now appears only in
+the campaign that has the rule, leaving replay, take a break, and give up the
+campaign.
+
+Under the hood: Compose, Gradle and the other libraries are up to date.
