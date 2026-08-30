@@ -435,9 +435,6 @@
     <string name="plays_by_aspect">Par affinité</string>
     <string name="plays_by_scenario">Par scénario</string>
     <string name="plays_by_difficulty">Par difficulté</string>
-    <string name="plays_stat_played">Jouées</string>
-    <string name="plays_stat_won">Gagnées</string>
-    <string name="plays_stat_rate">Taux de victoire</string>
     <string name="long_break_title">Ranger la partie</string>
     <string name="long_break_intro">Notez ce dont vous ne vous souviendrez plus dans une semaine. Tout est facultatif.</string>
     <string name="long_break_photo">Une photo de la table</string>
@@ -469,6 +466,16 @@
     <string name="plays_send_yes">Envoyer</string>
     <string name="plays_send_no">Pas celle-ci</string>
     <string name="plays_send_short">Envoyer</string>
+    <plurals name="plays_summary_record">
+        <item quantity="one">Gagné %1$d sur %2$d partie jouée</item>
+        <item quantity="many">Gagné %1$d sur %2$d de parties jouées</item>
+        <item quantity="other">Gagné %1$d sur %2$d parties jouées</item>
+    </plurals>
+    <plurals name="plays_row_detail">
+        <item quantity="one">Gagné %1$d sur %2$d partie · %3$s de jeu</item>
+        <item quantity="many">Gagné %1$d sur %2$d de parties · %3$s de jeu</item>
+        <item quantity="other">Gagné %1$d sur %2$d parties · %3$s de jeu</item>
+    </plurals>
     <string name="plays_stat_total_time">Temps total</string>
     <string name="plays_stat_average">Moyenne</string>
     <string name="plays_stat_longest">Plus longue</string>

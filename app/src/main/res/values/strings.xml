@@ -415,9 +415,6 @@
     <string name="plays_by_aspect">By aspect</string>
     <string name="plays_by_scenario">By scenario</string>
     <string name="plays_by_difficulty">By difficulty</string>
-    <string name="plays_stat_played">Played</string>
-    <string name="plays_stat_won">Won</string>
-    <string name="plays_stat_rate">Win rate</string>
     <string name="long_break_title">Putting the game away</string>
     <string name="long_break_intro">Write down what is hard to remember in a week. Everything here is optional.</string>
     <string name="long_break_photo">A photo of the table</string>
@@ -449,6 +446,14 @@
     <string name="plays_send_yes">Send</string>
     <string name="plays_send_no">Not this one</string>
     <string name="plays_send_short">Send</string>
+    <plurals name="plays_summary_record">
+        <item quantity="one">Won %1$d of %2$d game played</item>
+        <item quantity="other">Won %1$d of %2$d games played</item>
+    </plurals>
+    <plurals name="plays_row_detail">
+        <item quantity="one">Won %1$d of %2$d game · %3$s played</item>
+        <item quantity="other">Won %1$d of %2$d games · %3$s played</item>
+    </plurals>
     <string name="plays_stat_total_time">Total time</string>
     <string name="plays_stat_average">Average</string>
     <string name="plays_stat_longest">Longest</string>

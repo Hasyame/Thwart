@@ -1,11 +1,14 @@
 package com.hasyame.marvelchampions.ui.plays
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,8 +33,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
 import com.hasyame.marvelchampions.data.photos.PhotoStore
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -191,16 +199,30 @@ private fun Overall(state: PlaysUiState) {
     ComicPanel(Modifier.fillMaxWidth().padding(12.dp)) {
         Column(
             Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Stat(state.totalPlayed.toString(), stringResource(R.string.plays_stat_played))
-                Stat(state.totalWon.toString(), stringResource(R.string.plays_stat_won))
-                Stat(
-                    value = percent(state.totalWon, state.totalPlayed),
-                    label = stringResource(R.string.plays_stat_rate),
-                )
-            }
+            // One figure, large, because it is the one everybody opens this
+            // page for. Nine numbers of equal weight meant reading all nine to
+            // find it.
+            Text(
+                text = percent(state.totalWon, state.totalPlayed),
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = pluralStringResource(
+                    R.plurals.plays_summary_record,
+                    state.totalPlayed,
+                    state.totalWon,
+                    state.totalPlayed,
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            WinBar(won = state.totalWon, played = state.totalPlayed)
+
+            // Everything else, deliberately smaller. These are things worth
+            // knowing rather than things worth leading with.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Stat(duration(state.totalMillis), stringResource(R.string.plays_stat_total_time))
                 Stat(duration(state.averageMillis), stringResource(R.string.plays_stat_average))
@@ -218,12 +240,49 @@ private fun Overall(state: PlaysUiState) {
     }
 }
 
+/**
+ * How much of a bar is won.
+ *
+ * A proportion is what the eye reads without counting, and it is the honest
+ * shape for this: one win from one game fills the bar, and the count beside it
+ * says why that means little. A percentage on its own says 100% and stops.
+ */
+@Composable
+private fun WinBar(
+    won: Int,
+    played: Int,
+    modifier: Modifier = Modifier,
+) {
+    val fraction = if (played <= 0) 0f else won.toFloat() / played.toFloat()
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(BAR_HEIGHT)
+            .clip(RoundedCornerShape(percent = 50))
+            .background(MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        if (fraction > 0f) {
+            Box(
+                Modifier
+                    .fillMaxWidth(fraction)
+                    .height(BAR_HEIGHT)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(MaterialTheme.colorScheme.primary),
+            )
+        }
+    }
+}
+
+private val BAR_HEIGHT = 10.dp
+
 @Composable
 private fun RowScope.Stat(value: String, label: String) {
     // Equal share of the row, so the three columns line up between rows rather
     // than each being as wide as its own number.
     Column(Modifier.weight(1f)) {
-        Text(value, style = MaterialTheme.typography.headlineSmall)
+        // titleMedium rather than headlineSmall: these sit under the win
+        // rate and should not compete with it.
+        Text(value, style = MaterialTheme.typography.titleMedium)
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
@@ -247,20 +306,60 @@ private fun androidx.compose.foundation.lazy.LazyListScope.winRateSection(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
         )
     }
-    items(rows, key = { "$title-${it.key}" }) { row ->
-        ListItem(
-            headlineContent = { Text(readableKey(row.key)) },
-            trailingContent = {
-                Text(
-                    // Both the rate and the raw counts: a single win from one
-                    // game is 100%, and the counts are what stop that reading
-                    // as a fact about the hero.
-                    text = "${percent(row.won, row.played)}  (${row.won}/${row.played})  ·  ${duration(row.totalMillis)}",
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            },
-        )
+    // Most played first. Sorted by rate, a hero won with once sat at the top on
+    // 100% above one played thirty times, which is the opposite of what the
+    // list is for.
+    val ordered = rows.sortedWith(
+        compareByDescending<WinRateRow> { it.played }
+            .thenByDescending { if (it.played == 0) 0.0 else it.won.toDouble() / it.played },
+    )
+    items(ordered, key = { "$title-${it.key}" }) { row ->
+        WinRateItem(row)
     }
+}
+
+/**
+ * One line of the list: who, how well, and how much.
+ *
+ * The three facts used to be one run of right-aligned text, "67%  (8/12)  ·  1h
+ * 11m", which is four separators competing with the name for the same line. The
+ * bar carries the rate, the counts sit under the name where there is room, and
+ * the hours stay because "time spent with this hero" is a thing people want.
+ */
+@Composable
+private fun WinRateItem(row: WinRateRow) {
+    ListItem(
+        headlineContent = {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(readableKey(row.key))
+                Text(
+                    text = percent(row.won, row.played),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+        supportingContent = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                WinBar(won = row.won, played = row.played)
+                Text(
+                    text = pluralStringResource(
+                        R.plurals.plays_row_detail,
+                        row.played,
+                        row.won,
+                        row.played,
+                        duration(row.totalMillis),
+                    ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+    )
 }
 
 @Composable
