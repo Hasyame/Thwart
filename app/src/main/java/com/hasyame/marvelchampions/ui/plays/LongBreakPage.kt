@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.data.db.entity.PausedPhase
+import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.db.entity.VillainStep
 import com.hasyame.marvelchampions.ui.photos.TablePhotoButton
 import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
@@ -46,17 +47,23 @@ import com.hasyame.marvelchampions.ui.photos.rememberTablePhotoCapture
  */
 @Composable
 fun LongBreakPage(
-    state: GameSessionUiState,
-    viewModel: GameSessionViewModel,
-    onSaved: () -> Unit,
+    draft: LongBreakDraft,
+    /** Hero code to the name to show, in seat order. */
+    heroes: List<Pair<String, String>>,
+    photos: List<String>,
+    photoStore: PhotoStore,
+    onDraft: (LongBreakDraft) -> Unit,
+    onPhoto: (String) -> Unit,
+    onRemovePhoto: (String) -> Unit,
+    onCancel: () -> Unit,
+    onSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val draft = state.longBreak ?: return
     val scope = rememberCoroutineScope()
     val takePhoto = rememberTablePhotoCapture(
-        photoStore = viewModel.photoStore,
+        photoStore = photoStore,
         scope = scope,
-        onTaken = viewModel::addPhoto,
+        onTaken = onPhoto,
     )
 
     Column(
@@ -81,15 +88,15 @@ fun LongBreakPage(
         // of fields can, and the table is still standing while it is taken.
         Section(stringResource(R.string.long_break_photo)) {
             TablePhotoButton(
-                taken = state.photos.size,
+                taken = photos.size,
                 onTake = takePhoto,
                 modifier = Modifier.fillMaxWidth(),
             )
             TablePhotoStrip(
-                names = state.photos,
-                photoStore = viewModel.photoStore,
+                names = photos,
+                photoStore = photoStore,
                 onOpen = { },
-                onDelete = viewModel::removePhoto,
+                onDelete = onRemovePhoto,
             )
         }
 
@@ -98,7 +105,7 @@ fun LongBreakPage(
                 PausedPhase.entries.forEach { phase ->
                     FilterChip(
                         selected = draft.phase == phase,
-                        onClick = { viewModel.updateLongBreak(draft.copy(phase = phase)) },
+                        onClick = { onDraft(draft.copy(phase = phase)) },
                         label = { Text(stringResource(phase.label)) },
                     )
                 }
@@ -111,7 +118,7 @@ fun LongBreakPage(
                         FilterChip(
                             selected = draft.villainStep == step,
                             onClick = {
-                                viewModel.updateLongBreak(draft.copy(villainStep = step))
+                                onDraft(draft.copy(villainStep = step))
                             },
                             label = { Text(stringResource(step.label)) },
                         )
@@ -121,8 +128,7 @@ fun LongBreakPage(
         }
 
         Section(stringResource(R.string.long_break_heroes)) {
-            state.heroes.forEach { hero ->
-                val name = state.names.heroes[hero.heroCode] ?: hero.heroCode
+            heroes.forEach { (heroCode, name) ->
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -130,12 +136,12 @@ fun LongBreakPage(
                 ) {
                     Text(text = name, modifier = Modifier.weight(1f))
                     OutlinedTextField(
-                        value = draft.heroLives[hero.heroCode].orEmpty(),
+                        value = draft.heroLives[heroCode].orEmpty(),
                         onValueChange = { typed ->
-                            viewModel.updateLongBreak(
+                            onDraft(
                                 draft.copy(
                                     heroLives = draft.heroLives +
-                                        (hero.heroCode to typed.filter(Char::isDigit)),
+                                        (heroCode to typed.filter(Char::isDigit)),
                                 ),
                             )
                         },
@@ -152,7 +158,7 @@ fun LongBreakPage(
             OutlinedTextField(
                 value = draft.villainLife,
                 onValueChange = {
-                    viewModel.updateLongBreak(
+                    onDraft(
                         draft.copy(villainLife = it.filter(Char::isDigit)),
                     )
                 },
@@ -169,7 +175,7 @@ fun LongBreakPage(
                 (1..3).forEach { stage ->
                     FilterChip(
                         selected = draft.villainStage == stage,
-                        onClick = { viewModel.updateLongBreak(draft.copy(villainStage = stage)) },
+                        onClick = { onDraft(draft.copy(villainStage = stage)) },
                         label = { Text(stageLabel(stage)) },
                     )
                 }
@@ -177,12 +183,12 @@ fun LongBreakPage(
         }
 
         Button(
-            onClick = { viewModel.saveLongBreak(onSaved) },
+            onClick = onSave,
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.long_break_save)) }
 
         OutlinedButton(
-            onClick = viewModel::cancelLongBreak,
+            onClick = onCancel,
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.long_break_back)) }
     }

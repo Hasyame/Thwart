@@ -50,6 +50,18 @@ data class PausedGameEntity(
     /** Photographs of the table, by file name, comma separated. */
     @ColumnInfo(defaultValue = "")
     val photos: String = "",
+
+    /**
+     * The campaign run this game belongs to, or empty for a game of its own.
+     *
+     * A campaign scenario is a game like any other and gets put away for the
+     * same reasons, so it is saved here rather than in a second place: one list
+     * of games waiting to be picked up, whatever they were started from.
+     * Resuming reads this to decide whether to reopen the campaign or a plain
+     * session, since a campaign scenario has a log to go back to.
+     */
+    @ColumnInfo(defaultValue = "")
+    val campaignRunId: String = "",
 )
 
 /** The two halves of a round a game can be stopped in. */

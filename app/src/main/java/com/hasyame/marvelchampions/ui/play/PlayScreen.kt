@@ -89,7 +89,15 @@ fun PlayScreen(
                 onClose = { showPaused = false },
                 onResume = {
                     showPaused = false
-                    onResumePausedGame(game.id)
+                    // A campaign scenario has a log to go back to, so it
+                    // reopens the run rather than a standalone session. The
+                    // notes were the point of stopping; the run is where the
+                    // rest of the campaign lives.
+                    if (game.campaignRunId.isBlank()) {
+                        onResumePausedGame(game.id)
+                    } else {
+                        onResumeCampaign(game.campaignRunId)
+                    }
                 },
             )
         }

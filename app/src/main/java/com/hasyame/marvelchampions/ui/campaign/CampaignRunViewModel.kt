@@ -2,7 +2,13 @@ package com.hasyame.marvelchampions.ui.campaign
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
+import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
+import com.hasyame.marvelchampions.data.db.entity.PausedPhase
+import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
+import com.hasyame.marvelchampions.ui.plays.LongBreakDraft
+import java.util.UUID
 import com.hasyame.marvelchampions.data.repository.CampaignRun
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.campaign.engine.AnswerSet
@@ -83,6 +89,14 @@ data class ScenarioOutcomeSummary(
 )
 
 data class CampaignRunUiState(
+    /**
+     * What is being written down while the scenario is put away.
+     *
+     * Null except between pressing the button and saving, exactly as in a
+     * standalone game: a campaign scenario is a game like any other and
+     * gets cleared off a table for the same reasons.
+     */
+    val longBreak: LongBreakDraft? = null,
     val run: CampaignRun? = null,
     val page: RunPage = RunPage.BRIEFING,
     val elapsedMillis: Long = 0,
@@ -109,6 +123,8 @@ class CampaignRunViewModel @Inject constructor(
     private val preferences: AppPreferences,
     private val encounterRepository: EncounterRepository,
     private val cardDao: CardDao,
+    private val pausedGameDao: PausedGameDao,
+    val photoStore: PhotoStore,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(CampaignRunUiState())
@@ -498,6 +514,76 @@ class CampaignRunViewModel @Inject constructor(
             ?.takeIf { it.isNotBlank() }
             ?: return null
         return resolveDraws(text, run, scenarioId)
+    }
+
+    /**
+     * Starts writing the scenario down so the table can be cleared.
+     *
+     * The clock stops with it. A game put away with the clock still running
+     * records the washing up as play time.
+     */
+    fun beginLongBreak() {
+        val run = state.value.run ?: return
+        state.value = state.value.copy(
+            longBreak = LongBreakDraft(
+                heroLives = run.state.heroes.associate { it.heroCardCode to "" },
+            ),
+        )
+        pauseTimer()
+    }
+
+    fun updateLongBreak(draft: LongBreakDraft) {
+        state.value = state.value.copy(longBreak = draft)
+    }
+
+    fun cancelLongBreak() {
+        state.value = state.value.copy(longBreak = null)
+    }
+
+    /**
+     * Files the scenario away and leaves.
+     *
+     * Saved beside every other paused game rather than somewhere of its own, so
+     * a player looking for the game they put away has one place to look. The
+     * run id is what tells the Play screen to reopen the campaign rather than a
+     * standalone session, since a campaign scenario has a log to go back to.
+     */
+    fun saveLongBreak(onSaved: () -> Unit) {
+        val current = state.value
+        val draft = current.longBreak ?: return
+        val run = current.run ?: return
+        val scenarioId = run.state.currentScenarioId ?: return
+        val scenario = run.template.scenarios.firstOrNull { it.id == scenarioId }
+
+        viewModelScope.launch {
+            pausedGameDao.upsert(
+                PausedGameEntity(
+                    id = UUID.randomUUID().toString(),
+                    savedAt = System.currentTimeMillis(),
+                    scenarioCode = scenarioId,
+                    scenarioName = scenario?.name?.resolve(run.localeCode) ?: scenarioId,
+                    difficulty = run.state.difficulty.orEmpty(),
+                    heroes = run.state.heroes.joinToString(",") {
+                        "${it.heroCardCode}|${it.name}"
+                    },
+                    elapsedMillis = run.timer.elapsedAt(System.currentTimeMillis()),
+                    phase = draft.phase.name,
+                    villainStep = if (draft.phase == PausedPhase.VILLAIN) {
+                        draft.villainStep.name
+                    } else {
+                        ""
+                    },
+                    heroLives = draft.heroLives.entries.joinToString(",") { (code, life) ->
+                        "$code|${life.ifBlank { "?" }}"
+                    },
+                    villainLife = draft.villainLife.toIntOrNull() ?: 0,
+                    villainStage = draft.villainStage,
+                    campaignRunId = run.entity.id,
+                ),
+            )
+            state.value = state.value.copy(longBreak = null)
+            onSaved()
+        }
     }
 
     /**

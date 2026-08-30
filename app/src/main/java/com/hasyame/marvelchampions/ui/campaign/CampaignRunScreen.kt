@@ -58,6 +58,7 @@ import com.hasyame.marvelchampions.domain.play.EncounterSetup
 import com.hasyame.marvelchampions.ui.plays.EncounterPanel
 import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.ui.plays.LongBreakPage
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicBurst
@@ -152,6 +153,21 @@ fun CampaignRunScreen(
                         onKeepCard = viewModel::keepDrawnCard,
                     )
 
+                    // Written down rather than navigated to, exactly as a
+                    // standalone game does it: the scenario has not moved on,
+                    // it is being recorded, and cancelling puts the table back.
+                    RunPage.PLAYING if state.longBreak != null -> LongBreakPage(
+                        draft = requireNotNull(state.longBreak),
+                        heroes = run.state.heroes.map { it.heroCardCode to it.name },
+                        photos = emptyList(),
+                        photoStore = viewModel.photoStore,
+                        onDraft = viewModel::updateLongBreak,
+                        onPhoto = { },
+                        onRemovePhoto = { },
+                        onCancel = viewModel::cancelLongBreak,
+                        onSave = { viewModel.saveLongBreak(onBack) },
+                    )
+
                     RunPage.PLAYING -> PlayingPage(
                         isSubmitting = state.isSubmitting,
                         run = run,
@@ -161,6 +177,7 @@ fun CampaignRunScreen(
                         onDefeat = viewModel::declareDefeat,
                         onPause = viewModel::pauseTimer,
                         onResume = viewModel::resumeTimer,
+                        onLongBreak = viewModel::beginLongBreak,
                         trackEncounter = state.trackEncounter,
                         encounter = state.encounter,
                         keepAwake = state.keepAwake,
@@ -641,6 +658,7 @@ private fun PlayingPage(
     onDefeat: () -> Unit,
     onPause: () -> Unit,
     onResume: () -> Unit,
+    onLongBreak: () -> Unit,
     trackEncounter: Boolean = false,
     encounter: Encounter = Encounter.startOf(EncounterSetup()),
     keepAwake: Boolean = true,
@@ -677,6 +695,15 @@ private fun PlayingPage(
                 ),
             )
         }
+
+        // The other kind of stopping: not the clock, the table. A campaign
+        // scenario gets cleared off a table for the same reasons as any other
+        // game, and had no way to say so.
+        OutlinedButton(
+            onClick = onLongBreak,
+            enabled = !isSubmitting,
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.session_long_break)) }
 
         if (trackEncounter) {
             if (keepAwake) {

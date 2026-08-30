@@ -166,9 +166,19 @@ fun GameSessionScreen(
             // has not moved on, it is being written down, and cancelling puts
             // the table straight back.
             state.longBreak != null -> LongBreakPage(
-                state = state,
-                viewModel = viewModel,
-                onSaved = onBack,
+                // Read into a local first: `state` is a delegated property, so
+                // the compiler cannot know the field is still non-null here.
+                draft = requireNotNull(state.longBreak),
+                heroes = state.heroes.map {
+                    it.heroCode to (state.names.heroes[it.heroCode] ?: it.heroCode)
+                },
+                photos = state.photos,
+                photoStore = viewModel.photoStore,
+                onDraft = viewModel::updateLongBreak,
+                onPhoto = viewModel::addPhoto,
+                onRemovePhoto = viewModel::removePhoto,
+                onCancel = viewModel::cancelLongBreak,
+                onSave = { viewModel.saveLongBreak(onBack) },
                 modifier = Modifier.padding(padding),
             )
 
