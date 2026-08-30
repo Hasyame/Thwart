@@ -41,6 +41,15 @@ data class Backup(
     val plays: List<PlayEntity> = emptyList(),
     val randomizerHistory: List<RandomizerHistoryEntity> = emptyList(),
     val favouriteCards: List<FavouriteCardEntity> = emptyList(),
+    /**
+     * Names of the table photographs travelling with this backup.
+     *
+     * Empty unless the player ticked the box, and empty in every backup written
+     * before that box existed. The files themselves are beside this document in
+     * the archive; this list is what says they should be there, so a restore
+     * can report what it found and what it did not.
+     */
+    val photos: List<String> = emptyList(),
 ) {
     /** What a restore is about to bring in, for the confirmation. */
     fun summary(): BackupSummary = BackupSummary(
@@ -49,6 +58,7 @@ data class Backup(
         decks = decks.size,
         campaigns = campaignRuns.size,
         plays = plays.size,
+        photos = photos.size,
     )
 
     companion object {
@@ -63,6 +73,7 @@ data class BackupSummary(
     val decks: Int,
     val campaigns: Int,
     val plays: Int,
+    val photos: Int = 0,
 )
 
 /** What came of reading or writing a backup, in terms the screen can show. */

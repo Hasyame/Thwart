@@ -129,9 +129,18 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { bggAccount.setMode(mode) }
     }
 
-    val suggestedBackupName: String get() = backupRepository.suggestedFileName()
+    fun suggestedBackupName(withPhotos: Boolean): String =
+        backupRepository.suggestedFileName(withPhotos)
 
     private val pendingBackup = MutableStateFlow<Backup?>(null)
+
+    /**
+     * The file the pending restore came from, kept because the photographs
+     * are still in it. Reading them at confirmation time rather than at
+     * preview time keeps a restore that is never confirmed from touching
+     * anything at all.
+     */
+    private var pendingSource: android.net.Uri? = null
 
     /** What a chosen file contains, shown before anything is replaced. */
     val pendingRestore: StateFlow<BackupSummary?> = pendingBackup
@@ -141,9 +150,10 @@ class SettingsViewModel @Inject constructor(
     private val backupMessages = MutableStateFlow<String?>(null)
     val backupMessage: StateFlow<String?> = backupMessages.asStateFlow()
 
-    fun exportBackup(destination: android.net.Uri) {
+    fun exportBackup(destination: android.net.Uri, includePhotos: Boolean = false) {
         viewModelScope.launch {
-            backupMessages.value = when (val result = backupRepository.export(destination)) {
+            val result = backupRepository.export(destination, includePhotos)
+            backupMessages.value = when (result) {
                 is BackupResult.Exported -> "Backup saved."
                 is BackupResult.Failed -> "Could not save the backup: ${result.detail}"
                 else -> null
@@ -155,8 +165,12 @@ class SettingsViewModel @Inject constructor(
     fun openBackup(source: android.net.Uri) {
         viewModelScope.launch {
             backupRepository.peek(source).fold(
-                onSuccess = { pendingBackup.value = it },
+                onSuccess = {
+                    pendingBackup.value = it
+                    pendingSource = source
+                },
                 onFailure = {
+                    pendingSource = null
                     backupMessages.value = "That file is not a backup: ${it.message}"
                 },
             )
@@ -165,9 +179,12 @@ class SettingsViewModel @Inject constructor(
 
     fun confirmRestore() {
         val backup = pendingBackup.value ?: return
+        val source = pendingSource
         pendingBackup.value = null
+        pendingSource = null
         viewModelScope.launch {
-            backupMessages.value = when (val result = backupRepository.restore(backup)) {
+            val result = backupRepository.restore(backup, source)
+            backupMessages.value = when (result) {
                 is BackupResult.Restored ->
                     "Restored ${result.summary.decks} decks, " +
                         "${result.summary.campaigns} campaigns and " +

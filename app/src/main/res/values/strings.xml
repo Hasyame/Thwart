@@ -501,6 +501,9 @@
     <string name="settings_backup_summary">This app has no account and no server, so this device holds the only copy of your collection, decks, campaigns and play history. Save a backup somewhere else.</string>
     <string name="settings_backup_export">Save a backup</string>
     <string name="settings_backup_restore">Restore</string>
+    <string name="settings_backup_photos">Include table photos</string>
+    <string name="settings_backup_photos_detail">Saves an archive instead of a document, so the pictures come back too. Larger, and they travel with the file wherever it goes.</string>
+    <string name="settings_restore_photos">Photos: %1$d</string>
     <string name="settings_restore_title">Restore this backup?</string>
     <string name="settings_restore_contents">Saved %1$s.\n\nDecks: %2$d\nCampaigns: %3$d\nGames: %4$d\nOwned packs: %5$d</string>
     <string name="settings_restore_warning">This replaces everything currently in the app. Anything not in the backup will be lost, and it cannot be undone.</string>

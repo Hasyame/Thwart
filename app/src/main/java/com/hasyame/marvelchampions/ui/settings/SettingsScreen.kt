@@ -198,7 +198,7 @@ fun SettingsScreen(
             BackupSection(
                 pendingRestore = viewModel.pendingRestore.collectAsStateWithLifecycle().value,
                 message = viewModel.backupMessage.collectAsStateWithLifecycle().value,
-                suggestedFileName = viewModel.suggestedBackupName,
+                suggestedFileName = viewModel::suggestedBackupName,
                 onExport = viewModel::exportBackup,
                 onFileChosen = viewModel::openBackup,
                 onConfirmRestore = viewModel::confirmRestore,

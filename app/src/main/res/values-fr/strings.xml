@@ -521,6 +521,9 @@
     <string name="settings_backup_summary">Cette application n\'a ni compte ni serveur : cet appareil contient donc l\'unique copie de votre collection, de vos decks, de vos campagnes et de votre historique. Enregistrez une sauvegarde ailleurs.</string>
     <string name="settings_backup_export">Enregistrer une sauvegarde</string>
     <string name="settings_backup_restore">Restaurer</string>
+    <string name="settings_backup_photos">Inclure les photos de table</string>
+    <string name="settings_backup_photos_detail">Enregistre une archive plutôt qu\'un document, afin que les photos reviennent aussi. Plus volumineux, et elles suivent le fichier partout où il va.</string>
+    <string name="settings_restore_photos">Photos : %1$d</string>
     <string name="settings_restore_title">Restaurer cette sauvegarde ?</string>
     <string name="settings_restore_contents">Enregistrée le %1$s.\n\nDecks : %2$d\nCampagnes : %3$d\nParties : %4$d\nExtensions possédées : %5$d</string>
     <string name="settings_restore_warning">Cela remplace tout ce que contient actuellement l\'application. Tout ce qui ne figure pas dans la sauvegarde sera perdu, et l\'opération est irréversible.</string>
