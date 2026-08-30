@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,64 +48,75 @@ fun FirstRunCardsScreen(
         }
     }
 
-    Column(
-        Modifier.fillMaxSize().padding(32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    // Inside a Surface, which is what supplies the background and the content
+    // colour that goes with it. Drawn without one this screen sat on the bare
+    // window and the heading inherited the default black, which on the dark
+    // theme was black on black: the title was simply not there. Every other
+    // screen in the app is inside a Scaffold and never had to think about it.
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
     ) {
-        Text(
-            text = stringResource(R.string.first_run_title),
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = stringResource(R.string.first_run_body),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
+        Column(
+            Modifier.fillMaxSize().padding(32.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.first_run_title),
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = stringResource(R.string.first_run_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
 
-        when (state) {
-            is CardSyncState.Running -> {
-                // Indeterminate on purpose: the worker reports which step it is
-                // on, not how far through it is, and a bar that fakes progress
-                // it does not have is worse than one that admits it.
-                LinearProgressIndicator(Modifier.fillMaxWidth())
-                Text(
-                    text = stringResource(R.string.first_run_working),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            when (state) {
+                is CardSyncState.Running -> {
+                    // Indeterminate on purpose: the worker reports which step it is
+                    // on, not how far through it is, and a bar that fakes progress
+                    // it does not have is worse than one that admits it.
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                    Text(
+                        text = stringResource(R.string.first_run_working),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
 
-            is CardSyncState.Failed -> {
-                // The worker's own message is an exception string: English
-                // whatever the phone is set to, and written for whoever reads
-                // the log rather than for the person holding the phone. What
-                // they can act on is the connection, so that is what it says.
-                // Settings reports the detail for anybody who wants it.
-                Text(
-                    text = stringResource(R.string.first_run_failed),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                )
-                Button(onClick = onDownload, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.first_run_retry))
+                is CardSyncState.Failed -> {
+                    // The worker's own message is an exception string: English
+                    // whatever the phone is set to, and written for whoever reads
+                    // the log rather than for the person holding the phone. What
+                    // they can act on is the connection, so that is what it says.
+                    // Settings reports the detail for anybody who wants it.
+                    Text(
+                        text = stringResource(R.string.first_run_failed),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                    )
+                    Button(onClick = onDownload, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.first_run_retry))
+                    }
+                }
+
+                else -> Button(onClick = onDownload, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.first_run_download))
                 }
             }
 
-            else -> Button(onClick = onDownload, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.first_run_download))
-            }
-        }
-
-        // Never a dead end. Somebody with no signal can still read the rules
-        // reference, and being told to come back later when they opened the app
-        // to settle an argument at the table is the worse answer.
-        if (state !is CardSyncState.Running) {
-            TextButton(onClick = onSkip) {
-                Text(stringResource(R.string.first_run_skip))
+            // Never a dead end. Somebody with no signal can still read the rules
+            // reference, and being told to come back later when they opened the app
+            // to settle an argument at the table is the worse answer.
+            if (state !is CardSyncState.Running) {
+                TextButton(onClick = onSkip) {
+                    Text(stringResource(R.string.first_run_skip))
+                }
             }
         }
     }
