@@ -36,7 +36,7 @@ class StringResourceEscapingTest {
                 // already-escaped backslash case without a second pattern.
                 body.forEachIndexed { index, char ->
                     if (char == '\'' && (index == 0 || body[index - 1] != '\\')) {
-                        offenders += "${file.parentFile.name}/$name"
+                        offenders += "${file.parentFile?.name}/$name"
                     }
                 }
             }

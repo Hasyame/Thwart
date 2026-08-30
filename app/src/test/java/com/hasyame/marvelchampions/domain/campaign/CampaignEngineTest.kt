@@ -391,9 +391,9 @@ class CampaignEngineTest {
             counters = template.counters.filterNot { it.id == "vp" },
             scenarios = listOf(
                 scenario.copy(
-                    onVictory = scenario.onVictory?.copy(
-                        effects = scenario.onVictory!!.effects.filterNot { it.counter == "vp" },
-                    ),
+                    onVictory = scenario.onVictory?.let { victory ->
+                        victory.copy(effects = victory.effects.filterNot { it.counter == "vp" })
+                    },
                 ),
             ) + template.scenarios.drop(1),
         )
