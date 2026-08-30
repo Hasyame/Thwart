@@ -1,0 +1,5 @@
+L’historique est maintenant dans un encadré, comme tous les autres
+tableaux de la page Parties.
+
+Même bandeau rouge, même compteur à côté, et il s’ouvre et se referme d’une
+touche. C’était la seule partie de la page à se comporter autrement.

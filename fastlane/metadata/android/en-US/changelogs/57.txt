@@ -1,0 +1,5 @@
+The history is now in a box like every other table on the Stats page.
+
+It has the same red heading, the same count beside it, and it opens and
+closes with a tap. It was the only thing on the page that behaved
+differently.

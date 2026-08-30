@@ -110,6 +110,7 @@ fun PlaysScreen(
     var sort by rememberSaveable { mutableStateOf(StatSort.ALPHABETICAL) }
     var query by rememberSaveable { mutableStateOf("") }
     var historyPage by rememberSaveable { mutableStateOf(0) }
+    var historyOpen by rememberSaveable { mutableStateOf(true) }
     // What each box is measuring, by box. Kept per box because the useful
     // question differs: which aspect you reach for is a share, whether a hero
     // wins is a rate.
@@ -217,38 +218,25 @@ fun PlaysScreen(
                 }
             }
 
-            item(key = "history-title") {
-                SectionHeading(
+            item(key = "history") {
+                HistorySection(
                     title = historyTitle,
-                    trailing = pluralStringResource(
-                        R.plurals.plays_section_entries,
-                        state.plays.size,
-                        state.plays.size,
-                    ),
-                )
-            }
-            items(pagePlays, key = { it.id }) { play ->
-                PlayRow(
-                    play = play,
+                    total = state.plays.size,
+                    plays = pagePlays,
+                    page = page,
+                    pageCount = pageCount,
+                    expanded = historyOpen,
                     photoStore = viewModel.photoStore,
-                    onDelete = { confirmDelete = play },
-                    onReport = { viewModel.reportLater(play.id) },
+                    onToggle = { historyOpen = !historyOpen },
+                    onPage = {
+                        historyPage = it
+                        // Turning a page and landing halfway down it reads as
+                        // nothing having happened.
+                        scope.launch { listState.animateScrollToItem(historyIndex) }
+                    },
+                    onDelete = { confirmDelete = it },
+                    onReport = { viewModel.reportLater(it.id) },
                 )
-                HorizontalDivider()
-            }
-            if (pageCount > 1) {
-                item(key = "history-pager") {
-                    HistoryPager(
-                        page = page,
-                        pageCount = pageCount,
-                        onPage = {
-                            historyPage = it
-                            // Turning a page and landing halfway down it reads
-                            // as nothing having happened.
-                            scope.launch { listState.animateScrollToItem(historyIndex) }
-                        },
-                    )
-                }
             }
         }
     }
@@ -468,33 +456,6 @@ private fun TableControls(
                     label = { Text(stringResource(option.labelRes)) },
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun SectionHeading(title: String, trailing: String? = null) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        // The whole count, not the page's: paging should never be mistaken for
-        // having fewer games than you have.
-        trailing?.let {
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = it,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }
@@ -925,6 +886,87 @@ private fun WinRateItem(
             }
         },
     )
+}
+
+/**
+ * The history, in the same headed box as the tables above it.
+ *
+ * A Column rather than lazy items, for the reason the tables give: a scroller
+ * inside a scroller is how a list stops following the thumb. Cheap here for a
+ * different reason, which is that a page is ten rows whatever the history holds.
+ */
+@Composable
+private fun HistorySection(
+    title: String,
+    total: Int,
+    plays: List<PlayEntity>,
+    page: Int,
+    pageCount: Int,
+    expanded: Boolean,
+    photoStore: PhotoStore,
+    onToggle: () -> Unit,
+    onPage: (Int) -> Unit,
+    onDelete: (PlayEntity) -> Unit,
+    onReport: (PlayEntity) -> Unit,
+) {
+    val turn by animateFloatAsState(if (expanded) 180f else 0f, label = "history-chevron")
+
+    ComicPanel(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
+        Column {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .background(HeadingFill)
+                    .clickable(
+                        onClick = onToggle,
+                        onClickLabel = stringResource(
+                            if (expanded) R.string.plays_section_hide else R.string.plays_section_show,
+                        ),
+                    )
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = HeadingInk,
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    // Every game, not the page's ten. Paging should never be
+                    // mistaken for having fewer games than you have.
+                    text = pluralStringResource(R.plurals.plays_section_entries, total, total),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = HeadingInk,
+                )
+                Spacer(Modifier.width(8.dp))
+                Icon(
+                    Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = HeadingInk,
+                    modifier = Modifier.rotate(turn),
+                )
+            }
+
+            AnimatedVisibility(expanded) {
+                Column {
+                    plays.forEach { play ->
+                        PlayRow(
+                            play = play,
+                            photoStore = photoStore,
+                            onDelete = { onDelete(play) },
+                            onReport = { onReport(play) },
+                        )
+                        HorizontalDivider()
+                    }
+                    if (pageCount > 1) {
+                        HistoryPager(page = page, pageCount = pageCount, onPage = onPage)
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
