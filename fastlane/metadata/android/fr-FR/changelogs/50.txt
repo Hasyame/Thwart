@@ -1,0 +1,13 @@
+Les sauvegardes peuvent désormais emporter vos photos de table.
+
+C’était la seule chose qu’une sauvegarde laissait derrière elle : une
+réinstallation restaurait la collection, les decks, les campagnes et
+l’historique des parties, et les photos avaient disparu.
+
+C’est une case à cocher sur l’écran Sauvegarde, décochée par défaut. Sans
+rien changer, les photos restent sur cet appareil, car un fichier de
+sauvegarde se transmet et se dépose dans des espaces partagés. Cochée, la
+sauvegarde devient une archive qui les emporte, et la restauration les
+remet à leur place.
+
+Les anciennes sauvegardes se restaurent exactement comme avant.

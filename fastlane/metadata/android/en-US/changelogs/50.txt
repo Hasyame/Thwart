@@ -1,0 +1,11 @@
+Backups can now carry your table photos.
+
+They were the one thing a backup left behind: a reinstall restored your
+collection, decks, campaigns and play history, and the pictures were gone.
+
+It is a tick box on the Backup screen, off by default. Left alone, nothing
+changes and the photos stay on this device, because a backup file gets
+handed to people and dropped into shared drives. Ticked, the backup is an
+archive carrying them, and restoring puts them back where they belong.
+
+Older backups still restore exactly as before.
