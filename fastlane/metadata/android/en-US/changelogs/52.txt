@@ -1,0 +1,8 @@
+The card database is back in the app.
+
+Three recent versions were built without it. Installing one fresh gave you
+an app with no cards until you downloaded them from Settings. Upgrading was
+unaffected, because the cards were already on your device.
+
+If you installed 1.30.2, 1.31.0 or 1.32.0 on a new device and found it
+empty, this is why, and this version fixes it.

@@ -1,0 +1,10 @@
+La base de cartes est de retour dans l’application.
+
+Trois versions récentes ont été compilées sans elle. Une installation
+neuve donnait une application sans aucune carte, jusqu’à les télécharger
+depuis les Réglages. Les mises à jour n’étaient pas concernées, les cartes
+étant déjà présentes sur l’appareil.
+
+Si vous avez installé la 1.30.2, la 1.31.0 ou la 1.32.0 sur un nouvel
+appareil et l’avez trouvée vide, voilà pourquoi, et cette version corrige
+le problème.
