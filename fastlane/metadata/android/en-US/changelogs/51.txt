@@ -1,0 +1,10 @@
+The app now tells you when there are cards you have not got.
+
+It asks MarvelCDB when it opens, and if a pack is missing, or has gained
+cards since your last refresh, it offers to fetch them. Say no and it stops
+asking about that pack, while a set released later still gets offered.
+Nothing is downloaded until you say yes, and nothing is said at all when
+there is no connection.
+
+The Cards and Decks tabs also have icons that look like cards now, instead
+of a magnifying glass and a list.

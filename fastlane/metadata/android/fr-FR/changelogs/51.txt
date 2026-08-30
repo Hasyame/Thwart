@@ -1,0 +1,10 @@
+L’application vous signale désormais les cartes qui vous manquent.
+
+Elle interroge MarvelCDB à son ouverture, et si un paquet est absent, ou
+s’il a gagné des cartes depuis votre dernière mise à jour, elle propose de
+les récupérer. Refusez et elle cesse de vous en parler, tandis qu’un paquet
+sorti plus tard vous sera proposé. Rien n’est téléchargé avant votre accord,
+et rien n’est dit du tout en l’absence de connexion.
+
+Les onglets Cartes et Decks ont aussi des icônes qui ressemblent enfin à des
+cartes, au lieu d’une loupe et d’une liste.
