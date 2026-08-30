@@ -72,6 +72,14 @@ data class ScenarioOutcomeSummary(
     val outcomeMessage: String? = null,
     /** The scenario this result belongs to, which the run may have left. */
     val scenarioId: String? = null,
+    /**
+     * Whether this campaign lets a lost scenario be left behind.
+     *
+     * Fear No Evil does: a failed job leaves the campaign and the rest goes
+     * on. No other campaign has that rule, so offering it everywhere invented
+     * a choice the players do not have.
+     */
+    val canContinue: Boolean = false,
 )
 
 data class CampaignRunUiState(
@@ -366,6 +374,7 @@ class CampaignRunViewModel @Inject constructor(
                     // belonging to a scenario do not outlive it.
                     outcomeMessage = outcomeMessage(run, scenarioId, victory = false),
                     scenarioId = scenarioId,
+                    canContinue = allowsContinue(run, scenarioId),
                 ),
             )
         }
@@ -468,6 +477,16 @@ class CampaignRunViewModel @Inject constructor(
      * Read from the run as it stood before the result was filed: a scenario's
      * draws are cleared when it finishes, and the line usually names one.
      */
+    /**
+     * Whether the campaign says what continuing past this defeat costs.
+     *
+     * The effects are the rule: a campaign that has none has no such rule, and
+     * the way out should not be offered.
+     */
+    private fun allowsContinue(run: CampaignRun, scenarioId: String): Boolean =
+        run.template.scenarios.firstOrNull { it.id == scenarioId }
+            ?.onDefeat?.onContinue.orEmpty().isNotEmpty()
+
     private fun outcomeMessage(
         run: CampaignRun,
         scenarioId: String,

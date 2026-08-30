@@ -918,16 +918,21 @@ private fun DefeatPage(
         }
         // Retrying settles nothing, so it comes first: the job is still
         // there to be won until the players decide otherwise.
-        // Each way out says what it costs. Three of these are hard to undo and
+        // Each way out says what it costs. Some of these are hard to undo and
         // one of them ends the campaign, so none of them should be a guess.
         Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.campaign_retry))
         }
-        WayOut(
-            label = stringResource(R.string.campaign_continue),
-            detail = stringResource(R.string.campaign_continue_detail),
-            onClick = onContinue,
-        )
+        // Only where the campaign has a rule for it. Fear No Evil lets a
+        // failed job leave the campaign; everywhere else a defeat is replayed
+        // or the campaign is given up, and there is no third thing.
+        if (summary?.canContinue == true) {
+            WayOut(
+                label = stringResource(R.string.campaign_continue),
+                detail = stringResource(R.string.campaign_continue_detail),
+                onClick = onContinue,
+            )
+        }
         WayOut(
             label = stringResource(R.string.campaign_take_a_break),
             detail = stringResource(R.string.campaign_break_detail),
@@ -950,9 +955,9 @@ private fun DefeatPage(
 /**
  * A way off this page, with what taking it does written underneath.
  *
- * The four ways out of a defeat are not interchangeable — one settles the job,
- * one ends the campaign — and a row of bare verbs made a table guess which was
- * which.
+ * The ways out of a defeat are not interchangeable: one settles the job,
+ * one ends the campaign, and a row of bare verbs made a table guess which
+ * was which.
  */
 @Composable
 private fun WayOut(

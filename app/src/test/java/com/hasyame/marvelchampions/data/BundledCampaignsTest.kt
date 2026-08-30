@@ -42,6 +42,24 @@ class BundledCampaignsTest {
         assertTrue(templates().isNotEmpty())
     }
 
+    /**
+     * Continuing past a defeat is a Fear No Evil rule, not a general one.
+     *
+     * Its onDefeat outcomes carry onContinue effects, which are what turning
+     * the environment over and dropping the job actually costs. No other
+     * campaign has that rule, and the defeat page reads exactly this to decide
+     * whether to offer the choice at all. If a campaign gains the rule, this
+     * test is where it gets said out loud.
+     */
+    @Test
+    fun `only Fear No Evil lets a lost scenario be left behind`() {
+        val offering = templates().filter { (_, template) ->
+            template.scenarios.any { it.onDefeat?.onContinue.orEmpty().isNotEmpty() }
+        }.map { (name, _) -> name }
+
+        assertEquals(listOf("fne.json"), offering)
+    }
+
     @Test
     fun `every bundled campaign validates`() {
         templates().forEach { (name, template) ->
