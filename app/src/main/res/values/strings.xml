@@ -506,7 +506,6 @@
     <string name="first_run_download">Get the cards</string>
     <string name="first_run_working">Fetching the cards. This can take a minute on a slow connection.</string>
     <string name="first_run_failed">That did not work. Check your connection and try again.</string>
-    <string name="first_run_failed_detail">That did not work: %1$s</string>
     <string name="first_run_retry">Try again</string>
     <string name="first_run_skip">Not now, go to the app</string>
     <string name="settings_backup">Backup</string>

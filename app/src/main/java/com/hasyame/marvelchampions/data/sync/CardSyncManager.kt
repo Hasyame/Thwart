@@ -52,7 +52,13 @@ class CardSyncManager @Inject constructor(
 
     fun observeState(): Flow<CardSyncState> =
         workManager.getWorkInfosForUniqueWorkFlow(CardSyncWorker.NAME).map { infos ->
-            when (val info = infos.lastOrNull()) {
+            // WorkManager keeps the record of finished runs alongside the live
+            // one and promises nothing about their order, so the last entry can
+            // be last week's failure while today's download is running. A run
+            // still in flight is always the one worth reporting; only when
+            // nothing is pending does an outcome describe the present.
+            val current = infos.firstOrNull { !it.state.isFinished } ?: infos.lastOrNull()
+            when (val info = current) {
                 null -> CardSyncState.Idle
                 else -> when (info.state) {
                     WorkInfo.State.RUNNING -> CardSyncState.Running(

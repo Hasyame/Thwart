@@ -526,7 +526,6 @@
     <string name="first_run_download">Récupérer les cartes</string>
     <string name="first_run_working">Récupération des cartes. Cela peut prendre une minute sur une connexion lente.</string>
     <string name="first_run_failed">Cela n\'a pas fonctionné. Vérifiez votre connexion et réessayez.</string>
-    <string name="first_run_failed_detail">Cela n\'a pas fonctionné : %1$s</string>
     <string name="first_run_retry">Réessayer</string>
     <string name="first_run_skip">Plus tard, aller à l\'application</string>
     <string name="settings_backup">Sauvegarde</string>

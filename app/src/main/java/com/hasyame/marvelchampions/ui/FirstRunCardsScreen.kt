@@ -78,10 +78,13 @@ fun FirstRunCardsScreen(
             }
 
             is CardSyncState.Failed -> {
+                // The worker's own message is an exception string: English
+                // whatever the phone is set to, and written for whoever reads
+                // the log rather than for the person holding the phone. What
+                // they can act on is the connection, so that is what it says.
+                // Settings reports the detail for anybody who wants it.
                 Text(
-                    text = state.message?.let {
-                        stringResource(R.string.first_run_failed_detail, it)
-                    } ?: stringResource(R.string.first_run_failed),
+                    text = stringResource(R.string.first_run_failed),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
