@@ -69,6 +69,7 @@ import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
 import com.hasyame.marvelchampions.ui.util.aspectLabel
 import java.text.DateFormat
 import java.util.Date
+import kotlin.math.roundToInt
 
 /**
  * Everything played, and what it adds up to.
@@ -105,6 +106,12 @@ fun PlaysScreen(
     var fullSections by rememberSaveable { mutableStateOf(emptySet<String>()) }
     var sort by rememberSaveable { mutableStateOf(StatSort.ALPHABETICAL) }
     var query by rememberSaveable { mutableStateOf("") }
+    // What each box is measuring, by box. Kept per box because the useful
+    // question differs: which aspect you reach for is a share, whether a hero
+    // wins is a rate.
+    var metrics by rememberSaveable { mutableStateOf(emptyMap<String, String>()) }
+    fun metricOf(key: String): StatMetric =
+        metrics[key]?.let { StatMetric.valueOf(it) } ?: StatMetric.WIN_RATE
 
     Scaffold(
         topBar = {
@@ -138,7 +145,13 @@ fun PlaysScreen(
         LazyColumn(Modifier.fillMaxSize().padding(padding)) {
             item(key = "overall") { Overall(state) }
             if (state.byAspect.isNotEmpty()) {
-                item(key = "aspects") { AspectChart(state.byAspect) }
+                item(key = "aspects") {
+                    AspectChart(
+                        rows = state.byAspect,
+                        metric = metricOf(ASPECT_PANEL),
+                        onMetric = { metrics = metrics + (ASPECT_PANEL to it.name) },
+                    )
+                }
             }
             if (tables.isNotEmpty()) {
                 item(key = "controls") {
@@ -158,6 +171,7 @@ fun PlaysScreen(
                         rows = rows,
                         sort = sort,
                         query = query,
+                        metric = metricOf(table.name),
                         // A closed box hides the very rows being searched for,
                         // so a search opens every table that has a match.
                         expanded = table.name in openSections || query.isNotBlank(),
@@ -176,6 +190,7 @@ fun PlaysScreen(
                                 fullSections + table.name
                             }
                         },
+                        onMetric = { metrics = metrics + (table.name to it.name) },
                     )
                 }
             }
@@ -247,10 +262,15 @@ fun PlaysScreen(
     }
 }
 
-/** The six breakdowns, each its own box. */
+/**
+ * The breakdowns, each its own box.
+ *
+ * Aspect is not among them: it has its own panel above, which is the same table
+ * drawn in the colours the game prints, and two boxes of identical numbers is
+ * not a fuller page.
+ */
 private enum class StatTable(val titleRes: Int) {
     HERO(R.string.plays_by_hero),
-    ASPECT(R.string.plays_by_aspect),
     SCENARIO(R.string.plays_by_scenario),
     DIFFICULTY(R.string.plays_by_difficulty),
     // Solo and group win rates differ enormously; a blended figure describes
@@ -263,7 +283,6 @@ private enum class StatTable(val titleRes: Int) {
 
     fun rowsOf(state: PlaysUiState): List<WinRateRow> = when (this) {
         HERO -> state.byHero
-        ASPECT -> state.byAspect
         SCENARIO -> state.byScenario
         DIFFICULTY -> state.byDifficulty
         PLAYERS -> state.bySoloOrGroup
@@ -275,6 +294,87 @@ private enum class StatSort(val labelRes: Int) {
     ALPHABETICAL(R.string.plays_sort_alpha),
     MOST_PLAYED(R.string.plays_sort_played),
     BEST_RATE(R.string.plays_sort_rate),
+}
+
+/**
+ * What a bar and its percentage are measuring.
+ *
+ * There used to be no answer to that question. A bar was drawn at one quantity
+ * and the number beside it printed another — the aspect chart sized its bars by
+ * games played and then wrote the win rate on the end, so "138 · 61%" was two
+ * unrelated facts sharing a line with nothing to say which was which. Each box
+ * now states its measure and lets you change it.
+ */
+private enum class StatMetric(val labelRes: Int) {
+    WIN_RATE(R.string.plays_metric_wins),
+    SHARE_PLAYED(R.string.plays_metric_games),
+    SHARE_TIME(R.string.plays_metric_time),
+}
+
+/** What one row is worth under [metric], before any total is applied. */
+private fun rawValue(row: WinRateRow, metric: StatMetric): Double = when (metric) {
+    StatMetric.WIN_RATE -> if (row.played == 0) 0.0 else row.won.toDouble() / row.played
+    StatMetric.SHARE_PLAYED -> row.played.toDouble()
+    StatMetric.SHARE_TIME -> row.totalMillis.toDouble()
+}
+
+/**
+ * The percentage to print, and how full to draw the bar. They are not always
+ * the same number.
+ *
+ * A win rate is already a proportion, so the bar is that proportion and the two
+ * agree. A share is not: one hero out of forty-seven is three percent of the
+ * table, and a bar drawn three percent full is a bar nobody can compare to the
+ * one below it. So a share prints its true percentage and draws itself against
+ * the largest row, which is what a bar chart has always done.
+ */
+private fun measure(
+    row: WinRateRow,
+    metric: StatMetric,
+    total: Double,
+    largest: Double,
+): Pair<String, Float> {
+    val raw = rawValue(row, metric)
+    return when (metric) {
+        StatMetric.WIN_RATE -> percentOf(raw) to raw.toFloat()
+        else -> {
+            val share = if (total <= 0.0) 0.0 else raw / total
+            val bar = if (largest <= 0.0) 0.0 else raw / largest
+            percentOf(share) to bar.toFloat()
+        }
+    }
+}
+
+private fun percentOf(fraction: Double): String =
+    if (fraction.isNaN()) "—" else "${(fraction * 100).roundToInt()}%"
+
+/**
+ * The chips that say what a box is measuring.
+ *
+ * Inside the box rather than up with the sort control, because the useful
+ * question differs per table: which aspect you reach for most is a share, and
+ * whether it wins is a rate.
+ */
+@Composable
+private fun MetricChips(metric: StatMetric, onMetric: (StatMetric) -> Unit) {
+    Row(
+        Modifier.padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 2.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.plays_metric_label),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        StatMetric.entries.forEach { option ->
+            FilterChip(
+                selected = metric == option,
+                onClick = { onMetric(option) },
+                label = { Text(stringResource(option.labelRes)) },
+            )
+        }
+    }
 }
 
 /**
@@ -365,7 +465,13 @@ private fun Overall(state: PlaysUiState) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            WinBar(won = state.totalWon, played = state.totalPlayed)
+            WinBar(
+                fraction = if (state.totalPlayed <= 0) {
+                    0f
+                } else {
+                    state.totalWon.toFloat() / state.totalPlayed
+                },
+            )
 
             // Everything else, deliberately smaller. These are things worth
             // knowing rather than things worth leading with.
@@ -387,49 +493,73 @@ private fun Overall(state: PlaysUiState) {
 }
 
 /**
- * Which aspects actually get played, in the colours the game prints them.
+ * The aspects, in the colours the game prints them.
  *
- * The win-rate table answers "does Justice win for me"; this answers "do I
- * ever pick anything but Justice", which the table cannot show because it
- * sorts the question away. Ordered by plays because a chart is about size.
+ * This is the by-aspect table, drawn rather than listed: there are only five
+ * aspects and they already have colours a player reads without a legend, which
+ * is exactly the case a chart is for. Ordered by the measure on show, so the
+ * longest bar is always the top row.
  */
 @Composable
-private fun AspectChart(rows: List<WinRateRow>) {
-    val ordered = remember(rows) { rows.sortedByDescending { it.played } }
-    val most = ordered.firstOrNull()?.played ?: 0
-    if (most <= 0) {
+private fun AspectChart(
+    rows: List<WinRateRow>,
+    metric: StatMetric,
+    onMetric: (StatMetric) -> Unit,
+) {
+    val ordered = remember(rows, metric) {
+        rows.sortedByDescending { rawValue(it, metric) }
+    }
+    val total = ordered.sumOf { rawValue(it, metric) }
+    val largest = ordered.maxOfOrNull { rawValue(it, metric) } ?: 0.0
+    if (ordered.isEmpty()) {
         return
     }
 
     ComicPanel(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(
-                text = stringResource(R.string.plays_aspects_chart),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-            )
-            ordered.forEach { row ->
-                AspectBar(row = row, most = most)
+        Column {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .background(HeadingFill)
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.plays_aspects_chart),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = HeadingInk,
+                )
+            }
+            MetricChips(metric = metric, onMetric = onMetric)
+            Column(
+                Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                ordered.forEach { row ->
+                    AspectBar(row = row, metric = metric, total = total, largest = largest)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AspectBar(row: WinRateRow, most: Int) {
+private fun AspectBar(
+    row: WinRateRow,
+    metric: StatMetric,
+    total: Double,
+    largest: Double,
+) {
     val label = aspectLabel(row.key)
     val colour = aspectColor(row.key) ?: MaterialTheme.colorScheme.primary
-    val share = if (most <= 0) 0f else row.played.toFloat() / most.toFloat()
+    val (text, fill) = measure(row, metric, total, largest)
 
-    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(label, style = MaterialTheme.typography.bodyMedium)
             Text(
-                // Plays and win rate together: the longest bar being the one
-                // you win least with is the interesting case, and it is
-                // invisible if the chart only counts.
-                text = "${row.played}  ·  ${percent(row.won, row.played)}",
-                style = MaterialTheme.typography.labelMedium,
+                text = text,
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -442,12 +572,25 @@ private fun AspectBar(row: WinRateRow, most: Int) {
         ) {
             Box(
                 Modifier
-                    .fillMaxWidth(share)
+                    .fillMaxWidth(fill)
                     .height(BAR_HEIGHT)
                     .clip(RoundedCornerShape(percent = 50))
                     .background(colour),
             )
         }
+        // The raw counts under every bar, so the percentage above is never the
+        // only thing on screen and can always be checked against something.
+        Text(
+            text = pluralStringResource(
+                R.plurals.plays_row_detail,
+                row.played,
+                row.won,
+                row.played,
+                duration(row.totalMillis),
+            ),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
@@ -463,10 +606,12 @@ private fun StatSection(
     rows: List<WinRateRow>,
     sort: StatSort,
     query: String,
+    metric: StatMetric,
     expanded: Boolean,
     showAll: Boolean,
     onToggle: () -> Unit,
     onShowAll: () -> Unit,
+    onMetric: (StatMetric) -> Unit,
 ) {
     val title = stringResource(table.titleRes)
     val turn by animateFloatAsState(if (expanded) 180f else 0f, label = "chevron")
@@ -528,9 +673,21 @@ private fun StatSection(
                 // the thumb. What keeps it cheap is the cap below — an opened
                 // table composes five rows, not ninety.
                 Column {
+                    MetricChips(metric = metric, onMetric = onMetric)
+                    // Totals over the whole table, not the five rows on show,
+                    // or a share would change meaning when the rest unfolded.
+                    val total = visible.sumOf { rawValue(it.second, metric) }
+                    val largest = visible.maxOfOrNull { rawValue(it.second, metric) } ?: 0.0
+
                     val shown = if (showAll) visible else visible.take(PREVIEW_ROWS)
                     shown.forEach { (label, row) ->
-                        WinRateItem(label = label, row = row)
+                        WinRateItem(
+                            label = label,
+                            row = row,
+                            metric = metric,
+                            total = total,
+                            largest = largest,
+                        )
                     }
 
                     if (visible.size > PREVIEW_ROWS) {
@@ -555,6 +712,9 @@ private fun StatSection(
 
 /** How many rows an opened table shows before it offers the rest. */
 private const val PREVIEW_ROWS = 5
+
+/** The aspect panel's key in the per-box metric map. Not a StatTable. */
+private const val ASPECT_PANEL = "ASPECTS"
 
 /**
  * The rows, labelled in the reader's language, filtered and put in order.
@@ -610,11 +770,9 @@ private fun rate(row: WinRateRow): Double =
  */
 @Composable
 private fun WinBar(
-    won: Int,
-    played: Int,
+    fraction: Float,
     modifier: Modifier = Modifier,
 ) {
-    val fraction = if (played <= 0) 0f else won.toFloat() / played.toFloat()
     Box(
         modifier
             .fillMaxWidth()
@@ -661,7 +819,14 @@ private fun RowScope.Stat(value: String, label: String) {
  * the hours stay because "time spent with this hero" is a thing people want.
  */
 @Composable
-private fun WinRateItem(label: String, row: WinRateRow) {
+private fun WinRateItem(
+    label: String,
+    row: WinRateRow,
+    metric: StatMetric,
+    total: Double,
+    largest: Double,
+) {
+    val (text, fill) = measure(row, metric, total, largest)
     ListItem(
         // The box behind it is already a surface; a second one on every row
         // draws a border around each line.
@@ -674,7 +839,7 @@ private fun WinRateItem(label: String, row: WinRateRow) {
             ) {
                 Text(label)
                 Text(
-                    text = percent(row.won, row.played),
+                    text = text,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -685,7 +850,7 @@ private fun WinRateItem(label: String, row: WinRateRow) {
                 // Decorative here: the line below states the same counts in
                 // words, and a screen reader announcing a bar twice is noise.
                 Box(Modifier.clearAndSetSemantics { }) {
-                    WinBar(won = row.won, played = row.played)
+                    WinBar(fraction = fill)
                 }
                 Text(
                     text = pluralStringResource(

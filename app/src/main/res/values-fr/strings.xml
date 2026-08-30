@@ -432,7 +432,6 @@
     <string name="plays_empty">Aucune partie enregistrée. Jouez-en une, puis enregistrez-la depuis le tirage aléatoire.</string>
     <string name="plays_history">Historique</string>
     <string name="plays_by_hero">Par héros</string>
-    <string name="plays_by_aspect">Par affinité</string>
     <string name="plays_by_scenario">Par scénario</string>
     <string name="plays_by_difficulty">Par difficulté</string>
     <string name="long_break_title">Ranger la partie</string>
@@ -564,6 +563,10 @@
     <string name="plays_by_players">Solo ou en groupe</string>
     <string name="plays_by_hero_aspect">Héros et affinité ensemble</string>
     <string name="plays_aspects_chart">Les affinités que vous jouez</string>
+    <string name="plays_metric_label">Afficher</string>
+    <string name="plays_metric_wins">Victoires</string>
+    <string name="plays_metric_games">Parties</string>
+    <string name="plays_metric_time">Temps</string>
     <string name="plays_sort_label">Trier les tableaux par</string>
     <string name="plays_sort_alpha">A–Z</string>
     <string name="plays_sort_played">Les plus jouées</string>
