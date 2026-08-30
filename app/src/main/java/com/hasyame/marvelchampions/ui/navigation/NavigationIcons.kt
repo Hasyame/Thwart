@@ -9,17 +9,24 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
 /**
- * The two icons Material does not have.
+ * The navigation bar icons Material does not have.
  *
- * Cards and Decks were a magnifying glass and a bulleted list, which say
- * "search" and "list" rather than what the tabs hold.
+ * Five of the six tabs carried a generic symbol that described a widget rather
+ * than a game: a magnifying glass for Cards, a bulleted list for Decks, a video
+ * player's triangle for Play, a dialog's information "i" for Rules, and a star
+ * for Stats, which is what the app already uses for favourites. Settings keeps
+ * its gear, because a gear is what everyone looks for and being clever there
+ * would cost more than it gained.
  *
- * Both are solid silhouettes rather than outlines, and that is the whole design
- * decision. Drawn as outlines they were legible at 96px and turned into a smear
- * at the 24dp a navigation bar actually uses: a 1.7 wide stroke leaves barely a
- * pixel of gap at that size, so the card, its border and the letter inside it
- * ran together. A filled shape with the detail knocked out of it survives being
- * small, which is the only size that matters here.
+ * All of them are solid silhouettes rather than outlines, and that is the whole
+ * design decision. Drawn as outlines they were legible at 96px and turned into
+ * a smear at the 24dp a navigation bar actually uses: a 1.7 wide stroke leaves
+ * barely a pixel of gap at that size, so a card, its border and the letter
+ * inside it ran together. A filled shape with the detail knocked out of it
+ * survives being small, which is the only size that matters here.
+ *
+ * Every shape is drawn here from scratch. Nothing is traced from a Fantasy
+ * Flight product, and none of the game's own iconography appears.
  */
 internal object NavigationIcons {
 
@@ -118,6 +125,89 @@ internal object NavigationIcons {
         }
     }
 
+    /**
+     * A closed fist, for Play.
+     *
+     * A play triangle is what a video player uses, and this tab is where a game
+     * of superheroes begins. The fist is the app's own drawing rather than any
+     * icon from the game: nothing here is copied from a Fantasy Flight product.
+     */
+    val Fist: ImageVector by lazy {
+        icon("Fist") {
+            filled {
+                moveTo(6.4f, 9.2f)
+                quadTo(6.4f, 7.6f, 8f, 7.6f)
+                horizontalLineTo(9.2f)
+                verticalLineTo(6.6f)
+                quadTo(9.2f, 5.2f, 10.6f, 5.2f)
+                quadTo(12f, 5.2f, 12f, 6.6f)
+                verticalLineTo(7.6f)
+                horizontalLineTo(13f)
+                verticalLineTo(6.2f)
+                quadTo(13f, 4.8f, 14.4f, 4.8f)
+                quadTo(15.8f, 4.8f, 15.8f, 6.2f)
+                verticalLineTo(7.6f)
+                horizontalLineTo(16.8f)
+                verticalLineTo(7f)
+                quadTo(16.8f, 5.7f, 18.1f, 5.7f)
+                quadTo(19.4f, 5.7f, 19.4f, 7f)
+                verticalLineTo(13.6f)
+                quadTo(19.4f, 18.9f, 14.6f, 18.9f)
+                horizontalLineTo(11.4f)
+                quadTo(7.6f, 18.9f, 6.2f, 15.6f)
+                lineTo(4.5f, 11.7f)
+                quadTo(4f, 10.5f, 5.1f, 10f)
+                quadTo(6.1f, 9.5f, 6.7f, 10.6f)
+                close()
+            }
+        }
+    }
+
+    /**
+     * An open book, for Rules.
+     *
+     * It replaces an information "i", which is what a dialog uses to tell you
+     * something. This tab is a reference you read, so it is a book.
+     */
+    val Book: ImageVector by lazy {
+        icon("Book") {
+            filled {
+                moveTo(11.2f, 6.5f)
+                quadTo(8.6f, 4.6f, 4.2f, 4.9f)
+                quadTo(3f, 5f, 3f, 6.1f)
+                verticalLineTo(17.4f)
+                quadTo(3f, 18.5f, 4.2f, 18.4f)
+                quadTo(8.2f, 18.2f, 11.2f, 20f)
+                close()
+
+                moveTo(12.8f, 6.5f)
+                quadTo(15.4f, 4.6f, 19.8f, 4.9f)
+                quadTo(21f, 5f, 21f, 6.1f)
+                verticalLineTo(17.4f)
+                quadTo(21f, 18.5f, 19.8f, 18.4f)
+                quadTo(15.8f, 18.2f, 12.8f, 20f)
+                close()
+            }
+        }
+    }
+
+    /**
+     * Three rising bars, for Stats.
+     *
+     * A star said "favourite", which is a different thing the app also has. The
+     * tab holds games played and win rates, so it gets the shape that means
+     * counting.
+     */
+    val Chart: ImageVector by lazy {
+        icon("Chart") {
+            filled {
+                roundedRect(3.5f, 13f, 4.6f, 7.5f, 1.1f)
+                roundedRect(9.7f, 8.5f, 4.6f, 12f, 1.1f)
+                roundedRect(15.9f, 4f, 4.6f, 16.5f, 1.1f)
+            }
+        }
+    }
+
     private fun icon(name: String, content: ImageVector.Builder.() -> Unit): ImageVector =
         ImageVector.Builder(
             name = name,
@@ -133,6 +223,27 @@ internal object NavigationIcons {
         content: PathBuilder.() -> Unit,
     ) {
         path(fill = SolidColor(Color.Black), pathFillType = fillType, pathBuilder = content)
+    }
+
+    private fun PathBuilder.roundedRect(
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float,
+        radius: Float,
+    ) {
+        val right = x + width
+        val bottom = y + height
+        moveTo(x + radius, y)
+        lineTo(right - radius, y)
+        quadTo(right, y, right, y + radius)
+        lineTo(right, bottom - radius)
+        quadTo(right, bottom, right - radius, bottom)
+        lineTo(x + radius, bottom)
+        quadTo(x, bottom, x, bottom - radius)
+        lineTo(x, y + radius)
+        quadTo(x, y, x + radius, y)
+        close()
     }
 
     private const val SIZE = 24f

@@ -2,9 +2,6 @@ package com.hasyame.marvelchampions.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.hasyame.marvelchampions.R
@@ -45,19 +42,19 @@ enum class TopLevelDestination(
     PLAY(
         route = PlayRoute::class,
         graphRoute = PlayGraph::class,
-        icon = Icons.Filled.PlayArrow,
+        icon = NavigationIcons.Fist,
         labelRes = R.string.destination_play,
     ),
     RULES(
         route = RulesRoute::class,
         graphRoute = RulesGraph::class,
-        icon = Icons.Filled.Info,
+        icon = NavigationIcons.Book,
         labelRes = R.string.destination_rules,
     ),
     STATS(
         route = PlaysRoute::class,
         graphRoute = StatsGraph::class,
-        icon = Icons.Filled.Star,
+        icon = NavigationIcons.Chart,
         labelRes = R.string.destination_stats,
     ),
     SETTINGS(
