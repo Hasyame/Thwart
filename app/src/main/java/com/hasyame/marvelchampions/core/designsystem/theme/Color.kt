@@ -37,6 +37,20 @@ val PaperWarm = Color(0xFFFFF8F6)
 val PaperShade = Color(0xFFF3DDDB)
 
 /**
+ * A filled heading strip, and the only text colour that belongs on it.
+ *
+ * Not `primary`/`onPrimary`, which cannot do this job in the dark theme.
+ * There `primary` is the bright coral, a mid-luminance fill that suits neither
+ * ink nor paper: Material pairs it with [IronRedInk], and dark maroon on bright
+ * coral is one hue twice with nothing between the two, legible on a contrast
+ * table and mud on a phone. Paper on the deep red separates in luminance *and*
+ * in hue, and it is the same pair in both themes, so a heading does not change
+ * character when the lights go out.
+ */
+val HeadingFill = IronRed
+val HeadingInk = PaperWarm
+
+/**
  * Night pages, as five steps rather than two.
  *
  * Material needs a run of surfaces to place things at different depths; with

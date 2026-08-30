@@ -60,6 +60,8 @@ import com.hasyame.marvelchampions.core.designsystem.component.ComicEmptyState
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.aspectColor
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
+import com.hasyame.marvelchampions.core.designsystem.theme.HeadingFill
+import com.hasyame.marvelchampions.core.designsystem.theme.HeadingInk
 import com.hasyame.marvelchampions.data.db.dao.WinRateRow
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.photos.PhotoStore
@@ -481,7 +483,7 @@ private fun StatSection(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(HeadingFill)
                     .clickable(
                         onClick = onToggle,
                         onClickLabel = stringResource(
@@ -495,7 +497,7 @@ private fun StatSection(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = HeadingInk,
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
@@ -507,7 +509,7 @@ private fun StatSection(
                         visible.size,
                     ),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = HeadingInk,
                 )
                 Spacer(Modifier.width(8.dp))
                 Icon(
@@ -515,7 +517,7 @@ private fun StatSection(
                     // The row already announces what tapping it does, so the
                     // chevron would only repeat it.
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = HeadingInk,
                     modifier = Modifier.rotate(turn),
                 )
             }
