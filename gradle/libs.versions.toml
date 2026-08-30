@@ -3,11 +3,11 @@
 # newest entry that is not an alpha/beta/rc.
 agp = "9.3.2"
 kotlin = "2.4.10"
-ksp = "2.3.10"
+ksp = "2.3.11"
 
 # AndroidX / Compose
 activityCompose = "1.13.0"
-coil = "3.5.0"
+coil = "3.6.0"
 appcompat = "1.8.0"
 composeBom = "2026.08.00"
 coreKtx = "1.19.0"
@@ -25,7 +25,7 @@ androidxHilt = "1.4.0"
 
 # Network / serialization
 kotlinxSerialization = "1.11.0"
-okhttp = "5.4.0"
+okhttp = "5.5.0"
 retrofit = "3.0.0"
 
 # Test
