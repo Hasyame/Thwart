@@ -1,0 +1,13 @@
+La page Parties est plus facile à lire.
+
+Chaque tableau est désormais dans son propre encadré que vous pouvez
+ouvrir et refermer, et un seul champ de recherche les filtre tous à la
+fois. Un encadré s’ouvre sur ses premières lignes plutôt que sur toutes,
+avec un bouton pour voir le reste.
+
+Chaque barre indique ce qu’elle mesure, et vous pouvez basculer entre les
+victoires, les parties jouées et le temps passé. Les tableaux se trient
+par ordre alphabétique, par nombre de parties ou par taux de victoire.
+
+Les titres des tableaux étaient en encre sombre sur rouge vif et se
+lisaient mal. C’est corrigé.

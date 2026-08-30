@@ -1,0 +1,11 @@
+The Stats page is easier to read.
+
+Each table now sits in its own box you can open and close, and a single
+search field filters all of them at once. A box opens to its first few
+rows rather than all of them, with a button to see the rest.
+
+Every bar says what it measures, and you can switch between wins, games
+played and time spent. Tables can be sorted alphabetically, by most
+played, or by best rate.
+
+The table headings were dark ink on bright red and hard to read. Fixed.
