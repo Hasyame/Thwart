@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -31,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -96,7 +98,11 @@ fun PlaysScreen(
     // Survives rotation: opening a table, turning the phone and finding it shut
     // again is the screen forgetting what you were reading.
     var openSections by rememberSaveable { mutableStateOf(setOf(StatTable.HERO.name)) }
+    // Tables that have been asked to show everything rather than their first
+    // few rows.
+    var fullSections by rememberSaveable { mutableStateOf(emptySet<String>()) }
     var sort by rememberSaveable { mutableStateOf(StatSort.ALPHABETICAL) }
+    var query by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -133,7 +139,14 @@ fun PlaysScreen(
                 item(key = "aspects") { AspectChart(state.byAspect) }
             }
             if (tables.isNotEmpty()) {
-                item(key = "sort") { SortRow(sort = sort, onSort = { sort = it }) }
+                item(key = "controls") {
+                    TableControls(
+                        query = query,
+                        onQuery = { query = it },
+                        sort = sort,
+                        onSort = { sort = it },
+                    )
+                }
             }
 
             tables.forEach { (table, rows) ->
@@ -142,12 +155,23 @@ fun PlaysScreen(
                         table = table,
                         rows = rows,
                         sort = sort,
-                        expanded = table.name in openSections,
+                        query = query,
+                        // A closed box hides the very rows being searched for,
+                        // so a search opens every table that has a match.
+                        expanded = table.name in openSections || query.isNotBlank(),
+                        showAll = table.name in fullSections || query.isNotBlank(),
                         onToggle = {
                             openSections = if (table.name in openSections) {
                                 openSections - table.name
                             } else {
                                 openSections + table.name
+                            }
+                        },
+                        onShowAll = {
+                            fullSections = if (table.name in fullSections) {
+                                fullSections - table.name
+                            } else {
+                                fullSections + table.name
                             }
                         },
                     )
@@ -251,14 +275,45 @@ private enum class StatSort(val labelRes: Int) {
     BEST_RATE(R.string.plays_sort_rate),
 }
 
+/**
+ * One filter and one order, for every table at once.
+ *
+ * A search box per table would be six of them, and the question is almost never
+ * "where does Spider-Man appear in this particular table" — it is "where does
+ * Spider-Man appear". Filtering everything from one field answers that, and
+ * costs one piece of state instead of six.
+ */
 @Composable
-private fun SortRow(sort: StatSort, onSort: (StatSort) -> Unit) {
-    Column(Modifier.padding(start = 12.dp, end = 12.dp, top = 4.dp)) {
+private fun TableControls(
+    query: String,
+    onQuery: (String) -> Unit,
+    sort: StatSort,
+    onSort: (StatSort) -> Unit,
+) {
+    Column(Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp)) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = onQuery,
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(stringResource(R.string.plays_filter_hint)) },
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+            trailingIcon = {
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = { onQuery("") }) {
+                        Icon(
+                            Icons.Filled.Clear,
+                            contentDescription = stringResource(R.string.plays_filter_clear),
+                        )
+                    }
+                }
+            },
+        )
         Text(
             text = stringResource(R.string.plays_sort_label),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 6.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             StatSort.entries.forEach { option ->
@@ -405,11 +460,21 @@ private fun StatSection(
     table: StatTable,
     rows: List<WinRateRow>,
     sort: StatSort,
+    query: String,
     expanded: Boolean,
+    showAll: Boolean,
     onToggle: () -> Unit,
+    onShowAll: () -> Unit,
 ) {
     val title = stringResource(table.titleRes)
     val turn by animateFloatAsState(if (expanded) 180f else 0f, label = "chevron")
+    val visible = sortedRows(rows, sort, query)
+
+    // A table with nothing matching the filter is not a table worth a box: six
+    // empty headers is the search telling you nothing six times.
+    if (query.isNotBlank() && visible.isEmpty()) {
+        return
+    }
 
     ComicPanel(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
         Column {
@@ -434,10 +499,12 @@ private fun StatSection(
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
+                    // The matching count while filtering, so the header says
+                    // how much of the table the search actually left.
                     text = pluralStringResource(
                         R.plurals.plays_section_entries,
-                        rows.size,
-                        rows.size,
+                        visible.size,
+                        visible.size,
                     ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -454,12 +521,29 @@ private fun StatSection(
             }
 
             AnimatedVisibility(expanded) {
-                // A Column rather than nested lazy items: a table this size is
-                // cheap to measure, and nesting a scroller inside the page
-                // scroller is how a list stops scrolling with the thumb.
+                // A Column rather than nested lazy items: nesting a scroller
+                // inside the page scroller is how a list stops scrolling with
+                // the thumb. What keeps it cheap is the cap below — an opened
+                // table composes five rows, not ninety.
                 Column {
-                    sortedRows(rows, sort).forEach { (label, row) ->
+                    val shown = if (showAll) visible else visible.take(PREVIEW_ROWS)
+                    shown.forEach { (label, row) ->
                         WinRateItem(label = label, row = row)
+                    }
+
+                    if (visible.size > PREVIEW_ROWS) {
+                        TextButton(
+                            onClick = onShowAll,
+                            modifier = Modifier.padding(start = 8.dp, bottom = 4.dp),
+                        ) {
+                            Text(
+                                if (showAll) {
+                                    stringResource(R.string.plays_show_fewer)
+                                } else {
+                                    stringResource(R.string.plays_show_all, visible.size)
+                                },
+                            )
+                        }
                     }
                 }
             }
@@ -467,20 +551,35 @@ private fun StatSection(
     }
 }
 
+/** How many rows an opened table shows before it offers the rest. */
+private const val PREVIEW_ROWS = 5
+
 /**
- * The rows, labelled in the reader's language and put in the chosen order.
+ * The rows, labelled in the reader's language, filtered and put in order.
  *
  * Alphabetical is the default because a table you are looking something up in
  * has to be one you can look something up in. The other two orders answer
  * different questions and are a tap away.
+ *
+ * Filtering is on the label rather than the key, so what you type is what you
+ * can see — a French reader searching "Agressivité" is not matched against
+ * "aggression".
  */
 @Composable
-private fun sortedRows(rows: List<WinRateRow>, sort: StatSort): List<Pair<String, WinRateRow>> {
+private fun sortedRows(
+    rows: List<WinRateRow>,
+    sort: StatSort,
+    query: String,
+): List<Pair<String, WinRateRow>> {
     // A for loop, not a map: readableKey resolves string resources, so it can
     // only be called from a composable body.
+    val needle = query.trim()
     val labelled = ArrayList<Pair<String, WinRateRow>>(rows.size)
     for (row in rows) {
-        labelled += readableKey(row.key) to row
+        val label = readableKey(row.key)
+        if (needle.isEmpty() || label.contains(needle, ignoreCase = true)) {
+            labelled += label to row
+        }
     }
     return when (sort) {
         StatSort.ALPHABETICAL -> labelled.sortedBy { it.first.lowercase() }

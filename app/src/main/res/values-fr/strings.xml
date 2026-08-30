@@ -568,6 +568,10 @@
     <string name="plays_sort_alpha">A–Z</string>
     <string name="plays_sort_played">Les plus jouées</string>
     <string name="plays_sort_rate">Meilleur taux</string>
+    <string name="plays_filter_hint">Rechercher</string>
+    <string name="plays_filter_clear">Effacer le filtre</string>
+    <string name="plays_show_all">Tout afficher (%1$d)</string>
+    <string name="plays_show_fewer">Afficher moins</string>
     <string name="plays_section_show">Afficher ce tableau</string>
     <string name="plays_section_hide">Masquer ce tableau</string>
     <plurals name="plays_section_entries">

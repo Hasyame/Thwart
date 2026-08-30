@@ -546,6 +546,12 @@
     <string name="plays_sort_alpha">A–Z</string>
     <string name="plays_sort_played">Most played</string>
     <string name="plays_sort_rate">Best win rate</string>
+    <!-- Kept to one word: anything longer wraps to two lines inside the field,
+         in French before English. What it searches is the tables directly below. -->
+    <string name="plays_filter_hint">Search</string>
+    <string name="plays_filter_clear">Clear the filter</string>
+    <string name="plays_show_all">Show all %1$d</string>
+    <string name="plays_show_fewer">Show fewer</string>
     <string name="plays_section_show">Show this table</string>
     <string name="plays_section_hide">Hide this table</string>
     <plurals name="plays_section_entries">
