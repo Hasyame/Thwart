@@ -1,20 +1,20 @@
 [versions]
 # Toolchain — versions resolved against the live Maven metadata on 2026-08-01,
 # newest entry that is not an alpha/beta/rc.
-agp = "9.3.1"
+agp = "9.3.2"
 kotlin = "2.4.10"
 ksp = "2.3.10"
 
 # AndroidX / Compose
 activityCompose = "1.13.0"
 coil = "3.5.0"
-appcompat = "1.7.1"
-composeBom = "2026.06.01"
+appcompat = "1.8.0"
+composeBom = "2026.08.00"
 coreKtx = "1.19.0"
 lifecycle = "2.11.0"
 material3Adaptive = "1.4.0"
 material3AdaptiveCore = "1.2.0"
-navigationCompose = "2.9.8"
+navigationCompose = "2.10.0"
 datastore = "1.2.1"
 room = "2.8.4"
 work = "2.11.2"
