@@ -1,0 +1,9 @@
+A campaign scenario can now be put away like any other game.
+
+Take a long break during a scenario, write down where everything stood,
+and clear the table. It waits with your other paused games, and picking it
+up again reopens the campaign rather than starting a fresh game.
+
+Jessica Jones and Luke Cage are also filed properly now. They were listed
+as wave 0 and uncategorised because they arrived after the pack list was
+last curated.

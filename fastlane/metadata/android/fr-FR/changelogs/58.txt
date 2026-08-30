@@ -1,0 +1,10 @@
+Un scénario de campagne peut désormais être rangé comme n’importe quelle
+autre partie.
+
+Prenez une longue pause pendant un scénario, notez où en était la partie,
+et rangez la table. Elle attend avec vos autres parties en pause, et la
+reprendre rouvre la campagne au lieu de lancer une nouvelle partie.
+
+Jessica Jones et Luke Cage sont aussi classés correctement. Ils
+apparaissaient en vague 0 et non classés, car ils sont sortis après la
+dernière mise à jour de la liste des extensions.
