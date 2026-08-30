@@ -1,0 +1,13 @@
+Les cartes ne sont plus incluses dans l’application. Elles sont
+téléchargées au premier lancement, environ 1,5 Mo, et tout fonctionne
+ensuite sans connexion.
+
+Cela corrige un vrai problème : trois versions récentes ont été compilées
+sans les cartes et s’installaient vides, et le paquet F-Droid ne les a
+jamais eues. Toutes les versions se comportent désormais de la même
+façon, quelle qu’en soit la provenance. Les cartes appartiennent par
+ailleurs à MarvelCDB et changent quand MarvelCDB change, ce qui se fige
+mal dans une application.
+
+Les onglets ont des icônes qui ressemblent à ce qu’ils contiennent : une
+carte, un deck, un poing, un livre et un graphique.

@@ -1,0 +1,11 @@
+The cards are no longer packaged with the app. They are fetched on first
+launch instead, about 1.5 MB, and everything works offline after that.
+
+That fixes a real problem: three recent versions were built without the
+cards and installed empty, and the F-Droid package never had them at all.
+Every build now behaves the same way wherever you got it from. The cards
+also belong to MarvelCDB and change when MarvelCDB changes, which is a
+poor thing to freeze into an app.
+
+The tabs have icons that look like what they hold: a card, a deck, a fist,
+a book and a chart.
