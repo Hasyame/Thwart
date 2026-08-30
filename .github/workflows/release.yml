@@ -171,7 +171,21 @@ jobs:
           else
             NOTES_ARG=(--generate-notes)
           fi
-          gh release create "$TAG" "Thwart-${TAG#v}.apk" \
+          ASSET="Thwart-${TAG#v}.apk"
+          # A re-run, or a release already published by hand. Neither is a
+          # reason to fail the run, and neither is a reason to overwrite a
+          # binary people may already have downloaded.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists."
+            if gh release view "$TAG" --json assets -q '.assets[].name' | grep -qxF "$ASSET"; then
+              echo "It already carries $ASSET. Nothing to do."
+            else
+              echo "Attaching $ASSET to it."
+              gh release upload "$TAG" "$ASSET"
+            fi
+            exit 0
+          fi
+          gh release create "$TAG" "$ASSET" \
             --title "Thwart ${TAG#v}" \
             "${NOTES_ARG[@]}"
 
