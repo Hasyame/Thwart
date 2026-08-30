@@ -2,11 +2,14 @@ package com.hasyame.marvelchampions.data
 
 import androidx.test.core.app.ApplicationProvider
 import android.content.Context
+import com.hasyame.marvelchampions.data.marvelcdb.dto.PackDto
 import com.hasyame.marvelchampions.data.marvelcdb.dto.PackMetadataFileDto
+import kotlinx.serialization.builtins.ListSerializer
 import com.hasyame.marvelchampions.domain.model.PackType
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -27,11 +30,46 @@ class PackMetadataAssetTest {
         return json.decodeFromString(PackMetadataFileDto.serializer(), text)
     }
 
+    /**
+     * Every pack MarvelCDB publishes has been curated.
+     *
+     * This used to assert a hardcoded count, with a comment claiming a new
+     * MarvelCDB pack would fail it. It could not: it never looked at MarvelCDB.
+     * Jessica Jones and Luke Cage arrived in August 2026 and the test stayed
+     * green while both showed in the app as wave 0 and Uncategorised.
+     *
+     * It now compares against the fetched seed, which is the same pack list the
+     * app builds its database from. Skipped when the seed is absent, so a
+     * developer without it is not blocked; the data workflow fetches it, which
+     * is where this has to bite.
+     */
     @Test
     fun `covers every pack marvelcdb currently publishes`() {
-        // 61 packs as of 2026-08-01. A new MarvelCDB pack makes this fail,
-        // which is the intended reminder to curate its type and wave.
-        assertEquals(61, readMetadata().packs.size)
+        assumeTrue("card seed not fetched, run ./gradlew fetchCardSeed", seedPresent())
+
+        val curated = readMetadata().packs.map { it.code }.toSet()
+        val published = seededPackCodes()
+        val uncurated = (published - curated).sorted()
+
+        assertTrue(
+            "pack_metadata.json is missing $uncurated. Curate the type and wave " +
+                "of each, or the collection screen files them under wave 0.",
+            uncurated.isEmpty(),
+        )
+    }
+
+    /** True when the card seed has been fetched into assets. */
+    private fun seedPresent(): Boolean =
+        ApplicationProvider.getApplicationContext<Context>()
+            .assets.list("seed").orEmpty().any { it.endsWith(".json") }
+
+    /** The pack codes MarvelCDB publishes, as of the last seed fetch. */
+    private fun seededPackCodes(): Set<String> {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val text = context.assets.open("seed/packs_en.json").bufferedReader().use { it.readText() }
+        return json.decodeFromString(ListSerializer(PackDto.serializer()), text)
+            .map { it.code }
+            .toSet()
     }
 
     @Test

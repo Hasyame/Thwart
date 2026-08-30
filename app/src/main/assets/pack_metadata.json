@@ -322,6 +322,20 @@
       "wave": 11,
       "waveInferred": true,
       "typeManual": true
+    },
+    {
+      "code": "jj",
+      "type": "HERO_PACK",
+      "wave": 11,
+      "waveInferred": true,
+      "typeManual": true
+    },
+    {
+      "code": "luke_cage",
+      "type": "HERO_PACK",
+      "wave": 11,
+      "waveInferred": true,
+      "typeManual": true
     }
   ]
 }
