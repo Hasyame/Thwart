@@ -1,0 +1,8 @@
+The statistics page led with nine numbers of equal weight, so finding your
+win rate meant reading all of them. It now leads with the win rate alone,
+large, with the record written underneath and a bar showing the share.
+
+The hero, aspect and scenario lists were sorted by rate, which put a hero
+you won with once above one you have played thirty times. They sort by
+games played now, and each line carries a bar instead of a row of numbers
+crowding the name.

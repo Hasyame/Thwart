@@ -1,0 +1,9 @@
+La page des statistiques s’ouvrait sur neuf nombres de même importance :
+trouver son taux de victoire obligeait à tous les lire. Elle s’ouvre
+désormais sur le taux de victoire seul, en grand, avec le détail en
+dessous et une barre qui en montre la proportion.
+
+Les listes par héros, par affinité et par scénario étaient triées par
+taux, ce qui plaçait un héros gagné une fois au-dessus d’un héros joué
+trente fois. Elles sont triées par nombre de parties, et chaque ligne
+porte une barre plutôt qu’une suite de nombres serrés contre le nom.
