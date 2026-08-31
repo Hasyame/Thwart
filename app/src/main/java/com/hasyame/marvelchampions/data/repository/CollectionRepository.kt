@@ -6,10 +6,12 @@ import com.hasyame.marvelchampions.data.db.dao.ExcludedModularSetDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedScenarioDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -38,6 +40,7 @@ class CollectionRepository @Inject constructor(
     private val excludedModularSetDao: ExcludedModularSetDao,
     private val excludedScenarioDao: ExcludedScenarioDao,
     private val cardDao: CardDao,
+    private val syncStateDao: SyncStateDao,
     private val setNameOverrides: SetNameOverrides,
 ) {
 
@@ -67,36 +70,49 @@ class CollectionRepository @Inject constructor(
 
     suspend fun getOwnedCodes(): Set<String> = ownedPackDao.getOwnedCodes().toSet()
 
-    suspend fun setOwned(packCode: String, owned: Boolean) {
-        if (owned) {
-            ownedPackDao.upsert(OwnedPackEntity(packCode = packCode, quantity = 1))
-        } else {
-            ownedPackDao.remove(packCode)
-        }
-    }
+    suspend fun setOwned(packCode: String, owned: Boolean) = setQuantity(
+        packCode = packCode,
+        quantity = if (owned) 1 else 0,
+    )
 
     suspend fun setQuantity(packCode: String, quantity: Int) {
+        val now = System.currentTimeMillis()
         if (quantity <= 0) {
-            ownedPackDao.remove(packCode)
+            ownedPackDao.remove(packCode, now)
         } else {
-            ownedPackDao.upsert(OwnedPackEntity(packCode = packCode, quantity = quantity))
+            ownedPackDao.upsert(
+                OwnedPackEntity(packCode = packCode, quantity = quantity, updatedAt = now),
+            )
         }
+        syncStateDao.markDirty(SyncCollection.OWNED_PACKS.key, packCode)
     }
 
     suspend fun setOwnedBulk(packCodes: Collection<String>, owned: Boolean) {
+        val now = System.currentTimeMillis()
         if (owned) {
-            ownedPackDao.upsertAll(packCodes.map { OwnedPackEntity(it, quantity = 1) })
+            ownedPackDao.upsertAll(
+                packCodes.map { OwnedPackEntity(it, quantity = 1, updatedAt = now) },
+            )
         } else {
-            packCodes.forEach { ownedPackDao.remove(it) }
+            packCodes.forEach { ownedPackDao.remove(it, now) }
         }
+        packCodes.forEach { syncStateDao.markDirty(SyncCollection.OWNED_PACKS.key, it) }
     }
 
-    /** Replaces the whole collection, for the JSON import path. */
+    /**
+     * Replaces the whole collection, for the JSON import path.
+     *
+     * The rows this drops leave no tombstone: they are removed outright, not
+     * deleted by the user. An import is a different collection taking the place
+     * of the old one, and it is the one path where the device will have to tell
+     * a server what it holds rather than what changed.
+     */
     suspend fun replaceCollection(ownedPacks: Map<String, Int>) {
-        ownedPackDao.replaceAll(
-            ownedPacks.filterValues { it > 0 }
-                .map { (code, quantity) -> OwnedPackEntity(code, quantity) },
-        )
+        val now = System.currentTimeMillis()
+        val entities = ownedPacks.filterValues { it > 0 }
+            .map { (code, quantity) -> OwnedPackEntity(code, quantity, updatedAt = now) }
+        ownedPackDao.replaceAll(entities)
+        entities.forEach { syncStateDao.markDirty(SyncCollection.OWNED_PACKS.key, it.packCode) }
     }
 
     suspend fun isEmpty(): Boolean = ownedPackDao.countOwned() == 0
@@ -150,11 +166,13 @@ class CollectionRepository @Inject constructor(
 
     /** [excluded] true means the user has not got it, so nothing may offer it. */
     suspend fun setScenarioExcluded(scenarioCode: String, excluded: Boolean) {
+        val now = System.currentTimeMillis()
         if (excluded) {
-            excludedScenarioDao.exclude(ExcludedScenarioEntity(scenarioCode))
+            excludedScenarioDao.exclude(ExcludedScenarioEntity(scenarioCode, updatedAt = now))
         } else {
-            excludedScenarioDao.include(scenarioCode)
+            excludedScenarioDao.include(scenarioCode, now)
         }
+        syncStateDao.markDirty(SyncCollection.EXCLUDED_SCENARIOS.key, scenarioCode)
     }
 
     /**
@@ -180,16 +198,23 @@ class CollectionRepository @Inject constructor(
 
     /** [excluded] true means the user has not got it, so nothing may offer it. */
     suspend fun setModularSetExcluded(setCode: String, excluded: Boolean) {
+        val now = System.currentTimeMillis()
         if (excluded) {
-            excludedModularSetDao.exclude(ExcludedModularSetEntity(setCode))
+            excludedModularSetDao.exclude(ExcludedModularSetEntity(setCode, updatedAt = now))
         } else {
-            excludedModularSetDao.include(setCode)
+            excludedModularSetDao.include(setCode, now)
         }
+        syncStateDao.markDirty(SyncCollection.EXCLUDED_MODULAR_SETS.key, setCode)
     }
 
     /** Replaces the exclusions wholesale, for the restore path. */
     suspend fun replaceExcludedModularSets(setCodes: Collection<String>) {
-        excludedModularSetDao.replaceAll(setCodes.map { ExcludedModularSetEntity(it) })
+        val now = System.currentTimeMillis()
+        val entities = setCodes.map { ExcludedModularSetEntity(it, updatedAt = now) }
+        excludedModularSetDao.replaceAll(entities)
+        entities.forEach {
+            syncStateDao.markDirty(SyncCollection.EXCLUDED_MODULAR_SETS.key, it.setCode)
+        }
     }
 
     private companion object {

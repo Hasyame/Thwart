@@ -59,7 +59,7 @@ class ExcludedScenarioDaoTest {
     @Test
     fun `ticking it back on removes it`() = runTest {
         dao.exclude(ExcludedScenarioEntity("mutagen_formula"))
-        dao.include("mutagen_formula")
+        dao.include("mutagen_formula", 1_700_000_000_000L)
 
         assertTrue(dao.getExcludedCodes().isEmpty())
     }

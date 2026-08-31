@@ -13,16 +13,18 @@ interface FavouriteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add(favourite: FavouriteCardEntity)
 
-    @Query("DELETE FROM favourite_cards WHERE cardCode = :cardCode")
-    suspend fun remove(cardCode: String)
+    @Query(
+        "UPDATE favourite_cards SET deletedAt = :now, updatedAt = :now WHERE cardCode = :cardCode",
+    )
+    suspend fun remove(cardCode: String, now: Long)
 
-    @Query("SELECT cardCode FROM favourite_cards")
+    @Query("SELECT cardCode FROM favourite_cards WHERE deletedAt IS NULL")
     fun observeCodes(): Flow<List<String>>
 
-    @Query("SELECT * FROM favourite_cards ORDER BY addedAt DESC")
+    @Query("SELECT * FROM favourite_cards WHERE deletedAt IS NULL ORDER BY addedAt DESC")
     suspend fun getAll(): List<FavouriteCardEntity>
 
-    /** For a restore, which replaces rather than merges. */
+    /** For a restore, which replaces rather than merges. A real DELETE; see CampaignDao. */
     @Query("DELETE FROM favourite_cards")
     suspend fun deleteAll()
 

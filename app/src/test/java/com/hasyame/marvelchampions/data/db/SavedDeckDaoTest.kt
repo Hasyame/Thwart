@@ -62,7 +62,7 @@ class SavedDeckDaoTest {
         dao.upsert(deck(DeckReference(1, DeckReference.Kind.DECKLIST), "A"))
         dao.upsert(deck(DeckReference(2, DeckReference.Kind.DECKLIST), "B"))
 
-        dao.delete("decklist-1")
+        dao.delete("decklist-1", 1_700_000_000_000L)
 
         assertNull(dao.getDeck("decklist-1"))
         assertEquals(1, dao.count())

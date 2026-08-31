@@ -159,7 +159,7 @@ class BackupRepository @Inject constructor(
                 database.playDao().deleteAll()
                 database.campaignDao().deleteAllRuns()
                 database.savedDeckDao().deleteAll()
-                database.ownedPackDao().clearOwned()
+                database.ownedPackDao().clear()
                 database.excludedModularSetDao().clear()
                 database.randomizerHistoryDao().clear()
                 database.favouriteDao().deleteAll()

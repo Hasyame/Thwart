@@ -27,21 +27,30 @@ interface PlayDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(play: PlayEntity)
 
-    @Query("SELECT * FROM plays ORDER BY playedAt DESC")
+    @Query("SELECT * FROM plays WHERE deletedAt IS NULL ORDER BY playedAt DESC")
     fun observePlays(): Flow<List<PlayEntity>>
 
-    @Query("SELECT * FROM plays WHERE id = :id")
+    @Query("SELECT * FROM plays WHERE id = :id AND deletedAt IS NULL")
     suspend fun getPlay(id: String): PlayEntity?
 
-    @Query("DELETE FROM plays WHERE id = :id")
-    suspend fun delete(id: String)
+    @Query("UPDATE plays SET deletedAt = :now, updatedAt = :now WHERE id = :id")
+    suspend fun delete(id: String, now: Long)
 
-    /** Every play's photo list, for the sweep that deletes the rest. */
+    /**
+     * Every play's photo list, for the sweep that deletes the rest.
+     *
+     * Tombstoned plays are **included** here, which is the one place a deleted
+     * row is deliberately still read. A photograph is a file on disk, and
+     * deleting the file the moment the play is tombstoned would make the delete
+     * unrecoverable while the row itself is still recoverable.
+     */
     @Query("SELECT photos FROM plays WHERE photos != ''")
     suspend fun photoLists(): List<String>
 
-    @Query("UPDATE plays SET reportedToBgg = 1 WHERE id = :id")
-    suspend fun markReported(id: String)
+    @Query(
+        "UPDATE plays SET reportedToBgg = 1, updatedAt = :now WHERE id = :id AND deletedAt IS NULL",
+    )
+    suspend fun markReported(id: String, now: Long)
 
     // Counted in SQL where a play is one row of the answer — a game happened at
     // one scenario, one difficulty, and one table size.
@@ -59,7 +68,7 @@ interface PlayDao {
     @Query(
         """
         SELECT heroCode, heroName, aspects, otherHeroes, roster, won, elapsedMillis
-        FROM plays ORDER BY playedAt DESC
+        FROM plays WHERE deletedAt IS NULL ORDER BY playedAt DESC
         """,
     )
     fun observeStatsRows(): Flow<List<PlayStatsRow>>
@@ -67,7 +76,7 @@ interface PlayDao {
     @Query(
         """
         SELECT scenarioName AS `key`, COUNT(*) AS played, SUM(won) AS won, SUM(elapsedMillis) AS totalMillis
-        FROM plays GROUP BY scenarioCode ORDER BY played DESC, `key` ASC
+        FROM plays WHERE deletedAt IS NULL GROUP BY scenarioCode ORDER BY played DESC, `key` ASC
         """,
     )
     fun observeByScenario(): Flow<List<WinRateRow>>
@@ -75,7 +84,7 @@ interface PlayDao {
     @Query(
         """
         SELECT difficulty AS `key`, COUNT(*) AS played, SUM(won) AS won, SUM(elapsedMillis) AS totalMillis
-        FROM plays GROUP BY difficulty ORDER BY played DESC, `key` ASC
+        FROM plays WHERE deletedAt IS NULL GROUP BY difficulty ORDER BY played DESC, `key` ASC
         """,
     )
     fun observeByDifficulty(): Flow<List<WinRateRow>>
@@ -105,16 +114,16 @@ interface PlayDao {
                  ELSE 'players_5plus'
                END AS `key`,
                COUNT(*) AS played, SUM(won) AS won, SUM(elapsedMillis) AS totalMillis
-        FROM plays GROUP BY `key` ORDER BY `key`
+        FROM plays WHERE deletedAt IS NULL GROUP BY `key` ORDER BY `key`
         """,
     )
     fun observeBySoloOrGroup(): Flow<List<WinRateRow>>
 
-    /** For a restore, which replaces rather than merges. */
+    /** For a restore, which replaces rather than merges. A real DELETE; see CampaignDao. */
     @Query("DELETE FROM plays")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM plays")
+    @Query("SELECT * FROM plays WHERE deletedAt IS NULL")
     suspend fun getAllPlays(): List<PlayEntity>
 }
 

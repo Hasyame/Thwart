@@ -3,9 +3,11 @@ package com.hasyame.marvelchampions.data.repository
 import android.content.Context
 import android.net.Uri
 import com.hasyame.marvelchampions.data.db.dao.CampaignDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero
 import com.hasyame.marvelchampions.domain.campaign.SchemeSetup
@@ -168,6 +170,7 @@ sealed interface TemplateImportResult {
 class CampaignRepository @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val campaignDao: CampaignDao,
+    private val syncStateDao: SyncStateDao,
     private val cardDao: CardDao,
     private val deckRepository: DeckRepository,
     private val playRepository: PlayRepository,
@@ -278,6 +281,7 @@ class CampaignRepository @Inject constructor(
             }
         }
         val runId = UUID.randomUUID().toString()
+        val now = System.currentTimeMillis()
         campaignDao.insertRun(
             CampaignRunEntity(
                 id = runId,
@@ -286,12 +290,14 @@ class CampaignRepository @Inject constructor(
                 name = name.ifBlank { template.name.resolve(localeCode()) },
                 difficulty = difficulty,
                 standardSet = standardSet,
-                createdAt = System.currentTimeMillis(),
+                createdAt = now,
                 // The template travels with the run so it stays readable even
                 // if the source file is moved or deleted.
                 templateJson = json.encodeToString(CampaignTemplate.serializer(), template),
+                updatedAt = now,
             ),
         )
+        syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
         append(
             runId,
             CampaignEvent.CampaignStarted(
@@ -325,7 +331,9 @@ class CampaignRepository @Inject constructor(
             campaignDao.setTemplateJson(
                 runId,
                 json.encodeToString(CampaignTemplate.serializer(), template),
+                System.currentTimeMillis(),
             )
+            syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
         }
 
         val events = campaignDao.getEvents(runId).mapNotNull { row ->
@@ -582,6 +590,10 @@ class CampaignRepository @Inject constructor(
                 payload = json.encodeToString(CampaignEvent.serializer(), event),
             ),
         )
+        // The event carries no updatedAt of its own: it is written once, never
+        // rewritten, and its own timestamp is the only time it has. All that is
+        // needed is the note that it has not been pushed yet.
+        syncStateDao.markDirty(SyncCollection.CAMPAIGN_EVENTS.key, event.id)
     }
 
     /**
@@ -839,6 +851,16 @@ class CampaignRepository @Inject constructor(
             )
         }
 
+    /**
+     * Records where the campaign clock has got to.
+     *
+     * Deliberately **not** stamped, and deliberately not marked for pushing.
+     * The three timer columns describe one device: `timerRunningSince` is a
+     * wall-clock instant on the phone in front of you, and a running timer
+     * shared between two devices produces a number that is wrong on both. This
+     * also fires every few seconds while a scenario is open, so treating it as
+     * a change to the run would put the row in every batch the app ever sends.
+     */
     suspend fun updateTimer(runId: String, timer: TimerState, scenarioId: String?) =
         withContext(ioDispatcher) {
             campaignDao.updateTimer(
@@ -850,11 +872,21 @@ class CampaignRepository @Inject constructor(
         }
 
     suspend fun markFinished(runId: String, finished: Boolean) = withContext(ioDispatcher) {
-        campaignDao.setFinished(runId, finished)
+        campaignDao.setFinished(runId, finished, System.currentTimeMillis())
+        syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
     }
 
+    /**
+     * Throws a campaign away.
+     *
+     * The run is tombstoned and its events are left alone. A long campaign has
+     * hundreds of them, and the run's own tombstone already says everything a
+     * second device needs to reach the same conclusion, so tombstoning each
+     * event would cost hundreds of rows to repeat one fact.
+     */
     suspend fun deleteRun(runId: String) = withContext(ioDispatcher) {
-        campaignDao.deleteRun(runId)
+        campaignDao.deleteRun(runId, System.currentTimeMillis())
+        syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
     }
 
     /**

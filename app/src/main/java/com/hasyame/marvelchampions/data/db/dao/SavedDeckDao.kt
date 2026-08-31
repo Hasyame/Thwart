@@ -16,25 +16,25 @@ interface SavedDeckDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(decks: List<SavedDeckEntity>)
 
-    @Query("SELECT * FROM saved_decks ORDER BY name")
+    @Query("SELECT * FROM saved_decks WHERE deletedAt IS NULL ORDER BY name")
     fun observeDecks(): Flow<List<SavedDeckEntity>>
 
-    @Query("SELECT * FROM saved_decks ORDER BY name")
+    @Query("SELECT * FROM saved_decks WHERE deletedAt IS NULL ORDER BY name")
     suspend fun getDecks(): List<SavedDeckEntity>
 
-    @Query("SELECT * FROM saved_decks WHERE id = :id")
+    @Query("SELECT * FROM saved_decks WHERE id = :id AND deletedAt IS NULL")
     fun observeDeck(id: String): Flow<SavedDeckEntity?>
 
-    @Query("SELECT * FROM saved_decks WHERE id = :id")
+    @Query("SELECT * FROM saved_decks WHERE id = :id AND deletedAt IS NULL")
     suspend fun getDeck(id: String): SavedDeckEntity?
 
-    @Query("DELETE FROM saved_decks WHERE id = :id")
-    suspend fun delete(id: String)
+    @Query("UPDATE saved_decks SET deletedAt = :now, updatedAt = :now WHERE id = :id")
+    suspend fun delete(id: String, now: Long)
 
-    @Query("SELECT COUNT(*) FROM saved_decks")
+    @Query("SELECT COUNT(*) FROM saved_decks WHERE deletedAt IS NULL")
     suspend fun count(): Int
 
-    /** For a restore, which replaces rather than merges. */
+    /** For a restore, which replaces rather than merges. A real DELETE; see CampaignDao. */
     @Query("DELETE FROM saved_decks")
     suspend fun deleteAll()
 }

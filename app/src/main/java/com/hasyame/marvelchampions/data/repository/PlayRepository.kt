@@ -4,8 +4,10 @@ import com.hasyame.marvelchampions.data.bgg.BggAccount
 import com.hasyame.marvelchampions.data.bgg.BggClient
 import com.hasyame.marvelchampions.data.bgg.BggResult
 import com.hasyame.marvelchampions.data.db.dao.PlayDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.dao.WinRateRow
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.model.BggPlay
 import com.hasyame.marvelchampions.domain.model.BggPlayer
@@ -40,6 +42,7 @@ sealed interface PlayRecorded {
 @Singleton
 class PlayRepository @Inject constructor(
     private val playDao: PlayDao,
+    private val syncStateDao: SyncStateDao,
     private val bggAccount: BggAccount,
     private val bggClient: BggClient,
     private val preferences: AppPreferences,
@@ -92,12 +95,14 @@ class PlayRepository @Inject constructor(
         // campaign scenario both end up here — and a play that missed its
         // location because one caller forgot would be invisible until it
         // reached BoardGameGeek.
-        val stamped = if (play.location.isBlank()) {
+        val located = if (play.location.isBlank()) {
             play.copy(location = preferences.currentPlayLocation())
         } else {
             play
         }
+        val stamped = located.copy(updatedAt = System.currentTimeMillis())
         playDao.insert(stamped)
+        syncStateDao.markDirty(SyncCollection.PLAYS.key, stamped.id)
 
         when (bggAccount.currentMode()) {
             BggReportingMode.OFF -> PlayRecorded.SavedOnly
@@ -129,7 +134,8 @@ class PlayRepository @Inject constructor(
 
         when (result) {
             is BggResult.Success -> {
-                playDao.markReported(play.id)
+                playDao.markReported(play.id, System.currentTimeMillis())
+                syncStateDao.markDirty(SyncCollection.PLAYS.key, play.id)
                 PlayRecorded.SavedAndReported
             }
 
@@ -141,5 +147,15 @@ class PlayRepository @Inject constructor(
         }
     }
 
-    suspend fun delete(playId: String) = withContext(ioDispatcher) { playDao.delete(playId) }
+    /**
+     * Removes a play from the history.
+     *
+     * A tombstone rather than a removal: the photographs it names are swept
+     * separately, and a second device that has not heard about this would
+     * otherwise put the game back.
+     */
+    suspend fun delete(playId: String) = withContext(ioDispatcher) {
+        playDao.delete(playId, System.currentTimeMillis())
+        syncStateDao.markDirty(SyncCollection.PLAYS.key, playId)
+    }
 }

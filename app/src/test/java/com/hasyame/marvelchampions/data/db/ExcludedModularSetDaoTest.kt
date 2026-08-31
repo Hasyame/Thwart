@@ -58,7 +58,7 @@ class ExcludedModularSetDaoTest {
     @Test
     fun `ticking a set back on removes it`() = runTest {
         dao.exclude(ExcludedModularSetEntity("hydra_patrol"))
-        dao.include("hydra_patrol")
+        dao.include("hydra_patrol", 1_700_000_000_000L)
 
         assertTrue(dao.getExcludedCodes().isEmpty())
     }

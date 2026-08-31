@@ -172,7 +172,7 @@ class PlayDaoTest {
         dao.insert(play("p1"))
         assertFalse(dao.getPlay("p1")!!.reportedToBgg)
 
-        dao.markReported("p1")
+        dao.markReported("p1", 1_700_000_000_000L)
         assertTrue(dao.getPlay("p1")!!.reportedToBgg)
     }
 
@@ -181,7 +181,7 @@ class PlayDaoTest {
         dao.insert(play("a", won = true))
         dao.insert(play("b", won = false))
 
-        dao.delete("b")
+        dao.delete("b", 1_700_000_000_000L)
 
         assertEquals(1, dao.observePlays().first().size)
         assertEquals(1, PlayStats.heroes(dao.observeStatsRows().first()).single().won)

@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,6 +26,9 @@ import org.robolectric.RobolectricTestRunner
  */
 @RunWith(RobolectricTestRunner::class)
 class CampaignDaoTest {
+
+    /** One fixed instant, so a test reads about the change and not the clock. */
+    private val NOW = 1_700_000_000_000L
 
     private lateinit var database: MarvelChampionsDatabase
     private lateinit var dao: CampaignDao
@@ -79,7 +83,7 @@ class CampaignDaoTest {
     fun `marking a run finished keeps the event log`() = runTest {
         seed()
 
-        dao.setFinished("run-1", true)
+        dao.setFinished("run-1", true, NOW)
 
         assertEquals(3, dao.countEvents("run-1"))
         assertEquals(true, dao.getRun("run-1")?.finished)
@@ -89,7 +93,7 @@ class CampaignDaoTest {
     fun `replacing the stored template keeps the event log`() = runTest {
         seed()
 
-        dao.setTemplateJson("run-1", """{"id":"gmw"}""")
+        dao.setTemplateJson("run-1", """{"id":"gmw"}""", NOW)
 
         assertEquals(3, dao.countEvents("run-1"))
         assertEquals("""{"id":"gmw"}""", dao.getRun("run-1")?.templateJson)
@@ -127,13 +131,16 @@ class CampaignDaoTest {
     }
 
     @Test
-    fun `deleting a run does take its events with it`() = runTest {
-        // The cascade is wanted here — just not on every update.
+    fun `deleting a run takes its events out of sight with it`() = runTest {
+        // The events are not removed any more — a tombstoned run fires no
+        // cascade — but nothing can read them, which is the property the app
+        // relies on and the one a second device has to agree with.
         seed()
 
-        dao.deleteRun("run-1")
+        dao.deleteRun("run-1", NOW)
 
         assertEquals(0, dao.countEvents("run-1"))
+        assertNull(dao.getRun("run-1"))
     }
 
     @Test

@@ -2,7 +2,9 @@ package com.hasyame.marvelchampions.data.repository
 
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.RandomizerHistoryDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.seed.CardSeedSource
 import com.hasyame.marvelchampions.data.seed.SetNameOverrides
 import com.hasyame.marvelchampions.domain.campaign.SchemeSetup
@@ -52,6 +54,7 @@ data class SchemeBriefing(
 class RandomizerRepository @Inject constructor(
     private val cardDao: CardDao,
     private val historyDao: RandomizerHistoryDao,
+    private val syncStateDao: SyncStateDao,
     private val collectionRepository: CollectionRepository,
     private val seed: CardSeedSource,
     private val setNameOverrides: SetNameOverrides,
@@ -249,22 +252,32 @@ class RandomizerRepository @Inject constructor(
     suspend fun save(draw: RandomizerDraw) {
         val scenario = draw.scenarioCode ?: return
         val difficulty = draw.difficulty ?: return
+        val now = System.currentTimeMillis()
+        val id = UUID.randomUUID().toString()
         historyDao.insert(
             RandomizerHistoryEntity(
-                id = UUID.randomUUID().toString(),
-                createdAt = System.currentTimeMillis(),
+                id = id,
+                createdAt = now,
                 scenarioCode = scenario,
                 difficulty = difficulty.name,
                 playerCount = draw.playerCount,
                 heroes = draw.heroes.joinToString(",") { "${it.heroCode}:${it.aspect}" },
                 modularSetCodes = draw.modularSetCodes.joinToString(","),
+                updatedAt = now,
             ),
         )
+        syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
     }
 
-    suspend fun setBeaten(id: String, beaten: Boolean) = historyDao.setBeaten(id, beaten)
+    suspend fun setBeaten(id: String, beaten: Boolean) {
+        historyDao.setBeaten(id, beaten, System.currentTimeMillis())
+        syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+    }
 
-    suspend fun deleteHistoryEntry(id: String) = historyDao.delete(id)
+    suspend fun deleteHistoryEntry(id: String) {
+        historyDao.delete(id, System.currentTimeMillis())
+        syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+    }
 
     companion object {
         private const val MAIN_SCHEME_TYPE = "main_scheme"

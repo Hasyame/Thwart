@@ -2,8 +2,10 @@ package com.hasyame.marvelchampions.data.repository
 
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.SavedDeckDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.deckbuilder.HeroDeckRulesParser
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.dto.DeckDto
@@ -68,6 +70,7 @@ data class DeckContents(
 class DeckRepository @Inject constructor(
     private val api: MarvelCdbApi,
     private val savedDeckDao: SavedDeckDao,
+    private val syncStateDao: SyncStateDao,
     private val cardDao: CardDao,
     private val collectionRepository: CollectionRepository,
     private val json: Json,
@@ -81,7 +84,22 @@ class DeckRepository @Inject constructor(
     suspend fun getDecks(): List<SavedDeckEntity> =
         withContext(ioDispatcher) { savedDeckDao.getDecks() }
 
-    suspend fun delete(id: String) = withContext(ioDispatcher) { savedDeckDao.delete(id) }
+    suspend fun delete(id: String) = withContext(ioDispatcher) {
+        savedDeckDao.delete(id, System.currentTimeMillis())
+        syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, id)
+    }
+
+    /**
+     * The one door every deck write goes through.
+     *
+     * Stamping here rather than at the six call sites below is the
+     * whole point: a deck saved without a timestamp is a deck the next device
+     * never hears about, and nothing would report it.
+     */
+    private suspend fun save(deck: SavedDeckEntity) {
+        savedDeckDao.upsert(deck.copy(updatedAt = System.currentTimeMillis()))
+        syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, deck.id)
+    }
 
     suspend fun import(reference: DeckReference): DeckImportResult = withContext(ioDispatcher) {
         try {
@@ -111,7 +129,7 @@ class DeckRepository @Inject constructor(
 
             val dto = json.decodeFromString(DeckDto.serializer(), body)
             val entity = withCompleteAspects(dto.toEntity(reference, body))
-            savedDeckDao.upsert(entity)
+            save(entity)
             DeckImportResult.Success(entity.id)
         } catch (_: IOException) {
             DeckImportResult.Failure(DeckImportError.Network)
@@ -151,7 +169,7 @@ class DeckRepository @Inject constructor(
         slots: Map<String, Int> = emptyMap(),
     ): String = withContext(ioDispatcher) {
         val id = "$LOCAL_ID_PREFIX${UUID.randomUUID()}"
-        savedDeckDao.upsert(
+        save(
             SavedDeckEntity(
                 id = id,
                 marvelCdbId = 0L,
@@ -188,7 +206,7 @@ class DeckRepository @Inject constructor(
             } else {
                 slots[cardCode] = quantity
             }
-            savedDeckDao.upsert(
+            save(
                 deck.copy(
                     slots = slots.entries.joinToString(",") { "${it.key}=${it.value}" },
                     // Remembered so a later refresh can warn rather than
@@ -201,7 +219,7 @@ class DeckRepository @Inject constructor(
 
     suspend fun renameDeck(deckId: String, name: String) = withContext(ioDispatcher) {
         savedDeckDao.getDeck(deckId)?.let {
-            savedDeckDao.upsert(it.copy(name = name, locallyEdited = true))
+            save(it.copy(name = name, locallyEdited = true))
         }
     }
 
@@ -215,7 +233,7 @@ class DeckRepository @Inject constructor(
             json.decodeFromString(DeckDto.serializer(), deck.rawJson)
         }.getOrNull() ?: return@withContext false
 
-        savedDeckDao.upsert(
+        save(
             deck.copy(
                 slots = dto.slots.entries.joinToString(",") { "${it.key}=${it.value}" },
                 locallyEdited = false,
@@ -261,7 +279,7 @@ class DeckRepository @Inject constructor(
 
     suspend fun setAspects(deckId: String, aspects: List<String>) = withContext(ioDispatcher) {
         savedDeckDao.getDeck(deckId)?.let {
-            savedDeckDao.upsert(it.copy(aspects = aspects.joinToString(",")))
+            save(it.copy(aspects = aspects.joinToString(",")))
         }
     }
 
