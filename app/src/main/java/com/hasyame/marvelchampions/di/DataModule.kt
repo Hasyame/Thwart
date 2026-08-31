@@ -16,6 +16,7 @@ import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
 import com.hasyame.marvelchampions.data.db.dao.RandomizerHistoryDao
 import com.hasyame.marvelchampions.data.db.dao.SavedDeckDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls
 import dagger.Module
@@ -105,6 +106,10 @@ object DataModule {
     @Provides
     fun provideSavedDeckDao(database: MarvelChampionsDatabase): SavedDeckDao =
         database.savedDeckDao()
+
+    @Provides
+    fun provideSyncStateDao(database: MarvelChampionsDatabase): SyncStateDao =
+        database.syncStateDao()
 
     @Provides
     fun provideCampaignDao(database: MarvelChampionsDatabase): CampaignDao =

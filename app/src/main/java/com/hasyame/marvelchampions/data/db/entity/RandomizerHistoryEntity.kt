@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.data.db.entity
 
 import kotlinx.serialization.Serializable
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -27,4 +28,10 @@ data class RandomizerHistoryEntity(
     val modularSetCodes: String,
     /** Set by the user once they have beaten it, for the "exclude beaten" filter. */
     val beaten: Boolean = false,
+
+    /** When this row last changed. See [SyncStateEntity]. */
+    @ColumnInfo(defaultValue = "0") val updatedAt: Long = 0,
+
+    /** When this row was deleted, or null while it exists. See [SyncStateEntity]. */
+    val deletedAt: Long? = null,
 )

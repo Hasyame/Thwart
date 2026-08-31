@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.data.db.entity
 
 import kotlinx.serialization.Serializable
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -70,6 +71,12 @@ data class PackTranslationEntity(
 data class OwnedPackEntity(
     @PrimaryKey val packCode: String,
     val quantity: Int,
+
+    /** When this row last changed. See [SyncStateEntity]. */
+    @ColumnInfo(defaultValue = "0") val updatedAt: Long = 0,
+
+    /** When this row was deleted, or null while it exists. See [SyncStateEntity]. */
+    val deletedAt: Long? = null,
 )
 
 /**
@@ -88,6 +95,12 @@ data class OwnedPackEntity(
 @Serializable
 data class ExcludedModularSetEntity(
     @PrimaryKey val setCode: String,
+
+    /** When this row last changed. See [SyncStateEntity]. */
+    @ColumnInfo(defaultValue = "0") val updatedAt: Long = 0,
+
+    /** When this row was deleted, or null while it exists. See [SyncStateEntity]. */
+    val deletedAt: Long? = null,
 )
 
 /**
@@ -106,4 +119,10 @@ data class ExcludedModularSetEntity(
 @Serializable
 data class ExcludedScenarioEntity(
     @PrimaryKey val scenarioCode: String,
+
+    /** When this row last changed. See [SyncStateEntity]. */
+    @ColumnInfo(defaultValue = "0") val updatedAt: Long = 0,
+
+    /** When this row was deleted, or null while it exists. See [SyncStateEntity]. */
+    val deletedAt: Long? = null,
 )

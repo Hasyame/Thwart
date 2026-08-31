@@ -45,4 +45,10 @@ data class SavedDeckEntity(
      * the original is never lost.
      */
     @ColumnInfo(defaultValue = "0") val locallyEdited: Boolean = false,
+
+    /** When this row last changed. See [SyncStateEntity]. */
+    @ColumnInfo(defaultValue = "0") val updatedAt: Long = 0,
+
+    /** When this row was deleted, or null while it exists. See [SyncStateEntity]. */
+    val deletedAt: Long? = null,
 )

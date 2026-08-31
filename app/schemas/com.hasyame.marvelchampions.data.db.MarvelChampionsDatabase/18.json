@@ -1,0 +1,1587 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 18,
+    "identityHash": "54d64c3b0053b58ece852f0dcce4511c",
+    "entities": [
+      {
+        "tableName": "cards",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `locale` TEXT NOT NULL, `name` TEXT NOT NULL, `realName` TEXT NOT NULL, `subname` TEXT, `position` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, `url` TEXT, `octgnId` TEXT, `packCode` TEXT NOT NULL, `packName` TEXT NOT NULL, `packLegacy` INTEGER NOT NULL, `packWave` INTEGER, `cardSetCode` TEXT, `cardSetName` TEXT, `cardSetTypeNameCode` TEXT, `cardSetParentCode` TEXT, `setPosition` INTEGER, `typeCode` TEXT NOT NULL, `typeName` TEXT NOT NULL, `factionCode` TEXT NOT NULL, `factionName` TEXT NOT NULL, `traits` TEXT, `realTraits` TEXT, `text` TEXT, `realText` TEXT, `flavor` TEXT, `errata` TEXT, `illustrator` TEXT, `backText` TEXT, `backName` TEXT, `backFlavor` TEXT, `imageSrc` TEXT, `backImageSrc` TEXT, `cost` INTEGER, `costPerHero` INTEGER NOT NULL, `costStar` INTEGER NOT NULL, `resourcePhysical` INTEGER, `resourceMental` INTEGER, `resourceEnergy` INTEGER, `resourceWild` INTEGER, `health` INTEGER, `healthPerGroup` INTEGER NOT NULL, `healthPerHero` INTEGER NOT NULL, `healthStar` INTEGER NOT NULL, `handSize` INTEGER, `attack` INTEGER, `attackCost` INTEGER, `attackStar` INTEGER NOT NULL, `thwart` INTEGER, `thwartCost` INTEGER, `thwartStar` INTEGER NOT NULL, `defense` INTEGER, `defenseStar` INTEGER NOT NULL, `recover` INTEGER, `recoverStar` INTEGER NOT NULL, `stage` TEXT, `boost` INTEGER, `boostStar` INTEGER NOT NULL, `scheme` INTEGER, `schemeStar` INTEGER NOT NULL, `schemeAcceleration` INTEGER, `schemeCrisis` INTEGER, `schemeHazard` INTEGER, `schemeAmplify` INTEGER, `threat` INTEGER, `threatFixed` INTEGER NOT NULL, `threatPerGroup` INTEGER NOT NULL, `threatStar` INTEGER NOT NULL, `baseThreat` INTEGER, `baseThreatFixed` INTEGER NOT NULL, `baseThreatPerGroup` INTEGER NOT NULL, `escalationThreat` INTEGER, `escalationThreatFixed` INTEGER NOT NULL, `escalationThreatStar` INTEGER NOT NULL, `deckLimit` INTEGER, `deckRequirementsJson` TEXT, `deckOptionsJson` TEXT, `restrictionsJson` TEXT, `linkedToCode` TEXT, `linkedToName` TEXT, `duplicateOfCode` TEXT, `duplicateOfName` TEXT, `duplicatedByJson` TEXT, `isUnique` INTEGER NOT NULL, `hidden` INTEGER NOT NULL, `permanent` INTEGER NOT NULL, `doubleSided` INTEGER NOT NULL, `spoiler` INTEGER, `metaJson` TEXT, `searchName` TEXT NOT NULL, `searchText` TEXT NOT NULL, `searchTraits` TEXT NOT NULL, PRIMARY KEY(`code`, `locale`))",
+        "fields": [
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locale",
+            "columnName": "locale",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "realName",
+            "columnName": "realName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subname",
+            "columnName": "subname",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "octgnId",
+            "columnName": "octgnId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "packCode",
+            "columnName": "packCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packName",
+            "columnName": "packName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packLegacy",
+            "columnName": "packLegacy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packWave",
+            "columnName": "packWave",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cardSetCode",
+            "columnName": "cardSetCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cardSetName",
+            "columnName": "cardSetName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cardSetTypeNameCode",
+            "columnName": "cardSetTypeNameCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cardSetParentCode",
+            "columnName": "cardSetParentCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "setPosition",
+            "columnName": "setPosition",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "typeCode",
+            "columnName": "typeCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "typeName",
+            "columnName": "typeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "factionCode",
+            "columnName": "factionCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "factionName",
+            "columnName": "factionName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "traits",
+            "columnName": "traits",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "realTraits",
+            "columnName": "realTraits",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "realText",
+            "columnName": "realText",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "flavor",
+            "columnName": "flavor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "errata",
+            "columnName": "errata",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "illustrator",
+            "columnName": "illustrator",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "backText",
+            "columnName": "backText",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "backName",
+            "columnName": "backName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "backFlavor",
+            "columnName": "backFlavor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageSrc",
+            "columnName": "imageSrc",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "backImageSrc",
+            "columnName": "backImageSrc",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cost",
+            "columnName": "cost",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "costPerHero",
+            "columnName": "costPerHero",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "costStar",
+            "columnName": "costStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "resourcePhysical",
+            "columnName": "resourcePhysical",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "resourceMental",
+            "columnName": "resourceMental",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "resourceEnergy",
+            "columnName": "resourceEnergy",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "resourceWild",
+            "columnName": "resourceWild",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "health",
+            "columnName": "health",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "healthPerGroup",
+            "columnName": "healthPerGroup",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "healthPerHero",
+            "columnName": "healthPerHero",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "healthStar",
+            "columnName": "healthStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "handSize",
+            "columnName": "handSize",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "attack",
+            "columnName": "attack",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "attackCost",
+            "columnName": "attackCost",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "attackStar",
+            "columnName": "attackStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thwart",
+            "columnName": "thwart",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "thwartCost",
+            "columnName": "thwartCost",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "thwartStar",
+            "columnName": "thwartStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defense",
+            "columnName": "defense",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "defenseStar",
+            "columnName": "defenseStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recover",
+            "columnName": "recover",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "recoverStar",
+            "columnName": "recoverStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stage",
+            "columnName": "stage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "boost",
+            "columnName": "boost",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "boostStar",
+            "columnName": "boostStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheme",
+            "columnName": "scheme",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "schemeStar",
+            "columnName": "schemeStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "schemeAcceleration",
+            "columnName": "schemeAcceleration",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "schemeCrisis",
+            "columnName": "schemeCrisis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "schemeHazard",
+            "columnName": "schemeHazard",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "schemeAmplify",
+            "columnName": "schemeAmplify",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "threat",
+            "columnName": "threat",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "threatFixed",
+            "columnName": "threatFixed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "threatPerGroup",
+            "columnName": "threatPerGroup",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "threatStar",
+            "columnName": "threatStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "baseThreat",
+            "columnName": "baseThreat",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "baseThreatFixed",
+            "columnName": "baseThreatFixed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "baseThreatPerGroup",
+            "columnName": "baseThreatPerGroup",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "escalationThreat",
+            "columnName": "escalationThreat",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "escalationThreatFixed",
+            "columnName": "escalationThreatFixed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "escalationThreatStar",
+            "columnName": "escalationThreatStar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deckLimit",
+            "columnName": "deckLimit",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "deckRequirementsJson",
+            "columnName": "deckRequirementsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "deckOptionsJson",
+            "columnName": "deckOptionsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "restrictionsJson",
+            "columnName": "restrictionsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "linkedToCode",
+            "columnName": "linkedToCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "linkedToName",
+            "columnName": "linkedToName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "duplicateOfCode",
+            "columnName": "duplicateOfCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "duplicateOfName",
+            "columnName": "duplicateOfName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "duplicatedByJson",
+            "columnName": "duplicatedByJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isUnique",
+            "columnName": "isUnique",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hidden",
+            "columnName": "hidden",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "permanent",
+            "columnName": "permanent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleSided",
+            "columnName": "doubleSided",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spoiler",
+            "columnName": "spoiler",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "metaJson",
+            "columnName": "metaJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "searchName",
+            "columnName": "searchName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchText",
+            "columnName": "searchText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchTraits",
+            "columnName": "searchTraits",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "code",
+            "locale"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_cards_locale",
+            "unique": false,
+            "columnNames": [
+              "locale"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cards_locale` ON `${TABLE_NAME}` (`locale`)"
+          },
+          {
+            "name": "index_cards_packCode",
+            "unique": false,
+            "columnNames": [
+              "packCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cards_packCode` ON `${TABLE_NAME}` (`packCode`)"
+          },
+          {
+            "name": "index_cards_typeCode",
+            "unique": false,
+            "columnNames": [
+              "typeCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cards_typeCode` ON `${TABLE_NAME}` (`typeCode`)"
+          },
+          {
+            "name": "index_cards_factionCode",
+            "unique": false,
+            "columnNames": [
+              "factionCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cards_factionCode` ON `${TABLE_NAME}` (`factionCode`)"
+          },
+          {
+            "name": "index_cards_cardSetCode",
+            "unique": false,
+            "columnNames": [
+              "cardSetCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cards_cardSetCode` ON `${TABLE_NAME}` (`cardSetCode`)"
+          },
+          {
+            "name": "index_cards_linkedToCode",
+            "unique": false,
+            "columnNames": [
+              "linkedToCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cards_linkedToCode` ON `${TABLE_NAME}` (`linkedToCode`)"
+          },
+          {
+            "name": "index_cards_duplicateOfCode",
+            "unique": false,
+            "columnNames": [
+              "duplicateOfCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cards_duplicateOfCode` ON `${TABLE_NAME}` (`duplicateOfCode`)"
+          }
+        ]
+      },
+      {
+        "tableName": "cards_fts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`searchName` TEXT NOT NULL, `searchText` TEXT NOT NULL, `searchTraits` TEXT NOT NULL, content=`cards`)",
+        "fields": [
+          {
+            "fieldPath": "searchName",
+            "columnName": "searchName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchText",
+            "columnName": "searchText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchTraits",
+            "columnName": "searchTraits",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": []
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "cards",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_cards_fts_BEFORE_UPDATE BEFORE UPDATE ON `cards` BEGIN DELETE FROM `cards_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_cards_fts_BEFORE_DELETE BEFORE DELETE ON `cards` BEGIN DELETE FROM `cards_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_cards_fts_AFTER_UPDATE AFTER UPDATE ON `cards` BEGIN INSERT INTO `cards_fts`(`docid`, `searchName`, `searchText`, `searchTraits`) VALUES (NEW.`rowid`, NEW.`searchName`, NEW.`searchText`, NEW.`searchTraits`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_cards_fts_AFTER_INSERT AFTER INSERT ON `cards` BEGIN INSERT INTO `cards_fts`(`docid`, `searchName`, `searchText`, `searchTraits`) VALUES (NEW.`rowid`, NEW.`searchName`, NEW.`searchText`, NEW.`searchTraits`); END"
+        ]
+      },
+      {
+        "tableName": "packs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `marvelCdbId` INTEGER NOT NULL, `position` INTEGER NOT NULL, `available` TEXT NOT NULL, `known` INTEGER NOT NULL, `total` INTEGER NOT NULL, `url` TEXT, `type` TEXT NOT NULL, `wave` INTEGER NOT NULL, `waveInferred` INTEGER NOT NULL, `typeManual` INTEGER NOT NULL, PRIMARY KEY(`code`))",
+        "fields": [
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marvelCdbId",
+            "columnName": "marvelCdbId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "available",
+            "columnName": "available",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "known",
+            "columnName": "known",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "total",
+            "columnName": "total",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wave",
+            "columnName": "wave",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "waveInferred",
+            "columnName": "waveInferred",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "typeManual",
+            "columnName": "typeManual",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "code"
+          ]
+        }
+      },
+      {
+        "tableName": "pack_translations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`packCode` TEXT NOT NULL, `locale` TEXT NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`packCode`, `locale`), FOREIGN KEY(`packCode`) REFERENCES `packs`(`code`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "packCode",
+            "columnName": "packCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locale",
+            "columnName": "locale",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "packCode",
+            "locale"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_pack_translations_packCode",
+            "unique": false,
+            "columnNames": [
+              "packCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pack_translations_packCode` ON `${TABLE_NAME}` (`packCode`)"
+          },
+          {
+            "name": "index_pack_translations_locale",
+            "unique": false,
+            "columnNames": [
+              "locale"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_pack_translations_locale` ON `${TABLE_NAME}` (`locale`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "packs",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "packCode"
+            ],
+            "referencedColumns": [
+              "code"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "owned_packs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`packCode` TEXT NOT NULL, `quantity` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`packCode`))",
+        "fields": [
+          {
+            "fieldPath": "packCode",
+            "columnName": "packCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "packCode"
+          ]
+        }
+      },
+      {
+        "tableName": "randomizer_history",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `scenarioCode` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `playerCount` INTEGER NOT NULL, `heroes` TEXT NOT NULL, `modularSetCodes` TEXT NOT NULL, `beaten` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scenarioCode",
+            "columnName": "scenarioCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "difficulty",
+            "columnName": "difficulty",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playerCount",
+            "columnName": "playerCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heroes",
+            "columnName": "heroes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modularSetCodes",
+            "columnName": "modularSetCodes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "beaten",
+            "columnName": "beaten",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "saved_decks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `marvelCdbId` INTEGER NOT NULL, `kind` TEXT NOT NULL, `url` TEXT NOT NULL, `name` TEXT NOT NULL, `heroCode` TEXT NOT NULL, `heroName` TEXT NOT NULL, `aspects` TEXT NOT NULL, `slots` TEXT NOT NULL, `ignoreDeckLimitSlots` TEXT NOT NULL, `descriptionMd` TEXT, `version` TEXT, `tags` TEXT, `rawJson` TEXT NOT NULL, `lastSyncedAt` INTEGER NOT NULL, `locallyEdited` INTEGER NOT NULL DEFAULT 0, `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marvelCdbId",
+            "columnName": "marvelCdbId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heroCode",
+            "columnName": "heroCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heroName",
+            "columnName": "heroName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "aspects",
+            "columnName": "aspects",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "slots",
+            "columnName": "slots",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ignoreDeckLimitSlots",
+            "columnName": "ignoreDeckLimitSlots",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descriptionMd",
+            "columnName": "descriptionMd",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tags",
+            "columnName": "tags",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rawJson",
+            "columnName": "rawJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSyncedAt",
+            "columnName": "lastSyncedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locallyEdited",
+            "columnName": "locallyEdited",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "campaign_runs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `templateId` TEXT NOT NULL, `templateName` TEXT NOT NULL, `name` TEXT NOT NULL DEFAULT '', `difficulty` TEXT NOT NULL, `standardSet` TEXT NOT NULL DEFAULT '', `createdAt` INTEGER NOT NULL, `finished` INTEGER NOT NULL, `templateJson` TEXT NOT NULL, `timerAccumulatedMillis` INTEGER NOT NULL, `timerRunningSince` INTEGER, `timerScenarioId` TEXT, `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "templateId",
+            "columnName": "templateId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "templateName",
+            "columnName": "templateName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "difficulty",
+            "columnName": "difficulty",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardSet",
+            "columnName": "standardSet",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "finished",
+            "columnName": "finished",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "templateJson",
+            "columnName": "templateJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timerAccumulatedMillis",
+            "columnName": "timerAccumulatedMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timerRunningSince",
+            "columnName": "timerRunningSince",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "timerScenarioId",
+            "columnName": "timerScenarioId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "campaign_events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `runId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `payload` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`runId`) REFERENCES `campaign_runs`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "runId",
+            "columnName": "runId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payload",
+            "columnName": "payload",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_campaign_events_runId",
+            "unique": false,
+            "columnNames": [
+              "runId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_campaign_events_runId` ON `${TABLE_NAME}` (`runId`)"
+          },
+          {
+            "name": "index_campaign_events_timestamp",
+            "unique": false,
+            "columnNames": [
+              "timestamp"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_campaign_events_timestamp` ON `${TABLE_NAME}` (`timestamp`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "campaign_runs",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "runId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "plays",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `playedAt` INTEGER NOT NULL, `scenarioCode` TEXT NOT NULL, `scenarioName` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `standardSet` TEXT NOT NULL DEFAULT '', `heroCode` TEXT NOT NULL, `heroName` TEXT NOT NULL, `aspects` TEXT NOT NULL, `otherHeroes` TEXT NOT NULL, `roster` TEXT NOT NULL DEFAULT '[]', `players` INTEGER NOT NULL, `won` INTEGER NOT NULL, `elapsedMillis` INTEGER NOT NULL, `notes` TEXT NOT NULL, `location` TEXT NOT NULL DEFAULT '', `victoryPoints` INTEGER NOT NULL DEFAULT 0, `campaignRunId` TEXT, `reportedToBgg` INTEGER NOT NULL, `photos` TEXT NOT NULL DEFAULT '', `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playedAt",
+            "columnName": "playedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scenarioCode",
+            "columnName": "scenarioCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scenarioName",
+            "columnName": "scenarioName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "difficulty",
+            "columnName": "difficulty",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardSet",
+            "columnName": "standardSet",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "heroCode",
+            "columnName": "heroCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heroName",
+            "columnName": "heroName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "aspects",
+            "columnName": "aspects",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "otherHeroes",
+            "columnName": "otherHeroes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "roster",
+            "columnName": "roster",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'[]'"
+          },
+          {
+            "fieldPath": "players",
+            "columnName": "players",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "won",
+            "columnName": "won",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elapsedMillis",
+            "columnName": "elapsedMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "victoryPoints",
+            "columnName": "victoryPoints",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "campaignRunId",
+            "columnName": "campaignRunId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "reportedToBgg",
+            "columnName": "reportedToBgg",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "photos",
+            "columnName": "photos",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_plays_playedAt",
+            "unique": false,
+            "columnNames": [
+              "playedAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plays_playedAt` ON `${TABLE_NAME}` (`playedAt`)"
+          },
+          {
+            "name": "index_plays_heroCode",
+            "unique": false,
+            "columnNames": [
+              "heroCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plays_heroCode` ON `${TABLE_NAME}` (`heroCode`)"
+          },
+          {
+            "name": "index_plays_scenarioCode",
+            "unique": false,
+            "columnNames": [
+              "scenarioCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plays_scenarioCode` ON `${TABLE_NAME}` (`scenarioCode`)"
+          }
+        ]
+      },
+      {
+        "tableName": "favourite_cards",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardCode` TEXT NOT NULL, `addedAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`cardCode`))",
+        "fields": [
+          {
+            "fieldPath": "cardCode",
+            "columnName": "cardCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cardCode"
+          ]
+        }
+      },
+      {
+        "tableName": "excluded_modular_sets",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`setCode` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`setCode`))",
+        "fields": [
+          {
+            "fieldPath": "setCode",
+            "columnName": "setCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "setCode"
+          ]
+        }
+      },
+      {
+        "tableName": "excluded_scenarios",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`scenarioCode` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL DEFAULT 0, `deletedAt` INTEGER, PRIMARY KEY(`scenarioCode`))",
+        "fields": [
+          {
+            "fieldPath": "scenarioCode",
+            "columnName": "scenarioCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "scenarioCode"
+          ]
+        }
+      },
+      {
+        "tableName": "paused_games",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `savedAt` INTEGER NOT NULL, `scenarioCode` TEXT NOT NULL, `scenarioName` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `heroes` TEXT NOT NULL, `modularSetCodes` TEXT NOT NULL, `elapsedMillis` INTEGER NOT NULL, `phase` TEXT NOT NULL, `villainStep` TEXT NOT NULL, `heroLives` TEXT NOT NULL, `villainLife` INTEGER NOT NULL, `villainStage` INTEGER NOT NULL, `photos` TEXT NOT NULL DEFAULT '', `campaignRunId` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "savedAt",
+            "columnName": "savedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scenarioCode",
+            "columnName": "scenarioCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scenarioName",
+            "columnName": "scenarioName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "difficulty",
+            "columnName": "difficulty",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heroes",
+            "columnName": "heroes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modularSetCodes",
+            "columnName": "modularSetCodes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elapsedMillis",
+            "columnName": "elapsedMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "phase",
+            "columnName": "phase",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "villainStep",
+            "columnName": "villainStep",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heroLives",
+            "columnName": "heroLives",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "villainLife",
+            "columnName": "villainLife",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "villainStage",
+            "columnName": "villainStage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "photos",
+            "columnName": "photos",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "campaignRunId",
+            "columnName": "campaignRunId",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "sync_state",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`collection` TEXT NOT NULL, `rowId` TEXT NOT NULL, `serverRevision` INTEGER NOT NULL DEFAULT 0, `dirty` INTEGER NOT NULL DEFAULT 1, PRIMARY KEY(`collection`, `rowId`))",
+        "fields": [
+          {
+            "fieldPath": "collection",
+            "columnName": "collection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rowId",
+            "columnName": "rowId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serverRevision",
+            "columnName": "serverRevision",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "dirty",
+            "columnName": "dirty",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "collection",
+            "rowId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '54d64c3b0053b58ece852f0dcce4511c')"
+    ]
+  }
+}

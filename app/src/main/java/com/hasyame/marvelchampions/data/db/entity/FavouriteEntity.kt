@@ -1,5 +1,6 @@
 package com.hasyame.marvelchampions.data.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
@@ -17,4 +18,10 @@ import kotlinx.serialization.Serializable
 data class FavouriteCardEntity(
     @PrimaryKey val cardCode: String,
     val addedAt: Long,
+
+    /** When this row last changed. See [SyncStateEntity]. */
+    @ColumnInfo(defaultValue = "0") val updatedAt: Long = 0,
+
+    /** When this row was deleted, or null while it exists. See [SyncStateEntity]. */
+    val deletedAt: Long? = null,
 )

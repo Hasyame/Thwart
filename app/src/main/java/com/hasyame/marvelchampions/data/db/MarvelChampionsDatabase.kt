@@ -30,16 +30,26 @@ import com.hasyame.marvelchampions.data.db.entity.PlayHeroConverters
 import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
+import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
 
 /**
  * Note that this database holds two very different kinds of data:
  *
  * - **cache** — `cards`, `cards_fts`, `packs`, `pack_translations`. Rebuilt from
  *   MarvelCDB on any device, excluded from backup, never exported.
- * - **user state** — `owned_packs`, and later decks and campaign runs. Owned by
- *   the user and carried between devices in the export bundle.
+ * - **user state** — `owned_packs`, the two exclusion tables, `favourite_cards`,
+ *   `saved_decks`, `campaign_runs`, `campaign_events`, `plays` and
+ *   `randomizer_history`. Owned by the user, carried between devices in the
+ *   export bundle, and the only tables that will ever sync.
+ * - **device state** — `paused_games`. It describes the table in front of one
+ *   phone: which villain card is face up, whose life total is what. Syncing it
+ *   would mean a tablet claiming there is a game in progress that is sitting on
+ *   somebody else's coffee table.
+ * - **sync bookkeeping** — `sync_state`, which belongs to none of the above and
+ *   is kept apart from all of them. See SyncStateEntity.
  *
- * They share a file for now because the cross-device bundle is a separate
+ * They share a file because the cross-device bundle is a separate
  * serialisation concern, not a storage one.
  */
 @TypeConverters(PlayHeroConverters::class)
@@ -59,12 +69,15 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
         ExcludedModularSetEntity::class,
         ExcludedScenarioEntity::class,
         PausedGameEntity::class,
+        SyncStateEntity::class,
     ],
-    version = 17,
+    version = 18,
     exportSchema = true,
-    // Both migrations so far only add a table, so Room can generate them from
-    // the exported schemas. Anything that alters an existing table needs a
-    // handwritten migration instead.
+    // Room generates these from the exported schemas, which it can do for
+    // anything that only adds a table, or adds a column with a SQL default.
+    // Anything else needs a handwritten migration. A spec is how a generated
+    // migration gets extra statements: see SyncMigration17To18, which seeds
+    // updatedAt on rows written before the column existed.
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
@@ -81,7 +94,8 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15),
         AutoMigration(from = 15, to = 16),
-        AutoMigration(from = 16, to = 17)
+        AutoMigration(from = 16, to = 17),
+        AutoMigration(from = 17, to = 18, spec = SyncMigration17To18::class),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {
@@ -96,6 +110,7 @@ abstract class MarvelChampionsDatabase : RoomDatabase() {
     abstract fun favouriteDao(): FavouriteDao
     abstract fun excludedModularSetDao(): ExcludedModularSetDao
     abstract fun excludedScenarioDao(): ExcludedScenarioDao
+    abstract fun syncStateDao(): SyncStateDao
 
     companion object {
         const val NAME: String = "marvelchampions.db"
