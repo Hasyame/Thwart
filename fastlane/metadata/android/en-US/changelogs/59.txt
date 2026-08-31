@@ -1,0 +1,13 @@
+A backup now brings back everything it should.
+
+Restoring used to hand back your decks and campaigns but quietly forget
+two things: the scenarios you had ticked off as missing from your boxes,
+and your settings. Your language, theme, table name and tracker choice all
+travel with the file now, and so do the scenario exclusions. Older backups
+still restore, and older versions of the app can still read a new one.
+
+Under the hood, this release prepares the database for syncing between
+devices later on. Deleting something now records that you deleted it,
+rather than only removing it, so that a second device can eventually be
+told. Nothing about how the app behaves changes, and nothing leaves your
+phone: there is no account and no server yet.

@@ -1,0 +1,15 @@
+Une sauvegarde restitue désormais tout ce qu'elle devrait.
+
+La restauration rendait vos decks et vos campagnes, mais oubliait
+discrètement deux choses : les scénarios que vous aviez cochés comme
+manquants dans vos boîtes, et vos réglages. Votre langue, votre thème, le
+lieu de jeu et le suivi de partie voyagent maintenant avec le fichier, tout
+comme les scénarios exclus. Les anciennes sauvegardes se restaurent
+toujours, et les anciennes versions peuvent encore lire une nouvelle.
+
+En coulisses, cette version prépare la base de données à une future
+synchronisation entre appareils. Supprimer quelque chose enregistre
+désormais la suppression au lieu de simplement retirer la ligne, pour
+qu'un second appareil puisse en être informé plus tard. Rien ne change
+dans le fonctionnement de l'application, et rien ne quitte votre
+téléphone : il n'y a encore ni compte ni serveur.
