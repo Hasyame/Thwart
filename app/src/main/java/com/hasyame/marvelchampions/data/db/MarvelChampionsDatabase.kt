@@ -71,7 +71,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         PausedGameEntity::class,
         SyncStateEntity::class,
     ],
-    version = 18,
+    version = 19,
     exportSchema = true,
     // Room generates these from the exported schemas, which it can do for
     // anything that only adds a table, or adds a column with a SQL default.
@@ -96,6 +96,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         AutoMigration(from = 15, to = 16),
         AutoMigration(from = 16, to = 17),
         AutoMigration(from = 17, to = 18, spec = SyncMigration17To18::class),
+        AutoMigration(from = 18, to = 19),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {

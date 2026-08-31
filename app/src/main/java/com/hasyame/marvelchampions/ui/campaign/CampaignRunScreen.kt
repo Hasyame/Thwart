@@ -55,6 +55,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
+import com.hasyame.marvelchampions.ui.plays.CorrectTimeDialog
 import com.hasyame.marvelchampions.ui.plays.EncounterPanel
 import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.R
@@ -178,7 +179,9 @@ fun CampaignRunScreen(
                         onPause = viewModel::pauseTimer,
                         onResume = viewModel::resumeTimer,
                         onLongBreak = viewModel::beginLongBreak,
+                        onCorrectTime = viewModel::setElapsed,
                         trackEncounter = state.trackEncounter,
+                        trackerWanted = state.trackerWanted,
                         encounter = state.encounter,
                         keepAwake = state.keepAwake,
                         onDamageVillain = viewModel::damageVillain,
@@ -659,7 +662,9 @@ private fun PlayingPage(
     onPause: () -> Unit,
     onResume: () -> Unit,
     onLongBreak: () -> Unit,
+    onCorrectTime: (Long) -> Unit = {},
     trackEncounter: Boolean = false,
+    trackerWanted: Boolean = false,
     encounter: Encounter = Encounter.startOf(EncounterSetup()),
     keepAwake: Boolean = true,
     onDamageVillain: (Int) -> Unit = {},
@@ -669,6 +674,19 @@ private fun PlayingPage(
     onEndRound: () -> Unit = {},
     onKeepAwake: (Boolean) -> Unit = {},
 ) {
+    var correctingTime by remember { mutableStateOf(false) }
+
+    if (correctingTime) {
+        CorrectTimeDialog(
+            elapsedMillis = elapsedMillis,
+            onDismiss = { correctingTime = false },
+            onConfirm = {
+                onCorrectTime(it)
+                correctingTime = false
+            },
+        )
+    }
+
     Column(
         // Scrollable since the tracker joined it: the clock and two buttons
         // fit any screen, the counters do not.
@@ -680,9 +698,18 @@ private fun PlayingPage(
             text = scenario?.name?.resolve(campaignTextLocale).orEmpty(),
             style = MaterialTheme.typography.headlineSmall,
         )
+        // The clock is the control, exactly as in a one-off game. The stop
+        // button gets forgotten in a campaign as easily as anywhere else, and
+        // the time was the one thing here that could not be put right.
         Text(
             text = TimerState.format(elapsedMillis),
             style = MaterialTheme.typography.displayLarge,
+            modifier = Modifier.clickable(enabled = !isSubmitting) { correctingTime = true },
+        )
+        Text(
+            text = stringResource(R.string.session_tap_to_correct),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         OutlinedButton(onClick = if (run.timer.isRunning) onPause else onResume) {
             Text(
@@ -719,6 +746,17 @@ private fun PlayingPage(
                 onAdvanceScheme = onAdvanceScheme,
                 onEndRound = onEndRound,
                 onKeepAwake = onKeepAwake,
+            )
+        } else if (trackerWanted) {
+            // Only when the player asked for the tracker. Someone who switched
+            // it off does not need telling on every scenario; someone who
+            // switched it on and got nothing does, because the alternative is
+            // an empty space that reads as a bug.
+            Text(
+                text = stringResource(R.string.campaign_tracker_unavailable),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
             )
         }
 

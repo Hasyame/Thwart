@@ -1022,11 +1022,17 @@ class CampaignRepository @Inject constructor(
 
     fun newEventId(): String = UUID.randomUUID().toString()
 
-    private companion object {
-        const val CAMPAIGN_ASSET_DIR = "campaigns"
-
-        /** Draw id the villain assignment is stored under, per scenario. */
+    companion object {
+        /**
+         * Draw id the villain assignment is stored under, per scenario.
+         *
+         * Public because the encounter tracker has to read it too: a campaign
+         * that deals its villain rather than naming it in the template keeps
+         * the answer here, and nowhere else.
+         */
         const val VILLAIN_DRAW_ID = "villain"
+
+        private const val CAMPAIGN_ASSET_DIR = "campaigns"
 
         /** The campaign question asking which order the subordinates come in. */
         const val VILLAIN_ORDER_CHOICE: String = "villainOrder"

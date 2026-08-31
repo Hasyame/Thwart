@@ -13,15 +13,18 @@ import com.hasyame.marvelchampions.data.repository.CampaignRun
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.campaign.engine.AnswerSet
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
+import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.domain.play.Encounter
+import com.hasyame.marvelchampions.domain.play.EncounterProgress
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
 import kotlinx.coroutines.flow.first
 import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -113,6 +116,16 @@ data class CampaignRunUiState(
 
     /** Counting villain health and scheme threat, if the setting asks for it. */
     val trackEncounter: Boolean = false,
+
+    /**
+     * Whether the player has the tracker switched on at all.
+     *
+     * Kept apart from [trackEncounter], which also needs numbers to count. The
+     * two together are what let the screen tell "you turned this off", which
+     * needs no comment, from "you turned this on and this scenario has nothing
+     * to count", which was previously an empty space with no explanation.
+     */
+    val trackerWanted: Boolean = false,
     val encounter: Encounter = Encounter.startOf(EncounterSetup()),
     val keepAwake: Boolean = true,
 )
@@ -124,6 +137,7 @@ class CampaignRunViewModel @Inject constructor(
     private val encounterRepository: EncounterRepository,
     private val cardDao: CardDao,
     private val pausedGameDao: PausedGameDao,
+    private val json: Json,
     val photoStore: PhotoStore,
 ) : ViewModel() {
 
@@ -260,12 +274,22 @@ class CampaignRunViewModel @Inject constructor(
         if (!preferences.trackEncounter.first()) {
             return EncounterSetup()
         }
+        val scenarioId = run.state.currentScenarioId ?: return EncounterSetup()
         val scenario = run.template.scenarios
-            .firstOrNull { it.id == run.state.currentScenarioId }
+            .firstOrNull { it.id == scenarioId }
             ?: return EncounterSetup()
+        // The template names the villain in every campaign but one. Fear No
+        // Evil deals a subordinate per job instead, so there the answer is in
+        // the log rather than the template, and reading only the template left
+        // the tracker permanently blank for that whole campaign.
         val villain = scenario.baseSetup
             ?.villainStages(run.state.difficulty, null)
             ?.firstOrNull()
+            ?: CampaignEngine.drawnCards(
+                run.state,
+                scenarioId,
+                CampaignRepository.VILLAIN_DRAW_ID,
+            ).firstOrNull()
             ?: return EncounterSetup()
         val locale = preferences.currentCardLocale()
         val setCode = cardDao.getCardsByCodes(listOf(villain))
@@ -280,6 +304,22 @@ class CampaignRunViewModel @Inject constructor(
             players = run.state.heroes.size.coerceAtLeast(1),
             expert = run.state.difficulty.equals("expert", ignoreCase = true),
         )
+    }
+
+    /**
+     * The counters this run was put away with, if it was.
+     *
+     * Null when there is no saved game for this run, or when it was saved with
+     * the tracker off, or when the stored text will not parse. A break that
+     * cannot be read back starts fresh, which is what happened to every break
+     * before these numbers were stored at all.
+     */
+    private suspend fun pausedProgressFor(runId: String): EncounterProgress? {
+        val saved = pausedGameDao.current()?.takeIf { it.campaignRunId == runId } ?: return null
+        val text = saved.encounterProgress.takeIf { it.isNotBlank() } ?: return null
+        return runCatching {
+            json.decodeFromString(EncounterProgress.serializer(), text)
+        }.getOrNull()
     }
 
     private fun updateEncounter(transform: Encounter.() -> Encounter) {
@@ -305,9 +345,12 @@ class CampaignRunViewModel @Inject constructor(
         val id = runId ?: return
         val run = state.value.run ?: return
         viewModelScope.launch {
+            // The clock the run already has, not a new one. A scenario put
+            // away on a long break and picked up again was starting from zero,
+            // which threw away everything already played.
             repository.updateTimer(
                 id,
-                TimerState().start(System.currentTimeMillis()),
+                run.timer.start(System.currentTimeMillis()),
                 run.state.currentScenarioId,
             )
             reload()
@@ -315,10 +358,19 @@ class CampaignRunViewModel @Inject constructor(
             // laid out, so the stages and the player count are settled.
             val run = state.value.run
             val setup = if (run != null) buildEncounter(run) else EncounterSetup()
+            // A scenario put away on a long break comes back where it stood.
+            // Without this the counters started again from full health, which
+            // made the break worth less than a photograph of the table.
+            val resumed = run?.let { pausedProgressFor(it.entity.id) }
             state.value = state.value.copy(
                 page = RunPage.PLAYING,
                 trackEncounter = setup.isUsable,
-                encounter = Encounter.startOf(setup),
+                trackerWanted = preferences.trackEncounter.first(),
+                encounter = if (resumed != null) {
+                    Encounter(setup = setup, progress = resumed)
+                } else {
+                    Encounter.startOf(setup)
+                },
             )
         }
     }
@@ -579,6 +631,17 @@ class CampaignRunViewModel @Inject constructor(
                     villainLife = draft.villainLife.toIntOrNull() ?: 0,
                     villainStage = draft.villainStage,
                     campaignRunId = run.entity.id,
+                    // Written by the app, for the reason the one-off game does
+                    // it: the numbers are already on the screen, and asking the
+                    // table to copy them out is the wrong way round.
+                    encounterProgress = if (current.trackEncounter) {
+                        json.encodeToString(
+                            EncounterProgress.serializer(),
+                            current.encounter.progress,
+                        )
+                    } else {
+                        ""
+                    },
                 ),
             )
             state.value = state.value.copy(longBreak = null)

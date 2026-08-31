@@ -62,6 +62,26 @@ data class PausedGameEntity(
      */
     @ColumnInfo(defaultValue = "")
     val campaignRunId: String = "",
+
+    /**
+     * The tracker's counters as they stood, serialised, or empty.
+     *
+     * The three fields above are what a player writes down by hand, and they
+     * are all a game needs when the tracker is off. When it is on, the app
+     * already knows where every counter stood, and asking the table to copy
+     * numbers the app is holding would be the wrong way round — so it stores
+     * them itself, and puts them back untouched.
+     *
+     * Empty for a game saved before this existed, and for one saved with the
+     * tracker off. Both fall back to the hand-written figures.
+     *
+     * JSON in one column rather than five more columns, for the reason a
+     * play's roster is: it is only ever read with the row it belongs to, and
+     * five columns would have to be migrated again the next time the tracker
+     * learns to count something new.
+     */
+    @ColumnInfo(defaultValue = "")
+    val encounterProgress: String = "",
 )
 
 /** The two halves of a round a game can be stopped in. */

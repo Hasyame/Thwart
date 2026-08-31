@@ -649,35 +649,12 @@ private fun PlayingPhase(
     var correctingTime by remember { mutableStateOf(false) }
 
     if (correctingTime) {
-        var minutes by remember { mutableStateOf((state.elapsedMillis / 60_000L).toString()) }
-        AlertDialog(
-            onDismissRequest = { correctingTime = false },
-            title = { Text(stringResource(R.string.session_correct_title)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(R.string.session_correct_message))
-                    OutlinedTextField(
-                        value = minutes,
-                        onValueChange = { minutes = it.filter(Char::isDigit) },
-                        label = { Text(stringResource(R.string.session_correct_minutes)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.setElapsed((minutes.toLongOrNull() ?: 0L) * 60_000L)
-                        correctingTime = false
-                    },
-                ) { Text(stringResource(R.string.session_correct_confirm)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { correctingTime = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
+        CorrectTimeDialog(
+            elapsedMillis = state.elapsedMillis,
+            onDismiss = { correctingTime = false },
+            onConfirm = {
+                viewModel.setElapsed(it)
+                correctingTime = false
             },
         )
     }

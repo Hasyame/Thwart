@@ -529,6 +529,9 @@
     <string name="cards_sort_cost_asc">Cost, cheapest first</string>
     <string name="cards_sort_cost_desc">Cost, dearest first</string>
     <string name="session_tap_to_correct">Tap the time to correct it</string>
+    <!-- Shown when the tracker is switched on but this scenario has nothing to
+         count, which is otherwise an unexplained empty space. -->
+    <string name="campaign_tracker_unavailable">The tracker is off for this scenario: its villain is not in the card database yet, so there is no health to count.</string>
     <string name="session_correct_title">Correct the time</string>
     <string name="session_correct_message">If you started the clock late, or left it running, set the real length here.</string>
     <string name="session_correct_minutes">Minutes played</string>

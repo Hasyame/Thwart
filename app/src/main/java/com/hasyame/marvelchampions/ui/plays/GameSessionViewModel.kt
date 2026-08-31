@@ -28,6 +28,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -91,6 +92,27 @@ fun SessionHero.displayName(names: Map<String, String>): String =
  * from, the life is carried as a manual figure instead, which is what the
  * tracker already does for a scenario it cannot read.
  */
+/**
+ * The counters to come back to.
+ *
+ * Prefers what the tracker itself recorded, which is exact. Falls back to the
+ * figures the table wrote down, which is all there is for a game saved with the
+ * tracker off, or saved by a version that did not keep them.
+ *
+ * The stored text is not trusted blindly: it has been through a database that
+ * an export can put back, so a value that will not parse falls back rather than
+ * bringing the screen down.
+ */
+private fun PausedGameEntity.restoredProgress(
+    setup: EncounterSetup,
+    json: Json,
+): EncounterProgress =
+    encounterProgress.takeIf { it.isNotBlank() }
+        ?.let {
+            runCatching { json.decodeFromString(EncounterProgress.serializer(), it) }.getOrNull()
+        }
+        ?: progress(setup)
+
 private fun PausedGameEntity.progress(setup: EncounterSetup): EncounterProgress {
     val index = (villainStage - 1).coerceIn(0, (setup.villain.size - 1).coerceAtLeast(0))
     val printed = setup.villain.getOrNull(index)?.totalFor(setup.players)
@@ -227,6 +249,7 @@ class GameSessionViewModel @Inject constructor(
     private val deckRepository: DeckRepository,
     val photoStore: PhotoStore,
     private val pausedGameDao: PausedGameDao,
+    private val json: Json,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(GameSessionUiState())
@@ -371,7 +394,7 @@ class GameSessionViewModel @Inject constructor(
                 modularSetCodes = saved.modularSetCodes.split(",").filter { it.isNotBlank() },
                 photos = saved.photos.split(",").filter { it.isNotBlank() },
                 briefing = randomizerRepository.schemeBriefing(saved.scenarioCode, locale),
-                encounter = Encounter(setup = setup, progress = saved.progress(setup)),
+                encounter = Encounter(setup = setup, progress = saved.restoredProgress(setup, json)),
                 trackEncounter = setup.isUsable,
                 elapsedMillis = saved.elapsedMillis,
                 timer = TimerState(accumulatedMillis = saved.elapsedMillis),
@@ -381,6 +404,20 @@ class GameSessionViewModel @Inject constructor(
             )
         }
     }
+
+    /**
+     * The tracker's counters as text, or empty when it was not running.
+     *
+     * Empty rather than a default-filled object, so that "the tracker was off"
+     * and "the tracker was on and everything happened to be at zero" stay
+     * different facts on the way back in.
+     */
+    private fun encounterProgressJson(current: GameSessionUiState): String =
+        if (current.trackEncounter) {
+            json.encodeToString(EncounterProgress.serializer(), current.encounter.progress)
+        } else {
+            ""
+        }
 
     fun setScenario(code: String) {
         state.value = state.value.copy(scenarioCode = code)
@@ -494,6 +531,10 @@ class GameSessionViewModel @Inject constructor(
                     villainLife = draft.villainLife.toIntOrNull() ?: 0,
                     villainStage = draft.villainStage,
                     photos = current.photos.joinToString(","),
+                    // What the tracker was holding, if it was running. Written
+                    // by the app rather than copied out by the table: it is
+                    // already on the screen in front of them.
+                    encounterProgress = encounterProgressJson(current),
                 ),
             )
             state.value = state.value.copy(longBreak = null)
@@ -557,8 +598,20 @@ class GameSessionViewModel @Inject constructor(
         }
         state.value = current.copy(
             phase = SessionPhase.PLAYING,
-            timer = TimerState().start(System.currentTimeMillis()),
-            firstPlayerIndex = if (current.heroes.size > 1) current.heroes.indices.random() else null,
+            // The clock this game already has, not a new one. A resumed game
+            // arrives here carrying the time it was put away with, and starting
+            // a fresh TimerState threw it away: a game stopped after an hour
+            // came back reading zero, and the hour was gone for good.
+            timer = current.timer.start(System.currentTimeMillis()),
+            firstPlayerIndex = when {
+                // Already decided, before the break. The app does not know who
+                // it was — nothing wrote it down — and drawing again would
+                // announce a different player with the same confidence, which
+                // is worse than saying nothing.
+                current.resumedFrom != null -> null
+                current.heroes.size > 1 -> current.heroes.indices.random()
+                else -> null
+            },
         )
     }
 

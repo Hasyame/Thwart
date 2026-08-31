@@ -551,6 +551,9 @@
     <string name="cards_sort_cost_asc">Coût croissant</string>
     <string name="cards_sort_cost_desc">Coût décroissant</string>
     <string name="session_tap_to_correct">Touchez le temps pour le corriger</string>
+    <!-- Shown when the tracker is switched on but this scenario has nothing to
+         count, which is otherwise an unexplained empty space. -->
+    <string name="campaign_tracker_unavailable">Le suivi est inactif pour ce scénario : son méchant n\'est pas encore dans la base de cartes, il n\'y a donc aucun point de vie à compter.</string>
     <string name="session_correct_title">Corriger le temps</string>
     <string name="session_correct_message">Si vous avez lancé le chronomètre en retard, ou oublié de l\'arrêter, indiquez ici la vraie durée.</string>
     <string name="session_correct_minutes">Minutes jouées</string>

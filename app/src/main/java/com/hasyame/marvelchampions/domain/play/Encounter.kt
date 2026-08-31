@@ -1,5 +1,7 @@
 package com.hasyame.marvelchampions.domain.play
 
+import kotlinx.serialization.Serializable
+
 /**
  * One printed side of a villain or a main scheme.
  *
@@ -53,7 +55,15 @@ data class EncounterSetup(
     val isUsable: Boolean get() = villain.isNotEmpty() || scheme.isNotEmpty()
 }
 
-/** Where the counters stand. Separate from the scenario, which cannot change. */
+/**
+ * Where the counters stand. Separate from the scenario, which cannot change.
+ *
+ * Serialisable because a game put down mid-play has to be able to write these
+ * numbers somewhere and find them again. They cannot be re-derived: the damage
+ * on the villain and the threat on the scheme are the game, not a function of
+ * it.
+ */
+@Serializable
 data class EncounterProgress(
     val villainIndex: Int = 0,
     val damage: Int = 0,
