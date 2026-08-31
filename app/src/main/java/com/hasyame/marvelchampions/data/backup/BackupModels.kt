@@ -3,11 +3,14 @@ package com.hasyame.marvelchampions.data.backup
 import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
+import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.domain.model.CardLocale
+import com.hasyame.marvelchampions.domain.model.ThemeChoice
 import kotlinx.serialization.Serializable
 
 /**
@@ -35,6 +38,16 @@ data class Backup(
      * merely loses the exclusions, which beats refusing the backup outright.
      */
     val excludedModularSets: List<ExcludedModularSetEntity> = emptyList(),
+    /**
+     * The other half of the same fact, about scenarios rather than modular sets.
+     *
+     * Missing until now, and silently: the table has existed since 1.28.0, was
+     * exported nowhere, and a restore quietly handed back a collection with
+     * every scenario ticked on again. Added on the same reasoning as
+     * [excludedModularSets] and with the version left alone for the same
+     * reason.
+     */
+    val excludedScenarios: List<ExcludedScenarioEntity> = emptyList(),
     val decks: List<SavedDeckEntity> = emptyList(),
     val campaignRuns: List<CampaignRunEntity> = emptyList(),
     val campaignEvents: List<CampaignEventEntity> = emptyList(),
@@ -50,6 +63,14 @@ data class Backup(
      * can report what it found and what it did not.
      */
     val photos: List<String> = emptyList(),
+    /**
+     * The preferences, or null in a backup written before they were included.
+     *
+     * Null rather than an empty object, so a restore can tell "this file has no
+     * settings" from "this file says the defaults", and leave the device's own
+     * settings alone in the first case.
+     */
+    val settings: BackupSettings? = null,
 ) {
     /** What a restore is about to bring in, for the confirmation. */
     fun summary(): BackupSummary = BackupSummary(
@@ -65,6 +86,31 @@ data class Backup(
         const val CURRENT_FORMAT_VERSION = 1
     }
 }
+
+/**
+ * The preferences that describe the player rather than the device.
+ *
+ * `last_card_sync` is deliberately absent. It records when *this* phone last
+ * fetched MarvelCDB, so restoring it onto another one would tell that device
+ * its card database is fresher than it is.
+ *
+ * Every field has a default, so a file written by a later version that adds one
+ * still restores here, and one written before a field existed still restores
+ * there.
+ */
+@Serializable
+data class BackupSettings(
+    /** The language card text is stored and shown in, as [CardLocale.code]. */
+    val cardLocale: String = "",
+    /** Light, dark or system, as [ThemeChoice.code]. */
+    val themeChoice: String = "",
+    /** Where games get played, as free text the player typed. */
+    val playLocation: String = "",
+    /** Whether a game in progress counts villain health and scheme threat. */
+    val trackEncounter: Boolean = false,
+    /** Packs the player has been offered and turned down. */
+    val dismissedPacks: List<String> = emptyList(),
+)
 
 /** The counts shown before a restore, so nobody replaces data blindly. */
 data class BackupSummary(

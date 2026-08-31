@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.data.settings.AppPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -31,6 +32,7 @@ import javax.inject.Singleton
 class BackupRepository @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val database: MarvelChampionsDatabase,
+    private val preferences: AppPreferences,
     private val photoStore: PhotoStore,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -68,6 +70,7 @@ class BackupRepository @Inject constructor(
                 appVersion = appVersion(),
                 ownedPacks = database.ownedPackDao().getOwned(),
                 excludedModularSets = database.excludedModularSetDao().getExcluded(),
+                excludedScenarios = database.excludedScenarioDao().getExcluded(),
                 decks = database.savedDeckDao().getDecks(),
                 campaignRuns = runs,
                 campaignEvents = runs.flatMap { database.campaignDao().getEvents(it.id) },
@@ -75,6 +78,7 @@ class BackupRepository @Inject constructor(
                 randomizerHistory = database.randomizerHistoryDao().getHistory(),
                 favouriteCards = database.favouriteDao().getAll(),
                 photos = photoFiles.map { it.name },
+                settings = preferences.snapshot(),
             )
 
             val bytes = json.encodeToString(Backup.serializer(), backup).toByteArray()
@@ -161,11 +165,16 @@ class BackupRepository @Inject constructor(
                 database.savedDeckDao().deleteAll()
                 database.ownedPackDao().clear()
                 database.excludedModularSetDao().clear()
+                database.excludedScenarioDao().clear()
                 database.randomizerHistoryDao().clear()
                 database.favouriteDao().deleteAll()
+                // The revisions described rows that are no longer here, and
+                // every restored row is new to a server until it is pushed.
+                database.syncStateDao().clear()
 
                 database.ownedPackDao().upsertAll(backup.ownedPacks)
                 database.excludedModularSetDao().excludeAll(backup.excludedModularSets)
+                database.excludedScenarioDao().excludeAll(backup.excludedScenarios)
                 database.savedDeckDao().upsertAll(backup.decks)
                 backup.campaignRuns.forEach { database.campaignDao().insertRun(it) }
                 // After the runs: an event references its run, and the foreign
@@ -175,6 +184,13 @@ class BackupRepository @Inject constructor(
                 database.randomizerHistoryDao().insertAll(backup.randomizerHistory)
                 database.favouriteDao().addAll(backup.favouriteCards)
             }
+            // Outside the transaction because the settings are a DataStore
+            // rather than a table, so they cannot be rolled back with it. After
+            // it, so a database restore that fails leaves the device's own
+            // settings alone. Null means the file predates settings being
+            // included, and there is nothing to put back.
+            backup.settings?.let { preferences.restore(it) }
+
             // After the transaction, and deliberately outside it: a photo
             // that will not write back is a missing picture, not a reason to
             // throw away a collection that has just been restored.

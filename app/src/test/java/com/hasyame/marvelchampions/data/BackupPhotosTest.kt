@@ -7,6 +7,7 @@ import com.hasyame.marvelchampions.data.backup.BackupRepository
 import com.hasyame.marvelchampions.data.backup.BackupResult
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.data.settings.AppPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -49,7 +50,13 @@ class BackupPhotosTest {
             MarvelChampionsDatabase::class.java,
         ).allowMainThreadQueries().build()
         photos = PhotoStore(context, Dispatchers.Unconfined)
-        repository = BackupRepository(context, database, photos, Dispatchers.Unconfined)
+        repository = BackupRepository(
+            context,
+            database,
+            AppPreferences(context),
+            photos,
+            Dispatchers.Unconfined,
+        )
     }
 
     @After

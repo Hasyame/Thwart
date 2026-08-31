@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.hasyame.marvelchampions.data.backup.BackupSettings
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -143,6 +144,56 @@ class AppPreferences @Inject constructor(
 
     suspend fun setTrackEncounter(enabled: Boolean) {
         context.dataStore.edit { preferences -> preferences[KEY_TRACK_ENCOUNTER] = enabled }
+    }
+
+    /**
+     * The settings worth carrying to another device, for a backup.
+     *
+     * Read in one pass rather than through the flows above, so the file cannot
+     * catch the store half way through a change.
+     */
+    suspend fun snapshot(): BackupSettings {
+        val preferences = context.dataStore.data.first()
+        return BackupSettings(
+            cardLocale = preferences[KEY_CARD_LOCALE].orEmpty(),
+            themeChoice = preferences[KEY_THEME].orEmpty(),
+            playLocation = preferences[KEY_PLAY_LOCATION].orEmpty(),
+            trackEncounter = preferences[KEY_TRACK_ENCOUNTER] ?: false,
+            dismissedPacks = preferences[KEY_DISMISSED_PACKS].orEmpty().sorted(),
+        )
+    }
+
+    /**
+     * Puts a backup's settings back.
+     *
+     * A blank value means the file did not carry that key, so the setting is
+     * left as it is rather than being reset to a default the player never
+     * chose. An unreadable locale or theme code is ignored on the same
+     * reasoning: the file has been outside the app and may have been edited by
+     * anything.
+     *
+     * `last_card_sync` is not restored. It says when *this* device last fetched
+     * MarvelCDB, and a borrowed value would tell it the card database is
+     * fresher than it is.
+     */
+    suspend fun restore(settings: BackupSettings) {
+        context.dataStore.edit { preferences ->
+            CardLocale.fromCode(settings.cardLocale)?.let {
+                preferences[KEY_CARD_LOCALE] = it.code
+            }
+            settings.themeChoice
+                .takeIf { code -> ThemeChoice.entries.any { it.code == code } }
+                ?.let { preferences[KEY_THEME] = it }
+            if (settings.playLocation.isNotBlank()) {
+                preferences[KEY_PLAY_LOCATION] = settings.playLocation
+            }
+            preferences[KEY_TRACK_ENCOUNTER] = settings.trackEncounter
+            // A union rather than a replacement: a pack turned down anywhere
+            // stays turned down, and the alternative is a restore re-offering
+            // packs the player has already said no to.
+            preferences[KEY_DISMISSED_PACKS] =
+                preferences[KEY_DISMISSED_PACKS].orEmpty() + settings.dismissedPacks
+        }
     }
 
     companion object {
