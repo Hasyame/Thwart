@@ -76,6 +76,34 @@ class SoftDeleteTest {
     }
 
     @Test
+    fun `a pack bought again comes back`() = runTest {
+        val dao = database.ownedPackDao()
+        dao.upsert(OwnedPackEntity("core", quantity = 1))
+        dao.remove("core", now)
+
+        dao.upsert(OwnedPackEntity("core", quantity = 2, updatedAt = now + 1))
+
+        // The insert writes over the tombstone rather than colliding with it,
+        // which is what every one of these tables relies on: a row deleted and
+        // recreated has to become visible again, not stay deleted with a newer
+        // timestamp on it.
+        assertEquals(listOf("core"), dao.getOwnedCodes())
+        assertEquals(2, dao.getOwned().single().quantity)
+        assertEquals(1, rowCount("owned_packs"))
+    }
+
+    @Test
+    fun `a set ticked off again after being put back is excluded`() = runTest {
+        val dao = database.excludedModularSetDao()
+        dao.exclude(ExcludedModularSetEntity("bomb_scare"))
+        dao.include("bomb_scare", now)
+
+        dao.exclude(ExcludedModularSetEntity("bomb_scare", updatedAt = now + 1))
+
+        assertEquals(listOf("bomb_scare"), dao.getExcludedCodes())
+    }
+
+    @Test
     fun `a modular set ticked back on is not excluded`() = runTest {
         val dao = database.excludedModularSetDao()
         dao.exclude(ExcludedModularSetEntity("bomb_scare"))
