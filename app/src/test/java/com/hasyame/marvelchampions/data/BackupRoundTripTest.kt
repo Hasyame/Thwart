@@ -243,7 +243,13 @@ class BackupRoundTripTest {
     fun `a real export restores whole`() = runTest {
         val path = System.getenv("MCC_BACKUP_FILE")
         assumeTrue("set MCC_BACKUP_FILE to a real export to run this", !path.isNullOrBlank())
-        val source = Uri.fromFile(File(path!!))
+        // The file, not just the variable. A variable left pointing at an export
+        // that has since been moved should skip this like any other missing
+        // file, not fail the build with a FileNotFoundException and look like a
+        // regression in the backup code.
+        val file = File(path!!)
+        assumeTrue("MCC_BACKUP_FILE points at ${'$'}path, which is not there", file.isFile)
+        val source = Uri.fromFile(file)
 
         val backup = repository.peek(source).getOrThrow()
         assertTrue("nothing to restore in $path", backup.plays.isNotEmpty())

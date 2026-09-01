@@ -19,7 +19,11 @@ import org.robolectric.RobolectricTestRunner
 import java.io.File
 
 /**
- * Schema 17 to 18, run against a real version-17 database.
+ * Every migration since 1.38.0, run against a real version-17 database.
+ *
+ * Opens at whatever version the app is on now, so this covers 17 to 18 and
+ * everything added after it. A migration written later is carried by this test
+ * without anyone having to remember to extend it.
  *
  * This is the test that matters most in the whole change. A migration that
  * loses a row loses somebody's campaign log, on their phone, with no copy
