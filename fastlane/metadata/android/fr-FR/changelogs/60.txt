@@ -1,0 +1,15 @@
+Une partie reprise après une longue pause repart où elle s'était arrêtée.
+
+La reprise recommençait tout à zéro. Le chronomètre repartait de zéro, en
+perdant tout le temps déjà joué, et le suivi revenait avec le méchant en
+pleine forme et le plan principal vide, car la menace et le tour n'étaient
+jamais enregistrés.
+
+Les deux sont corrigés. L'application note désormais elle-même où en
+étaient les compteurs, au lieu de vous demander de recopier des chiffres
+qu'elle a déjà à l'écran, et le chronomètre repart de là où vous l'aviez
+arrêté.
+
+Également dans les campagnes : le temps se corrige en le touchant, comme
+dans une partie normale, et quand le suivi ne peut pas compter un
+scénario, la page explique pourquoi au lieu de n'afficher rien.

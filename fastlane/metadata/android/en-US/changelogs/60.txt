@@ -1,0 +1,14 @@
+A game picked up after a long break carries on where it stood.
+
+Resuming used to start it again from nothing. The clock went back to zero,
+losing however long you had already played, and the tracker came back at
+full health with the main scheme empty, because the threat and the round
+were never saved at all.
+
+Both are fixed. The app now writes down where the counters stood itself,
+rather than asking you to copy numbers it already has on screen, and the
+clock carries on from where you stopped it.
+
+Also in campaigns: the clock can be corrected by tapping it, the same as
+in a one-off game, and when the tracker cannot count a scenario the page
+now says why instead of showing nothing.
