@@ -50,6 +50,15 @@ fun LongBreakPage(
     draft: LongBreakDraft,
     /** Hero code to the name to show, in seat order. */
     heroes: List<Pair<String, String>>,
+    /**
+     * Whether the tracker was counting this game.
+     *
+     * When it was, the villain's health and which card is face up are already
+     * known and are not asked for. Asking the table to copy a number off the
+     * screen it is looking at is the wrong way round, and a second copy of a
+     * figure is a second chance to disagree with it.
+     */
+    tracked: Boolean,
     photos: List<String>,
     photoStore: PhotoStore,
     onDraft: (LongBreakDraft) -> Unit,
@@ -155,29 +164,37 @@ fun LongBreakPage(
         }
 
         Section(stringResource(R.string.long_break_villain)) {
-            OutlinedTextField(
-                value = draft.villainLife,
-                onValueChange = {
-                    onDraft(
-                        draft.copy(villainLife = it.filter(Char::isDigit)),
-                    )
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                label = { Text(stringResource(R.string.long_break_life)) },
-                modifier = Modifier.width(160.dp),
-            )
-            Text(
-                text = stringResource(R.string.long_break_stage),
-                style = MaterialTheme.typography.labelLarge,
-            )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                (1..3).forEach { stage ->
-                    FilterChip(
-                        selected = draft.villainStage == stage,
-                        onClick = { onDraft(draft.copy(villainStage = stage)) },
-                        label = { Text(stageLabel(stage)) },
-                    )
+            if (tracked) {
+                Text(
+                    text = stringResource(R.string.long_break_villain_tracked),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                OutlinedTextField(
+                    value = draft.villainLife,
+                    onValueChange = {
+                        onDraft(
+                            draft.copy(villainLife = it.filter(Char::isDigit)),
+                        )
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text(stringResource(R.string.long_break_life)) },
+                    modifier = Modifier.width(160.dp),
+                )
+                Text(
+                    text = stringResource(R.string.long_break_stage),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    (1..3).forEach { stage ->
+                        FilterChip(
+                            selected = draft.villainStage == stage,
+                            onClick = { onDraft(draft.copy(villainStage = stage)) },
+                            label = { Text(stageLabel(stage)) },
+                        )
+                    }
                 }
             }
         }

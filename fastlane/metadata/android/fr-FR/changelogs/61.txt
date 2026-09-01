@@ -1,0 +1,11 @@
+Deux détails sur la page « ranger la partie ».
+
+Votre héros est nommé au lieu d'apparaître sous son code de carte. Le nom
+figurait sur le deck depuis toujours ; la page le cherchait d'abord au
+mauvais endroit.
+
+Et quand le suivi tourne, la page ne vous demande plus de taper les points
+de vie du méchant. L'application a déjà ce chiffre à l'écran devant vous,
+elle le conserve donc elle-même, et le récapitulatif affiché à la reprise
+le montre toujours. Avec le suivi désactivé, rien ne change : les champs
+restent là, car ce que vous notez est alors le seul enregistrement.

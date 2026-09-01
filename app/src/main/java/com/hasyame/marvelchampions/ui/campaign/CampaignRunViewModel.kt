@@ -628,8 +628,22 @@ class CampaignRunViewModel @Inject constructor(
                     heroLives = draft.heroLives.entries.joinToString(",") { (code, life) ->
                         "$code|${life.ifBlank { "?" }}"
                     },
-                    villainLife = draft.villainLife.toIntOrNull() ?: 0,
-                    villainStage = draft.villainStage,
+                    // From the tracker when it was running, as a one-off game
+                    // does it, so the recap shows real numbers the table never
+                    // had to type.
+                    villainLife = if (current.trackEncounter) {
+                        current.encounter.villainHealth
+                            ?.minus(current.encounter.progress.damage)
+                            ?.coerceAtLeast(0)
+                            ?: 0
+                    } else {
+                        draft.villainLife.toIntOrNull() ?: 0
+                    },
+                    villainStage = if (current.trackEncounter) {
+                        current.encounter.progress.villainIndex + 1
+                    } else {
+                        draft.villainStage
+                    },
                     campaignRunId = run.entity.id,
                     // Written by the app, for the reason the one-off game does
                     // it: the numbers are already on the screen, and asking the

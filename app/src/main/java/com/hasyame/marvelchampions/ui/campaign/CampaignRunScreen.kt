@@ -160,6 +160,7 @@ fun CampaignRunScreen(
                     RunPage.PLAYING if state.longBreak != null -> LongBreakPage(
                         draft = requireNotNull(state.longBreak),
                         heroes = run.state.heroes.map { it.heroCardCode to it.name },
+                        tracked = state.trackEncounter,
                         photos = emptyList(),
                         photoStore = viewModel.photoStore,
                         onDraft = viewModel::updateLongBreak,

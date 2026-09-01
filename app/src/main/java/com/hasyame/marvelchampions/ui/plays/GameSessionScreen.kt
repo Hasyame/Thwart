@@ -169,9 +169,14 @@ fun GameSessionScreen(
                 // Read into a local first: `state` is a delegated property, so
                 // the compiler cannot know the field is still non-null here.
                 draft = requireNotNull(state.longBreak),
+                // displayName, not the name table alone. A deck carries its
+                // own hero name and the table is only a fallback, so looking in
+                // the table first showed the card code for anyone whose hero the
+                // table did not happen to hold.
                 heroes = state.heroes.map {
-                    it.heroCode to (state.names.heroes[it.heroCode] ?: it.heroCode)
+                    it.heroCode to it.displayName(state.names.heroes)
                 },
+                tracked = state.trackEncounter,
                 photos = state.photos,
                 photoStore = viewModel.photoStore,
                 onDraft = viewModel::updateLongBreak,

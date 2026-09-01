@@ -119,6 +119,30 @@ class LongBreakResumeTest {
     }
 
     @Test
+    fun `the villain figures come from the tracker, not from the table`() {
+        val setup = EncounterSetup(
+            villain = listOf(
+                EncounterSide(name = "Rhino", stage = "I", value = 14, perPlayer = false),
+                EncounterSide(name = "Rhino", stage = "II", value = 16, perPlayer = false),
+            ),
+            scheme = emptyList(),
+            players = 1,
+        )
+        val played = Encounter.startOf(setup).damaged(9)
+
+        // What the row records while the table types nothing at all.
+        val life = played.villainHealth!! - played.progress.damage
+        val stage = played.progress.villainIndex + 1
+
+        assertEquals(5, life)
+        assertEquals(1, stage)
+
+        // And after the villain flips, the stage follows without being asked.
+        val flipped = played.villainAdvanced()
+        assertEquals(2, flipped.progress.villainIndex + 1)
+    }
+
+    @Test
     fun `a break saved with the tracker off is stored as nothing`() {
         // Empty rather than a default-filled object, so "the tracker was off"
         // and "the tracker was on and everything was at zero" stay different

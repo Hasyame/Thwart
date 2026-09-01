@@ -1,0 +1,10 @@
+Two small things on the "putting the game away" page.
+
+Your hero is named rather than shown as a card code. The name on the deck
+was there all along; the page was looking it up in the wrong place first.
+
+And when the tracker is running, the page no longer asks you to type the
+villain's health. The app already has that number on the screen in front
+of you, so it keeps it itself, and the summary you see when you pick the
+game up again still shows it. With the tracker off, nothing changes: the
+fields are still there, because then what you write is the only record.

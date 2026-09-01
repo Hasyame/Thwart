@@ -422,6 +422,9 @@
     <string name="long_break_villain">The villain</string>
     <string name="long_break_life">Life</string>
     <string name="long_break_stage">Which villain card is face up</string>
+    <!-- Replaces the villain fields when the tracker was counting: the app
+         already holds these numbers and keeps them itself. -->
+    <string name="long_break_villain_tracked">The tracker has the villain\'s health and the threat on the scheme. They are kept as they stand, so there is nothing to write down here.</string>
     <string name="long_break_save">Save and leave</string>
     <string name="long_break_back">Back to the game</string>
     <string name="phase_player">Player phase</string>

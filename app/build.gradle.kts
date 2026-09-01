@@ -24,8 +24,8 @@ android {
         // Must increase for every release. v1.0.0 is already published, and a
         // device refuses an install whose versionCode is not higher than the
         // one it already has — silently, from the user's point of view.
-        versionCode = 60
-        versionName = "1.40.0"
+        versionCode = 61
+        versionName = "1.40.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -188,6 +188,63 @@ android {
 room {
     schemaDirectory("$projectDir/schemas")
 }
+
+/**
+ * Fails on an unescaped apostrophe in a string resource, before aapt2 sees it.
+ *
+ * There is a unit test that checks exactly this, and it can never fire: resource
+ * merging is a dependency of the test task, so aapt2 kills the build first, with
+ * "Can not extract resource from ParsedResource@4ee71c15" and no line number and
+ * no file that a person wrote. The test was right and arrived too late, which is
+ * the worst combination a guard can have.
+ *
+ * Same rule, run early enough to be the thing that reports it. French is full of
+ * apostrophes; this mistake has cost more time than any other in the project.
+ */
+val checkStringEscaping = tasks.register("checkStringEscaping") {
+    group = "verification"
+    description = "Checks that every string resource escapes its apostrophes."
+
+    // Resolved at configuration time: reaching for the project inside doLast
+    // would break the configuration cache.
+    val stringFiles = layout.projectDirectory.dir("src/main/res").asFile
+        .listFiles().orEmpty()
+        .filter { it.isDirectory && it.name.startsWith("values") }
+        .map { File(it, "strings.xml") }
+        .filter { it.exists() }
+        .sortedBy { it.path }
+    val stamp = layout.buildDirectory.file("checks/string-escaping.txt")
+
+    inputs.files(stringFiles).withPropertyName("stringResources")
+    outputs.file(stamp)
+
+    doLast {
+        check(stringFiles.size >= 2) {
+            "found ${stringFiles.size} strings.xml files, expected at least two"
+        }
+        val pattern = Regex("""<string name="([^"]+)">(.*)</string>""")
+        val offenders = stringFiles.flatMap { file ->
+            file.readLines().mapNotNull { line ->
+                val match = pattern.find(line) ?: return@mapNotNull null
+                val (name, body) = match.destructured
+                val bare = body.withIndex().any { (index, char) ->
+                    char == '\'' && (index == 0 || body[index - 1] != '\\')
+                }
+                if (bare) "${file.parentFile.name}/$name" else null
+            }
+        }
+        check(offenders.isEmpty()) {
+            "unescaped apostrophe in string resources: $offenders. " +
+                "Write it as a backslash before the apostrophe; aapt2 would " +
+                "otherwise fail with a message naming neither file nor line."
+        }
+        stamp.get().asFile.apply { parentFile.mkdirs() }.writeText("ok\n")
+    }
+}
+
+// Before the resource compiler, which is the whole point.
+tasks.matching { it.name.startsWith("merge") && it.name.endsWith("Resources") }
+    .configureEach { dependsOn(checkStringEscaping) }
 
 /**
  * Downloads the card snapshot bundled into the APK.

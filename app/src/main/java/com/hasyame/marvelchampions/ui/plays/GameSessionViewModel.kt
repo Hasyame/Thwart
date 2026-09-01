@@ -405,6 +405,19 @@ class GameSessionViewModel @Inject constructor(
         }
     }
 
+    /** Life left on the villain, from the tracker, or null when it was off. */
+    private fun trackedVillainLife(current: GameSessionUiState): Int? {
+        if (!current.trackEncounter) {
+            return null
+        }
+        val printed = current.encounter.villainHealth ?: return null
+        return (printed - current.encounter.progress.damage).coerceAtLeast(0)
+    }
+
+    /** Which villain card is face up, counted from one, or null. */
+    private fun trackedVillainStage(current: GameSessionUiState): Int? =
+        if (current.trackEncounter) current.encounter.progress.villainIndex + 1 else null
+
     /**
      * The tracker's counters as text, or empty when it was not running.
      *
@@ -528,8 +541,12 @@ class GameSessionViewModel @Inject constructor(
                     heroLives = draft.heroLives.entries.joinToString(",") { (code, life) ->
                         "$code|${life.ifBlank { "?" }}"
                     },
-                    villainLife = draft.villainLife.toIntOrNull() ?: 0,
-                    villainStage = draft.villainStage,
+                    // From the tracker when it was running, so the recap
+                    // still shows real numbers without the table having typed
+                    // them, and the row says what it means on its own rather
+                    // than only inside the JSON beside it.
+                    villainLife = trackedVillainLife(current) ?: draft.villainLife.toIntOrNull() ?: 0,
+                    villainStage = trackedVillainStage(current) ?: draft.villainStage,
                     photos = current.photos.joinToString(","),
                     // What the tracker was holding, if it was running. Written
                     // by the app rather than copied out by the table: it is
