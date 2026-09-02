@@ -108,19 +108,46 @@ class FneTrackerDataTest {
     }
 
     @Test
-    fun `the racket job is knowingly absent`() {
-        // s3_racket has four main scheme cards and it is not yet settled
-        // whether they are stages of one job or alternatives drawn between
-        // games. Leaving it out is deliberate: a scheme guessed wrongly counts
-        // threat towards a limit nobody is playing to.
+    fun `every scheme accelerates by one a round, per player`() {
+        // What every main scheme in the card database carries: escalation 1,
+        // and not fixed, which in MarvelCDB's spelling means multiply. Without
+        // it the tracker would hold the threat still between rounds and call
+        // a scheme safe long after it was not.
+        val sides = template().tracker!!.schemes.values.flatten()
+
+        assertEquals(listOf(1), sides.map { it.escalation }.distinct())
+        assertEquals(listOf(true), sides.map { it.escalationPerPlayer }.distinct())
+    }
+
+    @Test
+    fun `the racket job is knowingly left uncounted`() {
+        // Not for want of numbers: its four cards all read 10 threat, no
+        // per-player icon, plus one a round. The problem is that Fear No Evil
+        // deals a main scheme *to each player*, so a three-handed game has
+        // three of them going at once, each completing on its own.
         //
-        // When that is settled, delete this test and add the scenario above.
+        // The tracker counts one main scheme. Folding three into one would
+        // report a limit nobody is playing to, and a single bar cannot say
+        // which player's scheme is nearly done. Counting nothing is the honest
+        // answer until the tracker can hold more than one, and the villain is
+        // still counted for this job like any other.
         val schemes = template().tracker!!.schemes
 
         assertTrue(
-            "s3_racket now has data; move it into the table above",
+            "s3_racket now has a scheme; the tracker must handle one per player first",
             "s3_racket" !in schemes,
         )
+    }
+
+    @Test
+    fun `the racket job still tracks its villain`() {
+        // The half that does work. Whichever subordinate is dealt to this job
+        // is one of the five, and all five are measured.
+        val template = template()
+        val pool = template.villainPool
+
+        assertTrue(pool.isNotEmpty())
+        assertTrue(pool.all { it in template.tracker!!.villains })
     }
 
     @Test

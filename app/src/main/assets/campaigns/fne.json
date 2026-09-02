@@ -251,7 +251,9 @@
      "value": 9,
      "perPlayer": true,
      "startingThreat": 1,
-     "startingThreatPerPlayer": true
+     "startingThreatPerPlayer": true,
+     "escalation": 1,
+     "escalationPerPlayer": true
     }
    ],
    "s2_poursuite": [
@@ -261,7 +263,9 @@
      "value": 9,
      "perPlayer": true,
      "startingThreat": 2,
-     "startingThreatPerPlayer": true
+     "startingThreatPerPlayer": true,
+     "escalation": 1,
+     "escalationPerPlayer": true
     }
    ],
    "s4_raft": [
@@ -271,7 +275,9 @@
      "value": 11,
      "perPlayer": true,
      "startingThreat": 2,
-     "startingThreatPerPlayer": true
+     "startingThreatPerPlayer": true,
+     "escalation": 1,
+     "escalationPerPlayer": true
     }
    ],
    "s5_rotatives": [
@@ -281,7 +287,9 @@
      "value": 9,
      "perPlayer": true,
      "startingThreat": 1,
-     "startingThreatPerPlayer": true
+     "startingThreatPerPlayer": true,
+     "escalation": 1,
+     "escalationPerPlayer": true
     }
    ],
    "s6_caid": [
@@ -291,13 +299,17 @@
      "value": 11,
      "perPlayer": true,
      "startingThreat": 3,
-     "startingThreatPerPlayer": true
+     "startingThreatPerPlayer": true,
+     "escalation": 1,
+     "escalationPerPlayer": true
     },
     {
      "name": "Fin de la Partie",
      "stage": "2A",
      "value": 7,
-     "perPlayer": true
+     "perPlayer": true,
+     "escalation": 1,
+     "escalationPerPlayer": true
     }
    ]
   }
@@ -1331,8 +1343,8 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : \"Racket en Bande Organisée\" (une par joueur).",
-      "en": "Main scheme deck: \"Racket en Bande Organisée\" (one per player)."
+      "fr": "Deck Manigance Principale : \"Racket en Bande Organisée\". Chaque joueur en tire une au hasard et joue la sienne.",
+      "en": "Main scheme deck: \"Organised Racket\". Each player draws one at random and plays their own."
      }
     },
     {
