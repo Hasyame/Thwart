@@ -551,6 +551,8 @@
     <string name="plays_metric_wins">Wins</string>
     <string name="plays_metric_games">Games</string>
     <string name="plays_metric_time">Time</string>
+    <string name="plays_sort_worst_rate">Worst win rate</string>
+    <string name="plays_metric_losses">Losses</string>
     <string name="plays_sort_label">Sort tables by</string>
     <string name="plays_sort_alpha">A–Z</string>
     <string name="plays_sort_played">Most played</string>

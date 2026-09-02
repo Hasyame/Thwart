@@ -69,7 +69,9 @@ import com.hasyame.marvelchampions.data.db.dao.WinRateRow
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
+import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.ui.util.aspectLabel
+import com.hasyame.marvelchampions.ui.util.labelRes
 import java.text.DateFormat
 import java.util.Date
 import kotlin.math.roundToInt
@@ -325,6 +327,14 @@ private enum class StatSort(val labelRes: Int) {
     ALPHABETICAL(R.string.plays_sort_alpha),
     MOST_PLAYED(R.string.plays_sort_played),
     BEST_RATE(R.string.plays_sort_rate),
+
+    /**
+     * The same table read from the other end.
+     *
+     * Best-first answers "what am I good at", which is the pleasant question
+     * and not usually the useful one. What loses is what you would change.
+     */
+    WORST_RATE(R.string.plays_sort_worst_rate),
 }
 
 /**
@@ -338,6 +348,16 @@ private enum class StatSort(val labelRes: Int) {
  */
 private enum class StatMetric(val labelRes: Int) {
     WIN_RATE(R.string.plays_metric_wins),
+
+    /**
+     * Losses, the same figure the other way up.
+     *
+     * Not redundant with [WIN_RATE] on a chart: the eye reads the long bar, so
+     * a page of wins shows what goes well and hides what does not. Switching
+     * the measure re-sorts and re-draws, and the hero you keep losing with
+     * becomes the longest bar instead of the shortest.
+     */
+    LOSS_RATE(R.string.plays_metric_losses),
     SHARE_PLAYED(R.string.plays_metric_games),
     SHARE_TIME(R.string.plays_metric_time),
 }
@@ -345,6 +365,11 @@ private enum class StatMetric(val labelRes: Int) {
 /** What one row is worth under [metric], before any total is applied. */
 private fun rawValue(row: WinRateRow, metric: StatMetric): Double = when (metric) {
     StatMetric.WIN_RATE -> if (row.played == 0) 0.0 else row.won.toDouble() / row.played
+    // Losses over games played, not one minus the win rate: a row with no games
+    // has no rate either way, and the subtraction would have called it a
+    // hundred percent defeats.
+    StatMetric.LOSS_RATE ->
+        if (row.played == 0) 0.0 else (row.played - row.won).toDouble() / row.played
     StatMetric.SHARE_PLAYED -> row.played.toDouble()
     StatMetric.SHARE_TIME -> row.totalMillis.toDouble()
 }
@@ -775,6 +800,12 @@ private fun sortedRows(
             compareByDescending<Pair<String, WinRateRow>> { rate(it.second) }
                 .thenByDescending { it.second.played },
         )
+        // Ties broken by plays again, and the same way round: among equally bad
+        // records the one played most is the one worth reading first.
+        StatSort.WORST_RATE -> labelled.sortedWith(
+            compareBy<Pair<String, WinRateRow>> { rate(it.second) }
+                .thenByDescending { it.second.played },
+        )
     }
 }
 
@@ -1120,16 +1151,21 @@ private fun readableKey(key: String): String {
         }
         return parts.joinToString(PAIR)
     }
+    // Asked of the enum rather than listed here. This screen used to keep its
+    // own copy of the difficulty names and had never been told about Standard
+    // III, so it fell through to the capitaliser below and read "Standard_iii"
+    // on somebody's statistics. DifficultyLabel's own comment predicted it: a
+    // third copy is how the names drift apart. A difficulty added later is now
+    // covered without anyone remembering this function exists.
+    Difficulty.entries.firstOrNull { it.name.lowercase() == key }?.let {
+        return stringResource(it.labelRes())
+    }
     return when (key) {
         "players_1" -> stringResource(R.string.plays_players_solo)
         "players_2" -> stringResource(R.string.plays_players_two)
         "players_3" -> stringResource(R.string.plays_players_three)
         "players_4" -> stringResource(R.string.plays_players_four)
         "players_5plus" -> stringResource(R.string.plays_players_more)
-        "standard_i" -> stringResource(R.string.difficulty_standard_i)
-        "standard_ii" -> stringResource(R.string.difficulty_standard_ii)
-        "expert_i" -> stringResource(R.string.difficulty_expert_i)
-        "expert_ii" -> stringResource(R.string.difficulty_expert_ii)
         in ASPECT_CODES -> aspectLabel(key)
         // A campaign records its own difficulty word, and heroes and scenarios
         // are already names. Those pass through as they are.

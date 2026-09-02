@@ -573,6 +573,8 @@
     <string name="plays_metric_wins">Victoires</string>
     <string name="plays_metric_games">Parties</string>
     <string name="plays_metric_time">Temps</string>
+    <string name="plays_sort_worst_rate">Pire taux de victoire</string>
+    <string name="plays_metric_losses">Défaites</string>
     <string name="plays_sort_label">Trier les tableaux par</string>
     <string name="plays_sort_alpha">A–Z</string>
     <string name="plays_sort_played">Les plus jouées</string>
