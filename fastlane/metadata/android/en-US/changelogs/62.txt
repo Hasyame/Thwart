@@ -1,0 +1,18 @@
+Fixes from real games, and the Fear No Evil tracker.
+
+The health and threat tracker now works in Fear No Evil. It never could:
+MarvelCDB has entered 68 of that pack's 276 cards and none of its villains,
+so there was nothing to count. The numbers are now carried by the campaign
+itself, read off the cards.
+
+Also fixed:
+
+- Standard III showed as "Standard_iii" in your statistics.
+- Two-handed solo was logged to BoardGameGeek as two players. Only you are
+  sent now, however many decks you hold; the heroes are named in the note.
+- Packs curated in an update reached only fresh installs, so Jessica Jones
+  and Luke Cage stayed in wave 0 for anyone who already had the app.
+- Two Fear No Evil questions about Mary Typhoide were wrong.
+
+New in statistics: sort a table worst-first, and measure a box by losses
+instead of wins.

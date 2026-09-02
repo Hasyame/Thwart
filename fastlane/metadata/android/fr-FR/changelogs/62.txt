@@ -1,0 +1,21 @@
+Corrections issues de vraies parties, et le suivi pour Peur de Rien.
+
+Le suivi des points de vie et de la menace fonctionne enfin dans Peur de
+Rien. Il ne l'a jamais pu : MarvelCDB n'a saisi que 68 des 276 cartes de
+cette extension et aucun de ses méchants, il n'y avait donc rien à
+compter. Les chiffres sont désormais portés par la campagne elle-même,
+relevés sur les cartes.
+
+Également corrigé :
+
+- Standard III s'affichait « Standard_iii » dans les statistiques.
+- Une partie en double main était envoyée à BoardGameGeek comme deux
+  joueurs. Vous seul êtes envoyé désormais, quel que soit le nombre de
+  decks ; les héros sont nommés dans la note.
+- Les extensions classées dans une mise à jour n'atteignaient que les
+  nouvelles installations : Jessica Jones et Luke Cage restaient en
+  vague 0 pour qui avait déjà l'application.
+- Deux questions de Peur de Rien sur Mary Typhoïde étaient fausses.
+
+Nouveau dans les statistiques : trier un tableau du pire au meilleur, et
+mesurer une boîte en défaites plutôt qu'en victoires.
