@@ -1,0 +1,12 @@
+Les boutons au-dessus des tableaux de statistiques tiennent à nouveau.
+
+L'ajout d'un quatrième tri rendait la rangée trop large et les mots étaient
+écrasés sur un écran étroit. Le titre « Trier les tableaux par » a disparu,
+les deux boutons de taux portent un nom plus court, et la rangée passe à la
+ligne au lieu de se déformer. La même chose avait été faite pour les
+boutons de mesure dans la version précédente.
+
+En coulisses : l'application revérifie sa liste d'extensions classées à
+chaque lancement, et n'écrit désormais que là où quelque chose a vraiment
+changé au lieu de tout réécrire. Lors d'un lancement normal, cela ne
+représente aucune écriture, et l'application s'ouvre plus vite.

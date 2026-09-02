@@ -1,0 +1,11 @@
+The buttons above the statistics tables fit again.
+
+Adding a fourth order left the row too wide, so the words were squeezed on
+a narrow screen. The "Sort tables by" heading has gone, the two rate
+buttons are named more briefly, and the row wraps instead of deforming.
+The same was done to the measure buttons in the previous release.
+
+Under the hood: the app re-checks its curated pack list on every launch,
+and now writes only where something has actually changed instead of
+rewriting every pack each time. On a normal launch that is no writes at
+all, and the app opens sooner for it.

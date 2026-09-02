@@ -132,16 +132,23 @@ data class CampaignRunUiState(
     val keepAwake: Boolean = true,
 )
 
-/** A curated side, as the tracker's own model. */
+/**
+ * A curated side, as the tracker's own model.
+ *
+ * The numbers are floored at zero. A bundled campaign is checked by a test, but
+ * a template can also be imported from a file the player was given, and a
+ * negative health would make the villain defeated the moment the game started,
+ * which the tracker would report as fact.
+ */
 private fun TrackedSide.toSide(): EncounterSide = EncounterSide(
     name = name,
     stage = stage,
-    value = value,
+    value = value?.coerceAtLeast(0),
     perPlayer = perPlayer,
     starred = starred,
-    startingThreat = startingThreat,
+    startingThreat = startingThreat.coerceAtLeast(0),
     startingThreatPerPlayer = startingThreatPerPlayer,
-    escalation = escalation,
+    escalation = escalation.coerceAtLeast(0),
     escalationPerPlayer = escalationPerPlayer,
 )
 

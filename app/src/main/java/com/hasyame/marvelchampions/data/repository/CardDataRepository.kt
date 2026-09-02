@@ -1,5 +1,6 @@
 package com.hasyame.marvelchampions.data.repository
 
+import androidx.room.withTransaction
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
 import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
@@ -84,10 +85,26 @@ class CardDataRepository @Inject constructor(
             return@withContext
         }
         val dao = database.packDao()
-        val known = dao.getPacks().map { it.code }.toSet()
-        seed.readPackMetadata().packs
-            .filter { it.code in known }
-            .forEach { meta ->
+        val stored = dao.getPacks().associateBy { it.code }
+        // Only what actually differs, and all of it in one transaction.
+        //
+        // This runs before the first screen is shown, on every launch. Writing
+        // all sixty-odd packs each time meant sixty-odd separate transactions
+        // to change nothing, which is a cost paid at the moment the app is
+        // least able to afford it. After the release that corrects a pack this
+        // finds nothing to do and writes not at all.
+        val corrections = seed.readPackMetadata().packs.filter { meta ->
+            val pack = stored[meta.code] ?: return@filter false
+            pack.type != meta.type ||
+                pack.wave != meta.wave ||
+                pack.waveInferred != meta.waveInferred ||
+                pack.typeManual != meta.typeManual
+        }
+        if (corrections.isEmpty()) {
+            return@withContext
+        }
+        database.withTransaction {
+            corrections.forEach { meta ->
                 dao.applyCuration(
                     code = meta.code,
                     type = meta.type,
@@ -96,6 +113,7 @@ class CardDataRepository @Inject constructor(
                     typeManual = meta.typeManual,
                 )
             }
+        }
     }
 
     /**

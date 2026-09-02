@@ -478,13 +478,16 @@ private fun TableControls(
                 }
             },
         )
-        Text(
-            text = stringResource(R.string.plays_sort_label),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        // No heading, and a row that wraps, for the reason the measure chips
+        // have neither: a fourth order did not fit beside a sentence, and a
+        // plain Row squeezes its children rather than moving them down. Four
+        // chips under a search box are read as what orders the tables without
+        // a line of prose saying so.
+        FlowRow(
+            Modifier.padding(top = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             StatSort.entries.forEach { option ->
                 FilterChip(
                     selected = sort == option,
