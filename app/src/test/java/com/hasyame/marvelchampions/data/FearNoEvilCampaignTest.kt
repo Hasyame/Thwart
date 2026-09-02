@@ -253,12 +253,21 @@ class FearNoEvilCampaignTest {
         assertFalse("victory pile asked before she is ever met",
             promptIds(state, "s1_musee").contains("mary"))
 
-        // Her own job asks both: she can be won over, or put down there.
+        // Her own job asks whether she was won over, and nothing else.
+        //
+        // It used to ask about the victory display here too. It cannot happen:
+        // her forced interruption replaces her defeat with a damage token on
+        // Psyché Perturbée and resets her health, so the one time she is faced
+        // as the villain is the one time she cannot end up there. Asking put a
+        // question to the table that has only one possible answer.
         assertTrue(promptIds(state, "s2_poursuite").contains("confiance"))
-        assertTrue(promptIds(state, "s2_poursuite").contains("mary"))
+        assertFalse(
+            "asked about the victory display on the job she cannot be defeated on",
+            promptIds(state, "s2_poursuite").contains("mary"),
+        )
 
         // Won over, and left standing.
-        events = events + finish("s2_poursuite", "confiance" to true, "mary" to false)
+        events = events + finish("s2_poursuite", "confiance" to true)
         state = engine.fold(template, events)
         assertTrue(
             "she is not put into play as the campaign ally",

@@ -65,6 +65,20 @@ data class CampaignTemplate(
     val setupChoices: List<CampaignChoice> = emptyList(),
 
     /**
+     * Printed numbers for a campaign whose cards the card database has not got.
+     *
+     * The health and threat tracker reads MarvelCDB, which is right for every
+     * campaign whose cards are entered there. Fear No Evil's are not: MarvelCDB
+     * holds 68 of its 276 cards and none of its villains, so the tracker had
+     * nothing to count and hid itself for that whole campaign.
+     *
+     * Curated by hand from the box, and only for that case. A campaign whose
+     * cards are in the database leaves this empty and is read from the database
+     * as before, so this cannot drift away from a source that does exist.
+     */
+    val tracker: CampaignTracker? = null,
+
+    /**
      * A draw run before every choice, campaign-scoped rather than tied to a
      * scenario's setup.
      *
@@ -320,6 +334,42 @@ data class ScenarioTemplate(
      * shape appears twice it belongs in the schema instead.
      */
     val handlerId: String? = null,
+)
+
+/**
+ * Villain and main scheme numbers a campaign carries itself.
+ *
+ * Keyed by whatever the campaign identifies them with: a villain by the id its
+ * draw uses, a scheme by its scenario id. Both are lists because a villain has
+ * stages and a finale can turn over to a second scheme.
+ */
+@Serializable
+data class CampaignTracker(
+    val villains: Map<String, List<TrackedSide>> = emptyMap(),
+    val schemes: Map<String, List<TrackedSide>> = emptyMap(),
+)
+
+/**
+ * One printed side, as the tracker counts it.
+ *
+ * Mirrors the card rather than the rules: [value] is the number printed on it,
+ * and [perPlayer] says whether the small figure icon is beside that number.
+ * Working the scaling out is the tracker's job, not this file's, so a template
+ * records what somebody can read off the card and check.
+ */
+@Serializable
+data class TrackedSide(
+    val name: String,
+    val stage: String = "",
+    /** Villain health, or a main scheme's threat limit. Null when starred. */
+    val value: Int? = null,
+    val perPlayer: Boolean = true,
+    /** The card prints a star instead of a number, so the table sets it. */
+    val starred: Boolean = false,
+    val startingThreat: Int = 0,
+    val startingThreatPerPlayer: Boolean = true,
+    val escalation: Int = 0,
+    val escalationPerPlayer: Boolean = false,
 )
 
 @Serializable

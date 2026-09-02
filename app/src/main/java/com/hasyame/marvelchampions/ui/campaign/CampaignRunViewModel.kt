@@ -19,6 +19,8 @@ import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.play.EncounterProgress
+import com.hasyame.marvelchampions.domain.campaign.template.TrackedSide
+import com.hasyame.marvelchampions.domain.play.EncounterSide
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
 import kotlinx.coroutines.flow.first
 import com.hasyame.marvelchampions.domain.campaign.template.villainStages
@@ -128,6 +130,19 @@ data class CampaignRunUiState(
     val trackerWanted: Boolean = false,
     val encounter: Encounter = Encounter.startOf(EncounterSetup()),
     val keepAwake: Boolean = true,
+)
+
+/** A curated side, as the tracker's own model. */
+private fun TrackedSide.toSide(): EncounterSide = EncounterSide(
+    name = name,
+    stage = stage,
+    value = value,
+    perPlayer = perPlayer,
+    starred = starred,
+    startingThreat = startingThreat,
+    startingThreatPerPlayer = startingThreatPerPlayer,
+    escalation = escalation,
+    escalationPerPlayer = escalationPerPlayer,
 )
 
 @HiltViewModel
@@ -278,6 +293,27 @@ class CampaignRunViewModel @Inject constructor(
         val scenario = run.template.scenarios
             .firstOrNull { it.id == scenarioId }
             ?: return EncounterSetup()
+
+        // A campaign that carries its own numbers is believed before the card
+        // database is asked. Only Fear No Evil does, and only because MarvelCDB
+        // has none of its villains; every other campaign leaves this empty and
+        // is read from the database as it always was.
+        run.template.tracker?.let { tracker ->
+            val drawn = CampaignEngine.drawnCards(
+                run.state,
+                scenarioId,
+                CampaignRepository.VILLAIN_DRAW_ID,
+            ).firstOrNull()
+            val stages = tracker.villains[drawn] ?: tracker.villains[scenarioId]
+            val scheme = tracker.schemes[scenarioId]
+            if (stages != null || scheme != null) {
+                return EncounterSetup(
+                    villain = stages?.map { it.toSide() }.orEmpty(),
+                    scheme = scheme?.map { it.toSide() }.orEmpty(),
+                    players = run.state.heroes.size.coerceAtLeast(1),
+                )
+            }
+        }
         // The template names the villain in every campaign but one. Fear No
         // Evil deals a subordinate per job instead, so there the answer is in
         // the log rather than the template, and reading only the template left

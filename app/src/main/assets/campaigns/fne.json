@@ -132,6 +132,176 @@
   "fne_villain_homme_pourpre",
   "fne_villain_mary_typhoide"
  ],
+ "tracker": {
+  "villains": {
+   "fne_villain_hammerhead": [
+    {
+     "name": "Hammerhead",
+     "stage": "I",
+     "value": 14,
+     "perPlayer": true
+    },
+    {
+     "name": "Hammerhead",
+     "stage": "II",
+     "value": 15,
+     "perPlayer": true
+    },
+    {
+     "name": "Hammerhead",
+     "stage": "III",
+     "value": 16,
+     "perPlayer": true
+    }
+   ],
+   "fne_villain_bullseye": [
+    {
+     "name": "Bullseye",
+     "stage": "I",
+     "value": 12,
+     "perPlayer": true
+    },
+    {
+     "name": "Bullseye",
+     "stage": "II",
+     "value": 16,
+     "perPlayer": true
+    },
+    {
+     "name": "Bullseye",
+     "stage": "III",
+     "value": 18,
+     "perPlayer": true
+    }
+   ],
+   "fne_villain_electro": [
+    {
+     "name": "Electro",
+     "stage": "I",
+     "value": 15,
+     "perPlayer": true
+    },
+    {
+     "name": "Electro",
+     "stage": "II",
+     "value": 17,
+     "perPlayer": true
+    },
+    {
+     "name": "Electro",
+     "stage": "III",
+     "value": 20,
+     "perPlayer": true
+    }
+   ],
+   "fne_villain_homme_pourpre": [
+    {
+     "name": "L’Homme Pourpre",
+     "stage": "I",
+     "value": 13,
+     "perPlayer": true
+    },
+    {
+     "name": "L’Homme Pourpre",
+     "stage": "II",
+     "value": 15,
+     "perPlayer": true
+    },
+    {
+     "name": "L’Homme Pourpre",
+     "stage": "III",
+     "value": 17,
+     "perPlayer": true
+    }
+   ],
+   "fne_villain_mary_typhoide": [
+    {
+     "name": "Mary Typhoïde",
+     "stage": "A",
+     "value": 10,
+     "perPlayer": true
+    },
+    {
+     "name": "Mary Typhoïde",
+     "stage": "B",
+     "value": 13,
+     "perPlayer": true
+    }
+   ],
+   "s6_caid": [
+    {
+     "name": "Le Caïd",
+     "stage": "A",
+     "value": 25,
+     "perPlayer": true
+    },
+    {
+     "name": "Le Caïd",
+     "stage": "B",
+     "value": 28,
+     "perPlayer": true
+    }
+   ]
+  },
+  "schemes": {
+   "s1_musee": [
+    {
+     "name": "Cambriolage du Musée d’Art",
+     "stage": "1A",
+     "value": 9,
+     "perPlayer": true,
+     "startingThreat": 1,
+     "startingThreatPerPlayer": true
+    }
+   ],
+   "s2_poursuite": [
+    {
+     "name": "La Poursuite",
+     "stage": "1A",
+     "value": 9,
+     "perPlayer": true,
+     "startingThreat": 2,
+     "startingThreatPerPlayer": true
+    }
+   ],
+   "s4_raft": [
+    {
+     "name": "L’Évasion du Raft",
+     "stage": "1A",
+     "value": 11,
+     "perPlayer": true,
+     "startingThreat": 2,
+     "startingThreatPerPlayer": true
+    }
+   ],
+   "s5_rotatives": [
+    {
+     "name": "Arrêtez les Rotatives !",
+     "stage": "1A",
+     "value": 9,
+     "perPlayer": true,
+     "startingThreat": 1,
+     "startingThreatPerPlayer": true
+    }
+   ],
+   "s6_caid": [
+    {
+     "name": "Le Gambit du Roi",
+     "stage": "1A",
+     "value": 11,
+     "perPlayer": true,
+     "startingThreat": 3,
+     "startingThreatPerPlayer": true
+    },
+    {
+     "name": "Fin de la Partie",
+     "stage": "2A",
+     "value": 7,
+     "perPlayer": true
+    }
+   ]
+  }
+ },
  "losesWhenScenarioFails": false,
  "counters": [
   {
@@ -780,8 +950,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions menace (effet de résolution de gagner la confiance) dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 threat tokens (from the win-her-trust resolution) on it?"
       },
       "when": {
        "all": [
@@ -804,14 +974,7 @@
       "when": {
        "all": [
         {
-         "any": [
-          {
-           "drawIs": "villain:fne_villain_mary_typhoide"
-          },
-          {
-           "flag": "confianceGagnee"
-          }
-         ]
+         "flag": "confianceGagnee"
         },
         {
          "notFlag": "maryVaincue"
@@ -1005,8 +1168,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions menace (effet de résolution de gagner la confiance) dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 threat tokens (from the win-her-trust resolution) on it?"
       },
       "when": {
        "all": [
@@ -1029,14 +1192,7 @@
       "when": {
        "all": [
         {
-         "any": [
-          {
-           "drawIs": "villain:fne_villain_mary_typhoide"
-          },
-          {
-           "flag": "confianceGagnee"
-          }
-         ]
+         "flag": "confianceGagnee"
         },
         {
          "notFlag": "maryVaincue"
@@ -1230,8 +1386,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions menace (effet de résolution de gagner la confiance) dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 threat tokens (from the win-her-trust resolution) on it?"
       },
       "when": {
        "all": [
@@ -1254,14 +1410,7 @@
       "when": {
        "all": [
         {
-         "any": [
-          {
-           "drawIs": "villain:fne_villain_mary_typhoide"
-          },
-          {
-           "flag": "confianceGagnee"
-          }
-         ]
+         "flag": "confianceGagnee"
         },
         {
          "notFlag": "maryVaincue"
@@ -1455,8 +1604,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions menace (effet de résolution de gagner la confiance) dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 threat tokens (from the win-her-trust resolution) on it?"
       },
       "when": {
        "all": [
@@ -1479,14 +1628,7 @@
       "when": {
        "all": [
         {
-         "any": [
-          {
-           "drawIs": "villain:fne_villain_mary_typhoide"
-          },
-          {
-           "flag": "confianceGagnee"
-          }
-         ]
+         "flag": "confianceGagnee"
         },
         {
          "notFlag": "maryVaincue"
@@ -1680,8 +1822,8 @@
       "id": "confiance",
       "type": "boolean",
       "label": {
-       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions dessus ?",
-       "en": "Is \"Disturbed Psyche\" in play with at least 2 tokens on it?"
+       "fr": "\"Psyché Perturbée\" est-elle en jeu avec au moins 2 pions menace (effet de résolution de gagner la confiance) dessus ?",
+       "en": "Is \"Disturbed Psyche\" in play with at least 2 threat tokens (from the win-her-trust resolution) on it?"
       },
       "when": {
        "all": [
@@ -1704,14 +1846,7 @@
       "when": {
        "all": [
         {
-         "any": [
-          {
-           "drawIs": "villain:fne_villain_mary_typhoide"
-          },
-          {
-           "flag": "confianceGagnee"
-          }
-         ]
+         "flag": "confianceGagnee"
         },
         {
          "notFlag": "maryVaincue"
