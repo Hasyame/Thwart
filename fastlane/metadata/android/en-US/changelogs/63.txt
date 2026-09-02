@@ -1,0 +1,11 @@
+Fixes the losses measure added yesterday.
+
+It printed the wrong number. A hero who had lost half his games was shown
+as 33%, because the figure was being divided by everyone else's losses
+instead of by that hero's own games. Wins were always right; only losses
+were affected, and only since 1.40.2.
+
+The row of buttons above each chart also took too much room once there
+were four of them, and squeezed the words on a narrow screen. The
+"Showing" label in front of them has gone, and the buttons now wrap
+instead of deforming.

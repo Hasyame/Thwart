@@ -547,7 +547,6 @@
     <string name="plays_by_players">By table size</string>
     <string name="plays_by_hero_aspect">Hero and aspect together</string>
     <string name="plays_aspects_chart">Aspects you play</string>
-    <string name="plays_metric_label">Showing</string>
     <string name="plays_metric_wins">Wins</string>
     <string name="plays_metric_games">Games</string>
     <string name="plays_metric_time">Time</string>

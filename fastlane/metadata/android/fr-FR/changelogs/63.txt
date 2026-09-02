@@ -1,0 +1,12 @@
+Corrige la mesure « défaites » ajoutée hier.
+
+Elle affichait un chiffre faux. Un héros ayant perdu la moitié de ses
+parties était annoncé à 33 %, car la valeur était divisée par les défaites
+de tous les autres au lieu des parties de ce héros. Les victoires ont
+toujours été justes ; seules les défaites étaient touchées, et seulement
+depuis la 1.40.2.
+
+La rangée de boutons au-dessus de chaque graphique prenait aussi trop de
+place une fois passée à quatre, et écrasait les mots sur un écran étroit.
+Le libellé « Afficher » a disparu et les boutons passent désormais à la
+ligne au lieu de se déformer.

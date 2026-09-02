@@ -569,7 +569,6 @@
     <string name="plays_by_players">Par nombre de joueurs</string>
     <string name="plays_by_hero_aspect">Héros et affinité ensemble</string>
     <string name="plays_aspects_chart">Les affinités que vous jouez</string>
-    <string name="plays_metric_label">Afficher</string>
     <string name="plays_metric_wins">Victoires</string>
     <string name="plays_metric_games">Parties</string>
     <string name="plays_metric_time">Temps</string>

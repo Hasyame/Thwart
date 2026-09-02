@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -346,7 +348,7 @@ private enum class StatSort(val labelRes: Int) {
  * unrelated facts sharing a line with nothing to say which was which. Each box
  * now states its measure and lets you change it.
  */
-private enum class StatMetric(val labelRes: Int) {
+internal enum class StatMetric(val labelRes: Int) {
     WIN_RATE(R.string.plays_metric_wins),
 
     /**
@@ -363,7 +365,7 @@ private enum class StatMetric(val labelRes: Int) {
 }
 
 /** What one row is worth under [metric], before any total is applied. */
-private fun rawValue(row: WinRateRow, metric: StatMetric): Double = when (metric) {
+internal fun rawValue(row: WinRateRow, metric: StatMetric): Double = when (metric) {
     StatMetric.WIN_RATE -> if (row.played == 0) 0.0 else row.won.toDouble() / row.played
     // Losses over games played, not one minus the win rate: a row with no games
     // has no rate either way, and the subtraction would have called it a
@@ -384,7 +386,7 @@ private fun rawValue(row: WinRateRow, metric: StatMetric): Double = when (metric
  * one below it. So a share prints its true percentage and draws itself against
  * the largest row, which is what a bar chart has always done.
  */
-private fun measure(
+internal fun measure(
     row: WinRateRow,
     metric: StatMetric,
     total: Double,
@@ -392,7 +394,12 @@ private fun measure(
 ): Pair<String, Float> {
     val raw = rawValue(row, metric)
     return when (metric) {
-        StatMetric.WIN_RATE -> percentOf(raw) to raw.toFloat()
+        // Both are already proportions of this row's own games, so the bar is
+        // that proportion and the number beside it agrees. Losses fell into
+        // the share branch below and were divided by the total of every row's
+        // rate, which printed a hero who loses half his games as something
+        // like twelve percent.
+        StatMetric.WIN_RATE, StatMetric.LOSS_RATE -> percentOf(raw) to raw.toFloat()
         else -> {
             val share = if (total <= 0.0) 0.0 else raw / total
             val bar = if (largest <= 0.0) 0.0 else raw / largest
@@ -411,18 +418,22 @@ private fun percentOf(fraction: Double): String =
  * question differs per table: which aspect you reach for most is a share, and
  * whether it wins is a rate.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MetricChips(metric: StatMetric, onMetric: (StatMetric) -> Unit) {
-    Row(
+    // A FlowRow, and no "Showing" label in front of it any more.
+    //
+    // A fourth measure did not fit. The label plus four chips overran the width
+    // on a phone, in French first, and a plain Row does not wrap: it squeezes
+    // the chips until the words break. The label was the least of the four
+    // things on the line — a row of chips above a chart is read as what the
+    // chart is measuring without being told — so it went, and what is left
+    // wraps rather than deforming when it does not fit.
+    FlowRow(
         Modifier.padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
-            text = stringResource(R.string.plays_metric_label),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
         StatMetric.entries.forEach { option ->
             FilterChip(
                 selected = metric == option,
