@@ -1,7 +1,7 @@
 [versions]
 # Toolchain — versions resolved against the live Maven metadata on 2026-08-01,
 # newest entry that is not an alpha/beta/rc.
-agp = "9.3.2"
+agp = "9.4.0"
 kotlin = "2.4.10"
 ksp = "2.3.11"
 
