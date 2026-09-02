@@ -45,6 +45,31 @@ interface PackDao {
         insertTranslations(translations)
     }
 
+    /**
+     * Re-applies the curated type and wave to a pack already in the database.
+     *
+     * Everything else about a pack comes from MarvelCDB; these four columns come
+     * from `assets/pack_metadata.json` and are the only part a release can fix
+     * on its own. Without this the curated file reached new installs only: it is
+     * read when the database is empty or when the player runs a card update, so
+     * Jessica Jones and Luke Cage stayed at wave 0 on every phone that already
+     * had the app, however many releases went by.
+     */
+    @Query(
+        """
+        UPDATE packs
+        SET type = :type, wave = :wave, waveInferred = :waveInferred, typeManual = :typeManual
+        WHERE code = :code
+        """,
+    )
+    suspend fun applyCuration(
+        code: String,
+        type: String,
+        wave: Int,
+        waveInferred: Boolean,
+        typeManual: Boolean,
+    )
+
     @Query("SELECT * FROM packs ORDER BY wave, position")
     fun observePacks(): Flow<List<PackEntity>>
 

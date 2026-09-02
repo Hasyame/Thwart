@@ -69,6 +69,36 @@ class CardDataRepository @Inject constructor(
     }
 
     /**
+     * Puts the curated pack types and waves back over what is already stored.
+     *
+     * Cheap: sixty-odd targeted updates over a table that never grows much, and
+     * it touches no card data, so it cannot disturb a sync or a download.
+     *
+     * Runs on every start rather than on a version change, because a version
+     * number is one more thing to keep in step and this costs less than reading
+     * it would. A pack the curated file does not mention is left exactly as
+     * MarvelCDB described it.
+     */
+    suspend fun reapplyPackCuration(): Unit = withContext(ioDispatcher) {
+        if (isEmpty()) {
+            return@withContext
+        }
+        val dao = database.packDao()
+        val known = dao.getPacks().map { it.code }.toSet()
+        seed.readPackMetadata().packs
+            .filter { it.code in known }
+            .forEach { meta ->
+                dao.applyCuration(
+                    code = meta.code,
+                    type = meta.type,
+                    wave = meta.wave,
+                    waveInferred = meta.waveInferred,
+                    typeManual = meta.typeManual,
+                )
+            }
+    }
+
+    /**
      * Refreshes both locales from MarvelCDB.
      *
      * Each locale is replaced inside a single transaction, so cancelling mid

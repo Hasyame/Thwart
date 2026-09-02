@@ -49,6 +49,11 @@ class FirstRunInitializer @Inject constructor(
     suspend fun initialize(): FirstRunOutcome {
         val wasEmpty = cardDataRepository.isEmpty()
         if (!wasEmpty) {
+            // The one thing an existing install still needs from a release: the
+            // curated pack types and waves. Card data comes from MarvelCDB and
+            // is the player's to refresh; this file ships with the app, and
+            // before this a correction to it reached new installs only.
+            cardDataRepository.reapplyPackCuration()
             return FirstRunOutcome.ALREADY_READY
         }
 
