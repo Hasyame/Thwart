@@ -49,30 +49,16 @@ internal fun PlayEntity.toBggPlay(bggUsername: String): BggPlay {
         }
     }
 
-    // The account holder takes the first seat, playing the hero recorded
-    // against this play. Everyone else at the table gets a seat too, named
-    // for the hero they ran and with no BGG account attached.
+    // One seat: the account holder, and nobody else.
     //
-    // They used to be left out, on the reasoning that the app does not know
-    // their accounts. That was wrong in practice: on BoardGameGeek the
-    // number of players *is* the number of player rows, so a three-handed
-    // game arrived as a solo game. An unnamed seat is easy to correct; a
-    // missing one quietly misreports every multiplayer game ever logged.
-    val others = roster
-        .filter { it.code != heroCode }
-        .map { hero ->
-            BggPlayer(
-                username = "",
-                name = hero.name,
-                score = 0,
-                won = won,
-                color = listOfNotNull(
-                    hero.name.takeIf { it.isNotBlank() },
-                    hero.aspect.takeIf { it.isNotBlank() },
-                ).joinToString(" / "),
-            )
-        }
-
+    // This briefly added a seat per hero, on the reasoning that BoardGameGeek
+    // counts player rows as players and a group game was arriving as a solo
+    // one. That confused heroes with people. Two-handed solo is one person
+    // holding two decks, and it was filing a second player who does not exist;
+    // at a real table the others have their own BGG accounts and log the game
+    // themselves. Either way this is a record of what *this* person played.
+    //
+    // Nothing is lost by it: every hero at the table is named in the comment.
     val seats = listOf(
         BggPlayer(
             username = bggUsername,
@@ -84,7 +70,7 @@ internal fun PlayEntity.toBggPlay(bggUsername: String): BggPlay {
                 aspects.takeIf { it.isNotBlank() },
             ).joinToString(" / "),
         ),
-    ) + others
+    )
 
     return BggPlay(
         playedOn = BggFormats.DATE_FORMAT.format(Date(playedAt)),

@@ -52,8 +52,12 @@ class BggPayloadTest {
     }
 
     @Test
-    fun `a three handed game sends three seats`() {
-        // The bug: this used to send one, so BGG recorded a solo play.
+    fun `however many hands are played, one person is reported`() {
+        // This briefly sent a seat per hero, because BGG counts player rows and
+        // a group game was arriving as solo. That confused heroes with people.
+        // Two-handed solo is one person holding two decks, and the second row
+        // was a player who does not exist. At a real table the others have
+        // their own accounts and log the game themselves.
         val payload = bgg(
             play(
                 roster = listOf(
@@ -64,17 +68,12 @@ class BggPayloadTest {
             ),
         )
 
-        assertEquals(3, payload.players.size)
-        assertEquals(
-            listOf("benoit", "She-Hulk", "Iron Man"),
-            payload.players.map { it.name },
-        )
+        assertEquals(1, payload.players.size)
+        assertEquals("benoit", payload.players.single().name)
     }
 
     @Test
-    fun `only the account holder carries a username`() {
-        // The other seats are real people the app has no account for. Naming
-        // them after the hero is honest; inventing a BGG username would not be.
+    fun `the seat is the account holder's own`() {
         val payload = bgg(
             play(
                 roster = listOf(
@@ -84,8 +83,23 @@ class BggPayloadTest {
             ),
         )
 
-        assertEquals("benoit", payload.players.first().username)
-        assertEquals("", payload.players.last().username)
+        assertEquals("benoit", payload.players.single().username)
+    }
+
+    @Test
+    fun `the heroes are still named, in the comment`() {
+        // Nothing is lost by the single seat: what was played is recorded, in
+        // the one field BGG keeps free text in.
+        val payload = bgg(
+            play(
+                roster = listOf(
+                    PlayHero("01001", "Spider-Man", "Justice"),
+                    PlayHero("01029", "She-Hulk", "Aggression"),
+                ),
+            ),
+        )
+
+        assertTrue(payload.comment.contains("Spider-Man"))
     }
 
     @Test
