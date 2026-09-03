@@ -241,13 +241,15 @@
      "name": "Le Caïd",
      "stage": "A",
      "value": 25,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "standard"
     },
     {
      "name": "Le Caïd",
      "stage": "B",
      "value": 28,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "expert"
     }
    ]
   },

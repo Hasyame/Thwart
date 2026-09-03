@@ -1,0 +1,9 @@
+Le final de Rien à Craindre compte le méchant qui est sur la table.
+
+Le Caïd existe en deux versions, et la campagne l'a toujours dit : la face
+A en campagne standard, la face B en experte. Le compteur les lisait comme
+un stade 1 puis un stade 2, donc il descendait la face A puis proposait de
+retourner sur une carte que personne n'avait, et une table en expert
+comptait jusqu'à 25 avec un 28 devant elle.
+
+Chaque difficulté affronte désormais sa propre carte, sans retournement.

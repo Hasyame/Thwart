@@ -79,12 +79,6 @@ class FneTrackerDataTest {
         // villain deck line in the setup says. The tracker counted from stage
         // I whatever was being played, so an expert table was counting down to
         // a number printed on a card not on the table.
-        val villains = template().tracker!!.villains
-
-        fun stagesOn(id: String, difficulty: String) = villains.getValue(id)
-            .filter { it.onlyOn == null || it.onlyOn == difficulty }
-            .map { it.stage }
-
         listOf(
             "fne_villain_hammerhead",
             "fne_villain_bullseye",
@@ -95,6 +89,37 @@ class FneTrackerDataTest {
             assertEquals("expert stages for $id", listOf("II", "III"), stagesOn(id, "expert"))
         }
     }
+
+    @Test
+    fun `the finale faces one card, and the difficulty says which`() {
+        // The setup has always named them: "Le Caid" (A1) on a standard
+        // campaign, (B1) on an expert one. A and B are the two versions of the
+        // same villain, not stage one and stage two, so counting A down and
+        // then offering to flip to B described a board nobody had — and an
+        // expert table was counting to 25 with a 28 on the table.
+        assertEquals(listOf("A"), stagesOn("s6_caid", "standard"))
+        assertEquals(listOf("B"), stagesOn("s6_caid", "expert"))
+    }
+
+    @Test
+    fun `Mary is not split by difficulty, because she flips in play`() {
+        // Her two faces alternate at the end of every villain phase, so both
+        // are on the table whatever the campaign is being played. Only the
+        // face she starts on depends on the difficulty, and that is a setup
+        // step rather than a number to count. Splitting her for symmetry with
+        // the others would leave the tracker counting one face of a villain
+        // that spends half the game on the other.
+        val mary = "fne_villain_mary_typhoide"
+
+        assertEquals(listOf("A", "B"), stagesOn(mary, "standard"))
+        assertEquals(listOf("A", "B"), stagesOn(mary, "expert"))
+    }
+
+    /** The sides a run of this difficulty actually deals, as the tracker reads them. */
+    private fun stagesOn(id: String, difficulty: String) =
+        template().tracker!!.villains.getValue(id)
+            .filter { it.onlyOn == null || it.onlyOn == difficulty }
+            .map { it.stage }
 
     @Test
     fun `villain health is per player, as the cards print it`() {
