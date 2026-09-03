@@ -41,6 +41,7 @@ import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.chooserName
+import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.ui.util.labelRes
 
 /**
@@ -83,21 +84,21 @@ fun StartCampaignScreen(
     var choices by remember { mutableStateOf(mapOf<String, String>()) }
     var name by remember { mutableStateOf("") }
     var difficulty by remember { mutableStateOf("") }
-    // Only asked for, and only required, when the campaign is played on expert.
-    var standardSet by remember { mutableStateOf<String?>(null) }
+    // Which physical sets of encounter cards go in. Left to the app unless the
+    // table says otherwise, which is both the answer for somebody who owns one
+    // of each and the feature for somebody who owns several.
+    var standardSet by remember { mutableStateOf(RANDOM_SET) }
+    var expertSet by remember { mutableStateOf(RANDOM_SET) }
     var roster by remember { mutableStateOf(emptyList<String>()) }
 
     val template: CampaignTemplate? =
         state.templates.firstOrNull { it.id == chosenTemplateId } ?: state.templates.firstOrNull()
     val difficulties = template?.difficulties.orEmpty()
     val effectiveDifficulty = difficulty.ifBlank { difficulties.firstOrNull().orEmpty() }
-    // An expert campaign with no Standard set chosen describes a deck nobody
-    // can build, so it cannot start any more than a campaign with no heroes.
-    val needsStandardSet = effectiveDifficulty == EXPERT && state.standardSets.isNotEmpty()
+    val isExpert = effectiveDifficulty == EXPERT
     val canStart = template != null &&
         roster.isNotEmpty() &&
-        effectiveDifficulty.isNotBlank() &&
-        (!needsStandardSet || standardSet != null)
+        effectiveDifficulty.isNotBlank()
 
     Scaffold(
         topBar = {
@@ -288,29 +289,33 @@ fun StartCampaignScreen(
                 )
             }
 
-            // An expert campaign shuffles the Expert set in with a Standard
-            // set, so which Standard is a second question, asked once because
-            // it is fixed for the whole run like everything else here.
-            if (needsStandardSet) {
-                Section(stringResource(R.string.session_standard_set)) {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        state.standardSets.forEach { set ->
-                            val stored = set.name.lowercase()
-                            FilterChip(
-                                selected = standardSet == stored,
-                                onClick = { standardSet = stored },
-                                label = { Text(stringResource(set.labelRes())) },
-                            )
-                        }
+            // Which cards actually go in the encounter deck. A standard
+            // campaign takes one Standard set; an expert campaign takes an
+            // Expert set *and* a Standard one, never the Expert alone. Asked
+            // once, because the deck is built once and played all the way
+            // through.
+            if (state.standardSets.isNotEmpty() || state.expertSets.isNotEmpty()) {
+                Section(stringResource(R.string.campaign_difficulty_sets)) {
+                    if (isExpert && state.expertSets.isNotEmpty()) {
+                        SetChoice(
+                            label = stringResource(R.string.campaign_expert_set),
+                            sets = state.expertSets,
+                            chosen = expertSet,
+                            onChoose = { expertSet = it },
+                        )
+                    }
+                    if (state.standardSets.isNotEmpty()) {
+                        SetChoice(
+                            label = stringResource(R.string.session_standard_set),
+                            sets = state.standardSets,
+                            chosen = standardSet,
+                            onChoose = { standardSet = it },
+                        )
                     }
                     Text(
-                        text = stringResource(R.string.session_standard_set_hint),
+                        text = stringResource(R.string.campaign_set_random_hint),
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (standardSet == null) {
-                            MaterialTheme.colorScheme.error
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -321,7 +326,8 @@ fun StartCampaignScreen(
                         viewModel.start(
                             it,
                             effectiveDifficulty,
-                            standardSet.orEmpty(),
+                            standardSet,
+                            expertSet,
                             roster,
                             name,
                             choices,
@@ -332,6 +338,39 @@ fun StartCampaignScreen(
                 enabled = canStart,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.campaign_lets_go)) }
+        }
+    }
+}
+
+/**
+ * One row of sets to shuffle in, with leaving it to the app as an option.
+ *
+ * The random chip comes first and is the default: somebody who owns one of
+ * each has nothing to decide, and somebody who owns several asked for exactly
+ * this. Whichever is drawn is written into the run, so the campaign is played
+ * with one set rather than a fresh one each game.
+ */
+@Composable
+private fun SetChoice(
+    label: String,
+    sets: List<Difficulty>,
+    chosen: String,
+    onChoose: (String) -> Unit,
+) {
+    Text(text = label, style = MaterialTheme.typography.labelLarge)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FilterChip(
+            selected = chosen == RANDOM_SET,
+            onClick = { onChoose(RANDOM_SET) },
+            label = { Text(stringResource(R.string.campaign_set_random)) },
+        )
+        sets.forEach { set ->
+            val stored = set.name.lowercase()
+            FilterChip(
+                selected = chosen == stored,
+                onClick = { onChoose(stored) },
+                label = { Text(stringResource(set.labelRes())) },
+            )
         }
     }
 }

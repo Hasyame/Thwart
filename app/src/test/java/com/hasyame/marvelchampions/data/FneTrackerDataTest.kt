@@ -73,6 +73,30 @@ class FneTrackerDataTest {
     }
 
     @Test
+    fun `a subordinate is dealt two of its three stages, by difficulty`() {
+        // The campaign deals each subordinate as a pair: I and II on a
+        // standard campaign, II and III on an expert one, exactly as the
+        // villain deck line in the setup says. The tracker counted from stage
+        // I whatever was being played, so an expert table was counting down to
+        // a number printed on a card not on the table.
+        val villains = template().tracker!!.villains
+
+        fun stagesOn(id: String, difficulty: String) = villains.getValue(id)
+            .filter { it.onlyOn == null || it.onlyOn == difficulty }
+            .map { it.stage }
+
+        listOf(
+            "fne_villain_hammerhead",
+            "fne_villain_bullseye",
+            "fne_villain_electro",
+            "fne_villain_homme_pourpre",
+        ).forEach { id ->
+            assertEquals("standard stages for $id", listOf("I", "II"), stagesOn(id, "standard"))
+            assertEquals("expert stages for $id", listOf("II", "III"), stagesOn(id, "expert"))
+        }
+    }
+
+    @Test
     fun `villain health is per player, as the cards print it`() {
         // Every Fear No Evil villain card carries the small figure beside its
         // health. Marking one flat would have the tracker offer a solo total at
@@ -91,6 +115,9 @@ class FneTrackerDataTest {
         val expected = mapOf(
             "s1_musee" to listOf(9 to 1),
             "s2_poursuite" to listOf(9 to 2),
+            // The racket cards print flat numbers and no starting threat: what
+            // they start with comes from the pressure on the job instead.
+            "s3_racket" to listOf(10 to 0),
             "s4_raft" to listOf(11 to 2),
             "s5_rotatives" to listOf(9 to 1),
             // The finale turns over to a second scheme.
@@ -108,35 +135,60 @@ class FneTrackerDataTest {
     }
 
     @Test
-    fun `every scheme accelerates by one a round, per player`() {
-        // What every main scheme in the card database carries: escalation 1,
-        // and not fixed, which in MarvelCDB's spelling means multiply. Without
-        // it the tracker would hold the threat still between rounds and call
-        // a scheme safe long after it was not.
+    fun `every scheme accelerates by one a round`() {
+        // What every main scheme in the card database carries: escalation 1.
+        // Without it the tracker would hold the threat still between rounds
+        // and call a scheme safe long after it was not.
         val sides = template().tracker!!.schemes.values.flatten()
 
         assertEquals(listOf(1), sides.map { it.escalation }.distinct())
-        assertEquals(listOf(true), sides.map { it.escalationPerPlayer }.distinct())
     }
 
     @Test
-    fun `the racket job is knowingly left uncounted`() {
-        // Not for want of numbers: its four cards all read 10 threat, no
-        // per-player icon, plus one a round. The problem is that Fear No Evil
-        // deals a main scheme *to each player*, so a three-handed game has
-        // three of them going at once, each completing on its own.
-        //
-        // The tracker counts one main scheme. Folding three into one would
-        // report a limit nobody is playing to, and a single bar cannot say
-        // which player's scheme is nearly done. Counting nothing is the honest
-        // answer until the tracker can hold more than one, and the villain is
-        // still counted for this job like any other.
+    fun `only the racket accelerates flat, because its cards print it flat`() {
+        // Every other job multiplies its acceleration by the players, as the
+        // small figure beside the number says. The racket cards carry no
+        // figure: one threat a round each, whoever is at the table. Marking it
+        // per player would have a three-handed game counting three times as
+        // fast as it plays.
         val schemes = template().tracker!!.schemes
+        val flat = schemes.filterValues { sides -> sides.none { it.escalationPerPlayer } }
 
-        assertTrue(
-            "s3_racket now has a scheme; the tracker must handle one per player first",
-            "s3_racket" !in schemes,
-        )
+        assertEquals(setOf("s3_racket"), flat.keys)
+    }
+
+    @Test
+    fun `the racket job is counted once per player`() {
+        // Fear No Evil deals this job a main scheme *to each player*: five
+        // markets, everyone works a different one, and they finish at
+        // different times. It is the only job in the campaign that does, and
+        // the only one the tracker draws more than one counter for.
+        val tracker = template().tracker!!
+
+        assertEquals(listOf("s3_racket"), tracker.perPlayerSchemes)
+        assertTrue("the racket scheme must exist to be counted", "s3_racket" in tracker.schemes)
+    }
+
+    @Test
+    fun `a job under pressure starts its scheme where the table starts it`() {
+        // Pressure is threat already on the scheme before anybody plays a
+        // card: one token per box ticked, doubled on an expert campaign. The
+        // tracker has to start there, or it counts to the right limit from the
+        // wrong place all game.
+        val schemes = template().tracker!!.schemes
+        val fromPressure = schemes.filterValues { sides ->
+            sides.any { it.startingThreatFrom != null }
+        }
+
+        // The two jobs whose extra threat lands on the main scheme. La
+        // Poursuite's lands on the tanker, which is not a main scheme, and the
+        // other two jobs are not paid in threat at all.
+        assertEquals(setOf("s1_musee", "s3_racket"), fromPressure.keys)
+
+        val racket = schemes.getValue("s3_racket").first().startingThreatFrom!!
+        assertEquals(0, racket.amountFor(counterValue = 0, expert = false))
+        assertEquals(2, racket.amountFor(counterValue = 2, expert = false))
+        assertEquals(4, racket.amountFor(counterValue = 2, expert = true))
     }
 
     @Test

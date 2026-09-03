@@ -181,7 +181,8 @@ private fun PlayingPage(state: VersusUiState, viewModel: VersusViewModel) {
             enabled = true,
             keepAwake = true,
             onDamageVillain = { viewModel.damageLeader(team, it) },
-            onChangeThreat = { viewModel.changeThreat(team, it) },
+            // One scheme a side here, so which copy is always the first.
+            onChangeThreat = { _, amount -> viewModel.changeThreat(team, amount) },
             onAdvanceVillain = { viewModel.advanceLeader(team) },
             onAdvanceScheme = { viewModel.advanceScheme(team) },
             onEndRound = viewModel::endRound,

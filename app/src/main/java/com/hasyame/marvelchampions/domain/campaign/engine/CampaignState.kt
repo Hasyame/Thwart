@@ -1,5 +1,7 @@
 package com.hasyame.marvelchampions.domain.campaign.engine
 
+import com.hasyame.marvelchampions.domain.campaign.template.ComputedAmount
+
 /**
  * Everything derived from the event log. Never stored — always folded.
  */
@@ -114,4 +116,16 @@ data class Purchase(
 data class HeroCardStats(
     val heroId: String,
     val printedHealth: Int?,
+)
+
+/**
+ * An amount the campaign works out for itself, read against this run.
+ *
+ * Null when there is nothing to work out. Zero is a real answer and means the
+ * rule does not apply yet, which is why the two are kept apart: a step with no
+ * amount is shown as written, and a step whose amount is nothing is not shown.
+ */
+fun CampaignState.amountOf(amount: ComputedAmount?): Int? = amount?.amountFor(
+    counterValue = counter(amount.counter),
+    expert = difficulty.equals("expert", ignoreCase = true),
 )

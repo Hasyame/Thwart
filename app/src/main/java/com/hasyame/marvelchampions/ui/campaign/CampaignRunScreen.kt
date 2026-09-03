@@ -65,10 +65,13 @@ import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicBurst
 import com.hasyame.marvelchampions.core.designsystem.component.halftone
 import com.hasyame.marvelchampions.data.repository.CampaignRun
+import com.hasyame.marvelchampions.domain.randomizer.Difficulty
+import com.hasyame.marvelchampions.ui.util.labelRes
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
 import com.hasyame.marvelchampions.domain.campaign.engine.ConditionEvaluator
 import com.hasyame.marvelchampions.domain.campaign.engine.EvaluationContext
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
+import com.hasyame.marvelchampions.domain.campaign.engine.amountOf
 import com.hasyame.marvelchampions.domain.campaign.template.CounterScope
 import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import com.hasyame.marvelchampions.domain.campaign.template.ScenarioTemplate
@@ -302,6 +305,8 @@ private fun BriefingPage(
             }
         }
 
+        DifficultySets(run)
+
         // Card chips only. A campaign whose cards are in no database — Fear
         // No Evil — fills none of them, and an empty titled box is worse than
         // no box, so the whole panel goes.
@@ -439,6 +444,37 @@ private fun CardChips(
 
 
 /**
+ * The encounter sets the difficulty is made of, named on every briefing.
+ *
+ * Stated here because the app may have drawn them: a table that asked for a
+ * set at random has no other way of knowing which one it is playing, and it is
+ * the same one every game of the run.
+ */
+@Composable
+private fun DifficultySets(run: CampaignRun) {
+    val names = listOf(run.entity.expertSet, run.entity.standardSet)
+        .filter { it.isNotBlank() }
+        .mapNotNull { stored ->
+            // Reading a stored name back, not offering a menu: which sets a
+            // table may pick from was settled by the collection at the start.
+            Difficulty.entries.firstOrNull { it.name.lowercase() == stored }
+        }
+        .map { stringResource(it.labelRes()) }
+    if (names.isEmpty()) {
+        return
+    }
+    ComicPanel(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.campaign_difficulty_sets),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            Text(names.joinToString(" + "))
+        }
+    }
+}
+
+/**
  * One titled panel of setup steps.
  *
  * The briefing is three of these: what goes on the table before the game,
@@ -468,6 +504,10 @@ private fun SetupPanel(
                 )
                 steps
                     .filter { ConditionEvaluator.evaluate(it.condition, context) }
+                    // A step whose worked-out amount comes to nothing does not
+                    // apply this time. Printing "place 0 threat" would leave
+                    // the table hunting for something to do.
+                    .filter { run.state.amountOf(it.compute) != 0 }
                     // A step can exist only to carry a draw, with the steps
                     // that read it saying everything. Rendering its empty
                     // text would put a bullet with nothing after it on the
@@ -478,7 +518,10 @@ private fun SetupPanel(
                             Text(
                                 campaignText(
                                     "• " + resolveDraws(
-                                        step.text.resolve(campaignTextLocale),
+                                        resolveAmount(
+                                            step.text.resolve(campaignTextLocale),
+                                            run.state.amountOf(step.compute),
+                                        ),
                                         run,
                                         run.state.currentScenarioId,
                                     ),
@@ -669,7 +712,7 @@ private fun PlayingPage(
     encounter: Encounter = Encounter.startOf(EncounterSetup()),
     keepAwake: Boolean = true,
     onDamageVillain: (Int) -> Unit = {},
-    onChangeThreat: (Int) -> Unit = {},
+    onChangeThreat: (Int, Int) -> Unit = { _, _ -> },
     onAdvanceVillain: () -> Unit = {},
     onAdvanceScheme: () -> Unit = {},
     onEndRound: () -> Unit = {},

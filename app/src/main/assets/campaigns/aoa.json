@@ -638,8 +638,20 @@
     },
     {
      "text": {
-      "fr": "Utilisez la face A en Escarmouche et Standard, la face B en Expert et Héroïque",
-      "en": "Use side A for Skirmish and Standard, side B for Expert and Heroic"
+      "fr": "Utilisez la face A.",
+      "en": "Use side A."
+     },
+     "when": {
+      "difficulty": "standard"
+     }
+    },
+    {
+     "text": {
+      "fr": "Utilisez la face B.",
+      "en": "Use side B."
+     },
+     "when": {
+      "difficulty": "expert"
      }
     },
     {

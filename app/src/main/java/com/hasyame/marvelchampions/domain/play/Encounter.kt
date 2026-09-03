@@ -30,6 +30,14 @@ data class EncounterSide(
     /** Threat already on a scheme when it comes into play. Schemes only. */
     val startingThreat: Int = 0,
     val startingThreatPerPlayer: Boolean = false,
+    /**
+     * Threat the campaign puts on the scheme on top of what the card prints.
+     *
+     * Already worked out, and not scaled again: Fear No Evil starts a job with
+     * a threat for every pressure box ticked against it, and that is a flat
+     * amount whatever the printed threat beside it does.
+     */
+    val extraStartingThreat: Int = 0,
     /** Threat added at the end of every round. Schemes only. */
     val escalation: Int = 0,
     val escalationPerPlayer: Boolean = false,
@@ -37,7 +45,7 @@ data class EncounterSide(
     fun totalFor(players: Int): Int? = value?.timesPlayers(perPlayer, players)
 
     fun startingThreatFor(players: Int): Int =
-        startingThreat.timesPlayers(startingThreatPerPlayer, players)
+        startingThreat.timesPlayers(startingThreatPerPlayer, players) + extraStartingThreat
 
     fun escalationFor(players: Int): Int = escalation.timesPlayers(escalationPerPlayer, players)
 
@@ -50,6 +58,17 @@ data class EncounterSetup(
     val villain: List<EncounterSide> = emptyList(),
     val scheme: List<EncounterSide> = emptyList(),
     val players: Int = 1,
+    /**
+     * How many copies of the main scheme are on the table at once.
+     *
+     * One almost everywhere: a table plays a main scheme and turns it over.
+     * Fear No Evil's racket job deals one to *each* player, who works their own
+     * market on their own, so three players have three schemes running side by
+     * side and finishing at different times. Folding those into a single bar
+     * would count to a limit nobody is playing to, and could not say whose
+     * scheme was nearly done.
+     */
+    val schemeCopies: Int = 1,
 ) {
     /** Nothing to count is not worth showing. */
     val isUsable: Boolean get() = villain.isNotEmpty() || scheme.isNotEmpty()
@@ -69,6 +88,16 @@ data class EncounterProgress(
     val damage: Int = 0,
     val schemeIndex: Int = 0,
     val threat: Int = 0,
+    /**
+     * Threat on the second and later copies of the main scheme.
+     *
+     * The first copy's threat stays in [threat] rather than all of them moving
+     * into one list. A game put away before this field existed wrote `threat`
+     * into its saved counters, and renaming it would have every paused game
+     * come back with its scheme empty — the exact loss the saved counters were
+     * added to stop.
+     */
+    val extraThreats: List<Int> = emptyList(),
     val round: Int = 1,
     /** Filled in by the player, for the stages that print a star. */
     val manualVillainHealth: Int? = null,
@@ -107,7 +136,17 @@ data class Encounter(
 
     val villainDefeated: Boolean get() = villainHealth?.let { progress.damage >= it } == true
 
-    val schemeComplete: Boolean get() = schemeLimit?.let { progress.threat >= it } == true
+    /** Copies of the main scheme in play, never fewer than one. */
+    val schemeCopies: Int get() = setup.schemeCopies.coerceAtLeast(1)
+
+    /** Threat on one copy of the main scheme. Copy zero is the table's own. */
+    fun threatOn(copyIndex: Int): Int =
+        if (copyIndex <= 0) progress.threat else progress.extraThreats.getOrElse(copyIndex - 1) { 0 }
+
+    fun schemeCompleteOn(copyIndex: Int): Boolean =
+        schemeLimit?.let { threatOn(copyIndex) >= it } == true
+
+    val schemeComplete: Boolean get() = schemeCompleteOn(0)
 
     val isFinalVillainStage: Boolean get() = progress.villainIndex >= setup.villain.lastIndex
 
@@ -126,9 +165,19 @@ data class Encounter(
     }
 
     /** Threat on the main scheme. A negative amount thwarts. */
-    fun threatened(amount: Int): Encounter {
-        val raised = (progress.threat + amount).coerceAtLeast(0)
-        return withProgress { copy(threat = schemeLimit?.let(raised::coerceAtMost) ?: raised) }
+    fun threatened(amount: Int): Encounter = threatened(0, amount)
+
+    /** The same, on one particular copy of the scheme. */
+    fun threatened(copyIndex: Int, amount: Int): Encounter {
+        val raised = (threatOn(copyIndex) + amount).coerceAtLeast(0)
+        val capped = schemeLimit?.let(raised::coerceAtMost) ?: raised
+        return withProgress {
+            if (copyIndex <= 0) {
+                copy(threat = capped)
+            } else {
+                copy(extraThreats = extraThreats.replacing(copyIndex - 1, capped))
+            }
+        }
     }
 
     /**
@@ -158,10 +207,12 @@ data class Encounter(
             this
         } else {
             val next = setup.scheme[progress.schemeIndex + 1]
+            val start = next.startingThreatFor(setup.players)
             withProgress {
                 copy(
                     schemeIndex = schemeIndex + 1,
-                    threat = next.startingThreatFor(setup.players),
+                    threat = start,
+                    extraThreats = List(schemeCopies - 1) { start },
                     manualSchemeLimit = null,
                 )
             }
@@ -176,7 +227,16 @@ data class Encounter(
      */
     fun roundEnded(): Encounter {
         val escalation = schemeSide?.escalationFor(setup.players) ?: 0
-        return threatened(escalation).withProgress { copy(round = round + 1) }
+        // Every copy accelerates, not only the first: a table playing one
+        // scheme each is a table where each of them speeds up every round.
+        val escalated = if (escalation == 0) {
+            this
+        } else {
+            (0 until schemeCopies).fold(this) { encounter, index ->
+                encounter.threatened(index, escalation)
+            }
+        }
+        return escalated.withProgress { copy(round = round + 1) }
     }
 
     fun withManualVillainHealth(health: Int?): Encounter =
@@ -188,13 +248,23 @@ data class Encounter(
     private inline fun withProgress(change: EncounterProgress.() -> EncounterProgress) =
         copy(progress = progress.change())
 
+    /** The list with one entry replaced, grown with zeroes if it is short. */
+    private fun List<Int>.replacing(index: Int, value: Int): List<Int> {
+        val grown = if (size > index) this else this + List(index + 1 - size) { 0 }
+        return grown.mapIndexed { at, existing -> if (at == index) value else existing }
+    }
+
     companion object {
         /** A scenario at the start of a game, with the scheme's printed threat on it. */
-        fun startOf(setup: EncounterSetup): Encounter = Encounter(
-            setup = setup,
-            progress = EncounterProgress(
-                threat = setup.scheme.firstOrNull()?.startingThreatFor(setup.players) ?: 0,
-            ),
-        )
+        fun startOf(setup: EncounterSetup): Encounter {
+            val start = setup.scheme.firstOrNull()?.startingThreatFor(setup.players) ?: 0
+            return Encounter(
+                setup = setup,
+                progress = EncounterProgress(
+                    threat = start,
+                    extraThreats = List((setup.schemeCopies - 1).coerceAtLeast(0)) { start },
+                ),
+            )
+        }
     }
 }

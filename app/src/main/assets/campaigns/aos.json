@@ -321,8 +321,20 @@
         },
         {
           "text": {
-            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
-            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+            "fr": "Un Board Member qui atteint 4 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 4 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "standard"
+          }
+        },
+        {
+          "text": {
+            "fr": "Un Board Member qui atteint 3 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 3 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "expert"
           }
         },
         {
@@ -767,8 +779,20 @@
         },
         {
           "text": {
-            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
-            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+            "fr": "Un Board Member qui atteint 4 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 4 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "standard"
+          }
+        },
+        {
+          "text": {
+            "fr": "Un Board Member qui atteint 3 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 3 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "expert"
           }
         },
         {
@@ -1217,8 +1241,20 @@
         },
         {
           "text": {
-            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
-            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+            "fr": "Un Board Member qui atteint 4 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 4 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "standard"
+          }
+        },
+        {
+          "text": {
+            "fr": "Un Board Member qui atteint 3 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 3 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "expert"
           }
         },
         {
@@ -1697,8 +1733,20 @@
         },
         {
           "text": {
-            "en": "A board member reaching 4 secrets (3 in expert) flips to its attachment side, and stays that way for the rest of the campaign.",
-            "fr": "Un Board Member qui atteint 4 secrets (3 en expert) se retourne sur sa face attachement, et y reste pour tout le reste de la campagne."
+            "fr": "Un Board Member qui atteint 4 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 4 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "standard"
+          }
+        },
+        {
+          "text": {
+            "fr": "Un Board Member qui atteint 3 secrets se retourne sur sa face attachement, et y reste pour tout le reste de la campagne.",
+            "en": "A board member reaching 3 secrets flips to its attachment side, and stays that way for the rest of the campaign."
+          },
+          "when": {
+            "difficulty": "expert"
           }
         },
         {

@@ -39,11 +39,38 @@ data class StartCampaignUiState(
     /** How much of each campaign's own text is written, by template id. */
     val coverage: Map<String, TranslationCoverage> = emptyMap(),
     /**
-     * Standard sets the collection can field, offered when the campaign is
-     * played on expert. Each one arrived in a particular box.
+     * Difficulty sets the collection can field. Each one arrived in a
+     * particular box, so a table can only shuffle in what it owns.
+     *
+     * Both lists are offered: a standard campaign is played with one Standard
+     * set, and an expert campaign with an Expert set *and* a Standard one.
      */
     val standardSets: List<Difficulty> = emptyList(),
+    val expertSets: List<Difficulty> = emptyList(),
 )
+
+/**
+ * Chosen instead of a set, meaning the app picks one of the owned sets.
+ *
+ * Drawn once when the campaign starts and written into the run, not re-rolled
+ * per scenario: the encounter deck is built at the start and played all the way
+ * through, so a set that changed between games would be a different deck.
+ */
+const val RANDOM_SET = "random"
+
+/**
+ * The set a run actually plays with, drawn here if the table left it to us.
+ *
+ * A choice the collection cannot field is drawn again rather than stored: the
+ * screen offers only owned sets, so a name nobody owns can only come from a
+ * collection that changed under it, and it describes a deck that cannot be
+ * built.
+ */
+internal fun chosenSet(choice: String, available: List<Difficulty>): String = when {
+    available.isEmpty() -> ""
+    available.any { it.name.equals(choice, ignoreCase = true) } -> choice.lowercase()
+    else -> available.random().name.lowercase()
+}
 
 @HiltViewModel
 class StartCampaignViewModel @Inject constructor(
@@ -83,6 +110,8 @@ class StartCampaignViewModel @Inject constructor(
                     // change.
                     coverage = templates.associate { it.id to it.translationCoverage() },
                     standardSets = Difficulty.standards.filter { it.packCode in owned },
+                    expertSets = Difficulty.entries
+                        .filter { it.isExpert && it.packCode in owned },
                     candidates = decks.map { deck ->
                         val rules = builderRepository.heroRules(deck.heroCode, locale)
                         RosterCandidate(
@@ -110,7 +139,9 @@ class StartCampaignViewModel @Inject constructor(
     fun start(
         template: CampaignTemplate,
         difficulty: String,
+        /** A set name, or [RANDOM_SET] to have the app pick one. */
         standardSet: String,
+        expertSet: String,
         deckIds: List<String>,
         name: String,
         choices: Map<String, String>,
@@ -123,17 +154,25 @@ class StartCampaignViewModel @Inject constructor(
         if (roster.isEmpty()) {
             return
         }
+        val expert = difficulty.equals(EXPERT, ignoreCase = true)
         viewModelScope.launch {
             onStarted(
                 campaignRepository.startRun(
                     template = template,
                     difficulty = difficulty,
-                    standardSet = standardSet,
+                    standardSet = chosenSet(standardSet, state.value.standardSets),
+                    // An Expert set is never played on its own, and never
+                    // played at all on a standard campaign.
+                    expertSet = if (expert) chosenSet(expertSet, state.value.expertSets) else "",
                     deckIds = roster,
                     name = name,
                     choices = choices,
                 ),
             )
         }
+    }
+
+    private companion object {
+        const val EXPERT = "expert"
     }
 }

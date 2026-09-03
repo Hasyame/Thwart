@@ -634,7 +634,8 @@ class GameSessionViewModel @Inject constructor(
 
     fun damageVillain(amount: Int) = updateEncounter { damaged(amount) }
 
-    fun changeThreat(amount: Int) = updateEncounter { threatened(amount) }
+    fun changeThreat(copyIndex: Int, amount: Int) =
+        updateEncounter { threatened(copyIndex, amount) }
 
     /** The acceleration goes on the main scheme. */
     fun endRound() = updateEncounter { roundEnded() }

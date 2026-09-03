@@ -14,7 +14,9 @@ import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.campaign.engine.AnswerSet
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
+import com.hasyame.marvelchampions.domain.campaign.engine.CampaignState
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
+import com.hasyame.marvelchampions.domain.campaign.engine.amountOf
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.domain.play.Encounter
@@ -140,7 +142,7 @@ data class CampaignRunUiState(
  * negative health would make the villain defeated the moment the game started,
  * which the tracker would report as fact.
  */
-private fun TrackedSide.toSide(): EncounterSide = EncounterSide(
+private fun TrackedSide.toSide(state: CampaignState): EncounterSide = EncounterSide(
     name = name,
     stage = stage,
     value = value?.coerceAtLeast(0),
@@ -150,6 +152,10 @@ private fun TrackedSide.toSide(): EncounterSide = EncounterSide(
     startingThreatPerPlayer = startingThreatPerPlayer,
     escalation = escalation.coerceAtLeast(0),
     escalationPerPlayer = escalationPerPlayer,
+    // What the campaign has already put on the scheme before anybody plays a
+    // card. Counting from the printed threat instead had the tracker two
+    // short of the table all game.
+    extraStartingThreat = (state.amountOf(startingThreatFrom) ?: 0).coerceAtLeast(0),
 )
 
 @HiltViewModel
@@ -311,13 +317,25 @@ class CampaignRunViewModel @Inject constructor(
                 scenarioId,
                 CampaignRepository.VILLAIN_DRAW_ID,
             ).firstOrNull()
-            val stages = tracker.villains[drawn] ?: tracker.villains[scenarioId]
-            val scheme = tracker.schemes[scenarioId]
-            if (stages != null || scheme != null) {
+            // Only the sides this campaign actually deals. A subordinate is
+            // dealt as two stages out of three, and which two depends on the
+            // difficulty.
+            val difficulty = run.state.difficulty
+            fun List<TrackedSide>.forThisRun() =
+                filter { it.onlyOn == null || it.onlyOn.equals(difficulty, ignoreCase = true) }
+            val stages = (tracker.villains[drawn] ?: tracker.villains[scenarioId])?.forThisRun()
+            val scheme = tracker.schemes[scenarioId]?.forThisRun()
+            if (!stages.isNullOrEmpty() || !scheme.isNullOrEmpty()) {
+                val players = run.state.heroes.size.coerceAtLeast(1)
                 return EncounterSetup(
-                    villain = stages?.map { it.toSide() }.orEmpty(),
-                    scheme = scheme?.map { it.toSide() }.orEmpty(),
-                    players = run.state.heroes.size.coerceAtLeast(1),
+                    villain = stages?.map { it.toSide(run.state) }.orEmpty(),
+                    scheme = scheme?.map { it.toSide(run.state) }.orEmpty(),
+                    players = players,
+                    // A job that deals a main scheme to each player is counted
+                    // once each: they are separate schemes finishing at
+                    // separate times, and one bar cannot say whose is nearly
+                    // done.
+                    schemeCopies = if (scenarioId in tracker.perPlayerSchemes) players else 1,
                 )
             }
         }
@@ -371,7 +389,8 @@ class CampaignRunViewModel @Inject constructor(
 
     fun damageVillain(amount: Int) = updateEncounter { damaged(amount) }
 
-    fun changeThreat(amount: Int) = updateEncounter { threatened(amount) }
+    fun changeThreat(copyIndex: Int, amount: Int) =
+        updateEncounter { threatened(copyIndex, amount) }
 
     fun advanceVillain() = updateEncounter { villainAdvanced() }
 

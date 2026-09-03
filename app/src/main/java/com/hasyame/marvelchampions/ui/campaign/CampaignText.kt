@@ -59,6 +59,18 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.withStyleSpan(value
 }
 
 /**
+ * Writes a step's worked-out amount into its `{value}` placeholder.
+ *
+ * Kept apart from [resolveDraws], and run before it: that one clears any
+ * placeholder it does not recognise, so an amount left for it to see would be
+ * quietly deleted rather than printed.
+ */
+fun resolveAmount(text: String, amount: Int?): String =
+    if (amount == null) text else text.replace(AMOUNT_PLACEHOLDER, amount.toString())
+
+private const val AMOUNT_PLACEHOLDER = "{value}"
+
+/**
  * Fills `{drawId}` in a template string with the card the app drew.
  *
  * A question like "was the MISSION defeated?" is answerable but vague — there

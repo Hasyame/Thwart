@@ -263,8 +263,10 @@ class CampaignRepository @Inject constructor(
     suspend fun startRun(
         template: CampaignTemplate,
         difficulty: String,
-        /** The Standard set played with an expert campaign. Empty otherwise. */
+        /** The Standard set played, whatever the difficulty. Empty if none. */
         standardSet: String = "",
+        /** The Expert set, on an expert campaign. Empty otherwise. */
+        expertSet: String = "",
         deckIds: List<String>,
         name: String = "",
         /** Answers to the campaign's own questions, by choice id. */
@@ -290,6 +292,7 @@ class CampaignRepository @Inject constructor(
                 name = name.ifBlank { template.name.resolve(localeCode()) },
                 difficulty = difficulty,
                 standardSet = standardSet,
+                expertSet = expertSet,
                 createdAt = now,
                 // The template travels with the run so it stays readable even
                 // if the source file is moved or deleted.

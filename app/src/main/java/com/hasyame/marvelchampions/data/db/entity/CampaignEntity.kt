@@ -38,6 +38,14 @@ data class CampaignRunEntity(
      * the encounter deck are not something a table changes between scenarios.
      */
     @ColumnInfo(defaultValue = "") val standardSet: String = "",
+    /**
+     * The Expert set played on an expert campaign. Empty otherwise.
+     *
+     * Chosen at the start like the Standard one, and drawn by the app when the
+     * table asked for a set at random. Recorded rather than re-rolled, because
+     * the encounter deck is built once and played for the whole campaign.
+     */
+    @ColumnInfo(defaultValue = "") val expertSet: String = "",
     val createdAt: Long,
     val finished: Boolean = false,
     /** The template JSON as imported, so a run stays readable if the file moves. */

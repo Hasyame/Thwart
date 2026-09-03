@@ -34,7 +34,8 @@ fun EncounterPanel(
     enabled: Boolean,
     keepAwake: Boolean,
     onDamageVillain: (Int) -> Unit,
-    onChangeThreat: (Int) -> Unit,
+    /** Which copy of the main scheme, and by how much. */
+    onChangeThreat: (Int, Int) -> Unit,
     onAdvanceVillain: () -> Unit,
     onAdvanceScheme: () -> Unit,
     onEndRound: () -> Unit,
@@ -68,20 +69,30 @@ fun EncounterPanel(
             }
 
             encounter.schemeSide?.let { scheme ->
-                HorizontalDivider()
-                CounterRow(
-                    title = scheme.name,
-                    value = encounter.progress.threat,
-                    total = encounter.schemeLimit,
-                    unit = stringResource(R.string.session_threat),
-                    unknown = scheme.starred,
-                    enabled = enabled,
-                    onChange = onChangeThreat,
-                    reached = encounter.schemeComplete,
-                    advanceLabel = stringResource(R.string.session_advance_scheme),
-                    onAdvance = if (encounter.isFinalSchemeStage) null else onAdvanceScheme,
-                    flavour = VitalFlavour.ELECTRIC,
-                )
+                // Usually one, and then this reads exactly as it always did.
+                // A scenario that deals a main scheme to each player gets one
+                // counter each, named for whose it is, because they are
+                // separate games of thwarting that finish at different times.
+                repeat(encounter.schemeCopies) { index ->
+                    HorizontalDivider()
+                    CounterRow(
+                        title = if (encounter.schemeCopies > 1) {
+                            stringResource(R.string.session_scheme_player, scheme.name, index + 1)
+                        } else {
+                            scheme.name
+                        },
+                        value = encounter.threatOn(index),
+                        total = encounter.schemeLimit,
+                        unit = stringResource(R.string.session_threat),
+                        unknown = scheme.starred,
+                        enabled = enabled,
+                        onChange = { amount -> onChangeThreat(index, amount) },
+                        reached = encounter.schemeCompleteOn(index),
+                        advanceLabel = stringResource(R.string.session_advance_scheme),
+                        onAdvance = if (encounter.isFinalSchemeStage) null else onAdvanceScheme,
+                        flavour = VitalFlavour.ELECTRIC,
+                    )
+                }
             }
 
             // The one piece of arithmetic worth automating: it is per player,

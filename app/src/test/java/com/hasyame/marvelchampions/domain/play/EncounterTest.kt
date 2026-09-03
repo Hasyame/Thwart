@@ -215,4 +215,100 @@ class EncounterTest {
         assertEquals(0, before.progress.threat)
         assertEquals(1, before.progress.round)
     }
+
+    // ------------------------------------------- a main scheme each --------
+
+    /**
+     * Fear No Evil's racket job, which deals a main scheme to every player.
+     *
+     * Flat numbers, as those cards print them: 10 threat and one a round,
+     * whoever is at the table. Each player clears their own market, so the
+     * counters run side by side and finish at different times.
+     */
+    private val racket = EncounterSetup(
+        villain = listOf(EncounterSide("Hammerhead", "I", value = 14, perPlayer = true)),
+        scheme = listOf(
+            EncounterSide(
+                name = "Racket en Bande Organisée",
+                stage = "1A",
+                value = 10,
+                perPlayer = false,
+                escalation = 1,
+                escalationPerPlayer = false,
+            ),
+        ),
+        players = 3,
+        schemeCopies = 3,
+    )
+
+    @Test
+    fun `each player's scheme is counted on its own`() {
+        val started = Encounter.startOf(racket)
+
+        val thwarted = started.threatened(0, 4).threatened(2, 9)
+
+        assertEquals(4, thwarted.threatOn(0))
+        assertEquals(0, thwarted.threatOn(1))
+        assertEquals(9, thwarted.threatOn(2))
+    }
+
+    @Test
+    fun `one player losing their market does not lose everybody's`() {
+        // The reason three counters exist rather than one total. A single bar
+        // would have called the whole table finished here.
+        val done = Encounter.startOf(racket).threatened(1, 10)
+
+        assertTrue(done.schemeCompleteOn(1))
+        assertFalse(done.schemeCompleteOn(0))
+        assertFalse(done.schemeCompleteOn(2))
+    }
+
+    @Test
+    fun `every market speeds up at the end of the round`() {
+        val round = Encounter.startOf(racket).threatened(0, 2).roundEnded()
+
+        assertEquals(3, round.threatOn(0))
+        assertEquals(1, round.threatOn(1))
+        assertEquals(1, round.threatOn(2))
+        assertEquals(2, round.progress.round)
+    }
+
+    @Test
+    fun `a scheme dealt to each player starts each of them where it starts`() {
+        // Threat the campaign has already put on the scheme goes on all of
+        // them, not only the first: pressure is paid by every market.
+        val pressed = racket.copy(
+            scheme = racket.scheme.map { it.copy(extraStartingThreat = 2) },
+        )
+
+        val started = Encounter.startOf(pressed)
+
+        assertEquals(listOf(2, 2, 2), List(3) { started.threatOn(it) })
+    }
+
+    @Test
+    fun `a table with one scheme behaves exactly as before`() {
+        // Everything above is inert for every other scenario in the game, and
+        // that has to stay true: one copy, one counter, one call.
+        val one = Encounter.startOf(rhino.copy(players = 2))
+
+        val played = one.threatened(5).roundEnded()
+
+        assertEquals(1, one.schemeCopies)
+        assertEquals(7, played.progress.threat)
+        assertEquals(emptyList<Int>(), played.progress.extraThreats)
+    }
+
+    @Test
+    fun `a game put away before the extra counters existed comes back whole`() {
+        // Saved counters carry `threat` and nothing else. Reading them back
+        // must give the first scheme its threat, not lose it to a list that
+        // was not written yet.
+        val old = EncounterProgress(threat = 6, round = 3)
+
+        val resumed = Encounter(setup = racket, progress = old)
+
+        assertEquals(6, resumed.threatOn(0))
+        assertEquals(0, resumed.threatOn(1))
+    }
 }

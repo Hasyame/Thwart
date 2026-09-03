@@ -139,7 +139,8 @@
      "name": "Hammerhead",
      "stage": "I",
      "value": 14,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "standard"
     },
     {
      "name": "Hammerhead",
@@ -151,7 +152,8 @@
      "name": "Hammerhead",
      "stage": "III",
      "value": 16,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "expert"
     }
    ],
    "fne_villain_bullseye": [
@@ -159,7 +161,8 @@
      "name": "Bullseye",
      "stage": "I",
      "value": 12,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "standard"
     },
     {
      "name": "Bullseye",
@@ -171,7 +174,8 @@
      "name": "Bullseye",
      "stage": "III",
      "value": 18,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "expert"
     }
    ],
    "fne_villain_electro": [
@@ -179,7 +183,8 @@
      "name": "Electro",
      "stage": "I",
      "value": 15,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "standard"
     },
     {
      "name": "Electro",
@@ -191,7 +196,8 @@
      "name": "Electro",
      "stage": "III",
      "value": 20,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "expert"
     }
    ],
    "fne_villain_homme_pourpre": [
@@ -199,7 +205,8 @@
      "name": "L’Homme Pourpre",
      "stage": "I",
      "value": 13,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "standard"
     },
     {
      "name": "L’Homme Pourpre",
@@ -211,7 +218,8 @@
      "name": "L’Homme Pourpre",
      "stage": "III",
      "value": 17,
-     "perPlayer": true
+     "perPlayer": true,
+     "onlyOn": "expert"
     }
    ],
    "fne_villain_mary_typhoide": [
@@ -253,7 +261,13 @@
      "startingThreat": 1,
      "startingThreatPerPlayer": true,
      "escalation": 1,
-     "escalationPerPlayer": true
+     "escalationPerPlayer": true,
+     "startingThreatFrom": {
+      "counter": "pressionMusee",
+      "perUnit": 1,
+      "perUnitExpert": 2,
+      "threshold": 1
+     }
     }
    ],
    "s2_poursuite": [
@@ -266,6 +280,24 @@
      "startingThreatPerPlayer": true,
      "escalation": 1,
      "escalationPerPlayer": true
+    }
+   ],
+   "s3_racket": [
+    {
+     "name": "Racket en Bande Organisée",
+     "stage": "1A",
+     "value": 10,
+     "perPlayer": false,
+     "startingThreat": 0,
+     "startingThreatPerPlayer": false,
+     "escalation": 1,
+     "escalationPerPlayer": false,
+     "startingThreatFrom": {
+      "counter": "pressionRacket",
+      "perUnit": 1,
+      "perUnitExpert": 2,
+      "threshold": 1
+     }
     }
    ],
    "s4_raft": [
@@ -312,7 +344,10 @@
      "escalationPerPlayer": true
     }
    ]
-  }
+  },
+  "perPlayerSchemes": [
+   "s3_racket"
+  ]
  },
  "losesWhenScenarioFails": false,
  "counters": [
@@ -399,8 +434,8 @@
    },
    {
     "text": {
-     "fr": "Campagne Experte Uniquement : reprenez les points de vie enregistrés au scénario précédent.",
-     "en": "Expert Campaign Only: set each hit point total to the value recorded last scenario."
+     "fr": "Reprenez les points de vie enregistrés au scénario précédent.",
+     "en": "Set each hit point total to the value recorded last scenario."
     },
     "when": {
      "difficulty": "expert"
@@ -408,8 +443,8 @@
    },
    {
     "text": {
-     "fr": "Campagne Experte Uniquement : chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
-     "en": "Expert Campaign Only: each player may take a facedown encounter card to heal for their REC."
+     "fr": "Chaque joueur peut prendre une carte Rencontre face cachée pour se soigner de sa REC.",
+     "en": "Each player may take a facedown encounter card to heal for their REC."
     },
     "when": {
      "difficulty": "expert"
@@ -927,12 +962,14 @@
     },
     {
      "text": {
-      "fr": "Placez sur la manigance principale 1 menace par case de pression cochée pour cette mission, ou 2 en campagne experte.",
-      "en": "Place 1 threat on the main scheme for each pressure box ticked against this mission, or 2 in an expert campaign."
+      "fr": "Menace à placer sur la manigance principale : {value}.",
+      "en": "Threat to place on the main scheme: {value}."
      },
-     "when": {
+     "compute": {
       "counter": "pressionMusee",
-      "atLeast": 1
+      "perUnit": 1,
+      "perUnitExpert": 2,
+      "threshold": 1
      }
     },
     {
@@ -1145,12 +1182,15 @@
     },
     {
      "text": {
-      "fr": "Révélez le \"Camion-Citerne\". Si cette mission a 2 cases de pression cochées, placez 1 menace dessus, ou 2 en campagne experte.",
-      "en": "Reveal the Tanker Truck. If this mission has 2 pressure boxes ticked, place 1 threat on it, or 2 in an expert campaign."
+      "fr": "Menace à placer sur le \"Camion-Citerne\" : {value}.",
+      "en": "Threat to place on the Tanker Truck: {value}."
      },
-     "when": {
+     "compute": {
       "counter": "pressionPoursuite",
-      "atLeast": 1
+      "perUnit": 1,
+      "perUnitExpert": 2,
+      "threshold": 2,
+      "once": true
      }
     },
     {
@@ -1343,8 +1383,8 @@
     },
     {
      "text": {
-      "fr": "Deck Manigance Principale : \"Racket en Bande Organisée\". Chaque joueur en tire une au hasard et joue la sienne.",
-      "en": "Main scheme deck: \"Organised Racket\". Each player draws one at random and plays their own."
+      "fr": "Deck Manigance Principale : \"Racket en Bande Organisée\". Chaque joueur en prend une différente et joue la sienne.",
+      "en": "Main scheme deck: \"Organised Racket\". Each player takes a different one and plays their own."
      }
     },
     {
@@ -1363,12 +1403,14 @@
     },
     {
      "text": {
-      "fr": "Placez sur chaque manigance principale 1 menace par case de pression cochée pour cette mission, ou 2 en campagne experte.",
-      "en": "Place 1 threat on every main scheme for each pressure box ticked against this mission, or 2 in an expert campaign."
+      "fr": "Menace à placer sur chaque manigance principale : {value}.",
+      "en": "Threat to place on each main scheme: {value}."
      },
-     "when": {
+     "compute": {
       "counter": "pressionRacket",
-      "atLeast": 1
+      "perUnit": 1,
+      "perUnitExpert": 2,
+      "threshold": 1
      }
     },
     {
@@ -1581,12 +1623,22 @@
     },
     {
      "text": {
-      "fr": "Chaque sbire PRISONNIER entre en jeu avec une carte d'état Tenace.\nSi cette mission a 2 cases de pression cochées, donnez-lui aussi une carte de boost face cachée.",
-      "en": "Each PRISONER minion enters play with a tough status card.\nIf this mission has 2 pressure boxes ticked, give it a facedown boost card as well."
+      "fr": "Chaque sbire PRISONNIER entre en jeu avec une carte d'état Tenace.",
+      "en": "Each PRISONNIER minion enters play with a Tough status card."
      },
      "when": {
       "counter": "pressionRaft",
       "atLeast": 1
+     }
+    },
+    {
+     "text": {
+      "fr": "Donnez aussi à chaque sbire PRISONNIER une carte de boost face cachée.",
+      "en": "Give each PRISONNIER minion a facedown boost card as well."
+     },
+     "when": {
+      "counter": "pressionRaft",
+      "atLeast": 2
      }
     },
     {
@@ -1799,12 +1851,14 @@
     },
     {
      "text": {
-      "fr": "Retirez de chaque soutien DAILY BUGLE 1 jeton par case de pression cochée pour cette mission.",
-      "en": "Remove 1 token from each DAILY BUGLE support for every pressure box ticked against this mission."
+      "fr": "Jetons à retirer de chaque soutien DAILY BUGLE : {value}.",
+      "en": "Tokens to remove from each DAILY BUGLE support: {value}."
      },
-     "when": {
+     "compute": {
       "counter": "pressionRotatives",
-      "atLeast": 1
+      "perUnit": 1,
+      "perUnitExpert": 1,
+      "threshold": 1
      }
     },
     {

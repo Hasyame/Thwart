@@ -251,12 +251,27 @@
         },
         {
           "text": {
-            "en": "Place damage on Robert Kelly for the difficulty you are playing: 1 on Standard, 2 on Expert.",
-            "fr": "Placez des dégâts sur Robert Kelly selon la difficulté jouée : 1 en Standard, 2 en Expert."
+            "fr": "Placez 1 dégât sur Robert Kelly.",
+            "en": "Place 1 damage on Robert Kelly."
           },
           "cards": [
             "32066"
-          ]
+          ],
+          "when": {
+            "difficulty": "standard"
+          }
+        },
+        {
+          "text": {
+            "fr": "Placez 2 dégâts sur Robert Kelly.",
+            "en": "Place 2 damage on Robert Kelly."
+          },
+          "cards": [
+            "32066"
+          ],
+          "when": {
+            "difficulty": "expert"
+          }
         }
       ],
       "onVictory": {
@@ -480,12 +495,27 @@
         },
         {
           "text": {
-            "en": "Place cards facedown under Operation Zero Tolerance for the difficulty you are playing: 1 on Standard, 2 on Expert.",
-            "fr": "Placez des cartes face cachée sous Opération Tolérance Zéro selon la difficulté jouée : 1 en Standard, 2 en Expert."
+            "fr": "Placez 1 carte face cachée sous Opération Tolérance Zéro.",
+            "en": "Place 1 card facedown under Operation Zero Tolerance."
           },
           "cards": [
             "32104"
-          ]
+          ],
+          "when": {
+            "difficulty": "standard"
+          }
+        },
+        {
+          "text": {
+            "fr": "Placez 2 cartes face cachée sous Opération Tolérance Zéro.",
+            "en": "Place 2 cards facedown under Operation Zero Tolerance."
+          },
+          "cards": [
+            "32104"
+          ],
+          "when": {
+            "difficulty": "expert"
+          }
         },
         {
           "text": {
@@ -1055,8 +1085,8 @@
         },
         {
           "text": {
-            "en": "The Brotherhood arrive in this order. Defeat 2 of them on Standard, 3 on Expert, to win.",
-            "fr": "La Confrérie arrive dans cet ordre. Vainquez-en 2 en Standard, 3 en Expert, pour gagner."
+            "fr": "La Confrérie arrive dans cet ordre. Vainquez-en 2 pour gagner.",
+            "en": "The Brotherhood arrive in this order. Defeat 2 of them to win."
           },
           "draw": {
             "id": "brotherhoodOrder",
@@ -1074,8 +1104,8 @@
         },
         {
           "text": {
-            "en": "The Brotherhood arrive in this order. Defeat 2 of them on Standard, 3 on Expert, to win.",
-            "fr": "La Confrérie arrive dans cet ordre. Vainquez-en 2 en Standard, 3 en Expert, pour gagner."
+            "fr": "La Confrérie arrive dans cet ordre. Vainquez-en 3 pour gagner.",
+            "en": "The Brotherhood arrive in this order. Defeat 3 of them to win."
           },
           "draw": {
             "id": "brotherhoodOrderExpert",

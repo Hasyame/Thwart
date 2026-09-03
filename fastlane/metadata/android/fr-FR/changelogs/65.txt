@@ -1,0 +1,14 @@
+Le Racket est enfin compté, et vous choisissez vos cartes de difficulté.
+
+Dans Rien à Craindre, le Racket distribue une manigance principale à
+chaque joueur, et le compteur n'en suivait qu'une. Il en suit désormais
+une par joueur, nommée pour son propriétaire.
+
+La menace due à la pression est calculée au lieu d'être décrite :
+l'application affiche le nombre pour la campagne en cours au lieu
+d'imprimer la règle des deux difficultés. Cela règle le Camion-Citerne de
+La Poursuite, et évite qu'une campagne standard lise des règles expertes.
+Quatre autres campagnes ont été corrigées de même.
+
+Au lancement d'une campagne, on choisit les cartes de difficulté mises
+dans le deck Rencontre : un set précis, ou au hasard parmi les vôtres.

@@ -1,0 +1,14 @@
+The racket job is counted properly, and you choose your difficulty cards.
+
+Fear No Evil deals its racket job a main scheme to every player, and the
+tracker only ever counted one. It now counts one each, named for whose it
+is.
+
+Threat from pressure is worked out rather than described: the app states
+the number for the campaign you are playing instead of printing the rule
+for both difficulties. That settles the tanker in La Poursuite, and stops
+a standard campaign being told what an expert one does. Four other
+campaigns had the same wording and were corrected too.
+
+Starting a campaign now asks which difficulty cards go in the encounter
+deck: pick a set, or leave it to the app to draw one you own.

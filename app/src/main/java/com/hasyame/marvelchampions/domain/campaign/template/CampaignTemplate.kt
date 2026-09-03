@@ -347,6 +347,15 @@ data class ScenarioTemplate(
 data class CampaignTracker(
     val villains: Map<String, List<TrackedSide>> = emptyMap(),
     val schemes: Map<String, List<TrackedSide>> = emptyMap(),
+    /**
+     * Scenario ids whose main scheme is dealt to each player rather than once
+     * to the table.
+     *
+     * Fear No Evil's racket job gives every player a market of their own to
+     * clear, so a table of three is thwarting three schemes that finish at
+     * different times. The tracker counts one each, named for whose it is.
+     */
+    val perPlayerSchemes: List<String> = emptyList(),
 )
 
 /**
@@ -370,7 +379,68 @@ data class TrackedSide(
     val startingThreatPerPlayer: Boolean = true,
     val escalation: Int = 0,
     val escalationPerPlayer: Boolean = false,
+    /**
+     * Threat the campaign adds on top of the printed [startingThreat].
+     *
+     * A job under pressure starts with tokens already on its scheme, which is
+     * not on the card and cannot be: it depends on how the campaign has gone.
+     * Without this the tracker starts a scheme two short of where the table
+     * starts it, and counts to the wrong place all game.
+     */
+    val startingThreatFrom: ComputedAmount? = null,
+    /**
+     * The difficulty this side is played on, when the modes use different
+     * cards.
+     *
+     * Fear No Evil's subordinates are dealt as two stages out of three: a
+     * standard campaign faces I and II, an expert one II and III. The tracker
+     * counted from the first stage whatever the campaign, so an expert table
+     * was counting the villain down to a number printed on a card that was
+     * not on the table.
+     *
+     * Null on every side that is played either way, which is most of them.
+     */
+    val onlyOn: String? = null,
 )
+
+/**
+ * A number the app works out from the campaign and prints in place of
+ * `{value}`.
+ *
+ * Campaign books state these as a sum for the table to do — one threat per
+ * pressure box ticked, or two on an expert campaign — for a number the app
+ * already holds every part of. Declaring the rule once means the setup step
+ * reads as the amount to place, and the tracker can start a scheme where the
+ * table really starts it rather than where the card is printed.
+ */
+@Serializable
+data class ComputedAmount(
+    /** The campaign counter the amount is read from. */
+    val counter: String,
+    /** What one unit of that counter is worth, on standard and on expert. */
+    val perUnit: Int = 1,
+    val perUnitExpert: Int = 1,
+    /** Below this the amount is nothing, and a step carrying it is not shown. */
+    val threshold: Int = 1,
+    /**
+     * True when reaching [threshold] is worth one amount rather than one per
+     * unit. La Poursuite puts a single token on its tanker once two boxes are
+     * ticked; the museum puts one on its scheme for every box.
+     */
+    val once: Boolean = false,
+) {
+    /**
+     * Floored at zero throughout: a template can be imported from a file, and
+     * a negative amount would print as an instruction to take threat off.
+     */
+    fun amountFor(counterValue: Int, expert: Boolean): Int {
+        if (counterValue < threshold) {
+            return 0
+        }
+        val unit = (if (expert) perUnitExpert else perUnit).coerceAtLeast(0)
+        return if (once) unit else unit * counterValue.coerceAtLeast(0)
+    }
+}
 
 @Serializable
 data class BaseSetup(
@@ -441,6 +511,15 @@ data class SetupStep(
      * the screen and cannot change while the setup is being read.
      */
     val draw: DrawDefinition? = null,
+
+    /**
+     * An amount the app works out and writes into this step's `{value}`.
+     *
+     * A step whose amount comes to nothing is not shown at all, so the rule
+     * that decides whether it applies and the sum that says how much are the
+     * same declaration rather than two that can disagree.
+     */
+    val compute: ComputedAmount? = null,
 )
 
 /**
