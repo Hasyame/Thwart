@@ -1,0 +1,14 @@
+Votre collection, vos decks, vos campagnes et votre historique peuvent vous
+suivre d'un appareil à l'autre.
+
+C'est désactivé tant que vous ne le demandez pas. Créer un compte et
+activer la synchronisation sont deux étapes distinctes, et la seconde vous
+dit ce que la fusion changerait, en parties, en decks et en campagnes,
+avant que quoi que ce soit ne soit écrit. Les réponses sont fusionner, ne
+garder que le compte, ou annuler, et celle qui écarte des données écrit
+d'abord une sauvegarde.
+
+Se déconnecter laisse tout intact sur le téléphone.
+
+L'application fonctionne toujours sans compte. Un compte n'apporte que la
+synchronisation, et aucun écran n'est derrière une connexion.

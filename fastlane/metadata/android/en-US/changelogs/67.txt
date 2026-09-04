@@ -1,0 +1,13 @@
+Your collection, decks, campaigns and play history can follow you between
+devices.
+
+It stays off until you ask for it. Creating an account and turning sync on
+are two separate steps, and the second one tells you what merging would
+mean, in plays and decks and campaigns, before anything at all is written.
+The answers are merge, keep only what is on the account, or cancel, and the
+one that discards writes a backup file first.
+
+Signing out leaves everything on the phone exactly as it was.
+
+The app still works with no account. An account buys sync and nothing else,
+and no screen is behind a sign-in.
