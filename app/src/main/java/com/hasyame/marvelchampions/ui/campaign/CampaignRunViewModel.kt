@@ -152,6 +152,7 @@ private fun TrackedSide.toSide(state: CampaignState): EncounterSide = EncounterS
     startingThreatPerPlayer = startingThreatPerPlayer,
     escalation = escalation.coerceAtLeast(0),
     escalationPerPlayer = escalationPerPlayer,
+    escalationVariable = escalationVariable,
     // What the campaign has already put on the scheme before anybody plays a
     // card. Counting from the printed threat instead had the tracker two
     // short of the table all game.

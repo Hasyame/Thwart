@@ -88,13 +88,21 @@ class FakeSyncApi : SyncApi {
     /** Small on purpose, so a handful of records is several batches and pages. */
     var limits = LimitsDto(batchRecords = 2, batchBytes = 1_000_000, pageSize = 2)
 
+    /**
+     * Set to behave like a server from before the resync flag existed, which
+     * refuses a page of a rebuild the same way it refuses a stale cursor.
+     */
+    var ignoresResync = false
+
     override suspend fun pull(
         url: String,
         authorization: String,
         since: Long,
         limit: Int,
+        resync: Boolean,
     ): Response<PullResponseDto> {
-        if (since > 0 && since < minCursor) {
+        val claimed = resync && !ignoresResync
+        if (since > 0 && !claimed && since < minCursor) {
             return refusal(409, SyncException.CURSOR_TOO_OLD)
         }
         val ordered = records.values.map { it.record }.sortedBy { it.revision }

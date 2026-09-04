@@ -1,0 +1,15 @@
+Rien à Craindre, vérifié sur les cartes elles-mêmes.
+
+La Poursuite accélère de deux menaces par joueur et par round, pas d'une.
+Le musée imprime une étoile à la place du nombre : son accélération vaut
+le nombre d'attachements ART sur le méchant plus 1, que l'application ne
+peut pas voir. Elle n'ajoute donc rien en fin de round et le briefing vous
+dit de le faire. Un compteur qui devine vaut moins qu'un compteur qui dit
+qu'il ne sait pas.
+
+Le Caïd se retourne. Chaque difficulté joue une carte à deux faces : 25
+points de vie par joueur en standard, 28 en expert, inchangés au
+retournement.
+
+Les menaces de départ étaient lues sur une photo. Quatre sur cinq étaient
+justes ; elles sont confirmées.

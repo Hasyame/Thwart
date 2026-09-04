@@ -48,7 +48,7 @@ class FneTrackerDataTest {
             "fne_villain_electro" to listOf(15, 17, 20),
             "fne_villain_homme_pourpre" to listOf(13, 15, 17),
             "fne_villain_mary_typhoide" to listOf(10, 13),
-            "s6_caid" to listOf(25, 28),
+            "s6_caid" to listOf(25, 25, 28, 28),
         )
 
         assertEquals(expected.keys, tracker!!.villains.keys)
@@ -91,14 +91,14 @@ class FneTrackerDataTest {
     }
 
     @Test
-    fun `the finale faces one card, and the difficulty says which`() {
-        // The setup has always named them: "Le Caid" (A1) on a standard
-        // campaign, (B1) on an expert one. A and B are the two versions of the
-        // same villain, not stage one and stage two, so counting A down and
-        // then offering to flip to B described a board nobody had — and an
-        // expert table was counting to 25 with a 28 on the table.
-        assertEquals(listOf("A"), stagesOn("s6_caid", "standard"))
-        assertEquals(listOf("B"), stagesOn("s6_caid", "expert"))
+    fun `the finale faces one card per difficulty, and turns it over`() {
+        // Read off the cards. A1 and A2 are the two sides of Le Caid (1/22),
+        // played on a standard campaign; B1 and B2 the two sides of (2/22), on
+        // an expert one. The health is printed on the card rather than on the
+        // side, so it does not change when he turns over: 25 per player for
+        // the first card, 28 for the second.
+        assertEquals(listOf("A1", "A2"), stagesOn("s6_caid", "standard"))
+        assertEquals(listOf("B1", "B2"), stagesOn("s6_caid", "expert"))
     }
 
     @Test
@@ -160,24 +160,62 @@ class FneTrackerDataTest {
     }
 
     @Test
-    fun `every scheme accelerates by one a round`() {
-        // What every main scheme in the card database carries: escalation 1.
-        // Without it the tracker would hold the threat still between rounds
-        // and call a scheme safe long after it was not.
-        val sides = template().tracker!!.schemes.values.flatten()
+    fun `each scheme accelerates as its own card prints it`() {
+        // Read off the 1B faces rather than assumed to be one a round, which
+        // is what they were until the cards were to hand. La Poursuite takes
+        // two, and the museum prints a star: its acceleration is the number of
+        // ART attachments on the villain plus one, which the app cannot see,
+        // so it adds nothing and says so in the briefing.
+        val schemes = template().tracker!!.schemes
 
-        assertEquals(listOf(1), sides.map { it.escalation }.distinct())
+        fun accelerationOf(id: String) = schemes.getValue(id).first().let {
+            if (it.escalationVariable) "variable" else "${it.escalation}"
+        }
+
+        assertEquals("variable", accelerationOf("s1_musee"))
+        assertEquals("2", accelerationOf("s2_poursuite"))
+        assertEquals("1", accelerationOf("s3_racket"))
+        assertEquals("1", accelerationOf("s4_raft"))
+        assertEquals("1", accelerationOf("s5_rotatives"))
+        assertEquals("1", accelerationOf("s6_caid"))
     }
 
     @Test
-    fun `only the racket accelerates flat, because its cards print it flat`() {
-        // Every other job multiplies its acceleration by the players, as the
-        // small figure beside the number says. The racket cards carry no
-        // figure: one threat a round each, whoever is at the table. Marking it
-        // per player would have a three-handed game counting three times as
-        // fast as it plays.
+    fun `a starred acceleration adds nothing rather than a guess`() {
+        // The whole point of marking it: two per player is right at setup and
+        // too low the moment a second ART lands, and a tracker that is quietly
+        // low is worse than one that says it cannot know.
+        val musee = template().tracker!!.schemes.getValue("s1_musee").first()
+
+        assertTrue(musee.escalationVariable)
+        assertEquals(0, musee.escalation)
+    }
+
+    @Test
+    fun `the starting threats are the ones printed on the cards`() {
+        // Confirmed against the 1B faces. These were read off a photograph of
+        // the box before the cards were to hand, and were the numbers in the
+        // app least worth trusting; four of the five were right.
         val schemes = template().tracker!!.schemes
-        val flat = schemes.filterValues { sides -> sides.none { it.escalationPerPlayer } }
+
+        fun startOf(id: String) = schemes.getValue(id).first().startingThreat
+
+        assertEquals(1, startOf("s1_musee"))
+        assertEquals(2, startOf("s2_poursuite"))
+        assertEquals(0, startOf("s3_racket"))
+        assertEquals(2, startOf("s4_raft"))
+        assertEquals(1, startOf("s5_rotatives"))
+    }
+
+    @Test
+    fun `only the racket prints its numbers flat`() {
+        // Every other job carries the small figure beside its threat limit, so
+        // it scales with the table. The five racket cards carry none: ten
+        // threat and one a round each, whoever is playing. Marking it per
+        // player would have a three-handed game counting three times as fast
+        // as it plays.
+        val schemes = template().tracker!!.schemes
+        val flat = schemes.filterValues { sides -> sides.none { it.perPlayer } }
 
         assertEquals(setOf("s3_racket"), flat.keys)
     }

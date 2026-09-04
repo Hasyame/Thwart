@@ -239,14 +239,28 @@
    "s6_caid": [
     {
      "name": "Le Caïd",
-     "stage": "A",
+     "stage": "A1",
      "value": 25,
      "perPlayer": true,
      "onlyOn": "standard"
     },
     {
      "name": "Le Caïd",
-     "stage": "B",
+     "stage": "A2",
+     "value": 25,
+     "perPlayer": true,
+     "onlyOn": "standard"
+    },
+    {
+     "name": "Le Caïd",
+     "stage": "B1",
+     "value": 28,
+     "perPlayer": true,
+     "onlyOn": "expert"
+    },
+    {
+     "name": "Le Caïd",
+     "stage": "B2",
      "value": 28,
      "perPlayer": true,
      "onlyOn": "expert"
@@ -262,14 +276,15 @@
      "perPlayer": true,
      "startingThreat": 1,
      "startingThreatPerPlayer": true,
-     "escalation": 1,
-     "escalationPerPlayer": true,
+     "escalation": 0,
+     "escalationPerPlayer": false,
      "startingThreatFrom": {
       "counter": "pressionMusee",
       "perUnit": 1,
       "perUnitExpert": 2,
       "threshold": 1
-     }
+     },
+     "escalationVariable": true
     }
    ],
    "s2_poursuite": [
@@ -280,7 +295,7 @@
      "perPlayer": true,
      "startingThreat": 2,
      "startingThreatPerPlayer": true,
-     "escalation": 1,
+     "escalation": 2,
      "escalationPerPlayer": true
     }
    ],
@@ -981,6 +996,12 @@
    "information": [
     {
      "include": "conseils"
+    },
+    {
+     "text": {
+      "fr": "Accélération de la manigance : le nombre d'attachements ART sur le méchant plus 1, par joueur. Ajoutez-la vous-même en fin de round.",
+      "en": "Main scheme acceleration: the number of ART attachments on the villain plus one, per player. Add it yourself at the end of the round."
+     }
     }
    ],
    "onVictory": {

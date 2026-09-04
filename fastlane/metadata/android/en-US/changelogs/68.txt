@@ -1,0 +1,14 @@
+Fear No Evil, checked against the cards themselves.
+
+La Poursuite accelerates by two threat per player a round, not one. The
+museum prints a star instead of a number: its acceleration is the number
+of ART attachments on the villain plus one, which the app cannot see, so
+it adds nothing at the end of the round and the briefing says to add it
+yourself. A tracker that guesses is worse than one that says it cannot
+know.
+
+Le Caid turns over. Each difficulty plays one card with two sides: 25
+health per player on standard, 28 on expert, unchanged when he flips.
+
+The starting threats were read off a photograph until now. Four of the
+five were right; they are confirmed.

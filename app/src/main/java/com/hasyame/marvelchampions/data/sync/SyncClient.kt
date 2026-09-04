@@ -146,8 +146,9 @@ class SyncClient @Inject constructor(
 
     // --- sync ---------------------------------------------------------------
 
-    suspend fun pull(since: Long, limit: Int): PullResponseDto = call {
-        api.pull(endpoints().changes, authorization(), since, limit)
+    /** [resync] marks a page of a rebuild that started at revision zero. */
+    suspend fun pull(since: Long, limit: Int, resync: Boolean = false): PullResponseDto = call {
+        api.pull(endpoints().changes, authorization(), since, limit, resync)
     }
 
     suspend fun push(batchId: String, records: List<PushRecordDto>): PushResponseDto = call {

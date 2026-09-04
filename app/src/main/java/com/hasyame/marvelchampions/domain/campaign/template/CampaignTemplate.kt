@@ -379,6 +379,8 @@ data class TrackedSide(
     val startingThreatPerPlayer: Boolean = true,
     val escalation: Int = 0,
     val escalationPerPlayer: Boolean = false,
+    /** The card prints a star for its acceleration, so the app adds none. */
+    val escalationVariable: Boolean = false,
     /**
      * Threat the campaign adds on top of the printed [startingThreat].
      *

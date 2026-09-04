@@ -300,6 +300,34 @@ class EncounterTest {
     }
 
     @Test
+    fun `a starred acceleration adds nothing at the end of the round`() {
+        // Cambriolage du Musee d'Art accelerates by the number of ART
+        // attachments on the villain plus one, which the app cannot see. Two
+        // per player is right at setup and too low the moment a second ART
+        // lands, so it adds nothing and the round button only advances the
+        // round. The player adds it with the buttons that are already there.
+        val musee = EncounterSetup(
+            scheme = listOf(
+                EncounterSide(
+                    name = "Cambriolage du Musee d'Art",
+                    stage = "1B",
+                    value = 9,
+                    perPlayer = true,
+                    startingThreat = 1,
+                    startingThreatPerPlayer = true,
+                    escalationVariable = true,
+                ),
+            ),
+            players = 2,
+        )
+
+        val round = Encounter.startOf(musee).roundEnded()
+
+        assertEquals("the printed starting threat, and nothing added", 2, round.progress.threat)
+        assertEquals(2, round.progress.round)
+    }
+
+    @Test
     fun `a game put away before the extra counters existed comes back whole`() {
         // Saved counters carry `threat` and nothing else. Reading them back
         // must give the first scheme its threat, not lose it to a list that

@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -208,23 +209,39 @@ class SyncEngineTest {
     }
 
     @Test
-    fun `a resync the server will not page through stops rather than skipping`() = runTest {
-        // A gap in the protocol rather than in this client. A resync pages with
-        // `since = the last revision of the previous page`, and the server
-        // refuses any `since` below its tombstone horizon — which live records
-        // written before the last swept tombstone sit under. The records
-        // between the page boundary and the horizon have never been read here,
-        // so stepping over them would lose them for good.
+    fun `a resync pages through, below the horizon and all`() = runTest {
+        // A resync pages with `since = the last revision of the previous page`,
+        // and those boundaries sit below the tombstone horizon whenever the
+        // account holds live records written before the last sweep. Saying so
+        // is what lets the server serve them: a rebuild from nothing has no
+        // deletion to miss, which is the same reason since=0 was always exempt.
         repeat(6) { index ->
             api.seed(SyncCollection.PLAYS.key, "server-$index", playBody("server-$index"))
         }
-        // Two records to a page, and a horizon well above the first boundary.
         api.minCursor = 5
 
         val outcome = engine.sync()
 
+        assertFalse("nothing should have been left behind", outcome.incomplete)
+        assertNotNull(database.syncRecordDao().play("server-0"))
+        assertNotNull(database.syncRecordDao().play("server-5"))
+    }
+
+    @Test
+    fun `a server that will not page a resync stops us rather than skipping`() = runTest {
+        // An instance from before the flag existed. The records between the
+        // page boundary and the horizon have never reached this device, so
+        // stepping over them would lose them for good: it stops, keeps what it
+        // applied, and says it did not get everything.
+        repeat(6) { index ->
+            api.seed(SyncCollection.PLAYS.key, "server-$index", playBody("server-$index"))
+        }
+        api.minCursor = 5
+        api.ignoresResync = true
+
+        val outcome = engine.sync()
+
         assertTrue("it must say it did not get everything", outcome.incomplete)
-        // And what it did read is kept, rather than the run being abandoned.
         assertNotNull(database.syncRecordDao().play("server-0"))
     }
 

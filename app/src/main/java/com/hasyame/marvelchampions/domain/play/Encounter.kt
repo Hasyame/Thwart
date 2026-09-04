@@ -41,13 +41,25 @@ data class EncounterSide(
     /** Threat added at the end of every round. Schemes only. */
     val escalation: Int = 0,
     val escalationPerPlayer: Boolean = false,
+    /**
+     * The card prints a star where the acceleration goes, so the amount is
+     * whatever the board says at the time.
+     *
+     * Cambriolage du Musée d'Art accelerates by the number of ART attachments
+     * on the villain plus one, which grows as the game goes on. The app cannot
+     * see the table, so it adds nothing and the round button only advances the
+     * round: a tracker that half-adjudicates is wrong at somebody's table, and
+     * then the numbers it *is* keeping stop being trusted either.
+     */
+    val escalationVariable: Boolean = false,
 ) {
     fun totalFor(players: Int): Int? = value?.timesPlayers(perPlayer, players)
 
     fun startingThreatFor(players: Int): Int =
         startingThreat.timesPlayers(startingThreatPerPlayer, players) + extraStartingThreat
 
-    fun escalationFor(players: Int): Int = escalation.timesPlayers(escalationPerPlayer, players)
+    fun escalationFor(players: Int): Int =
+        if (escalationVariable) 0 else escalation.timesPlayers(escalationPerPlayer, players)
 
     private fun Int.timesPlayers(scales: Boolean, players: Int): Int =
         if (scales) this * players else this

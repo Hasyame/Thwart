@@ -173,9 +173,13 @@ class SyncEngine @Inject constructor(
         val forks = mutableListOf<String>()
         var deferred = listOf<SyncRecordDto>()
 
+        // Every page of this run belongs to a rebuild from nothing when the
+        // run itself started there, which is what lets the server serve pages
+        // whose boundary sits below its tombstone horizon.
+        val rebuilding = since == 0L
         while (true) {
             val page = try {
-                client.pull(cursor, limits.pageSize)
+                client.pull(cursor, limits.pageSize, resync = rebuilding)
             } catch (refused: SyncException) {
                 // Already reading from zero and still refused: this is the
                 // paging gap above, not a stale cursor. Stop with what has been
@@ -447,7 +451,7 @@ class SyncEngine @Inject constructor(
             val records = mutableListOf<SyncRecordDto>()
             var cursor = 0L
             while (true) {
-                val page = client.pull(cursor, limits.pageSize)
+                val page = client.pull(cursor, limits.pageSize, resync = true)
                 records += page.changes
                 cursor = maxOf(cursor, page.cursor)
                 if (!page.hasMore || page.changes.isEmpty()) {

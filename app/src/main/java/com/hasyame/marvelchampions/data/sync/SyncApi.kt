@@ -93,12 +93,24 @@ interface SyncApi {
 
     // --- sync ---------------------------------------------------------------
 
+    /**
+     * [resync] says this page belongs to a rebuild that started at revision
+     * zero.
+     *
+     * A claim only the client can make: the server is stateless between
+     * requests and cannot tell "resuming from an old cursor" from "paging
+     * through a resync". Without it, a resync of a large account is refused on
+     * its own second page, because that page resumes from a revision that can
+     * sit below the tombstone horizon. It is not a privilege — claiming it
+     * falsely only serves this device an incomplete feed.
+     */
     @GET
     suspend fun pull(
         @Url url: String,
         @Header("Authorization") authorization: String,
         @Query("since") since: Long,
         @Query("limit") limit: Int,
+        @Query("resync") resync: Boolean,
     ): Response<PullResponseDto>
 
     @POST
