@@ -52,10 +52,12 @@ import java.util.Date
 @Composable
 fun SettingsScreen(
     onOpenCollection: () -> Unit,
+    onOpenSyncAccount: () -> Unit,
     onOpenAbout: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val account by viewModel.syncAccount.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -77,6 +79,19 @@ fun SettingsScreen(
                     Text(stringResource(R.string.settings_collection_summary))
                 },
                 modifier = Modifier.clickable(onClick = onOpenCollection),
+            )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.sync_settings_entry)) },
+                supportingContent = {
+                    Text(
+                        if (account.enabled && account.handle.isNotBlank()) {
+                            stringResource(R.string.sync_state_on, account.handle)
+                        } else {
+                            stringResource(R.string.sync_state_off)
+                        },
+                    )
+                },
+                modifier = Modifier.clickable(onClick = onOpenSyncAccount),
             )
             HorizontalDivider()
 

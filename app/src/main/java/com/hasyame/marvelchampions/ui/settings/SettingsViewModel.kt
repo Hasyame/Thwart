@@ -7,6 +7,8 @@ import com.hasyame.marvelchampions.data.repository.CollectionRepository
 import com.hasyame.marvelchampions.data.sync.CardImagePrefetcher
 import com.hasyame.marvelchampions.data.sync.CardSyncManager
 import com.hasyame.marvelchampions.data.sync.CardSyncState
+import com.hasyame.marvelchampions.data.sync.SyncSession
+import com.hasyame.marvelchampions.data.sync.SyncSessionStore
 import com.hasyame.marvelchampions.data.backup.Backup
 import com.hasyame.marvelchampions.data.backup.BackupRepository
 import com.hasyame.marvelchampions.data.backup.BackupResult
@@ -51,7 +53,18 @@ class SettingsViewModel @Inject constructor(
     private val backupRepository: BackupRepository,
     private val imagePrefetcher: CardImagePrefetcher,
     private val collectionRepository: CollectionRepository,
+    sessions: SyncSessionStore,
 ) : ViewModel() {
+
+    /**
+     * The account, for the one line the settings list shows about it.
+     *
+     * Its own flow rather than another field of [SettingsUiState]: it is read
+     * from a different store, changes for different reasons, and the settings
+     * screen only needs to know whether to say "off" or to name the account.
+     */
+    val syncAccount: StateFlow<SyncSession> = sessions.session
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SyncSession())
 
     /** Verifying and error are moments, not settings, so they are not persisted. */
     private val bggTransient = MutableStateFlow(BggTransient())

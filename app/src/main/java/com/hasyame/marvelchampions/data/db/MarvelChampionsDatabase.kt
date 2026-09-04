@@ -30,6 +30,7 @@ import com.hasyame.marvelchampions.data.db.entity.PlayHeroConverters
 import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.db.dao.SyncRecordDao
 import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
 
@@ -113,6 +114,8 @@ abstract class MarvelChampionsDatabase : RoomDatabase() {
     abstract fun excludedModularSetDao(): ExcludedModularSetDao
     abstract fun excludedScenarioDao(): ExcludedScenarioDao
     abstract fun syncStateDao(): SyncStateDao
+
+    abstract fun syncRecordDao(): SyncRecordDao
 
     companion object {
         const val NAME: String = "marvelchampions.db"

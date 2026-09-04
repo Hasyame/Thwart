@@ -26,6 +26,7 @@ import com.hasyame.marvelchampions.ui.randomizer.RandomizerScreen
 import com.hasyame.marvelchampions.ui.versus.VersusScreen
 import com.hasyame.marvelchampions.ui.settings.AboutScreen
 import com.hasyame.marvelchampions.ui.settings.SettingsScreen
+import com.hasyame.marvelchampions.ui.settings.sync.SyncAccountScreen
 
 @Composable
 fun MarvelChampionsNavHost(
@@ -209,11 +210,15 @@ fun MarvelChampionsNavHost(
             composable<SettingsRoute> {
                 SettingsScreen(
                     onOpenCollection = { navController.navigate(CollectionRoute) },
+                    onOpenSyncAccount = { navController.navigate(SyncAccountRoute) },
                     onOpenAbout = { navController.navigate(AboutRoute) },
                 )
             }
             composable<CollectionRoute> {
                 CollectionScreen(onBack = { navController.popBackStack() })
+            }
+            composable<SyncAccountRoute> {
+                SyncAccountScreen(onBack = { navController.popBackStack() })
             }
             composable<AboutRoute> {
                 AboutScreen(onBack = { navController.popBackStack() })

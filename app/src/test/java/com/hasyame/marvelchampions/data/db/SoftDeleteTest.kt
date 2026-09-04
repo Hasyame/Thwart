@@ -279,7 +279,7 @@ class SoftDeleteTest {
      */
     @Test
     fun `every select against a user table filters tombstones`() {
-        val offenders = daoSources().flatMap { file ->
+        val offenders = daoSources().filterNot { it.name in TOMBSTONE_READERS }.flatMap { file ->
             queriesIn(file.readText())
                 .filter { it.startsWith("SELECT") }
                 .filter { sql -> USER_TABLES.any { sql.reads(it) } }
@@ -317,11 +317,22 @@ class SoftDeleteTest {
     }
 
     @Test
+    fun `the exempted file is still there to be exempted`() {
+        // An exemption that names a file which has been renamed is an
+        // exemption that silently covers nothing, and the guard would then be
+        // failing for a file nobody is looking at.
+        val names = daoSources().map { it.name }
+
+        assertEquals(TOMBSTONE_READERS.toList(), names.filter { it in TOMBSTONE_READERS })
+    }
+
+    @Test
     fun `the guard is reading real files`() {
         // If the DAO folder ever moves, the search above would find nothing and
-        // pass by saying nothing. Nine DAOs are expected; a new one is a
-        // deliberate change to this number.
-        assertEquals(9, daoSources().size)
+        // pass by saying nothing. Ten DAO files are expected; a new one is a
+        // deliberate change to this number, and the tenth was deliberate: the
+        // one file allowed to read tombstones.
+        assertEquals(10, daoSources().size)
     }
 
     // --------------------------------------------------------------- helpers --
@@ -404,6 +415,21 @@ class SoftDeleteTest {
          * files outlive the row.
          */
         val ALLOWED = listOf("SELECT photos FROM plays")
+
+        /**
+         * The files whose whole job is to see deleted rows.
+         *
+         * Sync needs the opposite of what a screen needs: a row somebody threw
+         * away is exactly the thing that has to travel, or the other device
+         * never learns it is gone and hands it back.
+         *
+         * Exempted by file rather than by query on purpose. One file that
+         * exists only for sync can be read in a minute and checked that nothing
+         * in it feeds a screen; an exemption granted per query, scattered
+         * through the ordinary DAOs, is one somebody eventually copies onto a
+         * read that does.
+         */
+        val TOMBSTONE_READERS = setOf("SyncRecordDao.kt")
 
         /** Every `@Query` in one DAO source, whitespace flattened. */
         fun queriesIn(source: String): List<String> =

@@ -102,6 +102,16 @@ data object SettingsRoute
 @Serializable
 data object CollectionRoute
 
+/**
+ * The account, and whether this device syncs with it.
+ *
+ * A screen of its own rather than a section of the settings list: it holds a
+ * sign-in form, a device list and a question that must be read before it is
+ * answered, none of which belong in a list of switches.
+ */
+@Serializable
+data object SyncAccountRoute
+
 /** Who made this, why, and what it is not. */
 @Serializable
 data object AboutRoute

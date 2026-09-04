@@ -46,9 +46,13 @@ import androidx.room.Entity
  * here at all is also dirty, by absence, which is what makes a row written
  * before sync was ever switched on still get uploaded.
  *
- * Nothing reads this yet. It is filled in from today so that when the sync
- * client does arrive, every change made since this release is already queued
- * rather than needing a full upload to discover.
+ * The account itself is **not** here. The brief asked for a nullable `email`
+ * column on this table; this table is one row per *record*, so an address on it
+ * would be repeated once per play. Who this device is signed in as — the token,
+ * the handle, the address, the cursor — lives in `SyncSessionStore`, which is
+ * the same fact kept once. It is also deliberately not in the preferences,
+ * because those are written into the backup file and a bearer token has no
+ * business travelling in one.
  */
 @Entity(tableName = "sync_state", primaryKeys = ["collection", "rowId"])
 data class SyncStateEntity(
@@ -85,4 +89,34 @@ enum class SyncCollection(val key: String) {
     CAMPAIGN_EVENTS("campaign_events"),
     PLAYS("plays"),
     RANDOMIZER_HISTORY("randomizer_history"),
+
+    /**
+     * The preferences, as one record per account rather than a row per key.
+     *
+     * Late to this list: the local half of sync shipped with nine collections
+     * and this is the tenth. Doc 01 always said five of the six preference keys
+     * should travel, and the web client implements it, so it is here under the
+     * same name and the same merge rule. It is the one collection with no Room
+     * table behind it, which is why it is the one that has to name its own id.
+     */
+    SETTINGS("settings"),
+    ;
+
+    /** True when a record is never rewritten and never deleted. */
+    val isAppendOnly: Boolean get() = this == CAMPAIGN_EVENTS
+
+    companion object {
+        /** The id the single settings record always has. */
+        const val SETTINGS_ID = "app"
+
+        /**
+         * The collection with this wire name, or null.
+         *
+         * Null for a name this build does not know, which is what a client one
+         * release ahead looks like. A pulled record for an unknown collection
+         * is skipped rather than guessed at, and skipping it leaves the cursor
+         * short of it so a later build picks it up.
+         */
+        fun byKey(key: String): SyncCollection? = entries.firstOrNull { it.key == key }
+    }
 }

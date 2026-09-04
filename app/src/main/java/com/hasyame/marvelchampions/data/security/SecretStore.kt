@@ -26,12 +26,18 @@ import javax.inject.Singleton
  *
  * Written directly against the Keystore rather than pulling in a library, since
  * the whole requirement is one string.
+ *
+ * Open, and only for that: a test runs on a JVM with no Android Keystore in it,
+ * where every call here would return null and every caller would correctly
+ * conclude there was no stored secret. Tests substitute a plain-text stand-in so
+ * they can exercise what the caller does with a secret rather than what it does
+ * without one.
  */
 @Singleton
-class SecretStore @Inject constructor() {
+open class SecretStore @Inject constructor() {
 
     /** Returns the ciphertext, IV included, or null if encryption is unavailable. */
-    fun encrypt(plainText: String): String? = runCatching {
+    open fun encrypt(plainText: String): String? = runCatching {
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey())
 
@@ -49,7 +55,7 @@ class SecretStore @Inject constructor() {
      * Keystore key does not travel, so the stored ciphertext becomes so much
      * noise. Callers treat that as "not signed in" rather than as an error.
      */
-    fun decrypt(encoded: String): String? = runCatching {
+    open fun decrypt(encoded: String): String? = runCatching {
         val packed = Base64.decode(encoded, Base64.NO_WRAP)
         if (packed.size <= IV_LENGTH) {
             return null

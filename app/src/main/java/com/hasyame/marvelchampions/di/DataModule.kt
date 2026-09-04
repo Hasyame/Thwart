@@ -16,9 +16,11 @@ import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
 import com.hasyame.marvelchampions.data.db.dao.RandomizerHistoryDao
 import com.hasyame.marvelchampions.data.db.dao.SavedDeckDao
+import com.hasyame.marvelchampions.data.db.dao.SyncRecordDao
 import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls
+import com.hasyame.marvelchampions.data.sync.SyncApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -110,6 +112,22 @@ object DataModule {
     @Provides
     fun provideSyncStateDao(database: MarvelChampionsDatabase): SyncStateDao =
         database.syncStateDao()
+
+    @Provides
+    fun provideSyncRecordDao(database: MarvelChampionsDatabase): SyncRecordDao =
+        database.syncRecordDao()
+
+    /**
+     * The sync client rides the same Retrofit as MarvelCDB.
+     *
+     * Every call it makes passes an absolute URL, because the instance is a
+     * setting rather than a constant, so the base URL configured there is never
+     * consulted and a second client would buy nothing but a second connection
+     * pool.
+     */
+    @Provides
+    @Singleton
+    fun provideSyncApi(retrofit: Retrofit): SyncApi = retrofit.create(SyncApi::class.java)
 
     @Provides
     fun provideCampaignDao(database: MarvelChampionsDatabase): CampaignDao =

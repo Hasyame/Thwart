@@ -44,8 +44,44 @@ interface SyncStateDao {
     )
     suspend fun markSynced(collection: String, rowId: String, serverRevision: Long)
 
+    /**
+     * Records the revision the server gave a record **without** clearing the
+     * dirty flag.
+     *
+     * For the record this device has edited and not yet pushed, when a pull
+     * brings a newer version of it. The local edit is kept and pushed
+     * afterwards, where it wins by arriving last; this is what lets that push
+     * say which revision it is overwriting, so the overwrite is reported
+     * rather than silent.
+     *
+     * Inserted dirty when there is no row at all, because a record with no row
+     * here has never been pushed, which is the definition of dirty.
+     */
+    @Query(
+        """
+        INSERT INTO sync_state (collection, rowId, serverRevision, dirty)
+        VALUES (:collection, :rowId, :serverRevision, 1)
+        ON CONFLICT (collection, rowId) DO UPDATE SET serverRevision = :serverRevision
+        """,
+    )
+    suspend fun noteServerRevision(collection: String, rowId: String, serverRevision: Long)
+
     @Query("SELECT * FROM sync_state WHERE collection = :collection AND rowId = :rowId")
     suspend fun get(collection: String, rowId: String): SyncStateEntity?
+
+    /** Every row of the bookkeeping, for working out what has never been sent. */
+    @Query("SELECT * FROM sync_state")
+    suspend fun all(): List<SyncStateEntity>
+
+    /**
+     * Forgets one record's bookkeeping.
+     *
+     * For a row that is marked dirty and no longer exists in its table at all —
+     * a hard delete from before tombstones, say. There is nothing to push and
+     * nothing to remember.
+     */
+    @Query("DELETE FROM sync_state WHERE collection = :collection AND rowId = :rowId")
+    suspend fun forget(collection: String, rowId: String)
 
     @Query("SELECT * FROM sync_state WHERE dirty = 1")
     suspend fun dirtyRecords(): List<SyncStateEntity>
