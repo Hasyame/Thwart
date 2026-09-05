@@ -60,6 +60,12 @@ class AutoSyncWorker @AssistedInject constructor(
             } else {
                 Result.failure()
             }
+        } catch (_: Exception) {
+            // A database or a serialisation fault, which trying again will not
+            // mend. It is caught rather than left to escape because this runs
+            // unattended: the run is over either way, and the difference is
+            // whether it is over quietly or as a report of a crash nobody saw.
+            Result.failure()
         }
     }
 

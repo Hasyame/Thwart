@@ -1,0 +1,12 @@
+The app can keep itself in step now, without you pressing anything.
+
+A new switch under Account and sync, off until you turn it on. With it on,
+the app syncs by itself at the end of a scenario, at the end of a campaign,
+when you put a game away for later, and when you save a deck, change your
+collection or star a card.
+
+It runs only when you are signed in, sync is on and you have asked for this.
+Turning sync off, or signing out, turns it off with them. It waits a few
+seconds first, so twenty packs ticked off your collection make one sync
+rather than twenty, and it waits for a connection instead of failing
+without one.

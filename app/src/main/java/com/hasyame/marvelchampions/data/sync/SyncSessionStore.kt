@@ -120,6 +120,13 @@ class SyncSessionStore @Inject constructor(
      * collection list. Reading the full session there would put the Keystore on
      * the path of an ordinary tap, to answer a question that only needs two
      * booleans and a look at whether a token is stored at all.
+     *
+     * A pre-filter, not the last word: it sees that a token is stored, not that
+     * it can still be read. On a phone restored from a backup the ciphertext is
+     * there and the Keystore key is not, so this says yes and the engine then
+     * says unauthorised. That costs one failed job per burst of writes rather
+     * than a loop, because unauthorised is not retried, and it comes right by
+     * itself the moment the player signs in again.
      */
     val autoSyncArmed: Flow<Boolean> = context.syncStore.data.map { preferences ->
         preferences[KEY_ENABLED] == true &&

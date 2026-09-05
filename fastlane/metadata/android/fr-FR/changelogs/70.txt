@@ -1,0 +1,14 @@
+L'application peut maintenant rester à jour toute seule, sans que vous
+appuyiez sur quoi que ce soit.
+
+Un nouvel interrupteur dans Compte et synchronisation, désactivé tant que
+vous ne l'activez pas. Une fois activé, l'application se synchronise seule
+à la fin d'un scénario, à la fin d'une campagne, quand vous rangez une
+partie pour plus tard, et quand vous enregistrez un deck, modifiez votre
+collection ou mettez une carte en favori.
+
+Elle ne le fait que si vous êtes connecté, que la synchronisation est
+active et que vous l'avez demandé : la désactiver, ou vous déconnecter,
+l'arrête aussi. Elle attend quelques secondes, pour que vingt paquets
+cochés dans votre collection fassent une seule synchronisation plutôt que
+vingt, et elle attend une connexion au lieu d'échouer sans.

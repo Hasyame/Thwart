@@ -8,6 +8,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -74,10 +75,18 @@ class AutoSync @Inject constructor(
      * signed in.
      */
     suspend fun after(trigger: SyncTrigger) {
-        if (!sessions.autoSyncArmed.first()) {
-            return
+        // Nothing here may break the write that called it. Starring a card has
+        // to keep working on a phone whose preference file has gone bad, and
+        // the honest answer to "should this sync" when the preferences cannot
+        // be read is no.
+        val armed = try {
+            sessions.autoSyncArmed.first()
+        } catch (_: IOException) {
+            false
         }
-        enqueue(trigger.settleSeconds)
+        if (armed) {
+            enqueue(trigger.settleSeconds)
+        }
     }
 
     private fun enqueue(settleSeconds: Long) {
