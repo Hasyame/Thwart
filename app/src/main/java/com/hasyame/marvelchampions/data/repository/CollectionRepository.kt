@@ -2,6 +2,8 @@ package com.hasyame.marvelchampions.data.repository
 
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.seed.SetNameOverrides
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.data.db.dao.ExcludedModularSetDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedScenarioDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
@@ -42,6 +44,7 @@ class CollectionRepository @Inject constructor(
     private val cardDao: CardDao,
     private val syncStateDao: SyncStateDao,
     private val setNameOverrides: SetNameOverrides,
+    private val autoSync: AutoSync,
 ) {
 
     fun observeCollection(locale: CardLocale): Flow<List<PackOwnership>> =
@@ -85,6 +88,7 @@ class CollectionRepository @Inject constructor(
             )
         }
         syncStateDao.markDirty(SyncCollection.OWNED_PACKS.key, packCode)
+        autoSync.after(SyncTrigger.COLLECTION_CHANGED)
     }
 
     suspend fun setOwnedBulk(packCodes: Collection<String>, owned: Boolean) {
@@ -97,6 +101,7 @@ class CollectionRepository @Inject constructor(
             packCodes.forEach { ownedPackDao.remove(it, now) }
         }
         packCodes.forEach { syncStateDao.markDirty(SyncCollection.OWNED_PACKS.key, it) }
+        autoSync.after(SyncTrigger.COLLECTION_CHANGED)
     }
 
     /**
@@ -113,6 +118,7 @@ class CollectionRepository @Inject constructor(
             .map { (code, quantity) -> OwnedPackEntity(code, quantity, updatedAt = now) }
         ownedPackDao.replaceAll(entities)
         entities.forEach { syncStateDao.markDirty(SyncCollection.OWNED_PACKS.key, it.packCode) }
+        autoSync.after(SyncTrigger.COLLECTION_CHANGED)
     }
 
     suspend fun isEmpty(): Boolean = ownedPackDao.countOwned() == 0
@@ -173,6 +179,7 @@ class CollectionRepository @Inject constructor(
             excludedScenarioDao.include(scenarioCode, now)
         }
         syncStateDao.markDirty(SyncCollection.EXCLUDED_SCENARIOS.key, scenarioCode)
+        autoSync.after(SyncTrigger.COLLECTION_CHANGED)
     }
 
     /**
@@ -205,6 +212,7 @@ class CollectionRepository @Inject constructor(
             excludedModularSetDao.include(setCode, now)
         }
         syncStateDao.markDirty(SyncCollection.EXCLUDED_MODULAR_SETS.key, setCode)
+        autoSync.after(SyncTrigger.COLLECTION_CHANGED)
     }
 
     /** Replaces the exclusions wholesale, for the restore path. */
@@ -215,6 +223,7 @@ class CollectionRepository @Inject constructor(
         entities.forEach {
             syncStateDao.markDirty(SyncCollection.EXCLUDED_MODULAR_SETS.key, it.setCode)
         }
+        autoSync.after(SyncTrigger.COLLECTION_CHANGED)
     }
 
     private companion object {

@@ -376,6 +376,17 @@ private fun SignedIn(state: SyncAccountUiState, viewModel: SyncAccountViewModel)
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
+        ListItem(
+            headlineContent = { Text(stringResource(R.string.sync_auto)) },
+            supportingContent = { Text(stringResource(R.string.sync_auto_summary)) },
+            trailingContent = {
+                Switch(
+                    checked = state.autoSync,
+                    enabled = !state.busy,
+                    onCheckedChange = viewModel::setAutoSync,
+                )
+            },
+        )
         Button(
             onClick = viewModel::syncNow,
             enabled = !state.busy,

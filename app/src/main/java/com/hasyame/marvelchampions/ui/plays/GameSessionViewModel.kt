@@ -10,6 +10,8 @@ import com.hasyame.marvelchampions.data.db.entity.PlayHero
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.db.entity.VillainStep
 import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
@@ -249,6 +251,7 @@ class GameSessionViewModel @Inject constructor(
     private val deckRepository: DeckRepository,
     val photoStore: PhotoStore,
     private val pausedGameDao: PausedGameDao,
+    private val autoSync: AutoSync,
     private val json: Json,
 ) : ViewModel() {
 
@@ -554,6 +557,12 @@ class GameSessionViewModel @Inject constructor(
                     encounterProgress = encounterProgressJson(current),
                 ),
             )
+            // A paused game is the one thing here that does not itself
+            // travel: it is where a table left off, on the table it left off
+            // at. What is worth sending is everything else that has piled up
+            // during the evening, and this is the moment somebody says they
+            // are done for now.
+            autoSync.after(SyncTrigger.LONG_BREAK)
             state.value = state.value.copy(longBreak = null)
             onSaved()
         }

@@ -60,6 +60,12 @@ data class SyncSession(
      * how a feature earns a reputation before it has done anything.
      */
     val enabled: Boolean = false,
+    /**
+     * Whether this device also syncs by itself, at the moments a game or a
+     * collection changes. A second, narrower question than [enabled]: that one
+     * says the data travels, this one says nobody has to remember to send it.
+     */
+    val autoSync: Boolean = false,
     /** The highest revision this device has read. Zero means nothing yet. */
     val cursor: Long = 0,
     /** When the account's recovery code was issued, RFC 3339, for the reminder. */
@@ -98,11 +104,28 @@ class SyncSessionStore @Inject constructor(
             email = preferences[KEY_EMAIL].orEmpty(),
             token = preferences[KEY_TOKEN]?.let { secrets.decrypt(it) },
             enabled = preferences[KEY_ENABLED] == true,
+            autoSync = preferences[KEY_AUTO_SYNC] == true,
             cursor = preferences[KEY_CURSOR] ?: 0,
             recoveryIssuedAt = preferences[KEY_RECOVERY_ISSUED].orEmpty(),
             lastSyncedAt = preferences[KEY_LAST_SYNCED] ?: 0,
             inFlightBatchId = preferences[KEY_IN_FLIGHT].orEmpty(),
         )
+    }
+
+    /**
+     * Whether an unattended sync should go ahead, without decrypting anything.
+     *
+     * Its own flow rather than a read of [session] because of where it is
+     * called from: after starring a card, after every pack ticked off a
+     * collection list. Reading the full session there would put the Keystore on
+     * the path of an ordinary tap, to answer a question that only needs two
+     * booleans and a look at whether a token is stored at all.
+     */
+    val autoSyncArmed: Flow<Boolean> = context.syncStore.data.map { preferences ->
+        preferences[KEY_ENABLED] == true &&
+            preferences[KEY_AUTO_SYNC] == true &&
+            !preferences[KEY_TOKEN].isNullOrBlank() &&
+            !preferences[KEY_ACCOUNT_ID].isNullOrBlank()
     }
 
     suspend fun current(): SyncSession = session.first()
@@ -137,12 +160,25 @@ class SyncSessionStore @Inject constructor(
                 preferences.remove(KEY_CURSOR)
                 preferences.remove(KEY_LAST_SYNCED)
                 preferences[KEY_ENABLED] = false
+                preferences[KEY_AUTO_SYNC] = false
             }
         }
     }
 
     suspend fun setEnabled(enabled: Boolean) {
-        context.syncStore.edit { it[KEY_ENABLED] = enabled }
+        context.syncStore.edit { preferences ->
+            preferences[KEY_ENABLED] = enabled
+            // Switching sync off switches the unattended part off with it.
+            // Leaving it armed would mean turning sync back on later quietly
+            // resumed a background job the player last saw months ago.
+            if (!enabled) {
+                preferences[KEY_AUTO_SYNC] = false
+            }
+        }
+    }
+
+    suspend fun setAutoSync(autoSync: Boolean) {
+        context.syncStore.edit { it[KEY_AUTO_SYNC] = autoSync }
     }
 
     suspend fun setInstanceUrl(url: String) {
@@ -213,6 +249,7 @@ class SyncSessionStore @Inject constructor(
             preferences.remove(KEY_LAST_SYNCED)
             preferences.remove(KEY_IN_FLIGHT)
             preferences[KEY_ENABLED] = false
+            preferences[KEY_AUTO_SYNC] = false
         }
     }
 
@@ -223,6 +260,7 @@ class SyncSessionStore @Inject constructor(
         val KEY_EMAIL = stringPreferencesKey("email")
         val KEY_TOKEN = stringPreferencesKey("token")
         val KEY_ENABLED = booleanPreferencesKey("enabled")
+        val KEY_AUTO_SYNC = booleanPreferencesKey("auto_sync")
         val KEY_CURSOR = longPreferencesKey("cursor")
         val KEY_RECOVERY_ISSUED = stringPreferencesKey("recovery_issued_at")
         val KEY_LAST_SYNCED = longPreferencesKey("last_synced_at")

@@ -10,6 +10,8 @@ import com.hasyame.marvelchampions.data.deckbuilder.HeroDeckRulesParser
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.dto.DeckDto
 import com.hasyame.marvelchampions.data.marvelcdb.dto.DeckMetaDto
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.domain.deeplink.DeckReference
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import kotlinx.coroutines.CoroutineDispatcher
@@ -73,6 +75,7 @@ class DeckRepository @Inject constructor(
     private val syncStateDao: SyncStateDao,
     private val cardDao: CardDao,
     private val collectionRepository: CollectionRepository,
+    private val autoSync: AutoSync,
     private val json: Json,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -96,9 +99,20 @@ class DeckRepository @Inject constructor(
      * whole point: a deck saved without a timestamp is a deck the next device
      * never hears about, and nothing would report it.
      */
+    /**
+     * The one door every deck write goes through, which is why the automatic
+     * sync is asked for here rather than at the two places a deck is created.
+     *
+     * A deck built in the app is created empty and filled a card at a time. If
+     * only creation counted, the copy on the other device would be the empty
+     * one, which is worse than no copy: it looks like a finished deck. The
+     * trigger settles for a few seconds first, so building a deck is one sync
+     * at the end of it rather than one per card.
+     */
     private suspend fun save(deck: SavedDeckEntity) {
         savedDeckDao.upsert(deck.copy(updatedAt = System.currentTimeMillis()))
         syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, deck.id)
+        autoSync.after(SyncTrigger.DECK_ADDED)
     }
 
     suspend fun import(reference: DeckReference): DeckImportResult = withContext(ioDispatcher) {

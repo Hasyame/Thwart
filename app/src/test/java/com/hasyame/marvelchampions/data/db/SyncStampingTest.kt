@@ -5,7 +5,10 @@ import androidx.test.core.app.ApplicationProvider
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.repository.CollectionRepository
 import com.hasyame.marvelchampions.data.repository.FavouriteRepository
+import com.hasyame.marvelchampions.data.security.SecretStore
 import com.hasyame.marvelchampions.data.seed.SetNameOverrides
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncSessionStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -42,9 +45,15 @@ class SyncStampingTest {
             MarvelChampionsDatabase::class.java,
         ).allowMainThreadQueries().build()
 
+        // The real one, signed out, which is the state it is in for anybody
+        // who has never made an account: asked after every write, and does
+        // nothing. A stub here would prove only that a stub does nothing.
+        val autoSync = AutoSync(context, SyncSessionStore(context, SecretStore()))
+
         favourites = FavouriteRepository(
             database.favouriteDao(),
             database.syncStateDao(),
+            autoSync,
             Dispatchers.Unconfined,
         )
         collection = CollectionRepository(
@@ -55,6 +64,7 @@ class SyncStampingTest {
             database.cardDao(),
             database.syncStateDao(),
             SetNameOverrides(context, Json { ignoreUnknownKeys = true }, Dispatchers.Unconfined),
+            autoSync,
         )
     }
 

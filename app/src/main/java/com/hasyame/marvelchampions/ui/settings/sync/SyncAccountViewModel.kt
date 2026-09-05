@@ -65,6 +65,7 @@ data class SyncAccountUiState(
     val handle: String = "",
     val email: String = "",
     val enabled: Boolean = false,
+    val autoSync: Boolean = false,
     val pending: Int = 0,
     val lastSyncedAt: Long = 0,
     val devices: List<DeviceDto> = emptyList(),
@@ -133,6 +134,7 @@ class SyncAccountViewModel @Inject constructor(
                         handle = session.handle,
                         email = session.email,
                         enabled = session.enabled,
+                        autoSync = session.autoSync,
                         lastSyncedAt = session.lastSyncedAt,
                     )
                 }
@@ -256,6 +258,17 @@ class SyncAccountViewModel @Inject constructor(
             plan = prepared
             update { copy(adoption = prepared.counts) }
         }
+    }
+
+    /**
+     * Whether the app syncs at the end of a game and after a change, on its own.
+     *
+     * No merge question and no dialogue: by the time this can be reached the
+     * account has already been reconciled once, and this only decides who has
+     * to remember to press the button.
+     */
+    fun setAutoSync(autoSync: Boolean) {
+        viewModelScope.launch { sessions.setAutoSync(autoSync) }
     }
 
     fun cancelAdoption() {

@@ -689,6 +689,8 @@
     <string name="sync_switch">Keep this device in step</string>
     <string name="sync_switch_summary">Off until you say so. Signing in says who you are; this says whether your data travels.</string>
     <string name="sync_now">Sync now</string>
+    <string name="sync_auto">Sync by itself</string>
+    <string name="sync_auto_summary">At the end of a scenario or a campaign, when a game is put away for later, and when you add or edit a deck, change your collection or star a card.</string>
     <string name="sync_pending">Waiting to be sent: %1$d</string>
     <string name="sync_up_to_date">Everything has been sent</string>
     <string name="sync_last">Last synced %1$s</string>

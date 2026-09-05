@@ -24,6 +24,8 @@ import com.hasyame.marvelchampions.domain.campaign.template.TemplateError
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidationException
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidator
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -175,6 +177,7 @@ class CampaignRepository @Inject constructor(
     private val deckRepository: DeckRepository,
     private val playRepository: PlayRepository,
     private val preferences: AppPreferences,
+    private val autoSync: AutoSync,
     private val json: Json,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -825,6 +828,11 @@ class CampaignRepository @Inject constructor(
                     victory = victory,
                 ),
             )
+            // The scenario is settled and the table is between games. The play
+            // itself was already filed by [recordScenarioPlay], which asks for
+            // the same sync; this covers the campaign's own log, which is what
+            // a second device needs to carry the campaign on.
+            autoSync.after(SyncTrigger.SCENARIO_FINISHED)
         }
 
     /** Records the scenario the players chose to play next. */
@@ -877,6 +885,9 @@ class CampaignRepository @Inject constructor(
     suspend fun markFinished(runId: String, finished: Boolean) = withContext(ioDispatcher) {
         campaignDao.setFinished(runId, finished, System.currentTimeMillis())
         syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+        if (finished) {
+            autoSync.after(SyncTrigger.CAMPAIGN_FINISHED)
+        }
     }
 
     /**

@@ -9,6 +9,8 @@ import com.hasyame.marvelchampions.data.db.dao.WinRateRow
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.domain.model.BggPlay
 import com.hasyame.marvelchampions.domain.model.BggPlayer
 import com.hasyame.marvelchampions.domain.model.BggReportingMode
@@ -46,6 +48,7 @@ class PlayRepository @Inject constructor(
     private val bggAccount: BggAccount,
     private val bggClient: BggClient,
     private val preferences: AppPreferences,
+    private val autoSync: AutoSync,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
@@ -103,6 +106,10 @@ class PlayRepository @Inject constructor(
         val stamped = located.copy(updatedAt = System.currentTimeMillis())
         playDao.insert(stamped)
         syncStateDao.markDirty(SyncCollection.PLAYS.key, stamped.id)
+        // A finished scenario is the moment somebody is most likely to pick up
+        // another device and carry on, so it does not wait behind the report to
+        // BoardGameGeek below, which may not happen at all.
+        autoSync.after(SyncTrigger.SCENARIO_FINISHED)
 
         when (bggAccount.currentMode()) {
             BggReportingMode.OFF -> PlayRecorded.SavedOnly

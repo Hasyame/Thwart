@@ -6,6 +6,8 @@ import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.db.entity.PausedPhase
 import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
 import com.hasyame.marvelchampions.ui.plays.LongBreakDraft
 import java.util.UUID
@@ -166,6 +168,7 @@ class CampaignRunViewModel @Inject constructor(
     private val encounterRepository: EncounterRepository,
     private val cardDao: CardDao,
     private val pausedGameDao: PausedGameDao,
+    private val autoSync: AutoSync,
     private val json: Json,
     val photoStore: PhotoStore,
 ) : ViewModel() {
@@ -721,6 +724,12 @@ class CampaignRunViewModel @Inject constructor(
                     },
                 ),
             )
+            // A paused game is the one thing here that does not itself
+            // travel: it is where a table left off, on the table it left off
+            // at. What is worth sending is everything else that has piled up
+            // during the evening, and this is the moment somebody says they
+            // are done for now.
+            autoSync.after(SyncTrigger.LONG_BREAK)
             state.value = state.value.copy(longBreak = null)
             onSaved()
         }

@@ -712,6 +712,8 @@
     <string name="sync_switch">Garder cet appareil à jour</string>
     <string name="sync_switch_summary">Désactivé tant que vous ne l\'activez pas. Se connecter dit qui vous êtes ; ceci dit si vos données voyagent.</string>
     <string name="sync_now">Synchroniser maintenant</string>
+    <string name="sync_auto">Synchroniser tout seul</string>
+    <string name="sync_auto_summary">À la fin d\'un scénario ou d\'une campagne, quand une partie est rangée pour plus tard, et quand vous ajoutez ou modifiez un deck, changez votre collection ou mettez une carte en favori.</string>
     <string name="sync_pending">En attente d\'envoi : %1$d</string>
     <string name="sync_up_to_date">Tout a été envoyé</string>
     <string name="sync_last">Dernière synchronisation %1$s</string>
