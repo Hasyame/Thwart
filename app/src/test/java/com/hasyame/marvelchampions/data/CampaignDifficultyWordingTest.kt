@@ -106,6 +106,50 @@ class CampaignDifficultyWordingTest {
     }
 
     @Test
+    fun `the finale counts the settled jobs itself`() {
+        // Two of its setup steps used to open with "if three missions or more
+        // are ACHEVE", which asks the table to count something the campaign
+        // log already knows: those flags are where the count comes from. The
+        // step now states the instruction and the number, and the same
+        // declaration decides whether it applies at all, so the two cannot
+        // disagree.
+        val caid = templates().first { it.first == "fne.json" }.second
+            .scenarios.first { it.id == "s6_caid" }
+        val counted = caid.allSetupSteps().mapNotNull { it.compute }
+            .filter { it.flagSet == "acheve" }
+
+        assertEquals(listOf(3, 4), counted.map { it.threshold })
+
+        val tough = counted.first()
+        assertEquals("nothing at two settled jobs", 0, tough.amountFor(2, expert = false))
+        assertEquals("the count itself at three", 3, tough.amountFor(3, expert = false))
+        // Not doubled on expert: how many jobs are settled is a fact about the
+        // campaign, not a difficulty.
+        assertEquals(4, tough.amountFor(4, expert = true))
+    }
+
+    @Test
+    fun `every step that prints an amount works one out, and the other way round`() {
+        // A `{value}` with nothing to fill it is deleted before anybody sees
+        // it, and an amount with nowhere to print gates its step invisibly.
+        // Both are silent, so the validator refuses them; this checks the
+        // bundled campaigns pass their own rule.
+        val offenders = templates().flatMap { (name, template) ->
+            template.scenarios.flatMap { scenario ->
+                scenario.allSetupSteps()
+                    .filter { step ->
+                        val prints = listOfNotNull(step.text.fr, step.text.en)
+                            .any { it.contains("{value}") }
+                        prints != (step.compute != null)
+                    }
+                    .map { "$name/${scenario.id}: ${it.text.fr ?: it.text.en}" }
+            }
+        }
+
+        assertEquals(emptyList<String>(), offenders)
+    }
+
+    @Test
     fun `a step whose amount comes to nothing is read as not applying`() {
         // Zero and "no amount at all" have to stay different: the briefing
         // hides the first and prints the second as written. Collapsing them

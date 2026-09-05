@@ -2106,22 +2106,22 @@
     },
     {
      "text": {
-      "fr": "Si 3 missions ou plus sont ACHEVÉ, donnez une carte d'état Tenace à chaque sbire en jeu.",
-      "en": "If 3 or more missions are ACHEVÉ, give a tough status card to each minion in play."
+      "fr": "Donnez une carte d'état Tenace à chaque sbire en jeu : {value} missions sont ACHEVÉ.",
+      "en": "Give every minion in play a Tough status card: {value} missions are ACHEVÉ."
      },
-     "when": {
-      "countTrue": "acheve",
-      "countAtLeast": 3
+     "compute": {
+      "flagSet": "acheve",
+      "threshold": 3
      }
     },
     {
      "text": {
-      "fr": "Si 4 missions ou plus sont ACHEVÉ, trouvez et révélez \"James Wesley\".",
-      "en": "If 4 or more missions are ACHEVÉ, find and reveal \"James Wesley\"."
+      "fr": "Trouvez et révélez \"James Wesley\" : {value} missions sont ACHEVÉ.",
+      "en": "Find and reveal \"James Wesley\": {value} missions are ACHEVÉ."
      },
-     "when": {
-      "countTrue": "acheve",
-      "countAtLeast": 4
+     "compute": {
+      "flagSet": "acheve",
+      "threshold": 4
      }
     }
    ],

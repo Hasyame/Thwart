@@ -100,6 +100,41 @@ object TemplateValidator {
             val path = "scenarios.${scenario.id}"
             scenario.eachStep { section, index, step ->
                 validateCondition(step.condition, "$path.$section[$index].when", counterIds, flagSetIds, cardListIds, errors)
+                // A worked-out amount reads one source and prints the answer
+                // into the step. A name that matches nothing reads as zero,
+                // and zero hides the step: the instruction would simply never
+                // appear, which is the quietest way a campaign can be wrong.
+                step.compute?.let { amount ->
+                    val where = "$path.$section[$index].compute"
+                    val named = listOf(amount.counter, amount.flagSet).count { it.isNotBlank() }
+                    when {
+                        named != 1 -> errors += TemplateError(
+                            where,
+                            "name exactly one of 'counter' or 'flagSet'",
+                        )
+
+                        amount.counter.isNotBlank() && amount.counter !in counterIds ->
+                            errors += TemplateError(where, "unknown counter '${amount.counter}'")
+
+                        amount.flagSet.isNotBlank() && amount.flagSet !in flagSetIds ->
+                            errors += TemplateError(where, "unknown flag set '${amount.flagSet}'")
+                    }
+                }
+                // The placeholder and the amount go together. A `{value}` with
+                // nothing to fill it is deleted before anybody sees it, and an
+                // amount with nowhere to print gates the step invisibly.
+                val placeholder = listOfNotNull(step.text.fr, step.text.en)
+                    .any { it.contains("{value}") }
+                if (placeholder != (step.compute != null)) {
+                    errors += TemplateError(
+                        "$path.$section[$index]",
+                        if (placeholder) {
+                            "text has {value} but the step computes nothing"
+                        } else {
+                            "the step computes an amount its text never prints"
+                        },
+                    )
+                }
                 step.draw?.let { draw ->
                     // A draw with a pool per hero carries its candidates in
                     // perHeroPools instead, keyed by the marker each player

@@ -1,15 +1,15 @@
 Rien à Craindre, vérifié sur les cartes elles-mêmes.
 
-La Poursuite accélère de deux menaces par joueur et par round, pas d'une.
-Le musée imprime une étoile à la place du nombre : son accélération vaut
-le nombre d'attachements ART sur le méchant plus 1, que l'application ne
-peut pas voir. Elle n'ajoute donc rien en fin de round et le briefing vous
-dit de le faire. Un compteur qui devine vaut moins qu'un compteur qui dit
-qu'il ne sait pas.
+La Poursuite accélère de 2 menaces par joueur et par round, pas 1. Le
+compteur avait un point de retard par round sur la table.
 
-Le Caïd se retourne. Chaque difficulté joue une carte à deux faces : 25
-points de vie par joueur en standard, 28 en expert, inchangés au
-retournement.
+Le Cambriolage du Musée d'Art accélère du nombre d'attachements ART sur le
+méchant plus 1, qui augmente en cours de partie et que l'application ne
+peut pas voir. Elle n'ajoute donc rien et le dit, plutôt que d'ajouter un
+nombre juste au premier round seulement.
 
-Les menaces de départ étaient lues sur une photo. Quatre sur cinq étaient
-justes ; elles sont confirmées.
+Le Caïd est une carte par difficulté avec deux faces : 25 points de vie par
+joueur en standard, 28 en expert, et le compteur le suit au retournement.
+
+Le final compte aussi vos missions ACHEVÉ tout seul, au lieu de vous
+demander si vous en avez trois ou quatre.

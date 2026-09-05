@@ -417,8 +417,17 @@ data class TrackedSide(
  */
 @Serializable
 data class ComputedAmount(
-    /** The campaign counter the amount is read from. */
-    val counter: String,
+    /** The campaign counter the amount is read from. Or [flagSet]. */
+    val counter: String = "",
+    /**
+     * Counts the true flags of a set, instead of reading a counter.
+     *
+     * How many jobs have been settled is a count of flags rather than a number
+     * anybody keeps, and asking a table to count them is asking them to do
+     * arithmetic the app has already done: the campaign log is where those
+     * flags came from.
+     */
+    val flagSet: String = "",
     /** What one unit of that counter is worth, on standard and on expert. */
     val perUnit: Int = 1,
     val perUnitExpert: Int = 1,

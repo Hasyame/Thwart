@@ -1,14 +1,15 @@
 Fear No Evil, checked against the cards themselves.
 
-La Poursuite accelerates by two threat per player a round, not one. The
-museum prints a star instead of a number: its acceleration is the number
-of ART attachments on the villain plus one, which the app cannot see, so
-it adds nothing at the end of the round and the briefing says to add it
-yourself. A tracker that guesses is worse than one that says it cannot
-know.
+La Poursuite accelerates by 2 threat per player each round, not 1. The
+tracker was a point a round short of the table.
 
-Le Caid turns over. Each difficulty plays one card with two sides: 25
-health per player on standard, 28 on expert, unchanged when he flips.
+Cambriolage du Musée d'Art accelerates by the number of ART attachments on
+the villain plus one, which grows during the game and which the app cannot
+see. It now adds nothing and says so, rather than adding a number that is
+right only in the first round.
 
-The starting threats were read off a photograph until now. Four of the
-five were right; they are confirmed.
+Le Caïd is one card per difficulty with two sides: 25 health per player on
+standard, 28 on expert, and the tracker follows him across the flip.
+
+The finale also counts your settled missions itself, instead of asking you
+whether three or four of them are ACHEVÉ.

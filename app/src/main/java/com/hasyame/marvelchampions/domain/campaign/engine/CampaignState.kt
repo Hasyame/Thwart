@@ -126,6 +126,9 @@ data class HeroCardStats(
  * amount is shown as written, and a step whose amount is nothing is not shown.
  */
 fun CampaignState.amountOf(amount: ComputedAmount?): Int? = amount?.amountFor(
-    counterValue = counter(amount.counter),
+    counterValue = when {
+        amount.flagSet.isNotBlank() -> countTrue(amount.flagSet)
+        else -> counter(amount.counter)
+    },
     expert = difficulty.equals("expert", ignoreCase = true),
 )

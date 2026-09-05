@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.domain.campaign
 
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.CardListDefinition
+import com.hasyame.marvelchampions.domain.campaign.template.ComputedAmount
 import com.hasyame.marvelchampions.domain.campaign.template.Condition
 import com.hasyame.marvelchampions.domain.campaign.template.CounterDefinition
 import com.hasyame.marvelchampions.domain.campaign.template.Effect
@@ -13,6 +14,7 @@ import com.hasyame.marvelchampions.domain.campaign.template.NextStep
 import com.hasyame.marvelchampions.domain.campaign.template.Outcome
 import com.hasyame.marvelchampions.domain.campaign.template.Prompt
 import com.hasyame.marvelchampions.domain.campaign.template.ScenarioTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.SetupStep
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidationException
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidator
 import org.junit.Assert.assertEquals
@@ -45,6 +47,107 @@ class TemplateValidatorTest {
     @Test
     fun `a minimal template is valid`() {
         assertTrue(TemplateValidator.validate(template()).isEmpty())
+    }
+
+    @Test
+    fun `a computed amount naming nothing that exists is refused`() {
+        // A name that matches no counter and no flag set reads as zero, and a
+        // zero amount hides its step: the instruction would simply never
+        // appear, which is the quietest way a campaign can be wrong.
+        val errors = TemplateValidator.validate(
+            template(
+                scenarios = listOf(
+                    ScenarioTemplate(
+                        id = "s1",
+                        campaignSetup = listOf(
+                            SetupStep(
+                                text = LocalizedText(fr = "Posez {value} menaces."),
+                                compute = ComputedAmount(counter = "pressionTypo"),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        assertTrue(errors.any { "unknown counter" in it.message })
+    }
+
+    @Test
+    fun `a computed amount counting an unknown flag set is refused`() {
+        val errors = TemplateValidator.validate(
+            template(
+                scenarios = listOf(
+                    ScenarioTemplate(
+                        id = "s1",
+                        campaignSetup = listOf(
+                            SetupStep(
+                                text = LocalizedText(fr = "{value} missions."),
+                                compute = ComputedAmount(flagSet = "acheveTypo"),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        assertTrue(errors.any { "unknown flag set" in it.message })
+    }
+
+    @Test
+    fun `a computed amount reads one source, not two and not none`() {
+        val both = TemplateValidator.validate(
+            template(
+                scenarios = listOf(
+                    ScenarioTemplate(
+                        id = "s1",
+                        campaignSetup = listOf(
+                            SetupStep(
+                                text = LocalizedText(fr = "{value}"),
+                                compute = ComputedAmount(counter = "credits", flagSet = "f1"),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        assertTrue(both.any { "exactly one" in it.message })
+    }
+
+    @Test
+    fun `a placeholder with nothing to fill it is refused, and so is the reverse`() {
+        // Both are silent in their own way: an unfilled {value} is stripped
+        // before anybody sees it, and an amount with nowhere to print gates
+        // the step invisibly.
+        val unfilled = TemplateValidator.validate(
+            template(
+                scenarios = listOf(
+                    ScenarioTemplate(
+                        id = "s1",
+                        campaignSetup = listOf(SetupStep(text = LocalizedText(fr = "Posez {value}."))),
+                    ),
+                ),
+            ),
+        )
+        val unprinted = TemplateValidator.validate(
+            template(
+                scenarios = listOf(
+                    ScenarioTemplate(
+                        id = "s1",
+                        campaignSetup = listOf(
+                            SetupStep(
+                                text = LocalizedText(fr = "Posez des menaces."),
+                                compute = ComputedAmount(counter = "credits"),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        assertTrue(unfilled.any { "computes nothing" in it.message })
+        assertTrue(unprinted.any { "never prints" in it.message })
     }
 
     @Test
