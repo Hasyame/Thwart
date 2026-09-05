@@ -1,0 +1,9 @@
+The Fear No Evil finale counts your settled missions for you.
+
+Two of Le Caïd's setup steps used to open with "if three missions or more
+are ACHEVÉ", which asks you to count something the campaign log already
+knows. They now say what to do and how many you have.
+
+The same declaration decides whether a step appears and fills in its
+number, so the two can never disagree, and the campaign files are checked
+for it when they load.

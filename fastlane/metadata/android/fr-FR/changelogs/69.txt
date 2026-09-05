@@ -1,0 +1,10 @@
+Le final de Rien à Craindre compte vos missions à votre place.
+
+Deux étapes de mise en place du Caïd commençaient par « Si 3 missions ou
+plus sont ACHEVÉ », ce qui vous demande de compter une chose que le
+registre de campagne connaît déjà. Elles disent maintenant quoi faire et
+combien vous en avez.
+
+C'est la même déclaration qui décide si une étape s'affiche et qui remplit
+son nombre : les deux ne peuvent donc pas se contredire, et les fichiers de
+campagne sont vérifiés là-dessus au chargement.
