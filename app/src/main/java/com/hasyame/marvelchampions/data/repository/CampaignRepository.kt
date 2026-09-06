@@ -95,6 +95,37 @@ data class CampaignRun(
 }
 
 /**
+ * What a campaign is waiting for, as a list can say it in three words.
+ *
+ * A campaign is not always inside a scenario. Fear No Evil and The Galaxy's
+ * Most Wanted both stop between jobs and ask the table to do something first,
+ * and a card that answered "current scenario" with a blank during that was
+ * hiding the only thing worth knowing.
+ */
+enum class CampaignStage {
+    /** Between scenarios, with the choice still to make. */
+    CHOOSING,
+
+    /** Between scenarios, with cards to turn over before choosing. */
+    TURNING_ENVIRONMENTS,
+
+    /** A scenario is picked and the table has not started the clock. */
+    READY,
+
+    /** The clock is running. */
+    PLAYING,
+
+    /** Put away on a long break, to be picked up where it stood. */
+    LONG_BREAK,
+
+    /** Over, badly. */
+    LOST,
+
+    /** Over. */
+    FINISHED,
+}
+
+/**
  * A finished or in-progress run, with what it amounted to.
  *
  * Everything here is folded from the event log rather than stored, so a
@@ -114,7 +145,33 @@ data class CampaignSummary(
     /** True once the campaign has been seen through to its end. */
     val finished: Boolean = false,
     val scenarios: List<ScenarioLogEntry> = emptyList(),
+    /** What the run is waiting for. [CampaignStage.LONG_BREAK] is added later. */
+    val stage: CampaignStage = CampaignStage.CHOOSING,
+    /** The scenario the run is sitting on, named, or empty between them. */
+    val currentScenarioName: String = "",
+    /** Scenarios settled at the table and not playable again. */
+    val scenariosSettled: Int = 0,
+    /**
+     * How many scenarios this run will actually play.
+     *
+     * Counted rather than taken from the template, because a campaign is not
+     * always its whole scenario list. Fear No Evil pushes jobs off the board
+     * before they are ever played: six exist, and a table that lets one be
+     * pushed out plays five. Adding up what has been played, what can still be
+     * chosen and the finale gives the number that is true when it is read, and
+     * it falls as the campaign takes options away.
+     */
+    val scenariosToPlay: Int = 0,
 ) {
+
+    /** How far through, 0 to 1, for a bar to draw. */
+    val progress: Float
+        get() = if (scenariosToPlay <= 0) {
+            0f
+        } else {
+            (scenariosSettled.toFloat() / scenariosToPlay).coerceIn(0f, 1f)
+        }
+
     /**
      * Scenarios won as a percentage of scenarios played.
      *
@@ -970,6 +1027,23 @@ class CampaignRepository @Inject constructor(
                 cardsBought = state.purchases.size,
                 hasMarket = template.market != null,
                 finished = state.finished,
+                stage = when {
+                    state.finished -> CampaignStage.FINISHED
+                    state.campaignLost -> CampaignStage.LOST
+                    state.awaitingChoice && state.environmentOffer.isNotEmpty() ->
+                        CampaignStage.TURNING_ENVIRONMENTS
+
+                    state.awaitingChoice -> CampaignStage.CHOOSING
+                    entity.timerRunningSince != null -> CampaignStage.PLAYING
+                    state.currentScenarioId != null -> CampaignStage.READY
+                    else -> CampaignStage.CHOOSING
+                },
+                currentScenarioName = state.currentScenarioId
+                    ?.let { id -> template.scenarios.firstOrNull { it.id == id } }
+                    ?.name?.resolve(localeCode())?.takeIf { it.isNotBlank() }
+                    .orEmpty(),
+                scenariosSettled = CampaignEngine.settledScenarios(template, state).size,
+                scenariosToPlay = CampaignEngine.scenariosToPlay(template, state),
                 scenarios = state.completedScenarios.map { result ->
                     val scenario = template.scenarios.firstOrNull { it.id == result.scenarioId }
                     ScenarioLogEntry(

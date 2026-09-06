@@ -808,6 +808,47 @@ class CampaignEngine(
             }
         }
 
+        /**
+         * Scenarios played at the table that will not come round again.
+         *
+         * Not simply the completed ones: Fear No Evil lets a lost job be
+         * attempted again, so a defeat that is still choosable has not been
+         * settled. Nor is it everything the campaign has finished with, since a
+         * job pushed off the board was never played at all.
+         */
+        fun settledScenarios(
+            template: CampaignTemplate,
+            state: CampaignState,
+        ): Set<String> {
+            val stillChoosable = choosableScenarios(template, state).map { it.id }.toSet()
+            return state.completedScenarios
+                .map { it.scenarioId }
+                .toSet()
+                .minus(stillChoosable)
+        }
+
+        /**
+         * How many scenarios this run will actually play.
+         *
+         * Counted rather than taken from the template, because a campaign is
+         * not always its whole scenario list. Fear No Evil pushes jobs off the
+         * board before they are ever played: six exist, and every job pushed
+         * out is one the table will never see. Adding up what has been played,
+         * what can still be chosen and the finale gives the number that is true
+         * at the moment it is read, and it falls as the campaign takes options
+         * away.
+         *
+         * A set union rather than a sum, because the finale is held out of the
+         * choosable list until it is the only thing left and would otherwise be
+         * counted twice at the end.
+         */
+        fun scenariosToPlay(template: CampaignTemplate, state: CampaignState): Int {
+            val settled = settledScenarios(template, state)
+            val choosable = choosableScenarios(template, state).map { it.id }
+            val finale = template.finaleScenarioId?.takeIf { it !in settled }
+            return (settled + choosable + listOfNotNull(finale)).size
+        }
+
         /** What a scenario has already drawn, in the order drawn. */
         fun drawnCards(state: CampaignState, scenarioId: String?, drawId: String): List<String> =
             state.draws[scenarioId].orEmpty()[drawId].orEmpty()

@@ -59,6 +59,9 @@ import com.hasyame.marvelchampions.ui.plays.CorrectTimeDialog
 import com.hasyame.marvelchampions.ui.plays.EncounterPanel
 import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
+import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.ui.plays.LongBreakNotes
 import com.hasyame.marvelchampions.ui.plays.LongBreakPage
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
@@ -77,6 +80,8 @@ import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import com.hasyame.marvelchampions.domain.campaign.template.ScenarioTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.SetupStep
 import kotlinx.coroutines.delay
+import java.text.DateFormat
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,6 +155,8 @@ fun CampaignRunScreen(
                     RunPage.BRIEFING -> BriefingPage(
                         run = run,
                         scenario = scenario,
+                        resumedBreak = state.resumedBreak,
+                        photoStore = viewModel.photoStore,
                         onReady = viewModel::beginScenario,
                         onNotReady = onBack,
                         onCardClick = onCardClick,
@@ -274,6 +281,15 @@ private const val FALLEN_PRESSURE = 3
 private fun BriefingPage(
     run: CampaignRun,
     scenario: ScenarioTemplate?,
+    /**
+     * The note this scenario was put away with, or null.
+     *
+     * Shown at the top rather than further down, because somebody opening this
+     * a week later is not reading the briefing: they are looking for where the
+     * table stood, and everything below is the same setup they already laid out.
+     */
+    resumedBreak: PausedGameEntity?,
+    photoStore: PhotoStore,
     onReady: () -> Unit,
     onNotReady: () -> Unit,
     onCardClick: (String) -> Unit,
@@ -291,6 +307,34 @@ private fun BriefingPage(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        resumedBreak?.let { note ->
+            ComicPanel(Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.campaign_break_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                    )
+                    Text(
+                        text = stringResource(
+                            R.string.campaign_break_saved,
+                            DateFormat.getDateInstance().format(Date(note.savedAt)),
+                        ),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    LongBreakNotes(game = note, photoStore = photoStore, showDate = false)
+                    Text(
+                        text = stringResource(R.string.campaign_break_resume_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
         // The story sits in a caption box, which is both what a comic does with
         // narration and what makes it readable: italic body text straight on
         // the halftone had the dots showing through every line.

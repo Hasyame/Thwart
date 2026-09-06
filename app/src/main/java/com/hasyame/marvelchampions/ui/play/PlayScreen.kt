@@ -32,6 +32,7 @@ import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.db.entity.PausedPhase
 import com.hasyame.marvelchampions.data.db.entity.VillainStep
 import com.hasyame.marvelchampions.data.photos.PhotoStore
+import com.hasyame.marvelchampions.ui.plays.LongBreakNotes
 import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
 import java.text.DateFormat
 import java.util.Date
@@ -130,7 +131,13 @@ fun PlayScreen(
             }
 
             // A game left mid-play, with what was written down about the table.
-            paused?.let { game ->
+            //
+            // Only when it is not a campaign's. A campaign on a break is still
+            // one campaign, and it was appearing twice here — once to carry on
+            // with and once to be resumed — as though the table had two things
+            // going. The campaign's own row leads to the same place and its box
+            // says it is on a break.
+            paused?.takeIf { it.campaignRunId.isBlank() }?.let { game ->
                 Choice(
                     icon = Icons.Filled.PlayArrow,
                     title = stringResource(R.string.paused_game_title),
@@ -225,51 +232,10 @@ private fun PausedGameRecap(
     onClose: () -> Unit,
     onResume: () -> Unit,
 ) {
-    // heroLives is code|life; the names it should show are in heroes as code|name.
-    val heroNames = game.heroes.split(",")
-        .filter { it.isNotBlank() }
-        .associate { it.substringBefore('|') to it.substringAfter('|', it) }
-    // A life left blank was stored as "?". Everything on that page was
-    // optional, so an unanswered hero is left out rather than shown empty.
-    val lives = game.heroLives.split(",")
-        .filter { it.isNotBlank() }
-        .mapNotNull { entry ->
-            val code = entry.substringBefore('|')
-            val life = entry.substringAfter('|', "")
-            if (life.isBlank() || life == "?") {
-                null
-            } else {
-                (heroNames[code] ?: code) to life
-            }
-        }
-    val photos = game.photos.split(",").filter { it.isNotBlank() }
-
     AlertDialog(
         onDismissRequest = onClose,
         title = { Text(game.scenarioName) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = DateFormat.getDateInstance().format(Date(game.savedAt)),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-                Text(stringResource(phaseLabel(game)))
-                lives.forEach { (name, life) ->
-                    Text("$name: $life")
-                }
-                if (game.villainLife > 0) {
-                    Text(
-                        pluralStringResource(
-                            R.plurals.paused_game_villain,
-                            game.villainLife,
-                            game.villainLife,
-                            "I".repeat(game.villainStage.coerceIn(1, 3)),
-                        ),
-                    )
-                }
-                TablePhotoStrip(names = photos, photoStore = photoStore, onOpen = { })
-            }
-        },
+        text = { LongBreakNotes(game = game, photoStore = photoStore) },
         confirmButton = {
             // The point of stopping this way is coming back to it, so carrying
             // on is the main action rather than something beside "forget".
@@ -285,17 +251,3 @@ private fun PausedGameRecap(
     )
 }
 
-/** Where the game stopped, as one line. */
-private fun phaseLabel(game: PausedGameEntity): Int =
-    if (game.phase == PausedPhase.VILLAIN.name) {
-        when (game.villainStep) {
-            VillainStep.PLACE_THREAT.name -> R.string.villain_step_threat
-            VillainStep.ACTIVATE_MINIONS.name -> R.string.villain_step_minions
-            VillainStep.DEAL_ENCOUNTERS.name -> R.string.villain_step_deal
-            VillainStep.REVEAL_ENCOUNTERS.name -> R.string.villain_step_reveal
-            VillainStep.PASS_FIRST_PLAYER.name -> R.string.villain_step_pass
-            else -> R.string.phase_villain
-        }
-    } else {
-        R.string.phase_player
-    }

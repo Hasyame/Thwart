@@ -106,6 +106,15 @@ data class CampaignRunUiState(
      * gets cleared off a table for the same reasons.
      */
     val longBreak: LongBreakDraft? = null,
+    /**
+     * The note this run was put away with, while it is still put away.
+     *
+     * Set when a run is opened and there is a break saved against it, and
+     * cleared the moment the table starts playing again. The briefing shows it,
+     * because the briefing is where somebody arrives after a week away and the
+     * first question is always "where were we".
+     */
+    val resumedBreak: PausedGameEntity? = null,
     val run: CampaignRun? = null,
     val page: RunPage = RunPage.BRIEFING,
     val elapsedMillis: Long = 0,
@@ -226,6 +235,7 @@ class CampaignRunViewModel @Inject constructor(
             run = run,
             elapsedMillis = run?.timer?.elapsedAt(System.currentTimeMillis()) ?: 0,
             isLoading = false,
+            resumedBreak = pausedGameDao.current()?.takeIf { it.campaignRunId == id },
         )
     }
 
@@ -428,8 +438,16 @@ class CampaignRunViewModel @Inject constructor(
             // Without this the counters started again from full health, which
             // made the break worth less than a photograph of the table.
             val resumed = run?.let { pausedProgressFor(it.entity.id) }
+            // Read first, then thrown away. The table is back at it, so the
+            // campaign is no longer on a break and its box must stop saying so
+            // — a note that outlives the game it describes is how a campaign
+            // ends up looking paused for the rest of its life.
+            if (state.value.resumedBreak != null) {
+                pausedGameDao.clear()
+            }
             state.value = state.value.copy(
                 page = RunPage.PLAYING,
+                resumedBreak = null,
                 trackEncounter = setup.isUsable,
                 trackerWanted = preferences.trackEncounter.first(),
                 encounter = if (resumed != null) {

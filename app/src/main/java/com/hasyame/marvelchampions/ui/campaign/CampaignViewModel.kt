@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
+import com.hasyame.marvelchampions.data.repository.CampaignStage
 import com.hasyame.marvelchampions.data.repository.CampaignSummary
 import com.hasyame.marvelchampions.data.repository.TemplateImportResult
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
@@ -18,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -72,9 +74,25 @@ class CampaignListViewModel @Inject constructor(
     /**
      * Runs with their statistics. Folded per run, which is cheap at this scale
      * and means a finished campaign's record cannot drift from its log.
+     *
+     * The break is folded in here rather than in the repository, and that is
+     * the point: a campaign put away for a week is still one campaign. It used
+     * to appear twice, once as the run and once as a paused game, as though the
+     * table had two things on the go. There is one box per campaign, and the
+     * break is something the box says about itself.
      */
-    val summaries: StateFlow<List<CampaignSummary>> = repository.observeRuns()
-        .map { repository.summaries() }
+    val summaries: StateFlow<List<CampaignSummary>> = combine(
+        repository.observeRuns().map { repository.summaries() },
+        pausedGameDao.observe(),
+    ) { runs, paused ->
+        runs.map { summary ->
+            if (!summary.finished && paused?.campaignRunId == summary.entity.id) {
+                summary.copy(stage = CampaignStage.LONG_BREAK)
+            } else {
+                summary
+            }
+        }
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),

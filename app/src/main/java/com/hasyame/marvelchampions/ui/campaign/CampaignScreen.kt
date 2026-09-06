@@ -2,8 +2,10 @@ package com.hasyame.marvelchampions.ui.campaign
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +22,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -40,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicEmptyState
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
+import com.hasyame.marvelchampions.data.repository.CampaignStage
 import com.hasyame.marvelchampions.data.repository.CampaignSummary
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 
@@ -104,6 +108,7 @@ fun CampaignScreen(
                     RunRow(
                         summary = summary,
                         subtitle = summary.entity.difficulty.replaceFirstChar(Char::uppercase),
+                        showProgress = true,
                         onClick = { onOpenRun(summary.entity.id) },
                         onDelete = { confirmDelete = summary },
                     )
@@ -200,10 +205,59 @@ private fun SectionHeader(title: String) {
     }
 }
 
+/**
+ * Where a campaign stands, in one line.
+ *
+ * A campaign is not always inside a scenario, and saying nothing during those
+ * stretches was the worst of it: Fear No Evil and The Galaxy's Most Wanted both
+ * stop between jobs and ask the table to do something, and the box went blank
+ * for exactly the part nobody remembers a week later.
+ */
+@Composable
+private fun stageLine(summary: CampaignSummary): String {
+    val scenario = summary.currentScenarioName
+    return when (summary.stage) {
+        CampaignStage.CHOOSING -> stringResource(R.string.campaign_stage_choosing)
+        CampaignStage.TURNING_ENVIRONMENTS ->
+            stringResource(R.string.campaign_stage_environments)
+
+        CampaignStage.READY -> if (scenario.isBlank()) {
+            stringResource(R.string.campaign_stage_ready_unknown)
+        } else {
+            stringResource(R.string.campaign_stage_ready, scenario)
+        }
+
+        CampaignStage.PLAYING -> if (scenario.isBlank()) {
+            stringResource(R.string.campaign_stage_playing_unknown)
+        } else {
+            stringResource(R.string.campaign_stage_playing, scenario)
+        }
+
+        CampaignStage.LONG_BREAK -> if (scenario.isBlank()) {
+            stringResource(R.string.campaign_stage_long_break_unknown)
+        } else {
+            stringResource(R.string.campaign_stage_long_break, scenario)
+        }
+
+        CampaignStage.LOST -> stringResource(R.string.campaign_stage_lost)
+        CampaignStage.FINISHED -> stringResource(R.string.campaign_stage_finished)
+    }
+}
+
 @Composable
 private fun RunRow(
     summary: CampaignSummary,
     subtitle: String,
+    /**
+     * Whether to draw the bar and say where the campaign stands.
+     *
+     * Decided by the caller rather than read off the summary, because the two
+     * ways of asking "is this over" do not always agree: the list splits its
+     * sections on the row's own flag, while the summary folds the log. A run
+     * filed as finished whose log has not caught up was showing a progress bar
+     * and a "next scenario" under the finished heading.
+     */
+    showProgress: Boolean = false,
     onClick: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -213,12 +267,41 @@ private fun RunRow(
             Text(summary.entity.name.ifBlank { summary.entity.templateName })
         },
         supportingContent = {
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(subtitle)
                 if (summary.heroNames.isNotEmpty()) {
                     Text(
                         text = summary.heroNames.joinToString(", "),
                         style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                // Only while it is running. A finished campaign has its record,
+                // and a full bar under it would say nothing the section heading
+                // has not already said.
+                if (showProgress && summary.scenariosToPlay > 0) {
+                    Text(
+                        text = stageLine(summary),
+                        style = MaterialTheme.typography.labelLarge,
+                        // A break is the one state that is about the table
+                        // rather than the campaign, so it is the one that gets
+                        // a colour.
+                        color = if (summary.stage == CampaignStage.LONG_BREAK) {
+                            MaterialTheme.colorScheme.tertiary
+                        } else {
+                            MaterialTheme.colorScheme.primary
+                        },
+                    )
+                    Text(
+                        text = stringResource(
+                            R.string.campaign_progress,
+                            summary.scenariosSettled,
+                            summary.scenariosToPlay,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    LinearProgressIndicator(
+                        progress = { summary.progress },
+                        modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                     )
                 }
             }
