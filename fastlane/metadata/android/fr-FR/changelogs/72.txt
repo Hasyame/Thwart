@@ -1,0 +1,14 @@
+La fiche de campagne montre enfin la campagne.
+
+Une campagne en cours n'était qu'une ligne : un nom, une difficulté, vos
+héros. C'est un panneau désormais, et il répond sans qu'on l'ouvre. Ce que
+la campagne attend. Depuis combien de temps vous jouez, partie en cours
+comprise. Où vous en êtes, sur une barre qui occupe toute la largeur.
+
+Et chaque scénario sous forme d'étiquette qui dit où il en est : celui sur
+la table, ceux que vous avez gagnés, ceux que vous avez perdus, ceux à
+venir, et dans Peur de Rien ceux qui ont été perdus sans jamais être joués,
+barrés.
+
+Les campagnes terminées restent une simple liste, pour que celle que vous
+jouez vraiment ressorte.

@@ -1,0 +1,14 @@
+The campaign box shows the campaign.
+
+A campaign in progress used to be a line: a name, a difficulty, your
+heroes. It is a panel now, and it answers without being opened. What the
+campaign is waiting for. How long you have played, the game on the clock
+included. How far through you are, on a bar that spans the panel.
+
+And every scenario as a chip that says where it stands: the one on the
+table, the ones you won, the ones you lost, the ones still to come, and in
+Fear No Evil the ones pushed off the board without ever being played,
+struck through.
+
+Finished campaigns stay a plain list, so the one you are actually playing
+is the one that stands out.
