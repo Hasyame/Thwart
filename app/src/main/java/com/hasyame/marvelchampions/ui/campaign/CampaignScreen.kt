@@ -1,11 +1,15 @@
 package com.hasyame.marvelchampions.ui.campaign
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,10 +26,12 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -36,15 +42,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import com.hasyame.marvelchampions.core.designsystem.component.ComicEmptyState
+import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.repository.CampaignStage
 import com.hasyame.marvelchampions.data.repository.CampaignSummary
+import com.hasyame.marvelchampions.data.repository.ScenarioProgress
+import com.hasyame.marvelchampions.data.repository.ScenarioStanding
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 
 /**
@@ -105,10 +120,8 @@ fun CampaignScreen(
             if (inProgress.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.campaign_in_progress_section)) }
                 items(inProgress, key = { it.entity.id }) { summary ->
-                    RunRow(
+                    RunPanel(
                         summary = summary,
-                        subtitle = summary.entity.difficulty.replaceFirstChar(Char::uppercase),
-                        showProgress = true,
                         onClick = { onOpenRun(summary.entity.id) },
                         onDelete = { confirmDelete = summary },
                     )
@@ -244,20 +257,213 @@ private fun stageLine(summary: CampaignSummary): String {
     }
 }
 
+
+/**
+ * A campaign on the table, as a panel rather than a line.
+ *
+ * It answers, without being opened: what is this, who is playing it, what is it
+ * waiting for, how long has it taken, how far through it is, and which
+ * scenarios are done. All of that was a tap away before, which sounds close
+ * enough until you have three campaigns and want to know which one to pick up.
+ */
+@Composable
+private fun RunPanel(
+    summary: CampaignSummary,
+    onClick: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    ComicPanel(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Column(
+            Modifier.clickable(onClick = onClick).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = summary.entity.name.ifBlank { summary.entity.templateName },
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Filled.Clear,
+                        contentDescription = stringResource(R.string.action_delete),
+                    )
+                }
+            }
+
+            Text(
+                text = listOfNotNull(
+                    summary.entity.difficulty.replaceFirstChar(Char::uppercase),
+                    summary.heroNames.joinToString(", ").takeIf { it.isNotBlank() },
+                ).joinToString(" · "),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Text(
+                text = stageLine(summary),
+                style = MaterialTheme.typography.labelLarge,
+                // A break is the one state that is about the table rather than
+                // about the campaign, so it is the one that gets its own
+                // colour.
+                color = if (summary.stage == CampaignStage.LONG_BREAK) {
+                    MaterialTheme.colorScheme.tertiary
+                } else {
+                    MaterialTheme.colorScheme.primary
+                },
+            )
+
+            if (summary.scenariosToPlay > 0) {
+                Text(
+                    text = listOf(
+                        stringResource(
+                            R.string.campaign_progress,
+                            summary.scenariosSettled,
+                            summary.scenariosToPlay,
+                        ),
+                        stringResource(
+                            R.string.campaign_time_so_far,
+                            TimerState.format(summary.timeSoFarMillis),
+                        ),
+                    ).joinToString(" · "),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                LinearProgressIndicator(
+                    progress = { summary.progress },
+                    modifier = Modifier.fillMaxWidth().height(6.dp),
+                )
+            }
+
+            if (summary.scenarioStandings.isNotEmpty()) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    summary.scenarioStandings.forEach { ScenarioChip(it) }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * One scenario, with its standing shown rather than spelled out.
+ *
+ * The fill carries it for anyone glancing, and the icon carries it for anyone
+ * who cannot use the colour — which is also what the screen reader announces,
+ * since the name alone would not say whether the job was won or pushed off the
+ * board.
+ *
+ * The palette is the app's own two colours and nothing else. Green for a win
+ * would be the obvious choice and it is not available here: this theme is red
+ * and bone on purpose, and the one place gold was tried it collided with the
+ * gold the game prints Justice in. So red is the scenario on the table, solid
+ * bone is one that is finished, and everything unplayed is an outline.
+ */
+@Composable
+private fun ScenarioChip(item: ScenarioProgress) {
+    val scheme = MaterialTheme.colorScheme
+    val container: Color
+    val content: Color
+    val icon: ImageVector?
+    val label: Int
+    when (item.standing) {
+        ScenarioStanding.WON -> {
+            container = scheme.tertiaryContainer
+            content = scheme.onTertiaryContainer
+            icon = Icons.Filled.Check
+            label = R.string.campaign_scenario_won
+        }
+
+        ScenarioStanding.LOST -> {
+            container = scheme.surfaceVariant
+            content = scheme.onSurfaceVariant
+            icon = Icons.Filled.Clear
+            label = R.string.campaign_scenario_lost
+        }
+
+        ScenarioStanding.REPLAYABLE -> {
+            container = scheme.surfaceVariant
+            content = scheme.onSurfaceVariant
+            icon = Icons.Filled.Refresh
+            label = R.string.campaign_scenario_replayable
+        }
+
+        ScenarioStanding.GONE -> {
+            container = Color.Transparent
+            content = scheme.outline
+            icon = Icons.Filled.Clear
+            label = R.string.campaign_scenario_gone
+        }
+
+        ScenarioStanding.CURRENT -> {
+            container = scheme.primaryContainer
+            content = scheme.onPrimaryContainer
+            icon = Icons.Filled.PlayArrow
+            label = R.string.campaign_scenario_current
+        }
+
+        ScenarioStanding.TO_PLAY -> {
+            container = Color.Transparent
+            content = scheme.onSurfaceVariant
+            icon = null
+            label = R.string.campaign_scenario_to_play
+        }
+    }
+
+    // Every one gets an outline, so a row of them reads as a set of scenarios
+    // rather than as chips with loose words between them.
+    Surface(
+        color = container,
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, content.copy(alpha = 0.4f)),
+    ) {
+        Row(
+            Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            icon?.let {
+                Icon(
+                    imageVector = it,
+                    contentDescription = stringResource(label),
+                    tint = content,
+                    modifier = Modifier.size(14.dp),
+                )
+            }
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.labelSmall,
+                color = content,
+                // A job pushed off the board was never played and never will
+                // be. Striking it through says that in a way a grey chip on its
+                // own does not.
+                textDecoration = if (item.standing == ScenarioStanding.GONE) {
+                    TextDecoration.LineThrough
+                } else {
+                    null
+                },
+            )
+        }
+    }
+}
+
+/**
+ * A finished campaign: a line in a list, because its story is in its record.
+ *
+ * The in-progress ones get [RunPanel] instead. The two are deliberately not the
+ * same shape: one is something to carry on with and the other is something to
+ * look back at, and a list where every entry looks equally live made the one
+ * campaign actually on the table hard to find.
+ */
 @Composable
 private fun RunRow(
     summary: CampaignSummary,
     subtitle: String,
-    /**
-     * Whether to draw the bar and say where the campaign stands.
-     *
-     * Decided by the caller rather than read off the summary, because the two
-     * ways of asking "is this over" do not always agree: the list splits its
-     * sections on the row's own flag, while the summary folds the log. A run
-     * filed as finished whose log has not caught up was showing a progress bar
-     * and a "next scenario" under the finished heading.
-     */
-    showProgress: Boolean = false,
     onClick: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -273,35 +479,6 @@ private fun RunRow(
                     Text(
                         text = summary.heroNames.joinToString(", "),
                         style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-                // Only while it is running. A finished campaign has its record,
-                // and a full bar under it would say nothing the section heading
-                // has not already said.
-                if (showProgress && summary.scenariosToPlay > 0) {
-                    Text(
-                        text = stageLine(summary),
-                        style = MaterialTheme.typography.labelLarge,
-                        // A break is the one state that is about the table
-                        // rather than the campaign, so it is the one that gets
-                        // a colour.
-                        color = if (summary.stage == CampaignStage.LONG_BREAK) {
-                            MaterialTheme.colorScheme.tertiary
-                        } else {
-                            MaterialTheme.colorScheme.primary
-                        },
-                    )
-                    Text(
-                        text = stringResource(
-                            R.string.campaign_progress,
-                            summary.scenariosSettled,
-                            summary.scenariosToPlay,
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                    LinearProgressIndicator(
-                        progress = { summary.progress },
-                        modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                     )
                 }
             }

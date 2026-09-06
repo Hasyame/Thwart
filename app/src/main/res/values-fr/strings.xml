@@ -685,6 +685,13 @@
     <string name="paused_game_resume">Reprendre cette partie</string>
     <string name="paused_game_stopped_at">Arrêté au stade du méchant</string>
     <string name="campaign_progress">Scénario %1$d sur %2$d</string>
+    <string name="campaign_time_so_far">jouée %1$s</string>
+    <string name="campaign_scenario_won">Gagné</string>
+    <string name="campaign_scenario_lost">Perdu</string>
+    <string name="campaign_scenario_replayable">Perdu, rejouable</string>
+    <string name="campaign_scenario_gone">Perdu sans avoir été joué</string>
+    <string name="campaign_scenario_current">En cours</string>
+    <string name="campaign_scenario_to_play">Pas encore joué</string>
     <string name="campaign_stage_choosing">Choix de la suite</string>
     <string name="campaign_stage_environments">Cartes à retourner avant de choisir</string>
     <string name="campaign_stage_ready">À suivre : %1$s</string>

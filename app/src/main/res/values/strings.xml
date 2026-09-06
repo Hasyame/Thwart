@@ -662,6 +662,13 @@
     <string name="paused_game_resume">Carry on with this game</string>
     <string name="paused_game_stopped_at">Stopped at villain stage</string>
     <string name="campaign_progress">Scenario %1$d of %2$d</string>
+    <string name="campaign_time_so_far">played for %1$s</string>
+    <string name="campaign_scenario_won">Won</string>
+    <string name="campaign_scenario_lost">Lost</string>
+    <string name="campaign_scenario_replayable">Lost, can be played again</string>
+    <string name="campaign_scenario_gone">Gone, never played</string>
+    <string name="campaign_scenario_current">Being played</string>
+    <string name="campaign_scenario_to_play">Not played yet</string>
     <string name="campaign_stage_choosing">Choosing where to go next</string>
     <string name="campaign_stage_environments">Cards to turn over before choosing</string>
     <string name="campaign_stage_ready">Next: %1$s</string>

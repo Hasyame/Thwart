@@ -126,6 +126,41 @@ enum class CampaignStage {
 }
 
 /**
+ * Where one scenario of a campaign stands.
+ *
+ * More than won and lost, because a campaign can take a scenario away without
+ * anybody playing it: Fear No Evil pushes jobs off the board, and a table
+ * looking at its campaign wants to see that the museum is gone as plainly as it
+ * sees which jobs it finished.
+ */
+enum class ScenarioStanding {
+    /** Played and won. */
+    WON,
+
+    /** Played, lost, and settled: it will not come round again. */
+    LOST,
+
+    /** Played and lost, and still on the board to try again. */
+    REPLAYABLE,
+
+    /** Never played, and no longer available. Pushed off the board. */
+    GONE,
+
+    /** The one the table is on. */
+    CURRENT,
+
+    /** Still to come. */
+    TO_PLAY,
+}
+
+/** One scenario of a campaign, named, with where it stands. */
+data class ScenarioProgress(
+    val id: String,
+    val name: String,
+    val standing: ScenarioStanding,
+)
+
+/**
  * A finished or in-progress run, with what it amounted to.
  *
  * Everything here is folded from the event log rather than stored, so a
@@ -162,7 +197,21 @@ data class CampaignSummary(
      * it falls as the campaign takes options away.
      */
     val scenariosToPlay: Int = 0,
+    /** Every scenario of the campaign, in template order, with its standing. */
+    val scenarioStandings: List<ScenarioProgress> = emptyList(),
+    /**
+     * Time on the scenario in progress, which the log does not know about yet.
+     *
+     * A scenario's time reaches the campaign log only when the scenario is
+     * filed. Until then it lives on the run's own clock, and a campaign box
+     * that showed only the log said "0:00" through an entire first game.
+     */
+    val currentScenarioMillis: Long = 0,
 ) {
+
+    /** Everything played, plus whatever is on the clock right now. */
+    val timeSoFarMillis: Long get() = totalTimeMillis + currentScenarioMillis
+
 
     /** How far through, 0 to 1, for a bar to draw. */
     val progress: Float
@@ -1044,6 +1093,11 @@ class CampaignRepository @Inject constructor(
                     .orEmpty(),
                 scenariosSettled = CampaignEngine.settledScenarios(template, state).size,
                 scenariosToPlay = CampaignEngine.scenariosToPlay(template, state),
+                scenarioStandings = standings(template, state, localeCode()),
+                currentScenarioMillis = TimerState(
+                    accumulatedMillis = entity.timerAccumulatedMillis,
+                    runningSinceEpochMillis = entity.timerRunningSince,
+                ).elapsedAt(System.currentTimeMillis()),
                 scenarios = state.completedScenarios.map { result ->
                     val scenario = template.scenarios.firstOrNull { it.id == result.scenarioId }
                     ScenarioLogEntry(
@@ -1060,6 +1114,41 @@ class CampaignRepository @Inject constructor(
                         ),
                     )
                 },
+            )
+        }
+    }
+
+    /**
+     * Where each scenario of a campaign stands, in the order the template lists
+     * them.
+     *
+     * The finale is the one that needs saying out loud: it is deliberately kept
+     * out of the choosable list until nothing else is left, so the plain test
+     * for "no longer available" would report it as pushed off the board from
+     * the first minute of the campaign.
+     */
+    private fun standings(
+        template: CampaignTemplate,
+        state: CampaignState,
+        localeCode: String,
+    ): List<ScenarioProgress> {
+        val choosable = CampaignEngine.choosableScenarios(template, state).map { it.id }.toSet()
+        return template.scenarios.map { scenario ->
+            val results = state.completedScenarios.filter { it.scenarioId == scenario.id }
+            val standing = when {
+                state.currentScenarioId == scenario.id -> ScenarioStanding.CURRENT
+                results.any { it.victory } -> ScenarioStanding.WON
+                results.isNotEmpty() && scenario.id in choosable -> ScenarioStanding.REPLAYABLE
+                results.isNotEmpty() -> ScenarioStanding.LOST
+                scenario.id == template.finaleScenarioId -> ScenarioStanding.TO_PLAY
+                scenario.id in choosable -> ScenarioStanding.TO_PLAY
+                else -> ScenarioStanding.GONE
+            }
+            ScenarioProgress(
+                id = scenario.id,
+                name = scenario.name?.resolve(localeCode)?.takeIf { it.isNotBlank() }
+                    ?: scenario.id,
+                standing = standing,
             )
         }
     }
