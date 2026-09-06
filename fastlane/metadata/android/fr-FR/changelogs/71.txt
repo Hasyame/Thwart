@@ -1,0 +1,14 @@
+Une seule fiche par campagne, et elle vous dit où vous en êtes.
+
+Une campagne rangée en longue pause apparaissait deux fois : une fois pour
+la continuer, une fois pour la reprendre. Il n'y a plus qu'une fiche, et
+elle affiche « En longue pause ». Ouvrez-la et le briefing commence par ce
+que vous aviez noté : la date, où vous vous êtes arrêtés, les points de vie
+restants. Lancez le scénario et la table revient telle quelle, suivi et
+chronomètre compris.
+
+La fiche dit aussi ce que la campagne attend, et ce n'est pas toujours un
+scénario : Peur de Rien et Convoitise Galactique s'arrêtent entre deux
+missions pour vous demander autre chose. En dessous, votre avancement, avec
+une barre calculée sur ce que votre campagne va réellement jouer plutôt que
+sur la liste des scénarios.

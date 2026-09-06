@@ -1,0 +1,13 @@
+One box per campaign, and it tells you where you are.
+
+A campaign put away on a long break used to appear twice, once to carry on
+with and once to resume. Now there is one box, and it says "In a long
+break". Open it and the briefing leads with what you wrote down: when you
+put it away, where you stopped, the hit points left. Start the scenario and
+the table comes back as you left it, tracker and clock included.
+
+The box also says what the campaign is waiting for, which is not always a
+scenario: Fear No Evil and The Galaxy's Most Wanted both stop between jobs
+to ask you something first. Under that, how far through you are, with a bar
+counted from what your campaign will actually play rather than from the
+scenario list.
