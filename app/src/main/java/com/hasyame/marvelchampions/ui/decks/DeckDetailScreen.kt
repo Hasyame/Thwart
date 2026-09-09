@@ -10,10 +10,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -21,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.core.designsystem.component.CardTypeBadge
+import com.hasyame.marvelchampions.core.designsystem.component.aspectColor
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckText
@@ -60,6 +66,9 @@ fun DeckDetailScreen(
     val shareContext = LocalContext.current
     var noShareApp by remember { mutableStateOf(false) }
     var confirmRefresh by remember { mutableStateOf(false) }
+    var menuOpen by remember { mutableStateOf(false) }
+    // Null while the dialogue is closed; the name being typed while it is open.
+    var renaming by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(deckId) { viewModel.load(deckId) }
 
@@ -90,6 +99,36 @@ fun DeckDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { confirmRefresh = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+        )
+    }
+
+    renaming?.let { typed ->
+        AlertDialog(
+            onDismissRequest = { renaming = null },
+            title = { Text(stringResource(R.string.decks_rename)) },
+            text = {
+                OutlinedTextField(
+                    value = typed,
+                    onValueChange = { renaming = it },
+                    singleLine = true,
+                    label = { Text(stringResource(R.string.decks_name)) },
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    // A deck with no name at all is worse than the one it has.
+                    enabled = typed.isNotBlank(),
+                    onClick = {
+                        viewModel.rename(typed)
+                        renaming = null
+                    },
+                ) { Text(stringResource(R.string.action_save)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { renaming = null }) {
                     Text(stringResource(R.string.action_cancel))
                 }
             },
@@ -169,6 +208,27 @@ fun DeckDetailScreen(
                                 contentDescription = stringResource(R.string.decks_refresh),
                             )
                         }
+                    }
+                    // Renaming lives in a menu rather than as a fifth icon: it
+                    // is done once and the bar is already full of things done
+                    // often.
+                    IconButton(
+                        enabled = deck != null,
+                        onClick = { menuOpen = true },
+                    ) {
+                        Icon(
+                            Icons.Filled.MoreVert,
+                            contentDescription = stringResource(R.string.action_more),
+                        )
+                    }
+                    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.decks_rename)) },
+                            onClick = {
+                                menuOpen = false
+                                renaming = deck?.name.orEmpty()
+                            },
+                        )
                     }
                 },
             )
@@ -326,6 +386,22 @@ fun DeckDetailScreen(
                     items(cards, key = { it.card.code }) { deckCard ->
                         ListItem(
                             modifier = Modifier.clickable { onCardClick(deckCard.card.code) },
+                            // Shape for the type, colour for the aspect. The
+                            // type is already the heading this row sits under,
+                            // so the colour is the part that earns its place:
+                            // it says how much leadership is in the deck at a
+                            // glance, which the list otherwise only gives by
+                            // reading every line. The aspect is written nowhere
+                            // here, so unlike in the editor the mark carries it
+                            // for a screen reader too.
+                            leadingContent = {
+                                CardTypeBadge(
+                                    typeCode = deckCard.card.typeCode,
+                                    factionCode = deckCard.card.factionCode,
+                                    contentDescription = deckCard.card.factionName
+                                        .takeIf { aspectColor(deckCard.card.factionCode) != null },
+                                )
+                            },
                             headlineContent = {
                                 Text("${deckCard.quantity}× ${deckCard.card.name}")
                             },

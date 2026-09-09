@@ -369,7 +369,10 @@ private fun SetupPhase(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 state.decks.forEach { deck ->
                     FilterChip(
                         selected = state.heroes.any { it.deckId == deck.id },
@@ -501,7 +504,10 @@ private fun ChosenRow(label: String, value: String?, onClick: () -> Unit) {
 private fun PickerSection(title: String, content: @Composable () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(title, style = MaterialTheme.typography.labelLarge)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { content() }
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) { content() }
     }
 }
 

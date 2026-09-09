@@ -419,7 +419,10 @@ private fun FiltersCard(state: RandomizerUiState, viewModel: RandomizerViewModel
                 text = stringResource(R.string.randomizer_difficulty),
                 style = MaterialTheme.typography.titleSmall,
             )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 // Only the difficulties the collection can field. The draw and
                 // the picker already knew this; the filter chips did not, so
                 // Standard II sat here offering itself to somebody who does not
@@ -446,7 +449,10 @@ private fun FiltersCard(state: RandomizerUiState, viewModel: RandomizerViewModel
                 text = stringResource(R.string.randomizer_excluded_aspects),
                 style = MaterialTheme.typography.titleSmall,
             )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 // Only aspects the collection can field: 'Pool came with
                 // Deadpool, so without him there is no such aspect to exclude.
                 state.pools.aspects.forEach { aspect ->
@@ -462,7 +468,10 @@ private fun FiltersCard(state: RandomizerUiState, viewModel: RandomizerViewModel
                 text = stringResource(R.string.randomizer_players),
                 style = MaterialTheme.typography.titleSmall,
             )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 (1..4).forEach { count ->
                     val selected = state.filters.minPlayers <= count &&
                         state.filters.maxPlayers >= count

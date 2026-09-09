@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.core.designsystem.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -9,35 +10,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.hasyame.marvelchampions.core.designsystem.theme.TypeAlly
-import com.hasyame.marvelchampions.core.designsystem.theme.TypeEvent
-import com.hasyame.marvelchampions.core.designsystem.theme.TypeObligation
-import com.hasyame.marvelchampions.core.designsystem.theme.TypeOther
-import com.hasyame.marvelchampions.core.designsystem.theme.TypeResource
-import com.hasyame.marvelchampions.core.designsystem.theme.TypeSupport
-import com.hasyame.marvelchampions.core.designsystem.theme.TypeUpgrade
 
 /**
  * The mark that stands for a card type in a list.
  *
- * Shape as well as colour, deliberately. A list told apart by colour alone is
- * a list a colour-blind player cannot skim, and these six are exactly the
- * greens and reds that go first. The shapes are distinct at 14dp, which is the
- * size this is actually used at.
+ * Shape alone, and that is the whole point of it. A list told apart by colour
+ * only is a list a colour-blind player cannot skim, so the type was always
+ * carried by the shape; the colour that came with it said the same thing twice.
+ * The shapes are distinct at 14dp, which is the size this is actually used at.
  *
  * Drawn rather than iconised because the project ships `material-icons-core`
  * only, and the icons that would fit are all in the extended set. Six shapes
  * are cheaper than that dependency and read better small.
  */
-enum class CardTypeMark(val colour: Color) {
-    ALLY(TypeAlly),
-    EVENT(TypeEvent),
-    SUPPORT(TypeSupport),
-    UPGRADE(TypeUpgrade),
-    RESOURCE(TypeResource),
-    OBLIGATION(TypeObligation),
-    OTHER(TypeOther),
+enum class CardTypeMark {
+    ALLY,
+    EVENT,
+    SUPPORT,
+    UPGRADE,
+    RESOURCE,
+    OBLIGATION,
+    OTHER,
 }
 
 /** The mark for a MarvelCDB type code. */
@@ -55,30 +51,51 @@ fun cardTypeMark(typeCode: String): CardTypeMark = when (typeCode) {
 }
 
 /**
- * A small filled shape standing for the card's type.
+ * A small shape standing for the card's type, in the colour of its aspect.
  *
- * Decorative: the type is already written beside it in words, so this carries
- * no content description and screen readers skip it rather than announcing a
- * shape.
+ * Two facts in one mark, which is what makes it worth the space. The shape is
+ * the type and the colour is the aspect: a player reading a decklist wants to
+ * know how much leadership is in it as much as how many allies, and the colour
+ * was previously spent restating the type the shape had already given.
+ *
+ * The aspect colours are the game's own, so they arrive already learned — the
+ * same red for aggression that is printed on the card. A card with no aspect at
+ * all, which in a deck means the hero's own cards, takes a neutral grey rather
+ * than borrowing a colour that would claim an aspect it has not got.
+ *
+ * Decorative by default: in a list that already writes the type and the aspect
+ * beside it, announcing a shape would only add noise. Where the row does not
+ * write them, [contentDescription] carries them instead.
  */
 @Composable
-fun CardTypeBadge(typeCode: String, modifier: Modifier = Modifier) {
+fun CardTypeBadge(
+    typeCode: String,
+    factionCode: String?,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
     val mark = cardTypeMark(typeCode)
-    Canvas(modifier.size(BADGE_SIZE)) {
+    val colour = aspectColor(factionCode) ?: MaterialTheme.colorScheme.onSurfaceVariant
+    val described = if (contentDescription == null) {
+        modifier
+    } else {
+        modifier.semantics { this.contentDescription = contentDescription }
+    }
+    Canvas(described.size(BADGE_SIZE)) {
         when (mark) {
-            CardTypeMark.ALLY -> drawCircle(mark.colour)
-            CardTypeMark.EVENT -> drawPolygon(mark.colour, sides = 3)
-            CardTypeMark.SUPPORT -> drawRect(mark.colour)
-            CardTypeMark.UPGRADE -> drawPolygon(mark.colour, sides = 4)
-            CardTypeMark.RESOURCE -> drawPolygon(mark.colour, sides = 6)
+            CardTypeMark.ALLY -> drawCircle(colour)
+            CardTypeMark.EVENT -> drawPolygon(colour, sides = 3)
+            CardTypeMark.SUPPORT -> drawRect(colour)
+            CardTypeMark.UPGRADE -> drawPolygon(colour, sides = 4)
+            CardTypeMark.RESOURCE -> drawPolygon(colour, sides = 6)
             // An open ring, so the one type a player does not choose to include
             // does not sit in the list looking like the ones they did.
             CardTypeMark.OBLIGATION -> drawCircle(
-                mark.colour,
+                colour,
                 radius = size.minDimension / 2f - RING_WIDTH / 2f,
                 style = Stroke(width = RING_WIDTH),
             )
-            CardTypeMark.OTHER -> drawCircle(mark.colour, radius = size.minDimension / 4f)
+            CardTypeMark.OTHER -> drawCircle(colour, radius = size.minDimension / 4f)
         }
     }
 }

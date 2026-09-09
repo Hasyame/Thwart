@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.repository.DeckImportError
 import com.hasyame.marvelchampions.data.repository.DeckRepository
@@ -55,6 +56,8 @@ fun DecksScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var addDialogOpen by remember { mutableStateOf(false) }
+    // The deck the bin was pressed on, held until the question is answered.
+    var confirmDelete by remember { mutableStateOf<SavedDeckEntity?>(null) }
 
     LaunchedEffect(sharedLink) {
         if (!sharedLink.isNullOrBlank()) {
@@ -119,7 +122,7 @@ fun DecksScreen(
                                 )
                             },
                             trailingContent = {
-                                IconButton(onClick = { viewModel.delete(deck.id) }) {
+                                IconButton(onClick = { confirmDelete = deck }) {
                                     Icon(
                                         Icons.Filled.Clear,
                                         contentDescription = stringResource(R.string.action_delete),
@@ -141,6 +144,30 @@ fun DecksScreen(
             onBuild = {
                 addDialogOpen = false
                 onBuildDeck()
+            },
+        )
+    }
+
+    // A deck is somebody's evening of building, and the bin sits on the row
+    // beside a deck they meant to open. Asking costs one tap; not asking cost
+    // a player their deck.
+    confirmDelete?.let { deck ->
+        AlertDialog(
+            onDismissRequest = { confirmDelete = null },
+            title = { Text(stringResource(R.string.decks_delete_title)) },
+            text = { Text(stringResource(R.string.decks_delete_message, deck.name)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.delete(deck.id)
+                        confirmDelete = null
+                    },
+                ) { Text(stringResource(R.string.action_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDelete = null }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
             },
         )
     }

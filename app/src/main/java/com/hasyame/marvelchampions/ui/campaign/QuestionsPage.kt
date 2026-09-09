@@ -353,7 +353,10 @@ fun QuestionsPage(
 
                         PromptType.CHOICE -> {
                             Text(label, style = MaterialTheme.typography.titleSmall)
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
                                 prompt.options.forEach { option ->
                                     FilterChip(
                                         selected = choices[prompt.id] == option.id,
@@ -375,7 +378,10 @@ fun QuestionsPage(
                         )
                     }
                     if (previews.isNotEmpty()) {
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
                             previews.forEach { code ->
                                 AssistChip(
                                     onClick = { onCardClick(code) },
@@ -487,7 +493,10 @@ private fun DeckCardField(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     } else {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             // Tapping a chip removes that card, so a mistake is undone where it
             // is seen rather than by reopening the list.
             selected.forEach { code ->

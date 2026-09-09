@@ -110,7 +110,10 @@ fun LongBreakPage(
         }
 
         Section(stringResource(R.string.long_break_where)) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 PausedPhase.entries.forEach { phase ->
                     FilterChip(
                         selected = draft.phase == phase,
@@ -122,7 +125,10 @@ fun LongBreakPage(
             // The villain phase has steps and the player phase does not, so the
             // steps only appear once they are the question being asked.
             if (draft.phase == PausedPhase.VILLAIN) {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     VillainStep.entries.forEach { step ->
                         FilterChip(
                             selected = draft.villainStep == step,
@@ -187,7 +193,10 @@ fun LongBreakPage(
                     text = stringResource(R.string.long_break_stage),
                     style = MaterialTheme.typography.labelLarge,
                 )
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     (1..3).forEach { stage ->
                         FilterChip(
                             selected = draft.villainStage == stage,

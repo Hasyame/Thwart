@@ -147,7 +147,10 @@ private fun ChipSection(
         return
     }
     Text(text = title, style = MaterialTheme.typography.titleSmall)
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         values.map { it to label(it, labels) }
             .sortedBy { it.second }
             .forEach { (value, shown) ->

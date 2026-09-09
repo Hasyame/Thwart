@@ -18,6 +18,8 @@
     <string name="action_clear">Clear</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_more">More</string>
     <string name="action_clear_filters">Clear filters</string>
 
     <!-- Cards -->
@@ -204,6 +206,9 @@
     <string name="decks_new">New deck</string>
     <string name="decks_build_from_scratch">Or build one from scratch</string>
     <string name="decks_name">Deck name</string>
+    <string name="decks_rename">Rename this deck</string>
+    <string name="decks_delete_title">Delete this deck?</string>
+    <string name="decks_delete_message">%1$s will be removed from this phone. A deck imported from MarvelCDB stays on MarvelCDB and can be imported again.</string>
     <string name="decks_choose_hero">Choose a hero</string>
     <plurals name="decks_choose_aspects">
         <item quantity="one">Choose %1$d aspect</item>

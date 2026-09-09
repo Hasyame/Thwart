@@ -73,6 +73,27 @@ class DeckDetailViewModel @Inject constructor(
     }
 
     /**
+     * Gives the deck a name of your own.
+     *
+     * Imported decks included, which is the point: MarvelCDB names a deck
+     * after its hero unless the author renamed it there, so a list of imports
+     * can be four decks all called Iron Man with no way to tell them apart. The
+     * name is a local edit like any other, so refreshing from MarvelCDB will
+     * warn before it takes the name back.
+     */
+    fun rename(name: String) {
+        val id = deckId ?: return
+        val cleaned = name.trim()
+        if (cleaned.isBlank()) {
+            return
+        }
+        viewModelScope.launch {
+            repository.renameDeck(id, cleaned)
+            load(id)
+        }
+    }
+
+    /**
      * Legality is shown for every deck, imported ones included: a campaign
      * refuses an illegal deck, so it has to be visible before you get there.
      */

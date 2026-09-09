@@ -105,6 +105,7 @@ fun NewDeckScreen(
                     FlowRow(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         NewDeckViewModel.ASPECTS.forEach { aspect ->
                             FilterChip(

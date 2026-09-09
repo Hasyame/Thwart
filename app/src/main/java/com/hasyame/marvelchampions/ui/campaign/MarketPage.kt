@@ -94,7 +94,10 @@ fun MarketPage(
                     text = stringResource(R.string.campaign_who_is_buying),
                     style = MaterialTheme.typography.titleSmall,
                 )
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     run.state.heroes.forEachIndexed { index, hero ->
                         FilterChip(
                             selected = hero.id == buyerId,

@@ -139,7 +139,10 @@ fun StartCampaignScreen(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     state.templates.forEach { candidate ->
                         FilterChip(
                             selected = template?.id == candidate.id,
@@ -251,7 +254,10 @@ fun StartCampaignScreen(
             template?.setupChoices?.forEach { choice ->
                 Section(choice.label.resolve(campaignTextLocale)) {
                     val selected = choices[choice.id] ?: choice.options.firstOrNull()?.id
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         choice.options.forEach { option ->
                             FilterChip(
                                 selected = selected == option.id,
@@ -273,8 +279,16 @@ fun StartCampaignScreen(
                 }
             }
 
+            // One question, asked once. Choosing Expert and choosing which
+            // Expert set to shuffle in are two halves of the same decision, and
+            // they used to sit in two headed sections with a paragraph between
+            // them — so the screen said "Expert" in one place and "Expert I" in
+            // another and looked like it was asking twice.
             Section(stringResource(R.string.campaign_difficulty)) {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     difficulties.forEach { value ->
                         FilterChip(
                             selected = effectiveDifficulty == value,
@@ -283,41 +297,40 @@ fun StartCampaignScreen(
                         )
                     }
                 }
-                Text(
-                    text = stringResource(R.string.campaign_roster_locked),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
 
-            // Which cards actually go in the encounter deck. A standard
-            // campaign takes one Standard set; an expert campaign takes an
-            // Expert set *and* a Standard one, never the Expert alone. Asked
-            // once, because the deck is built once and played all the way
-            // through.
-            if (state.standardSets.isNotEmpty() || state.expertSets.isNotEmpty()) {
-                Section(stringResource(R.string.campaign_difficulty_sets)) {
-                    if (isExpert && state.expertSets.isNotEmpty()) {
-                        SetChoice(
-                            label = stringResource(R.string.campaign_expert_set),
-                            sets = state.expertSets,
-                            chosen = expertSet,
-                            onChoose = { expertSet = it },
-                        )
-                    }
-                    if (state.standardSets.isNotEmpty()) {
-                        SetChoice(
-                            label = stringResource(R.string.session_standard_set),
-                            sets = state.standardSets,
-                            chosen = standardSet,
-                            onChoose = { standardSet = it },
-                        )
-                    }
+                // Which cards actually go in the encounter deck. A standard
+                // campaign takes one Standard set; an expert campaign takes an
+                // Expert set *and* a Standard one, never the Expert alone.
+                // Asked once, because the deck is built once and played all the
+                // way through.
+                val hasSets = state.standardSets.isNotEmpty() || state.expertSets.isNotEmpty()
+                if (isExpert && state.expertSets.isNotEmpty()) {
+                    SetChoice(
+                        label = stringResource(R.string.campaign_expert_set),
+                        sets = state.expertSets,
+                        chosen = expertSet,
+                        onChoose = { expertSet = it },
+                    )
+                }
+                if (state.standardSets.isNotEmpty()) {
+                    SetChoice(
+                        label = stringResource(R.string.session_standard_set),
+                        sets = state.standardSets,
+                        chosen = standardSet,
+                        onChoose = { standardSet = it },
+                    )
+                }
+                if (hasSets) {
                     Text(
                         text = stringResource(R.string.campaign_set_random_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+                Text(
+                    text = stringResource(R.string.campaign_roster_locked),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
 
             Button(
@@ -358,7 +371,10 @@ private fun SetChoice(
     onChoose: (String) -> Unit,
 ) {
     Text(text = label, style = MaterialTheme.typography.labelLarge)
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         FilterChip(
             selected = chosen == RANDOM_SET,
             onClick = { onChoose(RANDOM_SET) },

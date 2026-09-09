@@ -256,7 +256,7 @@ private fun CardRow(
     onRemove: () -> Unit,
 ) {
     ListItem(
-        leadingContent = { CardTypeBadge(card.typeCode) },
+        leadingContent = { CardTypeBadge(card.typeCode, card.factionCode) },
         headlineContent = {
             Text(if (quantity > 0) "$quantity× ${card.name}" else card.name)
         },

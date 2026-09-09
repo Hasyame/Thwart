@@ -475,7 +475,10 @@ private fun CardChips(
 ) {
     Column {
         Text(label, style = MaterialTheme.typography.labelLarge)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             codes.forEach { code ->
                 AssistChip(
                     onClick = { onCardClick(code) },
@@ -667,6 +670,7 @@ private fun SetupPanel(
                                 if (action.perHero) {
                                     FlowRow(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
                                     ) {
                                         run.state.heroes.forEach { hero ->
                                             OutlinedButton(
@@ -728,7 +732,10 @@ private fun DrawnCards(
             color = MaterialTheme.colorScheme.primary,
         )
     }
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         codes.forEach { code ->
             AssistChip(
                 onClick = { if (undecided) onKeep(code) else onCardClick(code) },

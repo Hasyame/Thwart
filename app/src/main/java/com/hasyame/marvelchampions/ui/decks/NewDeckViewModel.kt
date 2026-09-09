@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,9 +22,32 @@ data class NewDeckUiState(
     val rules: HeroDeckRules? = null,
     val chosenAspects: List<String> = emptyList(),
     val name: String = "",
+    /**
+     * Whether the player has typed a name of their own.
+     *
+     * Once they have, picking a hero must not touch it. Without this the
+     * prefill was a plain "overwrite if blank", and blank is exactly what the
+     * field is for the moment somebody starts typing into it while the hero's
+     * rules are still loading: the load finished, read a field it had seen
+     * empty, and put the hero's name back over what had just been typed. It
+     * came out as a deck called "Iron Man" that the player had named something
+     * else.
+     */
+    val nameEdited: Boolean = false,
     val isLoading: Boolean = true,
     val createdDeckId: String? = null,
 ) {
+    /**
+     * The state after a hero is picked, as far as the name is concerned.
+     *
+     * Its own function because it is the whole of the rule and the rule is what
+     * went wrong: a name the player wrote is theirs and a hero must not take it
+     * back, while an untouched field is a convenience worth filling so the
+     * Create button can be pressed without typing anything.
+     */
+    fun namedAfterPicking(heroName: String): NewDeckUiState =
+        if (nameEdited) this else copy(name = heroName)
+
     val aspectsNeeded: Int get() = rules?.aspectCount ?: 1
     val canCreate: Boolean
         get() = selectedHero != null &&
@@ -48,10 +72,7 @@ class NewDeckViewModel @Inject constructor(
             // state is read before the load suspends, so an aspect ticked while
             // the sixty-five heroes were being fetched was quietly discarded.
             val heroes = builderRepository.heroes(locale)
-            state.value = state.value.copy(
-                heroes = heroes,
-                isLoading = false,
-            )
+            state.update { it.copy(heroes = heroes, isLoading = false) }
         }
     }
 
@@ -59,31 +80,36 @@ class NewDeckViewModel @Inject constructor(
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
             val rules = builderRepository.heroRules(hero.card.code, locale)
-            state.value = state.value.copy(
-                selectedHero = hero,
-                rules = rules,
-                // Aspect choices belong to a hero, so they reset with it.
-                chosenAspects = emptyList(),
-                name = state.value.name.ifBlank { hero.card.name },
-            )
+            // `update` rather than an assignment: this lands after a database
+            // read, and a plain read-modify-write puts back whatever the field
+            // held when the read started, discarding anything typed meanwhile.
+            state.update { current ->
+                current.namedAfterPicking(hero.card.name).copy(
+                    selectedHero = hero,
+                    rules = rules,
+                    // Aspect choices belong to a hero, so they reset with it.
+                    chosenAspects = emptyList(),
+                )
+            }
         }
     }
 
     fun toggleAspect(aspect: String) {
-        val current = state.value.chosenAspects
-        val needed = state.value.aspectsNeeded
-        val next = when {
-            aspect in current -> current - aspect
-            // Picking past the limit replaces the oldest choice rather than
-            // making the user deselect first.
-            current.size >= needed -> current.drop(1) + aspect
-            else -> current + aspect
+        state.update { current ->
+            val chosen = current.chosenAspects
+            val next = when {
+                aspect in chosen -> chosen - aspect
+                // Picking past the limit replaces the oldest choice rather than
+                // making the user deselect first.
+                chosen.size >= current.aspectsNeeded -> chosen.drop(1) + aspect
+                else -> chosen + aspect
+            }
+            current.copy(chosenAspects = next)
         }
-        state.value = state.value.copy(chosenAspects = next)
     }
 
     fun setName(name: String) {
-        state.value = state.value.copy(name = name)
+        state.update { it.copy(name = name, nameEdited = true) }
     }
 
     fun create() {
@@ -102,12 +128,12 @@ class NewDeckViewModel @Inject constructor(
                 // are required, so the deck opens with them already in it.
                 slots = current.rules?.requiredCards.orEmpty(),
             )
-            state.value = state.value.copy(createdDeckId = id)
+            state.update { it.copy(createdDeckId = id) }
         }
     }
 
     fun consumeCreatedDeck() {
-        state.value = state.value.copy(createdDeckId = null)
+        state.update { it.copy(createdDeckId = null) }
     }
 
     companion object {
