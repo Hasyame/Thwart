@@ -1,0 +1,20 @@
+Thank you Dani, whose email this release is.
+
+You can rename a deck now, from the menu on the deck's own screen. Imported
+decks too, which is the point: MarvelCDB names a deck after its hero unless
+its author renamed it, so a list of imports can be four decks all called
+Iron Man.
+
+Deleting a deck asks first. The bin sat next to the deck you meant to open.
+
+A name you typed while the app was loading a hero could be thrown away and
+replaced by the hero's name. It is yours the moment you touch the field.
+
+A row of chips that ran onto a second line had no gap above it, which is
+what made Standard III look wrong. Fixed everywhere it happens.
+
+In a decklist the type mark now takes the colour of the card's aspect: the
+shape was already telling you the type. And the same mark is on the deck
+view, which had none.
+
+Starting a campaign asks about difficulty once instead of twice.

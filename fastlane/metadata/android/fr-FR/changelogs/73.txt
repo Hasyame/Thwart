@@ -1,0 +1,23 @@
+Merci Dani, dont ce sont ici les retours.
+
+Vous pouvez renommer un deck, depuis le menu de sa fiche. Les decks
+importés aussi, et c'est bien là l'intérêt : MarvelCDB nomme un deck
+d'après son héros tant que son auteur ne l'a pas renommé, et une liste
+d'imports peut donc être quatre decks tous appelés Iron Man.
+
+Supprimer un deck demande confirmation. La corbeille était juste à côté du
+deck que vous vouliez ouvrir.
+
+Un nom saisi pendant que l'application chargeait un héros pouvait être
+effacé et remplacé par celui du héros. Le champ est le vôtre dès que vous y
+touchez.
+
+Une ligne d'étiquettes qui passait à la ligne n'avait aucun espace au-dessus,
+ce qui donnait ce Standard III mal affiché. Corrigé partout.
+
+Dans un deck, la pastille de type prend désormais la couleur de l'affinité :
+la forme disait déjà le type. Et cette pastille apparaît dans la vue du
+deck, qui n'en avait aucune.
+
+Le lancement d'une campagne ne pose plus la question de la difficulté deux
+fois.
