@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.domain.deckbuilder.DeckValidation
 import com.hasyame.marvelchampions.domain.deckbuilder.HeroDeckRules
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,6 +59,9 @@ class DeckEditorViewModel @Inject constructor(
     private val query = MutableStateFlow("")
     private var deckId: String? = null
 
+    /** The subscription to the deck row, cancelled if this screen is reused. */
+    private var watching: Job? = null
+
     init {
         // No distinctUntilChanged: StateFlow already conflates equal values.
         query
@@ -66,20 +70,45 @@ class DeckEditorViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    /**
+     * Opens a deck and then keeps watching it.
+     *
+     * Observed rather than read once, and the difference only shows with sync
+     * on: a deck edited on a tablet used to leave this screen displaying what
+     * it had read when it opened, with no sign that anything had moved. Now the
+     * change arrives here the moment it lands, through the same path this
+     * screen's own edits take.
+     *
+     * The hazard this deliberately does not have is text under somebody's
+     * fingers. What updates here is a list of quantities, not a field being
+     * typed into: the deck's name is edited in a dialogue that holds its own
+     * copy, and nothing writes over it while it is open.
+     */
     fun load(id: String) {
-        deckId = id
-        viewModelScope.launch {
-            val locale = preferences.currentCardLocale()
-            val deck = deckRepository.getDeck(id)
-            if (deck == null) {
-                state.value = state.value.copy(isLoading = false)
-                return@launch
-            }
-            val rules = builderRepository.heroRules(deck.heroCode, locale)
-            state.value = state.value.copy(deck = deck, rules = rules, isLoading = false)
-            reloadDeckContents()
-            refreshCandidates()
+        if (deckId == id) {
+            return
         }
+        deckId = id
+        watching?.cancel()
+        watching = deckRepository.observeDeck(id)
+            .onEach { deck ->
+                if (deck == null) {
+                    state.value = state.value.copy(isLoading = false)
+                    return@onEach
+                }
+                val rules = state.value.rules
+                    ?: builderRepository.heroRules(
+                        deck.heroCode,
+                        preferences.currentCardLocale(),
+                    )
+                val first = state.value.deck == null
+                state.value = state.value.copy(deck = deck, rules = rules, isLoading = false)
+                reloadDeckContents()
+                if (first) {
+                    refreshCandidates()
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun setQuery(value: String) {
@@ -100,16 +129,25 @@ class DeckEditorViewModel @Inject constructor(
 
     fun removeCard(code: String) = changeQuantity(code, -1)
 
+    /**
+     * The tap is sent as what it is: one more, or one fewer.
+     *
+     * It used to read the quantity off this screen's own copy, add the delta
+     * and send the total. That is fine on one device and wrong on two: the copy
+     * on screen can be older than the row, so the total was computed from a
+     * number another device had already changed, and sending it wrote that
+     * change away. The repository does the arithmetic against the row instead.
+     *
+     * Nothing is reloaded here either. The screen observes the deck, so the
+     * write comes back through the same path a change from another device
+     * takes — one way in, and no chance of the two disagreeing.
+     */
     private fun changeQuantity(code: String, delta: Int) {
         val id = deckId ?: return
         if (!state.value.isEditable) {
             return
         }
-        viewModelScope.launch {
-            val current = state.value.slots[code] ?: 0
-            deckRepository.setCardQuantity(id, code, current + delta)
-            reloadDeckContents()
-        }
+        viewModelScope.launch { deckRepository.adjustCardQuantity(id, code, delta) }
     }
 
     fun rename(name: String) {

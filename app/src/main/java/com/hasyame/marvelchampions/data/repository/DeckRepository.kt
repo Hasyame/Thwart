@@ -206,15 +206,25 @@ class DeckRepository @Inject constructor(
     }
 
     /**
-     * Changes how many copies of a card a locally built deck holds.
+     * Adds [delta] copies of a card to a deck, or removes them.
      *
-     * Only local decks are editable: an imported deck must stay a faithful copy
-     * of what MarvelCDB has, so that a refresh never silently discards edits.
+     * A delta rather than a total, and that is the whole point of the shape.
+     * The screen that calls this is showing a number it read some time ago, and
+     * since sync arrived that number can be out of date: another device may have
+     * changed the same deck in between. Sending "make it three" writes the
+     * caller's stale arithmetic over whatever arrived; sending "one more"
+     * composes with it, because the sum is worked out here against the row as it
+     * stands right now.
+     *
+     * It is also what the person meant. Nobody taps + thinking "set this to
+     * three"; they think "one more of these", and the two only look the same
+     * while there is exactly one device.
      */
-    suspend fun setCardQuantity(deckId: String, cardCode: String, quantity: Int): Boolean =
+    suspend fun adjustCardQuantity(deckId: String, cardCode: String, delta: Int): Boolean =
         withContext(ioDispatcher) {
             val deck = savedDeckDao.getDeck(deckId) ?: return@withContext false
             val slots = parseSlots(deck.slots).toMutableMap()
+            val quantity = (slots[cardCode] ?: 0) + delta
             if (quantity <= 0) {
                 slots.remove(cardCode)
             } else {
