@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+>
+
+    <!--
+      Points debug builds at the cleartext exemption for the emulator's host
+      loopback. The main manifest sets no config of its own, so this simply
+      adds one to the debug variant.
+    -->
+    <application android:networkSecurityConfig="@xml/network_security_config_debug" />
+</manifest>

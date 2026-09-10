@@ -398,6 +398,32 @@ class SyncRecordCodec @Inject constructor(
     private inline fun <reified T> encode(value: T): JsonObject =
         json.encodeToJsonElement(value) as JsonObject
 
+    /**
+     * How many of these incoming records would keep a deck twice.
+     *
+     * Asked before a first merge so the question can say so. Somebody who is
+     * not expecting a second deck with a suffixed name reads it as sync having
+     * duplicated their work, and finding that out afterwards is exactly the
+     * kind of surprise that makes a person switch the feature off.
+     *
+     * On a first merge every local row is dirty by definition — it has no
+     * bookkeeping at all, which is what "never uploaded" looks like — so the
+     * test reduces to the fork rule itself.
+     */
+    suspend fun countForks(records: List<SyncRecordDto>): Int {
+        var forks = 0
+        for (record in records) {
+            if (record.collection != SyncCollection.SAVED_DECKS.key || record.deleted) {
+                continue
+            }
+            val remote = record.body?.let { decode<SavedDeckEntity>(it) } ?: continue
+            if (SyncMerge.deckForks(remote, dao.deck(record.id))) {
+                forks++
+            }
+        }
+        return forks
+    }
+
     private inline fun <reified T> decode(body: JsonObject): T =
         json.decodeFromJsonElement(body)
 

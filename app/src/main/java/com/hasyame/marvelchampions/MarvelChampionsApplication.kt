@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import dagger.hilt.android.HiltAndroidApp
-import com.hasyame.marvelchampions.data.sync.ForegroundCatchUp
+import com.hasyame.marvelchampions.data.sync.ForegroundSync
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 import javax.inject.Provider
@@ -33,9 +33,10 @@ class MarvelChampionsApplication :
         // First thing, so a crash during the rest of startup is still recorded.
         CrashLog.install(this)
         sweepPhotos()
-        // Asks the account what it missed, whenever the app becomes visible.
-        // Inert unless the player has signed in and asked for automatic sync.
-        foregroundCatchUp.get().start()
+        // Catches up and opens the live channel whenever the app becomes
+        // visible, and closes it again on leaving. Inert unless the player has
+        // signed in and asked for automatic sync.
+        foregroundSync.get().start()
     }
 
     /**
@@ -66,7 +67,7 @@ class MarvelChampionsApplication :
      * would build a slice of the graph before the first screen needs it.
      */
     @Inject
-    lateinit var foregroundCatchUp: Provider<ForegroundCatchUp>
+    lateinit var foregroundSync: Provider<ForegroundSync>
 
     @Inject
     lateinit var okHttpClient: Provider<OkHttpClient>

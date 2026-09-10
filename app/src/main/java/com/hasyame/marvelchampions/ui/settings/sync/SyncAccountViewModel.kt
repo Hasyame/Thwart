@@ -17,6 +17,7 @@ import com.hasyame.marvelchampions.data.sync.SyncEndpoints
 import com.hasyame.marvelchampions.data.sync.SyncEngine
 import com.hasyame.marvelchampions.data.sync.SyncException
 import com.hasyame.marvelchampions.data.sync.SyncSessionStore
+import com.hasyame.marvelchampions.data.sync.SyncStream
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -110,6 +111,7 @@ class SyncAccountViewModel @Inject constructor(
     private val engine: SyncEngine,
     private val sessions: SyncSessionStore,
     private val backups: BackupRepository,
+    private val stream: SyncStream,
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
@@ -226,6 +228,9 @@ class SyncAccountViewModel @Inject constructor(
      * everything intact.
      */
     fun signOut() {
+        // Before the session is cleared, so the channel closes rather than
+        // discovering on its next read that the token it holds is gone.
+        stream.disconnect()
         viewModelScope.launch {
             sessions.signOut()
             engine.forgetSyncState()
@@ -250,6 +255,7 @@ class SyncAccountViewModel @Inject constructor(
      */
     fun setEnabled(enabled: Boolean) {
         if (!enabled) {
+            stream.disconnect()
             viewModelScope.launch { sessions.setEnabled(false) }
             return
         }
@@ -268,7 +274,14 @@ class SyncAccountViewModel @Inject constructor(
      * to remember to press the button.
      */
     fun setAutoSync(autoSync: Boolean) {
-        viewModelScope.launch { sessions.setAutoSync(autoSync) }
+        viewModelScope.launch {
+            sessions.setAutoSync(autoSync)
+            // After the preference is written, not beside it. Connecting reads
+            // that same preference to decide whether it is allowed to, so a
+            // call that raced the write read the old value, decided no, and
+            // left the switch on with nothing behind it.
+            if (autoSync) stream.connect() else stream.disconnect()
+        }
     }
 
     fun cancelAdoption() {
@@ -398,6 +411,7 @@ fun SyncException.messageRes(): Int = when (code) {
     SyncException.WEAK_PASSWORD -> R.string.sync_error_weak_password
     SyncException.INVALID_RECOVERY_CODE -> R.string.sync_error_invalid_recovery_code
     SyncException.REGISTRATION_CLOSED -> R.string.sync_registration_closed
+    SyncException.EMAIL_NOT_VERIFIED -> R.string.sync_error_email_not_verified
     SyncException.CURSOR_TOO_OLD -> R.string.sync_error_cursor_too_old
     SyncException.RATE_LIMITED -> R.string.sync_error_rate_limited
     SyncException.OFFLINE -> R.string.sync_error_offline

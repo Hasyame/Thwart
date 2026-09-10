@@ -477,6 +477,7 @@ class SyncEngine @Inject constructor(
                         serverIds[it.key].orEmpty().size
                     },
                     localOnly = localOnly,
+                    forks = codec.countForks(records),
                 ),
                 records = records,
                 cursor = cursor,

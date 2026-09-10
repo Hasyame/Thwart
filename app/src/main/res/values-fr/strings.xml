@@ -760,12 +760,18 @@
     <string name="sync_adopt_server">Dans le compte : %1$s.</string>
     <string name="sync_adopt_local">Sur ce téléphone et pas dans le compte : %1$s.</string>
     <string name="sync_adopt_local_none">Tout ce qui est sur ce téléphone est déjà dans le compte.</string>
+    <plurals name="sync_adopt_forks">
+        <item quantity="one">%1$d deck a été modifié des deux côtés. Les deux versions sont conservées, la seconde sous un nouveau nom : rien de ce que vous avez construit n\'est perdu.</item>
+        <item quantity="many">%1$d de decks ont été modifiés des deux côtés. Les deux versions de chacun sont conservées, la seconde sous un nouveau nom : rien de ce que vous avez construit n\'est perdu.</item>
+        <item quantity="other">%1$d decks ont été modifiés des deux côtés. Les deux versions de chacun sont conservées, la seconde sous un nouveau nom : rien de ce que vous avez construit n\'est perdu.</item>
+    </plurals>
     <string name="sync_adopt_merge">Fusionner</string>
     <string name="sync_adopt_server_only">Ne garder que ce qui est dans le compte</string>
     <string name="sync_adopt_server_only_warning">Les données de ce téléphone sont d\'abord écrites dans un fichier de sauvegarde : même cette réponse est réversible.</string>
     <string name="sync_result">Reçus : %1$d. Envoyés : %2$d.</string>
     <string name="sync_error_unauthorized">Déconnecté. Reconnectez-vous.</string>
     <string name="sync_error_invalid_credentials">Ce nom et ce mot de passe ne correspondent pas.</string>
+    <string name="sync_error_email_not_verified">Confirmez d\'abord votre adresse. Le serveur vous a envoyé un message à la création du compte, et celui-ci reste désactivé tant que vous n\'avez pas suivi le lien qu\'il contient.</string>
     <string name="sync_error_handle_taken">Ce nom est déjà pris.</string>
     <string name="sync_error_invalid_handle">Un nom fait 3 à 32 lettres, chiffres, points, tirets ou tirets bas.</string>
     <string name="sync_error_weak_password">Un mot de passe doit faire au moins 10 caractères.</string>

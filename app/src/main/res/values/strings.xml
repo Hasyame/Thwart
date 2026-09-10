@@ -737,12 +737,17 @@
     <string name="sync_adopt_server">On the account: %1$s.</string>
     <string name="sync_adopt_local">On this phone and not in the account: %1$s.</string>
     <string name="sync_adopt_local_none">Everything on this phone is already in the account.</string>
+    <plurals name="sync_adopt_forks">
+        <item quantity="one">One deck has been edited in both places. Both versions are kept, the second under a new name, so nothing you built is lost.</item>
+        <item quantity="other">%1$d decks have been edited in both places. Both versions of each are kept, the second under a new name, so nothing you built is lost.</item>
+    </plurals>
     <string name="sync_adopt_merge">Merge them</string>
     <string name="sync_adopt_server_only">Keep only what is on the account</string>
     <string name="sync_adopt_server_only_warning">The data on this phone is written to a backup file first, so even this answer can be undone.</string>
     <string name="sync_result">Received: %1$d. Sent: %2$d.</string>
     <string name="sync_error_unauthorized">Signed out. Sign in again.</string>
     <string name="sync_error_invalid_credentials">That name and password do not match.</string>
+    <string name="sync_error_email_not_verified">Confirm your address first. The server sent you a message when the account was created, and the account stays switched off until you follow the link in it.</string>
     <string name="sync_error_handle_taken">That name is taken.</string>
     <string name="sync_error_invalid_handle">A name is 3 to 32 letters, digits, dots, dashes or underscores.</string>
     <string name="sync_error_weak_password">A password needs at least 10 characters.</string>

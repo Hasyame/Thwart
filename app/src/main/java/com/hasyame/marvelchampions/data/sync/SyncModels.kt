@@ -282,6 +282,13 @@ class SyncException(
         const val INVALID_RECOVERY_CODE = "invalid_recovery_code"
         const val REGISTRATION_CLOSED = "registration_closed"
 
+        /**
+         * The account exists and is switched off until the address is
+         * confirmed. Returned by signing in and by every authenticated
+         * call, so it is the first thing a new account meets.
+         */
+        const val EMAIL_NOT_VERIFIED = "email_not_verified"
+
         /** This device has been away longer than the tombstone retention. */
         const val CURSOR_TOO_OLD = "cursor_too_old"
 

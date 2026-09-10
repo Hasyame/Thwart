@@ -160,7 +160,7 @@ class AutoSyncTest {
             "CampaignRunViewModel.kt" to "LONG_BREAK",
             // The app coming back to the foreground, which is the only
             // trigger that asks rather than tells.
-            "ForegroundCatchUp.kt" to "RETURNED_TO_APP",
+            "ForegroundSync.kt" to "RETURNED_TO_APP",
             // A deck saved, a collection changed, a card starred.
             "DeckRepository.kt" to "DECK_ADDED",
             "CollectionRepository.kt" to "COLLECTION_CHANGED",

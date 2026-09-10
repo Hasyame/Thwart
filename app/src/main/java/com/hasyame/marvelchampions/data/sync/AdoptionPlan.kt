@@ -28,6 +28,15 @@ data class AdoptionCounts(
     val server: Map<SyncCollection, Int> = emptyMap(),
     /** Live rows this phone holds that the account has never seen. */
     val localOnly: Map<SyncCollection, Int> = emptyMap(),
+    /**
+     * Decks that would be kept twice rather than one version being discarded.
+     *
+     * The one outcome of a merge that looks like a bug from the outside: the
+     * same deck edited in both places produces a second copy with a suffixed
+     * name. Counted here so the question can say it in advance instead of
+     * leaving somebody to discover it in their deck list.
+     */
+    val forks: Int = 0,
 ) {
 
     fun server(collection: SyncCollection): Int = server[collection] ?: 0

@@ -622,6 +622,20 @@ private fun AdoptionDialog(
                         stringResource(R.string.sync_adopt_local, counted { counts.localOnly(it) })
                     },
                 )
+                // The one outcome of a merge that reads as a bug from the
+                // outside. Said in advance, because finding a second deck with
+                // a suffixed name afterwards looks like sync duplicated your
+                // work rather than like it kept both versions of it.
+                if (counts.forks > 0) {
+                    Text(
+                        text = pluralStringResource(
+                            R.plurals.sync_adopt_forks,
+                            counts.forks,
+                            counts.forks,
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 // The third answer sits in the body rather than beside the
                 // other two. A dialogue's button row is one line: stacking
                 // three there clipped the last of them off the bottom, and the

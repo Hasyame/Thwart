@@ -350,6 +350,7 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
+    implementation(libs.okhttp.sse)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
 

@@ -142,6 +142,16 @@ class SyncEndpoints(baseUrl: String) {
 
     fun device(id: String): String = "$base/v1/auth/devices/$id"
 
+    /**
+     * The live channel, starting from where this device has got to.
+     *
+     * `since` as well as the `Last-Event-ID` header: the header is what a
+     * browser sets by itself on an automatic reconnect, and the query is what a
+     * client that reconnects on its own uses. Sending both costs nothing and
+     * means the server can answer either way.
+     */
+    fun stream(since: Long): String = "$base/v1/sync/stream?since=$since"
+
     companion object {
         /**
          * The instance the app talks to unless told otherwise.
