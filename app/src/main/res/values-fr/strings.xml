@@ -731,7 +731,7 @@
     <string name="sync_new_password">Nouveau mot de passe</string>
     <string name="sync_registration_closed">Ce serveur n\'accepte pas de nouveaux comptes.</string>
     <string name="sync_recovery_title">Notez-le maintenant</string>
-    <string name="sync_recovery_body">C\'est le seul moyen de revenir dans votre compte. Aucune adresse e-mail n\'y est associée et le serveur n\'en garde qu\'une empreinte : personne ne pourra vous le renvoyer. Il n\'est affiché qu\'une fois.</string>
+    <string name="sync_recovery_body">Votre moyen de revenir si vous oubliez votre mot de passe. Le serveur n\'en garde qu\'une empreinte : personne ne pourra vous le renvoyer. Il n\'est affiché qu\'une fois.</string>
     <string name="sync_recovery_save">Enregistrer dans un fichier</string>
     <string name="sync_recovery_saved">Je l\'ai noté</string>
     <string name="sync_signed_in_as">Connecté en tant que %1$s</string>
@@ -784,7 +784,7 @@
     <string name="sync_email">Adresse e-mail</string>
     <string name="sync_identifier">Adresse e-mail</string>
     <string name="sync_identifier_hint">Ou le nom d\'un compte créé avant les adresses.</string>
-    <string name="sync_email_hint">C\'est par là que vous revenez. Elle n\'est pas vérifiée et aucun message ne lui est envoyé.</string>
+    <string name="sync_email_hint">Utilisez une adresse que vous pouvez consulter. Le serveur y envoie un lien, et le compte ne fonctionne pas tant que vous ne l\'avez pas suivi.</string>
     <string name="sync_error_invalid_email">Cela ne ressemble pas à une adresse e-mail.</string>
     <string name="sync_error_email_taken">Cette adresse a déjà un compte.</string>
     <plurals name="sync_result_forked">

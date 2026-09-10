@@ -708,7 +708,7 @@
     <string name="sync_new_password">New password</string>
     <string name="sync_registration_closed">This server is not taking new accounts.</string>
     <string name="sync_recovery_title">Write this down now</string>
-    <string name="sync_recovery_body">This is the only way back into your account. There is no email address on it and the server keeps only a fingerprint, so nobody can send it to you again. It is shown once.</string>
+    <string name="sync_recovery_body">Your way back in if you forget your password. The server keeps only a fingerprint of it, so nobody can send it to you again. It is shown once.</string>
     <string name="sync_recovery_save">Save to a file</string>
     <string name="sync_recovery_saved">I have saved it</string>
     <string name="sync_signed_in_as">Signed in as %1$s</string>
@@ -760,7 +760,7 @@
     <string name="sync_email">Email address</string>
     <string name="sync_identifier">Email address</string>
     <string name="sync_identifier_hint">Or the name on an account made before addresses existed.</string>
-    <string name="sync_email_hint">How you get back in. It is not verified and no message is sent to it.</string>
+    <string name="sync_email_hint">Use an address you can open. The server sends a link to it, and the account does not work until you follow that link.</string>
     <string name="sync_error_invalid_email">That does not look like an email address.</string>
     <string name="sync_error_email_taken">That address already has an account.</string>
     <plurals name="sync_result_forked">
