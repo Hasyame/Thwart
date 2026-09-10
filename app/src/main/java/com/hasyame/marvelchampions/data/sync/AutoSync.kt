@@ -40,6 +40,16 @@ enum class SyncTrigger(internal val settleSeconds: Long) {
     /** A game was filed away to be come back to. */
     LONG_BREAK(LEAVING_THE_TABLE),
 
+    /**
+     * The app came to the foreground.
+     *
+     * The one trigger that is not a write. It asks what happened elsewhere
+     * rather than announcing what happened here, which is the direction the
+     * other six cannot cover: a phone with nothing new of its own would
+     * otherwise never ask.
+     */
+    RETURNED_TO_APP(LEAVING_THE_TABLE),
+
     DECK_ADDED(TINKERING),
     COLLECTION_CHANGED(TINKERING),
     CARD_FAVOURITED(TINKERING),
