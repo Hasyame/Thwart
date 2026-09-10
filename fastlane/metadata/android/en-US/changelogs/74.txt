@@ -1,0 +1,23 @@
+Your other device's changes arrive while you are looking at the app.
+
+If you are signed in with sync switched on, Thwart now listens for changes
+made elsewhere and picks them up in about a second, instead of waiting until
+this phone happened to have a change of its own. It also asks what it missed
+whenever you open the app.
+
+It listens only while the app is on screen, and closes the connection the
+moment you leave it. No background service, no notification, nothing running
+behind a sleeping phone.
+
+Editing a deck is safer with two devices. A tap now means "one more of these"
+rather than "make it three", so adding a card on your phone can no longer
+undo a change you made on a tablet, and the deck list updates as changes
+arrive rather than after your next tap.
+
+The first-time merge question now warns you when it would keep a deck twice.
+
+An account whose address you have not confirmed yet now says so, instead of
+a general error that left you guessing.
+
+Nothing changes if you do not use an account: no connection is opened and
+nothing leaves the phone.

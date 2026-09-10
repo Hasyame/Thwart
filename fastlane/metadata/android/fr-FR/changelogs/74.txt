@@ -1,0 +1,25 @@
+Les changements de votre autre appareil arrivent pendant que vous regardez
+l'application.
+
+Si vous êtes connecté avec la synchronisation activée, Thwart écoute
+désormais les changements faits ailleurs et les récupère en une seconde
+environ, au lieu d'attendre que ce téléphone ait lui-même quelque chose à
+envoyer. Il demande aussi ce qu'il a manqué à chaque ouverture.
+
+Il n'écoute que lorsque l'application est à l'écran, et referme la connexion
+dès que vous la quittez. Aucun service en arrière-plan, aucune notification,
+rien qui tourne derrière un téléphone en veille.
+
+Modifier un deck est plus sûr à deux appareils. Un appui signifie maintenant
+« une de plus » et non « mets-en trois » : ajouter une carte sur votre
+téléphone ne peut plus annuler un changement fait sur une tablette, et la
+liste se met à jour à l'arrivée des changements plutôt qu'au prochain appui.
+
+La question de fusion à la première connexion prévient maintenant lorsqu'elle
+conserverait un deck en double.
+
+Un compte dont l'adresse n'est pas encore confirmée le dit, au lieu d'une
+erreur générale qui laissait deviner.
+
+Rien ne change si vous n'utilisez pas de compte : aucune connexion n'est
+ouverte et rien ne quitte le téléphone.

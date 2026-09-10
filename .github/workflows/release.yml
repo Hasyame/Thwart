@@ -146,6 +146,27 @@ jobs:
           fi
           echo "No bundled card data, as intended."
 
+      # The one transport-security exemption in this app is confined to debug
+      # builds by living in src/debug. That is a real property held in place by
+      # a directory name, so it is checked on the artefact rather than trusted:
+      # a manifest that permits cleartext would let a hostile network read
+      # somebody's sync traffic, and nothing else here would notice.
+      - name: No cleartext permitted in the package
+        run: |
+          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          BUILD_TOOLS=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          MANIFEST=$("$BUILD_TOOLS/aapt2" dump xmltree --file AndroidManifest.xml "$APK")
+          if echo "$MANIFEST" | grep -qiE 'networkSecurityConfig|usesCleartextTraffic'; then
+            echo "This APK relaxes transport security. It should not."
+            echo "$MANIFEST" | grep -iE 'networkSecurityConfig|usesCleartextTraffic'
+            exit 1
+          fi
+          if unzip -l "$APK" | grep -qi 'network_security'; then
+            echo "A network security config reached the release package."
+            exit 1
+          fi
+          echo "Cleartext is refused, as intended."
+
       # Proves the APK is signed by the real key rather than the debug one. The
       # build warns loudly in that case, but a warning in a log nobody reads is
       # how a debug-signed release gets published.
