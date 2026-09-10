@@ -179,6 +179,12 @@ class FakeSyncApi : SyncApi {
 
     override suspend fun recover(url: String, language: String, body: RecoverDto) = authResponse()
 
+    override suspend fun resendVerification(
+        url: String,
+        language: String,
+        body: ResendVerificationDto,
+    ): Response<ResendResponseDto> = Response.success(ResendResponseDto(sent = true))
+
     override suspend fun changePassword(
         url: String,
         authorization: String,

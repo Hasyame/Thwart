@@ -60,6 +60,18 @@ interface SyncApi {
         @Body body: RecoverDto,
     ): Response<AuthResponseDto>
 
+    /**
+     * Unauthenticated, and it has to be: the token belonging to an unconfirmed
+     * account is refused by every authenticated route, which is exactly the
+     * situation this exists to get out of.
+     */
+    @POST
+    suspend fun resendVerification(
+        @Url url: String,
+        @Header("Accept-Language") language: String,
+        @Body body: ResendVerificationDto,
+    ): Response<ResendResponseDto>
+
     @POST
     suspend fun changePassword(
         @Url url: String,
@@ -138,6 +150,7 @@ class SyncEndpoints(baseUrl: String) {
     val password: String get() = "$base/v1/auth/password"
     val devices: String get() = "$base/v1/auth/devices"
     val changes: String get() = "$base/v1/sync/changes"
+    val resendVerification: String get() = "$base/v1/auth/verify/resend"
     val account: String get() = "$base/v1/account"
 
     fun device(id: String): String = "$base/v1/auth/devices/$id"

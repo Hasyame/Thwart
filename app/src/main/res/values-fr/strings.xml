@@ -401,6 +401,8 @@
     <string name="settings_theme_light">Clair</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_about">À propos</string>
+    <string name="settings_patreon">Me soutenir sur Patreon</string>
+    <string name="settings_patreon_summary">Thwart est gratuite et le reste. Si elle vous sert, ceci m\'aide à continuer.</string>
     <string name="settings_about_summary">Qui a fait cette application, et pourquoi</string>
     <string name="about_story">Je suis un développeur amateur et, pour être honnête, cette application a été construite avec l\'aide de Claude Code, car le temps est ce qui me manque le plus.\n\nÀ l\'origine, je l\'ai développée pour moi : je voulais arrêter de fouiller dans des applications web en pleine partie et simplement être à l\'aise pendant que je joue.</string>
     <string name="about_note_title">Une note importante</string>
@@ -735,6 +737,13 @@
     <string name="sync_recovery_save">Enregistrer dans un fichier</string>
     <string name="sync_recovery_saved">Je l\'ai noté</string>
     <string name="sync_signed_in_as">Connecté en tant que %1$s</string>
+    <string name="sync_verify_title">Confirmez votre adresse</string>
+    <string name="sync_verify_body">Le serveur a envoyé un lien à cette adresse à la création du compte. Tant que vous ne l\'avez pas suivi, le compte est désactivé : il ne peut se connecter nulle part ailleurs et rien ne s\'y synchronise.</string>
+    <string name="sync_verify_resend">Renvoyer le lien</string>
+    <string name="sync_verify_resend_why">Votre mot de passe : c\'est la seule demande qu\'un compte non confirmé peut faire, et le serveur ne l\'accepte pas sans.</string>
+    <string name="sync_verify_send">Envoyer</string>
+    <string name="sync_verify_sent">C\'est parti, si un compte attend à cette adresse. Regardez dans vos indésirables s\'il n\'arrive pas.</string>
+    <string name="sync_verify_already">Cette adresse est déjà confirmée. Rien à envoyer.</string>
     <string name="sync_switch">Garder cet appareil à jour</string>
     <string name="sync_switch_summary">Désactivé tant que vous ne l\'activez pas. Se connecter dit qui vous êtes ; ceci dit si vos données voyagent.</string>
     <string name="sync_now">Synchroniser maintenant</string>

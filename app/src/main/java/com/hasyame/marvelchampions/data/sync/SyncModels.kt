@@ -191,8 +191,46 @@ data class AuthResponseDto(
      */
     val email: String = "",
     val token: String,
+    /**
+     * Whether the address has been confirmed.
+     *
+     * Defaults to true, which is the right answer for a server old enough not
+     * to send the field at all: an instance without verification has no
+     * unconfirmed accounts, so assuming the worst there would put a warning on
+     * a screen with nothing wrong with it.
+     */
+    val emailVerified: Boolean = true,
     val recoveryCode: String? = null,
     val recoveryCodeIssuedAt: String = "",
+)
+
+/**
+ * Asking for the confirmation link to be sent again.
+ *
+ * The password comes with it because this endpoint is unauthenticated — it has
+ * to be, since an unconfirmed account's token is refused everywhere — and
+ * without one it would be a way to make the server send mail to any address
+ * somebody could name.
+ */
+@Serializable
+data class ResendVerificationDto(
+    val handle: String,
+    val password: String,
+)
+
+/**
+ * What came of it.
+ *
+ * The server answers "sent" whatever happened, deliberately: a different answer
+ * for an address it does not know would turn this into a way of finding out who
+ * has an account. The one exception it does report is an account that was
+ * already confirmed, because there is nothing to send and saying so is more use
+ * than a message that never arrives.
+ */
+@Serializable
+data class ResendResponseDto(
+    val sent: Boolean = false,
+    val alreadyVerified: Boolean = false,
 )
 
 @Serializable

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The Patreon mark: a bar and a circle, in Patreon's own coral.
+
+  Drawn at the official proportions rather than approximated, and left in the
+  brand colour rather than tinted to the app's palette, because the whole point
+  of a logo on this button is that it is recognised before it is read.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="569"
+    android:viewportHeight="546">
+    <path
+        android:fillColor="#FF424D"
+        android:pathData="M0,0h100v546H0z" />
+    <path
+        android:fillColor="#FF424D"
+        android:pathData="M362.6,0a204.6,204.6 0,1 0,0 409.2 204.6,204.6 0,1 0,0 -409.2z" />
+</vector>

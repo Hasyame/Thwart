@@ -65,6 +65,8 @@ data class SyncAccountUiState(
     val signedIn: Boolean = false,
     val handle: String = "",
     val email: String = "",
+    /** False while the address is unconfirmed and the account is switched off. */
+    val emailVerified: Boolean = true,
     val enabled: Boolean = false,
     val autoSync: Boolean = false,
     val pending: Int = 0,
@@ -135,6 +137,7 @@ class SyncAccountViewModel @Inject constructor(
                         signedIn = session.isSignedIn,
                         handle = session.handle,
                         email = session.email,
+                        emailVerified = session.emailVerified,
                         enabled = session.enabled,
                         autoSync = session.autoSync,
                         lastSyncedAt = session.lastSyncedAt,
@@ -281,6 +284,34 @@ class SyncAccountViewModel @Inject constructor(
             // call that raced the write read the old value, decided no, and
             // left the switch on with nothing behind it.
             if (autoSync) stream.connect() else stream.disconnect()
+        }
+    }
+
+    /**
+     * Asks for the confirmation link again.
+     *
+     * The password is asked for because the endpoint requires it — it is
+     * unauthenticated, since the token belonging to an unconfirmed account is
+     * refused everywhere, and without a password it would be a way to make the
+     * server send mail to any address somebody could name. It is used for the
+     * one call and never stored.
+     *
+     * The server answers "sent" whatever happened, so this cannot report
+     * whether the address exists, and does not pretend to.
+     */
+    fun resendVerification(password: String) = attempt {
+        val identifier = state.value.email.ifBlank { state.value.handle }
+        val alreadyVerified = client.resendVerification(identifier, password)
+        update {
+            copy(
+                message = SyncMessage.Resource(
+                    if (alreadyVerified) {
+                        R.string.sync_verify_already
+                    } else {
+                        R.string.sync_verify_sent
+                    },
+                ),
+            )
         }
     }
 

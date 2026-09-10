@@ -48,6 +48,15 @@ data class SyncSession(
      */
     val email: String = "",
     /**
+     * False while the address on the account is still unconfirmed.
+     *
+     * The account exists, this device holds a token for it, and the server will
+     * refuse every request made with it. Worth its own field rather than being
+     * discovered through an error, so the screen can say so before somebody
+     * tries something and is turned away.
+     */
+    val emailVerified: Boolean = true,
+    /**
      * Null when signed out, and also when the stored ciphertext could not be
      * read — after a device restore, say. The two are the same thing to every
      * caller: there is no usable credential, so ask for one.
@@ -102,6 +111,7 @@ class SyncSessionStore @Inject constructor(
             accountId = preferences[KEY_ACCOUNT_ID].orEmpty(),
             handle = preferences[KEY_HANDLE].orEmpty(),
             email = preferences[KEY_EMAIL].orEmpty(),
+            emailVerified = preferences[KEY_EMAIL_VERIFIED] != false,
             token = preferences[KEY_TOKEN]?.let { secrets.decrypt(it) },
             enabled = preferences[KEY_ENABLED] == true,
             autoSync = preferences[KEY_AUTO_SYNC] == true,
@@ -162,6 +172,7 @@ class SyncSessionStore @Inject constructor(
             } else {
                 preferences.remove(KEY_TOKEN)
             }
+            preferences[KEY_EMAIL_VERIFIED] = response.emailVerified
             preferences[KEY_RECOVERY_ISSUED] = response.recoveryCodeIssuedAt
             if (previous != null && previous != response.accountId) {
                 preferences.remove(KEY_CURSOR)
@@ -250,6 +261,7 @@ class SyncSessionStore @Inject constructor(
             preferences.remove(KEY_ACCOUNT_ID)
             preferences.remove(KEY_HANDLE)
             preferences.remove(KEY_EMAIL)
+            preferences.remove(KEY_EMAIL_VERIFIED)
             preferences.remove(KEY_TOKEN)
             preferences.remove(KEY_CURSOR)
             preferences.remove(KEY_RECOVERY_ISSUED)
@@ -265,6 +277,7 @@ class SyncSessionStore @Inject constructor(
         val KEY_ACCOUNT_ID = stringPreferencesKey("account_id")
         val KEY_HANDLE = stringPreferencesKey("handle")
         val KEY_EMAIL = stringPreferencesKey("email")
+        val KEY_EMAIL_VERIFIED = booleanPreferencesKey("email_verified")
         val KEY_TOKEN = stringPreferencesKey("token")
         val KEY_ENABLED = booleanPreferencesKey("enabled")
         val KEY_AUTO_SYNC = booleanPreferencesKey("auto_sync")

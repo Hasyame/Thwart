@@ -4,6 +4,7 @@ import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -43,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.sync.AdoptionCounts
@@ -316,6 +319,87 @@ private fun InstanceSection(state: SyncAccountUiState, viewModel: SyncAccountVie
 private fun SignedIn(state: SyncAccountUiState, viewModel: SyncAccountViewModel) {
     var confirmingDelete by remember { mutableStateOf(false) }
     var deletePassword by remember { mutableStateOf("") }
+    var resending by remember { mutableStateOf(false) }
+    var resendPassword by remember { mutableStateOf("") }
+
+    /*
+        Said before anything is tried, not after something fails.
+
+        An account registered here and not yet confirmed is switched off at the
+        server: it holds a token and every request made with it is refused. The
+        person has no way of knowing that from this screen otherwise, and the
+        first thing they would learn is that the sync switch does not work.
+    */
+    if (!state.emailVerified) {
+        ComicPanel(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            Column(
+                Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.sync_verify_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+                Text(
+                    text = stringResource(R.string.sync_verify_body),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                OutlinedButton(
+                    onClick = {
+                        resendPassword = ""
+                        resending = true
+                    },
+                    enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.sync_verify_resend)) }
+            }
+        }
+    }
+
+    if (resending) {
+        AlertDialog(
+            onDismissRequest = { resending = false },
+            title = { Text(stringResource(R.string.sync_verify_resend)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // The endpoint is unauthenticated and needs the password,
+                    // because the token of an unconfirmed account is refused
+                    // everywhere. Explained rather than just demanded.
+                    Text(stringResource(R.string.sync_verify_resend_why))
+                    OutlinedTextField(
+                        value = resendPassword,
+                        onValueChange = { resendPassword = it },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                        ),
+                        label = { Text(stringResource(R.string.sync_password)) },
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = resendPassword.isNotBlank(),
+                    onClick = {
+                        viewModel.resendVerification(resendPassword)
+                        resendPassword = ""
+                        resending = false
+                    },
+                ) { Text(stringResource(R.string.sync_verify_send)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { resending = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+        )
+    }
 
     ListItem(
         headlineContent = { Text(stringResource(R.string.sync_signed_in_as, state.handle)) },

@@ -1,0 +1,17 @@
+Si votre e-mail de confirmation n'est jamais arrivé, vous pouvez en demander
+un autre.
+
+Un compte dont l'adresse n'est pas encore confirmée le dit maintenant sur
+l'écran du compte, explique que le compte est désactivé tant que vous n'avez
+pas suivi le lien, et propose de le renvoyer. Il demande votre mot de passe :
+c'est la seule demande qu'un compte non confirmé a le droit de faire.
+
+Deux textes de l'application disaient le contraire de la vérité et sont
+corrigés. Le formulaire d'inscription affirmait que votre adresse n'était pas
+vérifiée et qu'aucun message ne lui était envoyé ; elle l'est, et il y en a un.
+L'écran du code de récupération disait qu'aucune adresse n'était associée au
+compte, quelques secondes après que vous en ayez saisi une.
+
+Et il y a désormais un moyen de soutenir le projet, en bas des réglages.
+Thwart est gratuite et le reste : rien n'est derrière, rien n'est retenu sans,
+et ce n'est mentionné nulle part ailleurs.

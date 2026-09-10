@@ -1,0 +1,15 @@
+If your confirmation email never arrived, you can ask for another.
+
+An account whose address is not confirmed yet now says so on the account
+screen, explains that the account is switched off until you follow the link,
+and offers to send the link again. It asks for your password, because that is
+the only request an unconfirmed account is allowed to make.
+
+Two things the app used to say were no longer true and are fixed. The
+registration form said your address was never verified and no message was sent
+to it; it is, and one is. The recovery-code screen said there was no email
+address on the account, moments after you had typed one.
+
+And there is now a way to support the work, at the bottom of Settings. Thwart
+is free and stays free: nothing is behind it, nothing is withheld without it,
+and it is mentioned nowhere else.

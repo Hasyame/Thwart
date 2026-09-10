@@ -36,6 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
+import androidx.compose.material3.Icon
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.sync.CardSyncState
@@ -270,9 +274,34 @@ fun SettingsScreen(
                 supportingContent = { Text(stringResource(R.string.settings_about_summary)) },
                 modifier = Modifier.clickable(onClick = onOpenAbout),
             )
-            // No donate entry, deliberately. This project's standing is that it
-            // is an unofficial, non-commercial fan work, and money coming in is
-            // the thing most likely to undermine that.
+            HorizontalDivider()
+
+            /*
+                A way to support the work, added at the author's request.
+
+                This used to say "no donate entry, deliberately", on the
+                reasoning that money coming in is what would most undermine an
+                unofficial fan work's standing. That reasoning has not changed
+                and is why this is the shape it is: a link out to a page the
+                author already runs, at the bottom of Settings, mentioned
+                nowhere else. Nothing in the app is behind it, nothing is
+                withheld without it, and no screen asks twice.
+            */
+            val patreon = LocalUriHandler.current
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_patreon)) },
+                supportingContent = { Text(stringResource(R.string.settings_patreon_summary)) },
+                leadingContent = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_patreon),
+                        // Named rather than decorative: it is the only thing
+                        // saying which site this row leads to.
+                        contentDescription = stringResource(R.string.settings_patreon),
+                        tint = Color.Unspecified,
+                    )
+                },
+                modifier = Modifier.clickable { patreon.openUri(PATREON_URL) },
+            )
         }
     }
 }
@@ -479,3 +508,12 @@ private fun syncStepLabel(running: CardSyncState.Running): String {
         else -> stringResource(R.string.settings_sync_step_starting)
     }
 }
+
+/**
+ * The author's Patreon page.
+ *
+ * Opened in a browser rather than embedded: nothing about payment belongs
+ * inside this app, and a link out is the honest shape for a page somebody
+ * chooses to visit.
+ */
+private const val PATREON_URL = "https://www.patreon.com/cw/thwart"

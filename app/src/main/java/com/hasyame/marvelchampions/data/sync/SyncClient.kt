@@ -112,6 +112,22 @@ class SyncClient @Inject constructor(
         return response
     }
 
+    /**
+     * Asks for the confirmation link again.
+     *
+     * Returns true when there was nothing to send because the address is
+     * already confirmed, which the caller reports differently: telling somebody
+     * to go and look for a message that will never arrive is worse than telling
+     * them they are already done.
+     */
+    suspend fun resendVerification(identifier: String, password: String): Boolean = call {
+        api.resendVerification(
+            endpoints().resendVerification,
+            language,
+            ResendVerificationDto(identifier.trim(), password),
+        )
+    }.alreadyVerified
+
     suspend fun changePassword(currentPassword: String, newPassword: String) {
         callEmpty {
             api.changePassword(
