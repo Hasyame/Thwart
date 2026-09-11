@@ -11,6 +11,8 @@ import com.hasyame.marvelchampions.data.settings.AppPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -171,6 +173,59 @@ class SyncEngineTest {
         engine.sync()
 
         assertNotNull("the other device's record must survive", database.syncRecordDao().play("server-2"))
+    }
+
+    // --- collections this build does not read ------------------------------
+
+    @Test
+    fun `a collection this build does not know does not hold the cursor`() = runTest {
+        // A server from before the collections parameter sends everything.
+        // The starred game sits at the head of the second page, and used to
+        // pin the cursor there: every pull returned that page again, for good.
+        api.ignoresCollections = true
+        api.seed(SyncCollection.PLAYS.key, "server-1", playBody("server-1"))
+        api.seed(SyncCollection.PLAYS.key, "server-2", playBody("server-2"))
+        api.seed("favourite_plays", "server-1", buildJsonObject { put("playId", "server-1") })
+        repeat(4) { api.seed(SyncCollection.PLAYS.key, "server-${it + 3}", playBody("server-${it + 3}")) }
+
+        val outcome = engine.sync()
+
+        assertFalse("the run must finish rather than stop short", outcome.incomplete)
+        assertNotNull("the play after the star arrived", database.syncRecordDao().play("server-6"))
+        assertEquals("the cursor passed everything", api.count().toLong(), sessions.current().cursor)
+        assertTrue("and the run ended, rather than asking for the same page again", api.pulls.size <= 5)
+    }
+
+    @Test
+    fun `a build that reads more collections than the one before pulls from zero once`() = runTest {
+        api.seed(SyncCollection.PLAYS.key, "server-1", playBody("server-1"))
+        engine.sync()
+        // Pretend the cursor was read by a build that named fewer collections.
+        sessions.markCursorCollections("plays")
+        api.pulls.clear()
+
+        val outcome = engine.sync()
+
+        assertEquals("the pull started from zero", 0L, api.pulls.first())
+        assertTrue("and was reported as a full resync", outcome.fullResync)
+        assertEquals("the list beside the cursor is now this build's", SyncCollection.DECLARED, sessions.current().cursorCollections)
+
+        api.pulls.clear()
+        engine.sync()
+        assertTrue("only once: the next run resumes from the cursor", api.pulls.first() > 0L)
+    }
+
+    @Test
+    fun `a pull names the collections this build reads`() = runTest {
+        api.seed("favourite_plays", "server-1", buildJsonObject { put("playId", "server-1") })
+        api.seed(SyncCollection.PLAYS.key, "server-1", playBody("server-1"))
+
+        val outcome = engine.sync()
+
+        // The fake honours the parameter the way the server does: the star
+        // is never served, and nothing about it reaches this device.
+        assertEquals(1, outcome.pulled)
+        assertNotNull(database.syncRecordDao().play("server-1"))
     }
 
     // --- the tombstone horizon ----------------------------------------------

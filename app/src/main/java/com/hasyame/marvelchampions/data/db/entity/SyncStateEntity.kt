@@ -114,9 +114,21 @@ enum class SyncCollection(val key: String) {
          *
          * Null for a name this build does not know, which is what a client one
          * release ahead looks like. A pulled record for an unknown collection
-         * is skipped rather than guessed at, and skipping it leaves the cursor
-         * short of it so a later build picks it up.
+         * is skipped, and the cursor passes it. This used to say the cursor
+         * stayed short of it "so a later build picks it up", and that was the
+         * bug: a record that will never become applicable held the cursor on
+         * the same page for good. What lets a later build pick it up is
+         * [DECLARED] beside the cursor, and one pull from zero when it grows.
          */
         fun byKey(key: String): SyncCollection? = entries.firstOrNull { it.key == key }
+
+        /**
+         * The collections this build reads, named on every pull.
+         *
+         * The server serves only these, so nothing this build cannot store is
+         * sent to it. Sorted, so the same set always reads the same, because
+         * the session compares it to the one the cursor was read with.
+         */
+        val DECLARED: String = entries.map { it.key }.sorted().joinToString(",")
     }
 }

@@ -768,6 +768,7 @@
     <string name="sync_error_rate_limited">Too many attempts. Try again shortly.</string>
     <string name="sync_error_offline">No connection. Nothing was lost; it will go up next time.</string>
     <string name="sync_error_server">The server had a problem. Nothing was lost.</string>
+    <string name="sync_result_collections_grew">This version of the app reads more kinds of data than the last one did, so the whole account was read again. Once.</string>
     <string name="sync_error_cursor_too_old">This device had been away a long time, so the whole account was read again.</string>
     <string name="sync_error_incomplete">The server could not serve the whole account, so some of it is still missing. This is a fault on the server side; nothing here was lost.</string>
     <string name="sync_email">Email address</string>

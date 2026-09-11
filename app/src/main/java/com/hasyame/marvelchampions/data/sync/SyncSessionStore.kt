@@ -1,5 +1,6 @@
 package com.hasyame.marvelchampions.data.sync
 
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -77,6 +78,17 @@ data class SyncSession(
     val autoSync: Boolean = false,
     /** The highest revision this device has read. Zero means nothing yet. */
     val cursor: Long = 0,
+    /**
+     * The collections the cursor was read with, as [SyncCollection.DECLARED].
+     *
+     * The server serves a pull only the collections it names, so the cursor
+     * is a position among those and no other. A build that reads more than
+     * the one before it finds this differs from its own list and pulls from
+     * zero once: the records it never asked for are exactly the ones the
+     * cursor has already passed. Blank on a session from before this existed,
+     * which reads as "different" and costs one resync.
+     */
+    val cursorCollections: String = "",
     /** When the account's recovery code was issued, RFC 3339, for the reminder. */
     val recoveryIssuedAt: String = "",
     /** Epoch millis of the last completed sync, or zero. */
@@ -116,6 +128,7 @@ class SyncSessionStore @Inject constructor(
             enabled = preferences[KEY_ENABLED] == true,
             autoSync = preferences[KEY_AUTO_SYNC] == true,
             cursor = preferences[KEY_CURSOR] ?: 0,
+            cursorCollections = preferences[KEY_CURSOR_COLLECTIONS].orEmpty(),
             recoveryIssuedAt = preferences[KEY_RECOVERY_ISSUED].orEmpty(),
             lastSyncedAt = preferences[KEY_LAST_SYNCED] ?: 0,
             inFlightBatchId = preferences[KEY_IN_FLIGHT].orEmpty(),
@@ -223,12 +236,26 @@ class SyncSessionStore @Inject constructor(
             if (cursor > known) {
                 preferences[KEY_CURSOR] = cursor
             }
+            // Every position written from now on is among these collections.
+            preferences[KEY_CURSOR_COLLECTIONS] = SyncCollection.DECLARED
         }
+    }
+
+    /**
+     * Overwrites the list the cursor was read with. A seam for tests, which
+     * cannot change what this build declares but can pretend the cursor came
+     * from a build that declared less.
+     */
+    internal suspend fun markCursorCollections(value: String) {
+        context.syncStore.edit { it[KEY_CURSOR_COLLECTIONS] = value }
     }
 
     /** Puts the cursor back to zero, for a full resync. */
     suspend fun resetCursor() {
-        context.syncStore.edit { it.remove(KEY_CURSOR) }
+        context.syncStore.edit {
+            it.remove(KEY_CURSOR)
+            it.remove(KEY_CURSOR_COLLECTIONS)
+        }
     }
 
     suspend fun recordSync(at: Long) {
@@ -282,6 +309,7 @@ class SyncSessionStore @Inject constructor(
         val KEY_ENABLED = booleanPreferencesKey("enabled")
         val KEY_AUTO_SYNC = booleanPreferencesKey("auto_sync")
         val KEY_CURSOR = longPreferencesKey("cursor")
+        val KEY_CURSOR_COLLECTIONS = stringPreferencesKey("cursor_collections")
         val KEY_RECOVERY_ISSUED = stringPreferencesKey("recovery_issued_at")
         val KEY_LAST_SYNCED = longPreferencesKey("last_synced_at")
         val KEY_IN_FLIGHT = stringPreferencesKey("in_flight_batch")

@@ -94,18 +94,32 @@ class FakeSyncApi : SyncApi {
      */
     var ignoresResync = false
 
+    /**
+     * Set to behave like a server from before the `collections` parameter,
+     * which serves every collection it holds whatever the client names.
+     */
+    var ignoresCollections = false
+
+    /** Every `since` a pull asked for, in order. */
+    val pulls = mutableListOf<Long>()
+
     override suspend fun pull(
         url: String,
         authorization: String,
         since: Long,
         limit: Int,
         resync: Boolean,
+        collections: String,
     ): Response<PullResponseDto> {
+        pulls += since
         val claimed = resync && !ignoresResync
         if (since > 0 && !claimed && since < minCursor) {
             return refusal(409, SyncException.CURSOR_TOO_OLD)
         }
-        val ordered = records.values.map { it.record }.sortedBy { it.revision }
+        val named = collections.split(",").filter { it.isNotBlank() }.toSet()
+        val ordered = records.values.map { it.record }
+            .filter { ignoresCollections || named.isEmpty() || it.collection in named }
+            .sortedBy { it.revision }
         val page = ordered.filter { it.revision > since }.take(limit)
         return Response.success(
             PullResponseDto(

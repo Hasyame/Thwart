@@ -792,6 +792,7 @@
     <string name="sync_error_rate_limited">Trop de tentatives. Réessayez dans un instant.</string>
     <string name="sync_error_offline">Pas de connexion. Rien n\'est perdu : ce sera envoyé la prochaine fois.</string>
     <string name="sync_error_server">Le serveur a rencontré un problème. Rien n\'est perdu.</string>
+    <string name="sync_result_collections_grew">Cette version de l\'application lit plus de types de données que la précédente, donc tout le compte a été relu. Une seule fois.</string>
     <string name="sync_error_cursor_too_old">Cet appareil était absent depuis longtemps : tout le compte a été relu.</string>
     <string name="sync_error_incomplete">Le serveur n\'a pas pu fournir tout le compte : il en manque une partie. Le défaut est côté serveur ; rien n\'a été perdu ici.</string>
     <string name="sync_email">Adresse e-mail</string>

@@ -24,6 +24,12 @@ data class SyncOutcome(
     /** True when the whole account had to be re-read from revision zero. */
     val fullResync: Boolean = false,
     /**
+     * True when [fullResync] happened because this build reads more
+     * collections than the one that last synced, rather than because the
+     * device had been away too long. Same work, a different thing to say.
+     */
+    val collectionsGrew: Boolean = false,
+    /**
      * True when the server would not serve the rest of the account.
      *
      * Reachable, and not the client's fault. A full resync pages with
@@ -124,8 +130,26 @@ class SyncEngine @Inject constructor(
             }
             val limits = runCatching { client.version().limits }.getOrDefault(LimitsDto())
 
+            /*
+                A cursor read with another set of collections is a position
+                among records this build did not ask for. The server serves
+                a pull only the collections it names, so a build that names
+                more than the one before it pulls from zero once, as a merge,
+                exactly as it does when the server can no longer account for
+                its cursor: the records it never asked for are the ones its
+                cursor already passed. A session from before the list was
+                kept reads as different too, and pays the one resync.
+            */
+            val collectionsGrew = session.cursor > 0L &&
+                session.cursorCollections != SyncCollection.DECLARED
+            if (collectionsGrew) {
+                sessions.resetCursor()
+            }
+            val since = if (collectionsGrew) 0L else session.cursor
+
             val pull = try {
-                pullFrom(session.cursor, limits, firstMerge = session.cursor == 0L)
+                pullFrom(since, limits, firstMerge = since == 0L)
+                    .let { if (collectionsGrew) it.copy(fullResync = true, collectionsGrew = true) else it }
             } catch (tooOld: SyncException) {
                 if (tooOld.code != SyncException.CURSOR_TOO_OLD) {
                     throw tooOld
@@ -146,6 +170,7 @@ class SyncEngine @Inject constructor(
                 overwrittenOnServer = pushed.overwrittenOnServer,
                 forkedDecks = pull.forkedDecks,
                 fullResync = pull.fullResync,
+                collectionsGrew = pull.collectionsGrew,
                 incomplete = pull.incomplete,
                 cursor = pull.cursor,
             )
@@ -204,10 +229,29 @@ class SyncEngine @Inject constructor(
             deferred = deferred + result.deferred
             // Short of the first record that could not be applied, so the next
             // run sees it again.
+            val moved = result.highWaterMark != null && result.highWaterMark > cursor
             cursor = result.highWaterMark ?: cursor
             sessions.setCursor(cursor)
             if (!page.hasMore) {
                 break
+            }
+            /*
+                A full page that moved the cursor nowhere is the same page
+                again next time, and the time after: a record at its head
+                that can never be applied here would keep this loop asking
+                for it until the process died. That is what happened when a
+                collection this build did not know arrived first on a page.
+                Unknown collections no longer hold the cursor, so this is now
+                the guard for a permanently orphaned event rather than the
+                ordinary case, and it stops the run as incomplete instead.
+            */
+            if (!moved) {
+                return SyncOutcome(
+                    pulled = applied,
+                    forkedDecks = forks,
+                    incomplete = true,
+                    cursor = cursor,
+                )
             }
         }
 
@@ -251,12 +295,33 @@ class SyncEngine @Inject constructor(
             for (record in ordered) {
                 val collection = SyncCollection.byKey(record.collection)
                 if (collection == null) {
-                    // A collection a later release added. Left alone rather
-                    // than guessed at, and the cursor does not pass it.
-                    deferred += record
+                    /*
+                        A collection a later release added. Left alone rather
+                        than guessed at, and the cursor passes it: a record
+                        that will never become applicable here must not hold
+                        the cursor on this page for good. The server should
+                        not send one at all, since the pull names what this
+                        build reads; a self-hosted server older than that
+                        parameter still might. What lets a later build pick
+                        it up is the list kept beside the cursor: when it
+                        grows, that build pulls from zero once.
+                    */
+                    if (deferred.isEmpty()) {
+                        highWater = record.revision
+                    }
                     continue
                 }
                 val known = syncState.get(collection.key, record.id)
+                // Already here at this revision or a later one, and not
+                // edited since: nothing to decide. A pull from zero on a
+                // device that has data sends every record again, and
+                // re-applying them all would be work for the same rows.
+                if (known != null && !known.dirty && known.serverRevision >= record.revision) {
+                    if (deferred.isEmpty()) {
+                        highWater = record.revision
+                    }
+                    continue
+                }
                 val dirty = known == null || known.dirty
                 val outcome = codec.apply(
                     incoming = record,
@@ -290,8 +355,22 @@ class SyncEngine @Inject constructor(
                         applied++
                     }
 
-                    is ApplyResult.Deferred, is ApplyResult.Unknown -> {
+                    is ApplyResult.Deferred -> {
                         deferred += record
+                        continue
+                    }
+
+                    is ApplyResult.Unknown -> {
+                        // A body this build cannot read, or a tombstone for
+                        // a row it never had. Neither becomes applicable by
+                        // waiting, so neither holds the cursor: a deleted
+                        // record that never arrived needs no deleting, and
+                        // a body a later build can read is picked up by the
+                        // same pull from zero that a grown collection list
+                        // triggers, if that build's list grew.
+                        if (deferred.isEmpty()) {
+                            highWater = record.revision
+                        }
                         continue
                     }
                 }

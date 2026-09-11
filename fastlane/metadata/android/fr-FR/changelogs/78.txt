@@ -1,0 +1,10 @@
+Un correctif de synchronisation, pour les comptes aussi utilisés sur le web.
+
+Le web peut désormais mettre une partie en favori et noter la difficulté
+d'un scénario, et le compte contient alors des types de données que cette
+application ne lit pas encore. En en rencontrant un, l'application cessait
+d'avancer : chaque synchronisation relisait la même page et, passé un
+certain volume, ne se terminait plus. L'application indique maintenant au
+serveur ce qu'elle lit et ne reçoit que cela, passe ce qu'elle ne sait pas
+lire au lieu de l'attendre, et relit tout le compte, une fois, le jour où
+une version lit davantage.

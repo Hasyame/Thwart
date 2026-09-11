@@ -123,6 +123,13 @@ interface SyncApi {
         @Query("since") since: Long,
         @Query("limit") limit: Int,
         @Query("resync") resync: Boolean,
+        /**
+         * The collections this build reads, comma separated. The server serves
+         * only those, so a collection added after this build shipped never
+         * reaches it; a pull naming none is served the set from before the
+         * parameter existed.
+         */
+        @Query("collections") collections: String,
     ): Response<PullResponseDto>
 
     @POST

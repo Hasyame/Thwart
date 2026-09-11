@@ -1,0 +1,9 @@
+A sync fix, for accounts also used on the web.
+
+The web can now star a game and rate how hard a scenario was, and the
+account then holds kinds of data this app does not read yet. Meeting one
+of those, the app used to stop moving forward: every sync re-read the
+same page and, once enough had happened after it, never finished at all.
+The app now tells the server which kinds of data it reads and is sent
+only those, passes anything it cannot read rather than waiting on it, and
+reads the whole account again, once, the day a version reads more kinds.

@@ -373,6 +373,8 @@ class SyncAccountViewModel @Inject constructor(
                 outcome.forkedDecks.size,
             )
 
+            outcome.collectionsGrew -> SyncMessage.Resource(R.string.sync_result_collections_grew)
+
             outcome.fullResync -> SyncMessage.Resource(R.string.sync_error_cursor_too_old)
 
             else -> SyncMessage.Resource(

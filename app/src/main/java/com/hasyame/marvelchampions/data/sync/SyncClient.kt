@@ -1,6 +1,7 @@
 package com.hasyame.marvelchampions.data.sync
 
 import android.os.Build
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import java.util.Locale
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -164,7 +165,7 @@ class SyncClient @Inject constructor(
 
     /** [resync] marks a page of a rebuild that started at revision zero. */
     suspend fun pull(since: Long, limit: Int, resync: Boolean = false): PullResponseDto = call {
-        api.pull(endpoints().changes, authorization(), since, limit, resync)
+        api.pull(endpoints().changes, authorization(), since, limit, resync, SyncCollection.DECLARED)
     }
 
     suspend fun push(batchId: String, records: List<PushRecordDto>): PushResponseDto = call {
