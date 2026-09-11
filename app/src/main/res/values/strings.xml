@@ -215,6 +215,9 @@
         <item quantity="other">Choose %1$d aspects</item>
     </plurals>
     <string name="decks_create">Create deck</string>
+    <string name="decks_collection_only">Use only cards in my collection</string>
+    <string name="decks_collection_only_summary">When building a deck, offer only heroes and cards from the packs you own. Off, everything is offered and the missing packs are marked.</string>
+    <string name="decks_no_owned_heroes">No hero comes from a pack in your collection. Turn the switch off on the Decks page, or add your packs under Settings.</string>
     <string name="decks_hero_not_owned">%1$s — pack not in your collection</string>
     <string name="decks_edit">Edit deck</string>
     <string name="decks_tab_deck">Deck</string>

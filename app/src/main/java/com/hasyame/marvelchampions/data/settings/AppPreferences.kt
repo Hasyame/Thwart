@@ -97,6 +97,28 @@ class AppPreferences @Inject constructor(
         preferences[KEY_PLAY_LOCATION].orEmpty()
     }
 
+    /**
+     * Whether deck building offers only what the collection holds.
+     *
+     * On by default: a deck you cannot put on the table is the wrong default
+     * for an app that knows what you own. Off, every hero and card is offered,
+     * for a deck built ahead of a purchase or from a friend's boxes, with the
+     * missing packs still marked.
+     *
+     * Deliberately not in the backup nor synced: it is a way of looking at the
+     * card list, not a fact about the player, and the settings body that
+     * crosses to the other clients is a fixed set of keys they both check.
+     */
+    val deckCollectionOnly: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[KEY_DECK_COLLECTION_ONLY] ?: true
+    }
+
+    suspend fun isDeckCollectionOnly(): Boolean = deckCollectionOnly.first()
+
+    suspend fun setDeckCollectionOnly(enabled: Boolean) {
+        context.dataStore.edit { it[KEY_DECK_COLLECTION_ONLY] = enabled }
+    }
+
     /** Light, dark, or whatever the system is doing. */
     val themeChoice: Flow<ThemeChoice> = context.dataStore.data.map { preferences ->
         ThemeChoice.fromCode(preferences[KEY_THEME])
@@ -202,6 +224,7 @@ class AppPreferences @Inject constructor(
         private val KEY_THEME = stringPreferencesKey("theme_choice")
         private val KEY_PLAY_LOCATION = stringPreferencesKey("play_location")
         private val KEY_TRACK_ENCOUNTER = booleanPreferencesKey("track_encounter")
+        private val KEY_DECK_COLLECTION_ONLY = booleanPreferencesKey("deck_collection_only")
         private val KEY_DISMISSED_PACKS = stringSetPreferencesKey("dismissed_packs")
     }
 }

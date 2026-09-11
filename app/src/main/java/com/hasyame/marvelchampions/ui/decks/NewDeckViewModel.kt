@@ -17,7 +17,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class NewDeckUiState(
+    /** The heroes on offer: every one, or only the collection's, per the setting. */
     val heroes: List<HeroChoice> = emptyList(),
+    /** True when [heroes] was narrowed to the collection, so an empty list can say why. */
+    val collectionOnly: Boolean = true,
     val selectedHero: HeroChoice? = null,
     val rules: HeroDeckRules? = null,
     val chosenAspects: List<String> = emptyList(),
@@ -71,8 +74,12 @@ class NewDeckViewModel @Inject constructor(
             // Loaded into a local before the state is read. Written inline the
             // state is read before the load suspends, so an aspect ticked while
             // the sixty-five heroes were being fetched was quietly discarded.
+            val collectionOnly = preferences.isDeckCollectionOnly()
             val heroes = builderRepository.heroes(locale)
-            state.update { it.copy(heroes = heroes, isLoading = false) }
+                .filter { !collectionOnly || it.owned }
+            state.update {
+                it.copy(heroes = heroes, collectionOnly = collectionOnly, isLoading = false)
+            }
         }
     }
 

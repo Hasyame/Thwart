@@ -1,0 +1,9 @@
+A switch on the Decks page: "Use only cards in my collection".
+
+On, which is how it starts, a new deck offers only heroes from packs you
+own, and the editor lists only cards you own. Off, everything is offered,
+with the missing packs marked, for a deck built ahead of a purchase or from
+a friend's boxes.
+
+The editor's own "Cards in my collection" chip is the same switch, and the
+choice is remembered.

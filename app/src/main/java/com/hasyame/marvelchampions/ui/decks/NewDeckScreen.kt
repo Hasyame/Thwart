@@ -132,6 +132,20 @@ fun NewDeckScreen(
                 )
             }
 
+            // Only heroes from owned packs are offered, and there are none:
+            // said plainly, with where the switch is, rather than an empty
+            // list under a heading that promises heroes.
+            if (state.heroes.isEmpty() && state.collectionOnly) {
+                item {
+                    Text(
+                        text = stringResource(R.string.decks_no_owned_heroes),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    )
+                }
+            }
+
             items(state.heroes, key = { it.card.code }) { hero ->
                 val selected = state.selectedHero?.card?.code == hero.card.code
                 ListItem(

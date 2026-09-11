@@ -6,6 +6,7 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.repository.DeckImportError
 import com.hasyame.marvelchampions.data.repository.DeckImportResult
 import com.hasyame.marvelchampions.data.repository.DeckRepository
+import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.deeplink.MarvelCdbDeckUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,11 +23,14 @@ data class DecksUiState(
     val importError: DeckImportError? = null,
     /** Set when an import succeeds, so the UI can open the new deck. */
     val importedDeckId: String? = null,
+    /** Whether building a deck offers only what the collection holds. */
+    val collectionOnly: Boolean = true,
 )
 
 @HiltViewModel
 class DecksViewModel @Inject constructor(
     private val repository: DeckRepository,
+    private val preferences: AppPreferences,
 ) : ViewModel() {
 
     private val importing = MutableStateFlow(false)
@@ -38,18 +42,24 @@ class DecksViewModel @Inject constructor(
         importing,
         importError,
         importedDeckId,
-    ) { decks, isImporting, error, imported ->
+        preferences.deckCollectionOnly,
+    ) { decks, isImporting, error, imported, collectionOnly ->
         DecksUiState(
             decks = decks,
             isImporting = isImporting,
             importError = error,
             importedDeckId = imported,
+            collectionOnly = collectionOnly,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
         initialValue = DecksUiState(),
     )
+
+    fun setCollectionOnly(enabled: Boolean) {
+        viewModelScope.launch { preferences.setDeckCollectionOnly(enabled) }
+    }
 
     /** Imports from anything the user pasted, or a share sheet delivered. */
     fun import(input: String) {

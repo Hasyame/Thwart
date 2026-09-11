@@ -223,6 +223,9 @@
         <item quantity="other">Choisissez %1$d affinités</item>
     </plurals>
     <string name="decks_create">Créer le deck</string>
+    <string name="decks_collection_only">N\'utiliser que les cartes de ma collection</string>
+    <string name="decks_collection_only_summary">En construisant un deck, ne proposer que les héros et les cartes des extensions que vous possédez. Désactivé, tout est proposé et les extensions manquantes sont signalées.</string>
+    <string name="decks_no_owned_heroes">Aucun héros ne vient d\'une extension de votre collection. Désactivez l\'interrupteur sur la page Decks, ou ajoutez vos extensions dans les réglages.</string>
     <string name="decks_hero_not_owned">%1$s — extension absente de votre collection</string>
     <string name="decks_edit">Modifier le deck</string>
     <string name="decks_tab_deck">Deck</string>

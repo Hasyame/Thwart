@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -63,6 +64,15 @@ class DeckEditorViewModel @Inject constructor(
     private var watching: Job? = null
 
     init {
+        // The same setting as the switch on the Decks page, so the two agree;
+        // the chip here writes it back. Usually read before the first
+        // candidate search, which waits for the deck row; if the row wins the
+        // race, the search is run again, and refreshCandidates() is a no-op
+        // until there is a deck.
+        viewModelScope.launch {
+            state.update { it.copy(ownedOnly = preferences.isDeckCollectionOnly()) }
+            refreshCandidates()
+        }
         // No distinctUntilChanged: StateFlow already conflates equal values.
         query
             .debounce(SEARCH_DEBOUNCE_MS)
@@ -121,8 +131,11 @@ class DeckEditorViewModel @Inject constructor(
     }
 
     fun setOwnedOnly(ownedOnly: Boolean) {
-        state.value = state.value.copy(ownedOnly = ownedOnly)
-        viewModelScope.launch { refreshCandidates() }
+        state.update { it.copy(ownedOnly = ownedOnly) }
+        viewModelScope.launch {
+            preferences.setDeckCollectionOnly(ownedOnly)
+            refreshCandidates()
+        }
     }
 
     fun addCard(code: String) = changeQuantity(code, +1)

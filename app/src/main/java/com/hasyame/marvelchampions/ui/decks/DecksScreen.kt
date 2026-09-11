@@ -2,6 +2,8 @@ package com.hasyame.marvelchampions.ui.decks
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +23,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -32,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -89,48 +93,78 @@ fun DecksScreen(
             }
         },
     ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
-            if (state.isImporting) {
-                LinearProgressIndicator(Modifier.fillMaxWidth())
-            }
-            if (state.decks.isEmpty() && !state.isImporting) {
-                Box(
-                    Modifier.fillMaxSize().padding(32.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(R.string.decks_empty),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        Column(Modifier.fillMaxSize().padding(padding)) {
+            /*
+                Whether building a deck offers only what the collection holds.
+
+                Here rather than in Settings because it changes what the two
+                screens behind this one show — which heroes a new deck can
+                have, which cards the editor lists — and a switch you cannot
+                see from where its effect is felt is a switch people conclude
+                does not exist. The editor's own chip toggles the same setting.
+            */
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.decks_collection_only)) },
+                supportingContent = {
+                    Text(stringResource(R.string.decks_collection_only_summary))
+                },
+                trailingContent = {
+                    Switch(
+                        checked = state.collectionOnly,
+                        onCheckedChange = viewModel::setCollectionOnly,
                     )
+                },
+                modifier = Modifier.toggleable(
+                    value = state.collectionOnly,
+                    role = Role.Switch,
+                    onValueChange = viewModel::setCollectionOnly,
+                ),
+            )
+            HorizontalDivider()
+
+            Box(Modifier.fillMaxSize()) {
+                if (state.isImporting) {
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
                 }
-            } else {
-                LazyColumn(Modifier.fillMaxSize()) {
-                    items(state.decks, key = { it.id }) { deck ->
-                        ListItem(
-                            modifier = Modifier.clickable { onDeckClick(deck.id) },
-                            headlineContent = { Text(deck.name) },
-                            supportingContent = {
-                                Text(
-                                    listOfNotNull(
-                                        deck.heroName,
-                                        DeckRepository.parseAspects(deck.aspects)
-                                            .map { aspect -> aspectLabel(aspect) }
-                                            .joinToString(" / ")
-                                            .takeIf { it.isNotBlank() },
-                                    ).joinToString(" · "),
-                                )
-                            },
-                            trailingContent = {
-                                IconButton(onClick = { confirmDelete = deck }) {
-                                    Icon(
-                                        Icons.Filled.Clear,
-                                        contentDescription = stringResource(R.string.action_delete),
-                                    )
-                                }
-                            },
+                if (state.decks.isEmpty() && !state.isImporting) {
+                    Box(
+                        Modifier.fillMaxSize().padding(32.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.decks_empty),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        HorizontalDivider()
+                    }
+                } else {
+                    LazyColumn(Modifier.fillMaxSize()) {
+                        items(state.decks, key = { it.id }) { deck ->
+                            ListItem(
+                                modifier = Modifier.clickable { onDeckClick(deck.id) },
+                                headlineContent = { Text(deck.name) },
+                                supportingContent = {
+                                    Text(
+                                        listOfNotNull(
+                                            deck.heroName,
+                                            DeckRepository.parseAspects(deck.aspects)
+                                                .map { aspect -> aspectLabel(aspect) }
+                                                .joinToString(" / ")
+                                                .takeIf { it.isNotBlank() },
+                                        ).joinToString(" · "),
+                                    )
+                                },
+                                trailingContent = {
+                                    IconButton(onClick = { confirmDelete = deck }) {
+                                        Icon(
+                                            Icons.Filled.Clear,
+                                            contentDescription = stringResource(R.string.action_delete),
+                                        )
+                                    }
+                                },
+                            )
+                            HorizontalDivider()
+                        }
                     }
                 }
             }

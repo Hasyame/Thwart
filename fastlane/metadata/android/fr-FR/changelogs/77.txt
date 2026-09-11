@@ -1,0 +1,10 @@
+Un interrupteur sur la page Decks : « N'utiliser que les cartes de ma
+collection ».
+
+Activé, ce qui est le cas au départ, un nouveau deck ne propose que les
+héros des extensions que vous possédez, et l'éditeur ne liste que vos
+cartes. Désactivé, tout est proposé, extensions manquantes signalées, pour
+un deck préparé avant un achat ou avec les boîtes d'un ami.
+
+La puce « Cartes de ma collection » de l'éditeur est le même interrupteur,
+et le choix est mémorisé.
