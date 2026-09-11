@@ -158,4 +158,13 @@ data class GameSessionRoute(
      * how they end up disagreeing.
      */
     val resumeId: String? = null,
+    /**
+     * The game in the history to set the table up like again.
+     *
+     * The setup is read from the play rather than spelled out here, for the
+     * same reason [resumeId] is: a play knows its own heroes by name and
+     * aspect, and squeezing that through the `code:aspect` string above would
+     * lose the name and break on a deck that plays two aspects.
+     */
+    val replayId: String? = null,
 )

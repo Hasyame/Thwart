@@ -1,0 +1,15 @@
+Toute partie jouée seule ou tirée au sort peut être rejouée.
+
+Chacune a un bouton dans l'historique, sous Statistiques. Il ouvre la page
+de préparation avec cette partie déjà en place : scénario, difficulté et
+set Standard joué avec l'Expert, sets modulaires, et chaque place à table,
+retrouvée avec le deck d'origine si vous l'avez encore. Changez ce que vous
+voulez et lancez.
+
+Pas pour le scénario d'une campagne : une campagne se rejoue depuis sa
+propre boîte.
+
+Pour cela, les sets modulaires sont désormais conservés par code avec
+chaque partie, en plus de leurs noms dans les notes. Les parties d'avant sont
+relues par nom, ce qui fonctionne quand les cartes sont dans la langue
+qu'elles avaient ce jour-là.

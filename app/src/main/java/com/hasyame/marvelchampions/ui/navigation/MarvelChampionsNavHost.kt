@@ -152,12 +152,18 @@ fun MarvelChampionsNavHost(
                     standardSet = args.standardSet,
                     autoStart = args.autoStart,
                     resumeId = args.resumeId,
+                    replayId = args.replayId,
                     onBack = { navController.popBackStack() },
                     onOpenPlays = { navController.navigate(PlaysRoute) },
                 )
             }
             composable<PlaysRoute> {
-                PlaysScreen(onBack = { navController.popBackStack() })
+                PlaysScreen(
+                    onBack = { navController.popBackStack() },
+                    onPlayAgain = { playId ->
+                        navController.navigate(GameSessionRoute(replayId = playId))
+                    },
+                )
             }
             composable<CampaignRoute> {
                 CampaignScreen(
@@ -204,7 +210,16 @@ fun MarvelChampionsNavHost(
         }
         // Stats is its own tab, so its own graph and back stack.
         navigation<StatsGraph>(startDestination = PlaysRoute) {
-            composable<PlaysRoute> { PlaysScreen() }
+            composable<PlaysRoute> {
+                PlaysScreen(
+                    // The session lives in the Play graph, and a game started
+                    // from the history goes there: the Play tab lights up
+                    // while it runs, and back returns to the history.
+                    onPlayAgain = { playId ->
+                        navController.navigate(GameSessionRoute(replayId = playId))
+                    },
+                )
+            }
         }
         navigation<SettingsGraph>(startDestination = SettingsRoute) {
             composable<SettingsRoute> {

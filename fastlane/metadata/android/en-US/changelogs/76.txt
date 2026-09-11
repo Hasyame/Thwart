@@ -1,0 +1,13 @@
+Any game you played on your own or from a draw can be played again.
+
+Each of them has a play button in the history, under Stats. It opens the
+setup page with that game already on it: scenario, difficulty and the
+Standard set an Expert game was played with, the modular sets, and every
+seat, matched back to the deck it came from when you still have it. Change
+what you like and start.
+
+Not for a campaign's scenario: a campaign is played again from its own box.
+
+For that, the modular sets are now kept by code with each game as well as
+by name in its notes. Games from before this are read back by name, which
+works when the cards are in the language they were in that day.

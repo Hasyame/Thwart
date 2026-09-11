@@ -86,6 +86,7 @@ fun GameSessionScreen(
     standardSet: String? = null,
     autoStart: Boolean = false,
     resumeId: String? = null,
+    replayId: String? = null,
     onOpenPlays: () -> Unit,
     viewModel: GameSessionViewModel = hiltViewModel(),
 ) {
@@ -101,11 +102,14 @@ fun GameSessionScreen(
     }
 
     // A draw handed over from the randomiser, applied once.
-    LaunchedEffect(scenarioCode, difficulty, heroes, modularSets, standardSet, resumeId) {
-        // The two are exclusive. A paused game brings its own scenario, heroes
-        // and difficulty, and taking half from the route is how they disagree.
+    LaunchedEffect(scenarioCode, difficulty, heroes, modularSets, standardSet, resumeId, replayId) {
+        // The three are exclusive. A paused game or a game being played again
+        // brings its own scenario, heroes and difficulty, and taking half
+        // from the route is how they disagree.
         if (resumeId != null) {
             viewModel.resume(resumeId)
+        } else if (replayId != null) {
+            viewModel.replay(replayId)
         } else {
             viewModel.prefill(
                 scenarioCode = scenarioCode,

@@ -54,6 +54,11 @@ class PlayRepository @Inject constructor(
 
     fun observePlays(): Flow<List<PlayEntity>> = playDao.observePlays()
 
+    /** One game, or null when it was deleted or never existed. */
+    suspend fun getPlay(playId: String): PlayEntity? = withContext(ioDispatcher) {
+        playDao.getPlay(playId)
+    }
+
     fun observeByScenario(): Flow<List<WinRateRow>> = playDao.observeByScenario()
 
     fun observeByDifficulty(): Flow<List<WinRateRow>> = playDao.observeByDifficulty()

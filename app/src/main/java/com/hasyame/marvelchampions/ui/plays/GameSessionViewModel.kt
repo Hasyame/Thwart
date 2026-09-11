@@ -34,6 +34,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -408,6 +409,43 @@ class GameSessionViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Sets the table up again as a game in the history had it.
+     *
+     * Lands on the setup page with everything filled in rather than starting,
+     * because "again" rarely means "identically": a hero swaps aspect, a
+     * fourth player has turned up. The choices are there to be changed, and
+     * the clock starts when the table says it is ready, as it always does.
+     *
+     * Only plays recorded from this screen or from a draw can come back this
+     * way. A campaign's scenario is logged under the campaign's own id, with
+     * a difficulty and roster in the campaign's vocabulary, and none of that
+     * is something this page can put on a table.
+     */
+    fun replay(playId: String) {
+        if (prefilled) {
+            return
+        }
+        prefilled = true
+
+        viewModelScope.launch {
+            val play = playRepository.getPlay(playId) ?: return@launch
+            val locale = preferences.currentCardLocale()
+            val names = randomizerRepository.loadNames(locale)
+            val decks = deckRepository.observeDecks().first()
+            val setup = replaySetup(play, names, decks)
+            state.update {
+                it.copy(
+                    scenarioCode = setup.scenarioCode,
+                    difficulty = setup.difficulty ?: it.difficulty,
+                    standardSet = setup.standardSet,
+                    heroes = setup.heroes,
+                    modularSetCodes = setup.modularSetCodes,
+                )
+            }
+        }
+    }
+
     /** Life left on the villain, from the tracker, or null when it was off. */
     private fun trackedVillainLife(current: GameSessionUiState): Int? {
         if (!current.trackEncounter) {
@@ -768,6 +806,9 @@ class GameSessionViewModel @Inject constructor(
                     players = current.heroes.size,
                     won = won,
                     elapsedMillis = elapsed,
+                    // By code, so the same game can be set up again from the
+                    // history. The names below are for reading, not for that.
+                    modularSets = current.modularSetCodes.joinToString(","),
                     // Which modulars were in play changes a scenario enough that
                     // a win rate without them is only half the story.
                     notes = current.modularSetCodes
@@ -814,4 +855,116 @@ class GameSessionViewModel @Inject constructor(
     fun dismissRecorded() {
         finished.value = null
     }
+}
+
+/** What a game in the history says the table looked like, in this page's terms. */
+data class ReplaySetup(
+    val scenarioCode: String,
+    /** Null when the play's difficulty is in no vocabulary this page speaks. */
+    val difficulty: String?,
+    val standardSet: String?,
+    val heroes: List<SessionHero>,
+    val modularSetCodes: List<String>,
+)
+
+/**
+ * Reads a setup back out of a play.
+ *
+ * Nothing here is invented. A play records heroes, not decks, because that
+ * is what both clients record and the two must agree; so each seat is
+ * matched back to a saved deck by hero and aspects, and takes the deck when
+ * there is one, the hero alone when there is not. A play from before the
+ * roster existed gives one seat, the first player's, because the other
+ * heroes were stored as names alone and the aspects without saying who
+ * played which. A play that wrote only the modular sets' names gets its
+ * codes back by looking the names up in today's name table, which works
+ * when the cards are in the language they were in that day and quietly
+ * gives fewer sets when they are not. Either way the player is on the setup
+ * page, where the gap is one tap to fill.
+ */
+internal fun replaySetup(
+    play: PlayEntity,
+    names: RandomizerNames,
+    decks: List<SavedDeckEntity> = emptyList(),
+): ReplaySetup {
+    val heroes = if (play.roster.isNotEmpty()) {
+        play.roster.map { seat -> seatFor(seat, decks) }
+    } else {
+        listOfNotNull(
+            play.heroCode.takeIf { it.isNotBlank() }?.let { code ->
+                SessionHero(
+                    heroCode = code,
+                    aspect = play.aspects.split(",").firstOrNull()?.trim().orEmpty(),
+                    heroName = play.heroName.takeIf { it.isNotBlank() },
+                )
+            },
+        )
+    }
+
+    val codes = play.modularSets.split(",").filter { it.isNotBlank() }
+        .ifEmpty { modularCodesFromNotes(play.notes, names.modularSets) }
+
+    return ReplaySetup(
+        scenarioCode = play.scenarioCode,
+        difficulty = difficultyOf(play.difficulty),
+        standardSet = play.standardSet.takeIf { it.isNotBlank() },
+        heroes = heroes,
+        modularSetCodes = codes,
+    )
+}
+
+/**
+ * A seat for a recorded hero: the deck it was, when that deck is still here.
+ *
+ * Aspects are compared as sets. The seat says "leadership, protection", the
+ * deck says "protection,leadership" or the other way round, and both name
+ * the same deck.
+ */
+private fun seatFor(hero: PlayHero, decks: List<SavedDeckEntity>): SessionHero {
+    val wanted = aspectKey(hero.aspect)
+    val deck = decks.firstOrNull {
+        it.heroCode == hero.code && aspectKey(it.aspects) == wanted
+    }
+    return SessionHero(
+        heroCode = hero.code,
+        aspect = hero.aspect,
+        deckId = deck?.id,
+        deckName = deck?.name,
+        heroName = deck?.heroName ?: hero.name.takeIf { it.isNotBlank() },
+    )
+}
+
+private fun aspectKey(aspects: String): Set<String> =
+    aspects.split(',').map { it.trim().lowercase() }.filter { it.isNotEmpty() }.toSet()
+
+/**
+ * The difficulty as this page stores it, or null for one it cannot offer.
+ *
+ * Plays logged before the vocabulary was unified say `standard` or `expert`
+ * with no numeral; those were the Core Set's, so they map to the first of
+ * each. Anything else is left alone, and the page keeps its default rather
+ * than showing a difficulty with no chip to match it.
+ */
+private fun difficultyOf(recorded: String): String? {
+    val known = Difficulty.entries.firstOrNull { it.name.lowercase() == recorded }
+    if (known != null) {
+        return recorded
+    }
+    return when (recorded) {
+        "standard" -> Difficulty.STANDARD_I.name.lowercase()
+        "expert" -> Difficulty.EXPERT_I.name.lowercase()
+        else -> null
+    }
+}
+
+/** The line this screen writes into a play's notes, ahead of the set names. */
+private const val MODULAR_NOTE_PREFIX = "Modular sets: "
+
+/** Codes for the set names a play's notes list, where today's names match. */
+private fun modularCodesFromNotes(notes: String, modularSets: Map<String, String>): List<String> {
+    val line = notes.lineSequence().firstOrNull { it.startsWith(MODULAR_NOTE_PREFIX) }
+        ?: return emptyList()
+    val byName = modularSets.entries.associate { (code, name) -> name to code }
+    return line.removePrefix(MODULAR_NOTE_PREFIX).split(",")
+        .mapNotNull { byName[it.trim()] }
 }

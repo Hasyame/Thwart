@@ -455,6 +455,7 @@
     <string name="plays_send_message">Log this game against %1$s in your BoardGameGeek play history?</string>
     <string name="plays_send_yes">Send</string>
     <string name="plays_send_no">Not this one</string>
+    <string name="plays_play_again">Play again</string>
     <string name="plays_send_short">Send</string>
     <plurals name="plays_summary_record">
         <item quantity="one">Won %1$d of %2$d game played</item>

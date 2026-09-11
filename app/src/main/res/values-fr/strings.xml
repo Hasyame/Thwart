@@ -475,6 +475,7 @@
     <string name="plays_send_message">Enregistrer cette partie contre %1$s dans votre historique BoardGameGeek ?</string>
     <string name="plays_send_yes">Envoyer</string>
     <string name="plays_send_no">Pas celle-ci</string>
+    <string name="plays_play_again">Rejouer</string>
     <string name="plays_send_short">Envoyer</string>
     <plurals name="plays_summary_record">
         <item quantity="one">Gagné %1$d sur %2$d partie jouée</item>

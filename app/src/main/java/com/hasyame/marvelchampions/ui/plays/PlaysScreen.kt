@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -91,11 +92,15 @@ import kotlin.math.roundToInt
  *
  * [onBack] is null when this is a tab root: a top level destination has nothing
  * to go back to, and an arrow there is a lie.
+ *
+ * [onPlayAgain] opens the setup page with a game from the history already on
+ * it, by play id.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaysScreen(
     onBack: (() -> Unit)? = null,
+    onPlayAgain: (String) -> Unit,
     viewModel: PlaysViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -232,6 +237,7 @@ fun PlaysScreen(
                     expanded = historyOpen,
                     photoStore = viewModel.photoStore,
                     onToggle = { historyOpen = !historyOpen },
+                    onPlayAgain = { onPlayAgain(it.id) },
                     onPage = {
                         historyPage = it
                         // Turning a page and landing halfway down it reads as
@@ -950,6 +956,7 @@ private fun HistorySection(
     expanded: Boolean,
     photoStore: PhotoStore,
     onToggle: () -> Unit,
+    onPlayAgain: (PlayEntity) -> Unit,
     onPage: (Int) -> Unit,
     onDelete: (PlayEntity) -> Unit,
     onReport: (PlayEntity) -> Unit,
@@ -1000,6 +1007,7 @@ private fun HistorySection(
                         PlayRow(
                             play = play,
                             photoStore = photoStore,
+                            onPlayAgain = { onPlayAgain(play) },
                             onDelete = { onDelete(play) },
                             onReport = { onReport(play) },
                         )
@@ -1053,6 +1061,7 @@ private const val HISTORY_PAGE = 10
 private fun PlayRow(
     play: PlayEntity,
     photoStore: PhotoStore,
+    onPlayAgain: () -> Unit,
     onDelete: () -> Unit,
     onReport: () -> Unit,
 ) {
@@ -1096,6 +1105,18 @@ private fun PlayRow(
                 if (!play.reportedToBgg) {
                     TextButton(onClick = onReport) {
                         Text(stringResource(R.string.plays_send_short))
+                    }
+                }
+                // The same table again, on the setup page. Not for a campaign's
+                // scenario: that is logged under the campaign's own id and
+                // vocabulary, which the one-off setup page cannot read, and a
+                // campaign is replayed from the campaign box anyway.
+                if (play.campaignRunId == null && play.scenarioCode.isNotBlank()) {
+                    IconButton(onClick = onPlayAgain) {
+                        Icon(
+                            Icons.Filled.PlayArrow,
+                            contentDescription = stringResource(R.string.plays_play_again),
+                        )
                     }
                 }
                 IconButton(onClick = onDelete) {

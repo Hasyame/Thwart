@@ -53,6 +53,22 @@ data class PlayEntity(
     val standardSet: String = "",
 
     /**
+     * The modular sets shuffled in, by code, comma separated. Empty when none
+     * were, and on plays recorded before this existed.
+     *
+     * The names have always been written into [notes] ("Modular sets: ...")
+     * for a reader, and still are. Names are not enough to set the same game
+     * up again: they are in whichever language the cards were in that day,
+     * and a picker wants codes. So the codes are kept beside them, for the
+     * "play again" button on the history.
+     *
+     * The SQL default is what lets the migration add the column to rows that
+     * already exist; a Kotlin default only covers new objects.
+     */
+    @ColumnInfo(defaultValue = "")
+    val modularSets: String = "",
+
+    /**
      * The hero of the first seat, kept for display and for BoardGameGeek.
      *
      * Not what the statistics count any more. Counting per hero from this field
