@@ -821,11 +821,21 @@ class CampaignRepository @Inject constructor(
                 .toSet()
             val left = pool.filterNot { it in spent }.ifEmpty { pool }
 
-            // The recommended order is the pool's own order — the list the book
-            // prints for a table meeting these five for the first time. Any
-            // other answer means at random.
+            /*
+                The recommended order is the pool's own order — the list the
+                book prints for a table meeting these five for the first time.
+                Its last entry is "Purple Man or Typhoid Mary", one line for
+                two villains, so while both are left the order says nothing
+                between them and the app draws; the one not drawn is the last.
+                Any other answer means at random throughout.
+            */
             val recommended = run.state.choices[VILLAIN_ORDER_CHOICE] == VILLAIN_ORDER_RECOMMENDED
-            val villain = if (recommended) left.first() else left.random()
+            val tail = pool.takeLast(2).toSet()
+            val villain = when {
+                !recommended -> left.random()
+                left.toSet() == tail -> left.random()
+                else -> left.first()
+            }
 
             append(
                 runId,

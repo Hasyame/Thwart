@@ -1,0 +1,21 @@
+Peur de Rien, vérifiée contre le livret de règles anglais.
+
+Les scénarios, méchants, environnements et cartes portent désormais leurs
+titres anglais officiels quand l'application est en anglais.
+
+Trois règles étaient fausses. Perdre une partie ne fait pas échouer une
+mission : elle reste ouverte, contre le même SUBORDONNÉ, tant que la pression
+n'atteint pas trois (en campagne experte, une défaite ajoute un marqueur).
+En campagne experte, une défaite contre Le Caïd coûte un environnement
+ACHEVÉ, retourné sur sa face ÉCHOUÉ, et s'il n'en reste aucun la campagne est
+perdue. Et en campagne experte l'application demande maintenant les points de
+vie restants de chaque joueur après chaque partie, gagnée ou perdue, comme
+le journal l'exige.
+
+Aussi : La Poursuite révèle le Camion-Citerne dès une coche ; et l'ordre
+recommandé des SUBORDONNÉS tire lequel de L'Homme Pourpre et Mary Typhoïde
+vient en quatrième, comme le livret le laisse ouvert.
+
+En dessous, une mission perdue dont la page pose des questions (points de
+victoire, points de vie, le sacrifice du final) les pose désormais ; avant,
+toute défaite était enregistrée sans rien demander, dans toutes les campagnes.

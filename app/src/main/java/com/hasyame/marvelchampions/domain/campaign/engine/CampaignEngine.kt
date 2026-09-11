@@ -212,6 +212,7 @@ class CampaignEngine(
             draws = next.draws.replayed(template, event.scenarioId),
             currentScenarioId = advanced.scenarioId,
             finished = advanced.finished,
+            campaignLost = next.campaignLost || advanced.lost,
             awaitingChoice = advanced.awaitingChoice,
             // A new rotation: the villains get to pick their next two places.
             environmentPicked = false,
@@ -311,6 +312,7 @@ class CampaignEngine(
         val scenarioId: String?,
         val finished: Boolean,
         val awaitingChoice: Boolean = false,
+        val lost: Boolean = false,
     )
 
     /**
@@ -327,6 +329,7 @@ class CampaignEngine(
         val step = outcome?.next?.firstOrNull { ConditionEvaluator.evaluate(it.condition, context) }
             ?: return Advance(scenarioId, finished = false)
         return when {
+            step.lose -> Advance(null, finished = true, lost = true)
             step.end -> Advance(null, finished = true)
             // Nothing is current while the players decide, so the run has no
             // scenario to render until they have.

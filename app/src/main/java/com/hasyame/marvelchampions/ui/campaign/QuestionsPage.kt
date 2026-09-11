@@ -61,22 +61,26 @@ private val campaignTextLocale: String
     @Composable get() = LocalConfiguration.current.locales[0].language
 
 /**
- * Page 3. The post-victory questionnaire, entirely driven by the template.
+ * Page 3. The questionnaire after a result, entirely driven by the template.
  *
  * Prompts whose `when` fails are not shown, which is how the Expert-only
  * questions disappear on Standard without this file knowing anything about
- * difficulty.
+ * difficulty. [victory] says which outcome's questions these are: a defeat
+ * page can ask too (remaining hit points on an Expert campaign, which
+ * environment a lost finale costs), and used to be filed unasked.
  */
 @Composable
 fun QuestionsPage(
     run: CampaignRun,
     isSubmitting: Boolean = false,
     scenario: ScenarioTemplate?,
+    victory: Boolean = true,
     onCardClick: (String) -> Unit,
     onSubmit: (AnswerSet) -> Unit,
 ) {
     val context = EvaluationContext(state = run.state, scenarioId = scenario?.id)
-    val prompts = scenario?.onVictory?.prompts.orEmpty()
+    val outcome = if (victory) scenario?.onVictory else scenario?.onDefeat
+    val prompts = outcome?.prompts.orEmpty()
         .filter { ConditionEvaluator.evaluate(it.condition, context) }
 
     val numbers = remember { mutableStateMapOf<String, String>() }
@@ -135,10 +139,10 @@ fun QuestionsPage(
             Text(
                 text = when {
                     scenario == null -> stringResource(R.string.campaign_no_scenario)
-                    scenario.onVictory == null ->
+                    outcome == null ->
                         stringResource(R.string.campaign_scenario_incomplete, scenario.id)
 
-                    scenario.onVictory.prompts.isEmpty() ->
+                    outcome.prompts.isEmpty() ->
                         stringResource(R.string.campaign_scenario_incomplete, scenario.id)
 
                     else -> stringResource(R.string.campaign_no_questions)

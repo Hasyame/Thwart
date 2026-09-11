@@ -15,6 +15,8 @@ import com.hasyame.marvelchampions.data.repository.CampaignRun
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.campaign.engine.AnswerSet
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
+import com.hasyame.marvelchampions.domain.campaign.engine.EvaluationContext
+import com.hasyame.marvelchampions.domain.campaign.engine.ConditionEvaluator
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignState
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
@@ -128,6 +130,16 @@ data class CampaignRunUiState(
      * unchanged and a second tap filed the whole lot again.
      */
     val isSubmitting: Boolean = false,
+    /**
+     * Which result the questionnaire on [RunPage.QUESTIONS] is for.
+     *
+     * A defeat used to be filed the moment it was declared, with no answers,
+     * so every question a campaign put on its defeat page went unasked: the
+     * victory points, and on Fear No Evil's Expert campaign the remaining hit
+     * points and which Completed environment the finale takes. Now a defeat
+     * with questions goes through the same page, and this says so.
+     */
+    val answeringVictory: Boolean = true,
 
     /** Counting villain health and scheme threat, if the setting asks for it. */
     val trackEncounter: Boolean = false,
@@ -486,11 +498,41 @@ class CampaignRunViewModel @Inject constructor(
                 run.state.currentScenarioId,
             )
             reload()
-            state.value = state.value.copy(page = RunPage.QUESTIONS)
+            state.value = state.value.copy(page = RunPage.QUESTIONS, answeringVictory = true)
         }
     }
 
+    /**
+     * Defeat: ask the defeat page's questions if the campaign has any that
+     * apply, otherwise file the loss at once.
+     */
     fun declareDefeat() {
+        val id = runId ?: return
+        val run = state.value.run ?: return
+        val scenarioId = run.state.currentScenarioId ?: return
+        if (state.value.isSubmitting) {
+            return
+        }
+        val scenario = run.template.scenarios.firstOrNull { it.id == scenarioId }
+        val context = EvaluationContext(state = run.state, scenarioId = scenarioId)
+        val asks = scenario?.onDefeat?.prompts.orEmpty()
+            .any { ConditionEvaluator.evaluate(it.condition, context) }
+        if (asks) {
+            viewModelScope.launch {
+                repository.updateTimer(
+                    id,
+                    run.timer.pause(System.currentTimeMillis()),
+                    scenarioId,
+                )
+                reload()
+                state.value = state.value.copy(page = RunPage.QUESTIONS, answeringVictory = false)
+            }
+            return
+        }
+        recordDefeat(AnswerSet())
+    }
+
+    private fun recordDefeat(answers: AnswerSet) {
         val id = runId ?: return
         val run = state.value.run ?: return
         val scenarioId = run.state.currentScenarioId ?: return
@@ -507,21 +549,33 @@ class CampaignRunViewModel @Inject constructor(
                     timestamp = System.currentTimeMillis(),
                     scenarioId = scenarioId,
                     victory = false,
+                    answers = answers,
                     elapsedMillis = elapsed,
                 ),
             )
             repository.updateTimer(id, TimerState(), scenarioId)
             // A lost scenario is still a game that was played, so it counts
             // towards win rates like any other.
-            recordPlay(id, scenarioId, won = false, elapsedMillis = elapsed)
+            recordPlay(
+                id,
+                scenarioId,
+                won = false,
+                elapsedMillis = elapsed,
+                victoryPoints = answers.numbers["vp"] ?: 0,
+            )
             reload()
+            // A defeat page can end the campaign: Fear No Evil's finale on
+            // Expert, once no Completed environment is left to give up.
+            if (state.value.run?.state?.finished == true) {
+                repository.markFinished(id, true)
+            }
             state.value = state.value.copy(
                 page = RunPage.DEFEAT,
                 isSubmitting = false,
                 summary = ScenarioOutcomeSummary(
                     victory = false,
                     elapsedMillis = elapsed,
-                    victoryPoints = null,
+                    victoryPoints = answers.numbers["vp"],
                     // Resolved against the run as it was, because the draws
                     // belonging to a scenario do not outlive it.
                     outcomeMessage = outcomeMessage(run, scenarioId, victory = false),
@@ -534,6 +588,10 @@ class CampaignRunViewModel @Inject constructor(
 
     /** Records the questionnaire and moves to the result page. */
     fun submitAnswers(answers: AnswerSet) {
+        if (!state.value.answeringVictory) {
+            recordDefeat(answers)
+            return
+        }
         val id = runId ?: return
         val run = state.value.run ?: return
         val scenarioId = run.state.currentScenarioId
@@ -630,14 +688,18 @@ class CampaignRunViewModel @Inject constructor(
      * draws are cleared when it finishes, and the line usually names one.
      */
     /**
-     * Whether the campaign says what continuing past this defeat costs.
+     * Whether the campaign lets the table walk away from this defeat.
      *
-     * The effects are the rule: a campaign that has none has no such rule, and
-     * the way out should not be offered.
+     * Two shapes of rule say so: a defeat whose outcome hands the next choice
+     * to the players (Fear No Evil, where a lost job stays open and the book
+     * sends everyone back to campaign setup to pick any job), and a defeat
+     * that names what moving on costs. A campaign with neither has no third
+     * way out of a loss, and the button should not pretend otherwise.
      */
-    private fun allowsContinue(run: CampaignRun, scenarioId: String): Boolean =
-        run.template.scenarios.firstOrNull { it.id == scenarioId }
-            ?.onDefeat?.onContinue.orEmpty().isNotEmpty()
+    private fun allowsContinue(run: CampaignRun, scenarioId: String): Boolean {
+        val defeat = run.template.scenarios.firstOrNull { it.id == scenarioId }?.onDefeat ?: return false
+        return defeat.onContinue.isNotEmpty() || defeat.next.any { it.choose }
+    }
 
     private fun outcomeMessage(
         run: CampaignRun,

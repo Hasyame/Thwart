@@ -258,10 +258,10 @@ object TemplateValidator {
             // `choose` is the third way an outcome can continue: it names no
             // scenario because the players pick one. Fear No Evil is played in
             // whatever order the table likes, so nothing else *can* be named.
-            if (step.goto == null && !step.end && !step.choose) {
+            if (step.goto == null && !step.end && !step.lose && !step.choose) {
                 errors += TemplateError(
                     "$path.next[$index]",
-                    "needs a goto, an end, or choose",
+                    "needs a goto, an end, a lose, or choose",
                 )
             }
             validateCondition(step.condition, "$path.next[$index].when", counterIds, flagSetIds, cardListIds, errors)

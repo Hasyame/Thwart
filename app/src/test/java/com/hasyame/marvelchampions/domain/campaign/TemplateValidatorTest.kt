@@ -229,7 +229,7 @@ class TemplateValidatorTest {
             ),
         )
 
-        assertTrue(errors.any { it.message.contains("needs a goto, an end, or choose") })
+        assertTrue(errors.any { it.message.contains("needs a goto, an end, a lose, or choose") })
     }
 
     @Test

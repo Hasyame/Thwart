@@ -43,21 +43,30 @@ class BundledCampaignsTest {
     }
 
     /**
-     * Continuing past a defeat is a Fear No Evil rule, not a general one.
+     * Walking away from a defeat is a Fear No Evil rule, not a general one.
      *
-     * Its onDefeat outcomes carry onContinue effects, which are what turning
-     * the environment over and dropping the job actually costs. No other
-     * campaign has that rule, and the defeat page reads exactly this to decide
-     * whether to offer the choice at all. If a campaign gains the rule, this
-     * test is where it gets said out loud.
+     * Its five jobs hand the next choice back to the players after a loss
+     * (p.8: losing does not fail a scenario, and it may be attempted again),
+     * and nothing is recorded for moving on: only three pressure marks fail a
+     * job. No other campaign has that rule, and the defeat page reads exactly
+     * this to decide whether to offer the choice at all. If a campaign gains
+     * the rule, this test is where it gets said out loud.
      */
     @Test
-    fun `only Fear No Evil lets a lost scenario be left behind`() {
+    fun `only Fear No Evil lets a lost scenario be left for later`() {
         val offering = templates().filter { (_, template) ->
-            template.scenarios.any { it.onDefeat?.onContinue.orEmpty().isNotEmpty() }
+            template.scenarios.any { scenario ->
+                val defeat = scenario.onDefeat
+                defeat != null && (defeat.onContinue.isNotEmpty() || defeat.next.any { it.choose })
+            }
         }.map { (name, _) -> name }
 
         assertEquals(listOf("fne.json"), offering)
+        val fne = templates().first { (name, _) -> name == "fne.json" }.second
+        assertTrue(
+            "moving on from a lost job must cost nothing: the book fails a job on marks alone",
+            fne.scenarios.all { it.onDefeat?.onContinue.orEmpty().isEmpty() },
+        )
     }
 
     @Test

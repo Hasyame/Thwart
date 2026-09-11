@@ -670,6 +670,15 @@ data class NextStep(
     /** Ends the campaign rather than moving on. */
     val end: Boolean = false,
     /**
+     * Ends the campaign as lost.
+     *
+     * Distinct from [end], which is how a campaign is won or simply over: a
+     * book can say "the players lose the campaign" from a defeat page, as
+     * Fear No Evil's finale does on Expert once no Completed environment is
+     * left to sacrifice, and the run has to say so rather than look finished.
+     */
+    val lose: Boolean = false,
+    /**
      * Hands the choice of the next scenario to the players.
      *
      * Fear No Evil is played in whatever order the table likes, so the campaign

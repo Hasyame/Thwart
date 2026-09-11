@@ -1,0 +1,21 @@
+Fear No Evil, checked against the English rulebook.
+
+The scenarios, villains, environments and cards now carry their official
+English titles: Art Museum Heist, The Getaway, Protection Racket, The Raft
+Breakout, Stop the Presses!, Kingpin; Purple Man, Typhoid Mary, Establish
+Trust, Disturbed Psyche, Master Key, and the rest.
+
+Three rules were wrong. Losing a game does not fail a scenario: it stays
+open, against the same Underling, until the pressure reaches three (and on
+Expert, a defeat adds one mark). On an Expert campaign, a defeat against
+Kingpin costs one Completed environment, flipped to Failed, and with none
+left the campaign is lost. And on Expert the app now asks each player's
+remaining hit points after every game, won or lost, as the log requires.
+
+Also: The Getaway reveals the Jackknifed Tanker Truck from one mark; and the
+recommended villain order draws which of Purple Man and Typhoid Mary comes
+fourth, as the book leaves that open.
+
+Underneath, a lost scenario with questions on its page (victory points,
+hit points, the finale's sacrifice) now asks them; before, every defeat
+was filed unasked, in every campaign.

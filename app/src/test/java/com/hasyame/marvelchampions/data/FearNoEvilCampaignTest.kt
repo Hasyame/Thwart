@@ -201,6 +201,121 @@ class FearNoEvilCampaignTest {
      * asked only of the job she is behind; the victory pile only while she is
      * actually in the decks.
      */
+    // --- what the English rulebook (mc60, 2026) settled -------------------------
+
+    private fun lose(id: String, vararg booleans: Pair<String, Boolean>, expert: Boolean = false) = listOf(
+        CampaignEvent.ScenarioChosen(id = "choose-${tick()}", timestamp = clock, scenarioId = id),
+        CampaignEvent.ScenarioCompleted(
+            id = "lost-${tick()}",
+            timestamp = clock,
+            scenarioId = id,
+            victory = false,
+            answers = AnswerSet(booleans = booleans.toMap()),
+        ),
+        CampaignEvent.OutcomeContinued(
+            id = "on-${tick()}",
+            timestamp = clock,
+            scenarioId = id,
+            victory = false,
+        ),
+    )
+
+    private fun startExpert(template: CampaignTemplate) = start(template).copy(difficulty = "expert")
+
+    @Test
+    fun `every outcome page has something to say in both languages`() {
+        val template = template()
+        template.scenarios.forEach { scenario ->
+            listOf("victory" to scenario.onVictory, "defeat" to scenario.onDefeat).forEach { (kind, outcome) ->
+                val message = outcome?.message
+                assertTrue("${scenario.id} $kind has no message", message != null)
+                assertTrue("${scenario.id} $kind en", message!!.resolve("en").isNotBlank())
+                assertTrue("${scenario.id} $kind fr", message.resolve("fr").isNotBlank())
+            }
+        }
+    }
+
+    @Test
+    fun `losing a job and moving on does not fail it`() {
+        val template = template()
+        // p.8: "Losing a scenario does not automatically cause it to fail and it
+        // may be able to be attempted again." Only three marks fail a job, and
+        // on Standard a defeat adds none. The job stays on the list, and its
+        // environment goes on neither face.
+        val state = engine.fold(
+            template,
+            listOf(start(template)) + offer("s2_poursuite", "s3_racket") + keep("s2_poursuite") +
+                lose("s1_musee"),
+        )
+
+        assertTrue("still open", "s1_musee" in choosable(template, state))
+        assertEquals(0, state.counter("pressionMusee"))
+        assertFalse(state.flag("echoue", "s1_musee"))
+        assertFalse(state.flag("acheve", "s1_musee"))
+    }
+
+    @Test
+    fun `on Expert a defeat is one mark, and three of them fail the job`() {
+        val template = template()
+        val state = engine.fold(
+            template,
+            listOf(startExpert(template)) + offer("s2_poursuite", "s3_racket") + keep("s2_poursuite") +
+                lose("s1_musee") + lose("s1_musee"),
+        )
+        assertEquals(2, state.counter("pressionMusee"))
+        assertTrue("two marks: still open", "s1_musee" in choosable(template, state))
+
+        val failed = engine.fold(template, listOf(startExpert(template)) +
+            offer("s2_poursuite", "s3_racket") + keep("s2_poursuite") +
+            lose("s1_musee") + lose("s1_musee") + lose("s1_musee"))
+        assertEquals(3, failed.counter("pressionMusee"))
+        assertFalse("three marks: failed", "s1_musee" in choosable(template, failed))
+        assertFalse("a failed job is not the campaign", failed.campaignLost)
+    }
+
+    @Test
+    fun `on Expert the boss takes a Completed environment on a defeat, or the campaign`() {
+        val template = template()
+        val five = listOf("s1_musee", "s2_poursuite", "s3_racket", "s4_raft", "s5_rotatives")
+        val through: List<CampaignEvent> = listOf(startExpert(template)) + five.flatMap { listOf(offer(it), keep(it)) + play(it) }
+
+        // One sacrificed: the job is now Failed, the boss is replayed.
+        val flipped = engine.fold(
+            template,
+            through + lose("s6_caid", "flip_s3_racket" to true, expert = true),
+        )
+        assertFalse(flipped.flag("acheve", "s3_racket"))
+        assertTrue(flipped.flag("echoue", "s3_racket"))
+        assertEquals("s6_caid", flipped.currentScenarioId)
+        assertFalse(flipped.campaignLost)
+        assertFalse(flipped.finished)
+
+        // Every one of the five sacrificed, then one more defeat: lost.
+        var events: List<CampaignEvent> = through
+        for (id in five) {
+            events = events + lose("s6_caid", "flip_$id" to true, expert = true)
+        }
+        val stillOn = engine.fold(template, events)
+        assertFalse("the fifth sacrifice is still a replay", stillOn.campaignLost)
+        val lost = engine.fold(template, events + lose("s6_caid", expert = true))
+        assertTrue("nothing left to give: the campaign is lost", lost.campaignLost)
+        assertTrue(lost.finished)
+    }
+
+    @Test
+    fun `on Standard the boss is simply replayed`() {
+        val template = template()
+        val five = listOf("s1_musee", "s2_poursuite", "s3_racket", "s4_raft", "s5_rotatives")
+        val state = engine.fold(
+            template,
+            listOf(start(template)) + five.flatMap { listOf(offer(it), keep(it)) + play(it) } +
+                lose("s6_caid") + lose("s6_caid"),
+        )
+        assertEquals("s6_caid", state.currentScenarioId)
+        assertFalse(state.campaignLost)
+        assertTrue("nothing was flipped", five.all { state.flag("acheve", it) })
+    }
+
     @Test
     fun `Mary Typhoide is asked about only by tables that have met her`() {
         val template = template()
@@ -277,15 +392,11 @@ class FearNoEvilCampaignTest {
         assertFalse(promptIds(state, "s1_musee").contains("confiance"))
         assertTrue(promptIds(state, "s1_musee").contains("mary"))
 
-        // Lost for good: the line that puts her out is replaced by the one that
-        // takes her out of the decks, and nothing is asked again.
+        // Lost for good: p.9 step 13 puts her out only while "Mary Defeated?"
+        // is unchecked, and says nothing else. Nothing is asked again.
         events = events + finish("s1_musee", "mary" to true)
         state = engine.fold(template, events)
         val lines = setupLines(state, "s3_racket")
-        assertTrue(
-            "she is not struck from the decks",
-            lines.any { it.contains("perdue pour la campagne") },
-        )
         assertFalse(
             "she is still being put into play after being lost",
             lines.any { it.contains("alliée de campagne") },
