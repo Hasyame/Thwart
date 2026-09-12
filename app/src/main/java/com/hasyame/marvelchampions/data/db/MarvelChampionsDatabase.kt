@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.data.db.dao.ExcludedScenarioDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
 import com.hasyame.marvelchampions.data.db.dao.FavouriteDao
+import com.hasyame.marvelchampions.data.db.dao.RatingDao
 import com.hasyame.marvelchampions.data.db.dao.PlayDao
 import com.hasyame.marvelchampions.data.db.dao.RandomizerHistoryDao
 import com.hasyame.marvelchampions.data.db.dao.SavedDeckDao
@@ -22,6 +23,7 @@ import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
+import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
 import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
@@ -67,12 +69,13 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         CampaignEventEntity::class,
         PlayEntity::class,
         FavouriteCardEntity::class,
+        RatingEntity::class,
         ExcludedModularSetEntity::class,
         ExcludedScenarioEntity::class,
         PausedGameEntity::class,
         SyncStateEntity::class,
     ],
-    version = 21,
+    version = 22,
     exportSchema = true,
     // Room generates these from the exported schemas, which it can do for
     // anything that only adds a table, or adds a column with a SQL default.
@@ -100,6 +103,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         AutoMigration(from = 18, to = 19),
         AutoMigration(from = 19, to = 20),
         AutoMigration(from = 20, to = 21),
+        AutoMigration(from = 21, to = 22),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {
@@ -112,6 +116,7 @@ abstract class MarvelChampionsDatabase : RoomDatabase() {
     abstract fun campaignDao(): CampaignDao
     abstract fun playDao(): PlayDao
     abstract fun favouriteDao(): FavouriteDao
+    abstract fun ratingDao(): RatingDao
     abstract fun excludedModularSetDao(): ExcludedModularSetDao
     abstract fun excludedScenarioDao(): ExcludedScenarioDao
     abstract fun syncStateDao(): SyncStateDao

@@ -330,6 +330,37 @@ private fun SignedIn(state: SyncAccountUiState, viewModel: SyncAccountViewModel)
         person has no way of knowing that from this screen otherwise, and the
         first thing they would learn is that the sync switch does not work.
     */
+    /*
+        Ratings the server refused. Kept until read, because the live stream
+        syncs again within seconds and a notice that lived only in the last
+        run's result was gone before anybody saw it. The rows are already
+        gone; this only explains why.
+    */
+    if (state.rejectedRatings > 0) {
+        ComicPanel(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            Column(
+                Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = pluralStringResource(
+                        R.plurals.sync_rejected_ratings,
+                        state.rejectedRatings,
+                        state.rejectedRatings,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                TextButton(onClick = viewModel::dismissRejected) {
+                    Text(stringResource(R.string.sync_rejected_dismiss))
+                }
+            }
+        }
+    }
+
     if (!state.emailVerified) {
         ComicPanel(
             Modifier

@@ -67,6 +67,12 @@ data class SyncAccountUiState(
     val email: String = "",
     /** False while the address is unconfirmed and the account is switched off. */
     val emailVerified: Boolean = true,
+    /**
+     * Ratings the server refused since the notice was last read. Each was
+     * for a game the server does not have, and is already gone from this
+     * device; this is the one place that says so.
+     */
+    val rejectedRatings: Int = 0,
     val enabled: Boolean = false,
     val autoSync: Boolean = false,
     val pending: Int = 0,
@@ -138,6 +144,7 @@ class SyncAccountViewModel @Inject constructor(
                         handle = session.handle,
                         email = session.email,
                         emailVerified = session.emailVerified,
+                        rejectedRatings = session.rejectedRatings,
                         enabled = session.enabled,
                         autoSync = session.autoSync,
                         lastSyncedAt = session.lastSyncedAt,
@@ -313,6 +320,11 @@ class SyncAccountViewModel @Inject constructor(
                 ),
             )
         }
+    }
+
+    /** The refused-ratings notice has been read. */
+    fun dismissRejected() {
+        viewModelScope.launch { sessions.clearRejected() }
     }
 
     fun cancelAdoption() {

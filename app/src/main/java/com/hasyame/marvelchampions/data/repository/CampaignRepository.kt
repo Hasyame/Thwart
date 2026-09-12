@@ -12,6 +12,8 @@ import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero
 import com.hasyame.marvelchampions.domain.campaign.SchemeSetup
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
+import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignHero
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignState
@@ -640,8 +642,8 @@ class CampaignRepository @Inject constructor(
         elapsedMillis: Long,
         locale: CardLocale,
         victoryPoints: Int = 0,
-    ): PlayRecorded = withContext(ioDispatcher) {
-        val run = load(runId, locale) ?: return@withContext PlayRecorded.SavedOnly
+    ): PlayEntity? = withContext(ioDispatcher) {
+        val run = load(runId, locale) ?: return@withContext null
         val scenario = run.template.scenarios.firstOrNull { it.id == scenarioId }
         val heroes = run.state.heroes
 
@@ -668,8 +670,7 @@ class CampaignRepository @Inject constructor(
 
         val first = heroes.firstOrNull()
 
-        playRepository.record(
-            PlayEntity(
+        val play = PlayEntity(
                 id = playRepository.newPlayId(),
                 playedAt = System.currentTimeMillis(),
                 scenarioCode = scenarioId,
@@ -689,8 +690,9 @@ class CampaignRepository @Inject constructor(
                 elapsedMillis = elapsedMillis,
                 victoryPoints = victoryPoints,
                 campaignRunId = runId,
-            ),
-        )
+            )
+        playRepository.record(play)
+        play
     }
 
     suspend fun append(runId: String, event: CampaignEvent) = withContext(ioDispatcher) {
@@ -1014,6 +1016,37 @@ class CampaignRepository @Inject constructor(
      * second device needs to reach the same conclusion, so tombstoning each
      * event would cost hundreds of rows to repeat one fact.
      */
+    /**
+     * What a campaign's scenario can be rated on, as the ratings contract
+     * names it: the villain's card set, then each modular set its rules put
+     * on the table, paired with that set.
+     *
+     * A scenario played inside a campaign and the same scenario played on its
+     * own are one subject, so the campaign's own id (`s2_batroc`) has to
+     * become the set (`batroc`). The set follows from the villain card, drawn
+     * or written, through the card database, the same resolution the
+     * tracker uses. A campaign whose villains are not on the database, Fear
+     * No Evil today, resolves to nothing, and nothing is rated: better no
+     * rating than one filed under an invented key.
+     */
+    suspend fun ratingSubjects(runId: String, scenarioId: String, locale: CardLocale): List<RatingSubject> =
+        withContext(ioDispatcher) {
+            val run = load(runId, locale) ?: return@withContext emptyList()
+            val scenario = run.template.scenarios.firstOrNull { it.id == scenarioId }
+                ?: return@withContext emptyList()
+            val setup = scenario.baseSetup ?: return@withContext emptyList()
+            val drawn = CampaignEngine.drawnCards(run.state, scenarioId, VILLAIN_DRAW_ID).firstOrNull()
+            val villain = setup.villainStages(run.state.difficulty, drawn).firstOrNull() ?: drawn
+                ?: return@withContext emptyList()
+            val setCode = cardDao.getCard(villain, locale.code)?.cardSetCode
+                ?: return@withContext emptyList()
+            // Only the sets the card database calls modular: a template lists
+            // the villain's own set and the standard set in the same breath.
+            val modular = (setup.encounterSets + setup.modularSets).distinct()
+                .filter { cardDao.getSetType(it) == MODULAR_SET_TYPE }
+            listOf(RatingSubject.scenario(setCode)) + modular.map { RatingSubject.modular(it, setCode) }
+        }
+
     suspend fun deleteRun(runId: String) = withContext(ioDispatcher) {
         campaignDao.deleteRun(runId, System.currentTimeMillis())
         syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
@@ -1218,6 +1251,9 @@ class CampaignRepository @Inject constructor(
          * the answer here, and nowhere else.
          */
         const val VILLAIN_DRAW_ID = "villain"
+
+        /** The card database's word for a set the picker offers. */
+        const val MODULAR_SET_TYPE = "modular"
 
         private const val CAMPAIGN_ASSET_DIR = "campaigns"
 

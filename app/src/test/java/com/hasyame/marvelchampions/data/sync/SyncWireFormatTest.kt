@@ -109,9 +109,21 @@ class SyncWireFormatTest {
             "randomizer_history",
             "favourite_cards",
             "settings",
+            "ratings",
         )
 
         assertEquals(server, SyncCollection.entries.map { it.key }.toSet())
+    }
+
+    @Test
+    fun `ratings are pushed after the games they cite`() {
+        // The enum's order is the push order, and the server checks a rating
+        // against the play or run it cites as it holds it: pushed earlier, or
+        // earlier in the same batch. The first end-to-end run on the web had
+        // every rating refused because they sat before the plays.
+        val order = SyncCollection.entries
+        assertTrue(order.indexOf(SyncCollection.RATINGS) > order.indexOf(SyncCollection.PLAYS))
+        assertTrue(order.indexOf(SyncCollection.RATINGS) > order.indexOf(SyncCollection.CAMPAIGN_RUNS))
     }
 
     @Test

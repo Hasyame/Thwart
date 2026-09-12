@@ -29,6 +29,12 @@ import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
+import com.hasyame.marvelchampions.data.repository.RatingRepository
+import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
@@ -197,6 +203,15 @@ data class GameSessionUiState(
      */
     val firstPlayerIndex: Int? = null,
     val elapsedMillis: Long = 0,
+    /**
+     * The game just filed, while its result is on screen: what the rating
+     * row is about. Null until then, and again once the table is reset.
+     */
+    val lastPlay: PlayEntity? = null,
+    /** The player's own ratings, by subject key, for whatever is in view. */
+    val ownRatings: Map<String, Int> = emptyMap(),
+    /** The community's, by subject key, for the scenario and sets in view. */
+    val ratingSummaries: Map<String, RatingSummaryDto> = emptyMap(),
     /** The scenario's own main scheme and the setup printed on it. */
     val briefing: SchemeBriefing = SchemeBriefing(),
     val isLoading: Boolean = true,
@@ -254,6 +269,7 @@ class GameSessionViewModel @Inject constructor(
     private val pausedGameDao: PausedGameDao,
     private val autoSync: AutoSync,
     private val json: Json,
+    private val ratings: RatingRepository,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(GameSessionUiState())
@@ -288,6 +304,30 @@ class GameSessionViewModel @Inject constructor(
             deckRepository.observeDecks().collect { decks ->
                 state.value = state.value.copy(decks = decks)
             }
+        }
+        /*
+            The ratings in view follow the table: the scenario and sets chosen
+            on the setup page, and the game just filed once there is one. One
+            collector, keyed on those and nothing else, so every way the
+            choice changes (a tap, a draw handed over, a replay, a resumed
+            break) is covered without each remembering to ask.
+        */
+        viewModelScope.launch {
+            state.map { Triple(it.scenarioCode, it.modularSetCodes, it.lastPlay?.id) }
+                .distinctUntilChanged()
+                .collectLatest { (scenario, sets, _) ->
+                    val subjects = ratingSubjectsInView(scenario, sets, state.value.lastPlay)
+                    val ownKeys = subjects.map { it.key }
+                    // The community's first, one request, then the player's
+                    // own kept live while these stay in view.
+                    val summaries = ratings.summaries(
+                        ownKeys + sets.map { RatingSubject.modularOverallKey(it) },
+                    )
+                    state.update { it.copy(ratingSummaries = summaries) }
+                    ratings.observeOwn(ownKeys).collect { own ->
+                        state.update { it.copy(ownRatings = own) }
+                    }
+                }
         }
     }
 
@@ -737,6 +777,33 @@ class GameSessionViewModel @Inject constructor(
         updateTimer { it.setElapsed(millis.coerceAtLeast(0L), System.currentTimeMillis()) }
     }
 
+    /** The subjects a screen may rate or show: the setup's, and the filed game's. */
+    private fun ratingSubjectsInView(
+        scenario: String?,
+        sets: List<String>,
+        lastPlay: PlayEntity?,
+    ): List<RatingSubject> {
+        val onTable = scenario?.let { code ->
+            listOf(RatingSubject.scenario(code)) + sets.map { RatingSubject.modular(it, code) }
+        }.orEmpty()
+        return (onTable + RatingSubject.ofPlay(lastPlay ?: return onTable)).distinctBy { it.key }
+    }
+
+    /** The community's summary for a set with the scenario in view: the pairing when it has one, the set overall otherwise. */
+    fun summaryForSet(setCode: String): RatingSummaryDto? {
+        val scenario = state.value.scenarioCode ?: return null
+        val paired = state.value.ratingSummaries[RatingSubject.modular(setCode, scenario).key]
+        return if (paired?.mean != null) paired else state.value.ratingSummaries[RatingSubject.modularOverallKey(setCode)]
+    }
+
+    /** A rating for the game just filed, or its removal. */
+    fun rate(subject: RatingSubject, score: Int?) {
+        val play = state.value.lastPlay ?: return
+        viewModelScope.launch {
+            if (score == null) ratings.unrate(subject.key) else ratings.rate(subject, score, play)
+        }
+    }
+
     fun pause() = updateTimer { it.pause(System.currentTimeMillis()) }
 
     fun resume() = updateTimer { it.start(System.currentTimeMillis()) }
@@ -779,8 +846,7 @@ class GameSessionViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            finished.value = playRepository.record(
-                PlayEntity(
+            val play = PlayEntity(
                     id = playRepository.newPlayId(),
                     photos = current.photos.joinToString(","),
                     playedAt = System.currentTimeMillis(),
@@ -816,8 +882,11 @@ class GameSessionViewModel @Inject constructor(
                         .sorted()
                         .joinToString(", ")
                         .let { if (it.isBlank()) "" else "Modular sets: $it" },
-                ),
-            )
+                )
+            // Kept while the result is on screen: the rating row asks about
+            // this game, and needs it by id to cite as evidence.
+            state.update { it.copy(lastPlay = play) }
+            finished.value = playRepository.record(play)
         }
     }
 
@@ -843,6 +912,7 @@ class GameSessionViewModel @Inject constructor(
     fun reset() {
         finished.value = null
         state.value = state.value.copy(
+            lastPlay = null,
             phase = SessionPhase.SETUP,
             timer = TimerState(),
             firstPlayerIndex = null,

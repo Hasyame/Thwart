@@ -1,5 +1,8 @@
 package com.hasyame.marvelchampions.data.sync
 
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.JsonObject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -147,9 +150,32 @@ class FakeSyncApi : SyncApi {
             return refusal(500, SyncException.SERVER_ERROR)
         }
 
+        // The plays this batch carries, for the ratings behind them in it:
+        // the server checks a rating against the play as it holds it, pushed
+        // earlier or earlier in the same batch.
+        val playsInBatch = body.records
+            .filter { it.collection == SyncCollection.PLAYS.key && !it.deleted }
+            .map { it.id }
+            .toSet()
         val results = body.records.map { incoming ->
             val key = incoming.collection to incoming.id
             val existing = records[key]?.record
+            if (incoming.collection == SyncCollection.RATINGS.key && !incoming.deleted) {
+                val cited = incoming.body?.get("evidence")?.jsonObject?.get("playId")?.jsonPrimitive?.content
+                val held = cited != null && (
+                    cited in playsInBatch ||
+                        records[SyncCollection.PLAYS.key to cited]?.record?.deleted == false
+                    )
+                if (!held) {
+                    return@map RecordResultDto(
+                        id = incoming.id,
+                        collection = incoming.collection,
+                        revision = 0,
+                        outcome = RecordResultDto.OUTCOME_REJECTED,
+                        reason = "not_played",
+                    )
+                }
+            }
             revision++
             records[key] = Stored(
                 SyncRecordDto(
@@ -185,6 +211,10 @@ class FakeSyncApi : SyncApi {
     }
 
     // --- the parts these tests do not exercise ------------------------------
+
+    /** Nothing rated anywhere: every subject is below the threshold. */
+    override suspend fun ratingSummary(url: String, subjects: List<String>): Response<Map<String, RatingSummaryDto>> =
+        Response.success(subjects.associateWith { RatingSummaryDto(count = 0) })
 
     override suspend fun register(url: String, language: String, body: RegisterDto) =
         authResponse()

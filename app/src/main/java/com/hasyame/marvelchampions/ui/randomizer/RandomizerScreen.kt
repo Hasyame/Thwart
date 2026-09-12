@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.ui.ratings.RatingBadge
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
@@ -246,6 +248,15 @@ private fun DrawCard(state: RandomizerUiState, viewModel: RandomizerViewModel) {
                 state = state,
                 viewModel = viewModel,
             )
+            // The average beside the draw, never beside the question.
+            state.draw.scenarioCode?.let { code ->
+                val key = RatingSubject.scenario(code).key
+                RatingBadge(
+                    summary = state.ratingSummaries[key],
+                    own = state.ownRatings[key],
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
             if (state.scenarioNeedsReview) {
                 Text(
                     text = stringResource(R.string.randomizer_needs_review),
@@ -282,6 +293,25 @@ private fun DrawCard(state: RandomizerUiState, viewModel: RandomizerViewModel) {
                 state = state,
                 viewModel = viewModel,
             )
+            state.draw.scenarioCode?.let { scenario ->
+                state.draw.modularSetCodes.forEach { code ->
+                    val summary = viewModel.summaryForSet(code)
+                    val own = state.ownRatings[RatingSubject.modular(code, scenario).key]
+                    if (summary != null || own != null) {
+                        Row(
+                            Modifier.padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                text = state.names.modularSets[code] ?: code,
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                            RatingBadge(summary = summary, own = own)
+                        }
+                    }
+                }
+            }
             // The asterisk meant something only to whoever wrote it. Said out
             // loud, and only when there is one to explain.
             if (state.draw.mandatoryModularCodes.isNotEmpty()) {

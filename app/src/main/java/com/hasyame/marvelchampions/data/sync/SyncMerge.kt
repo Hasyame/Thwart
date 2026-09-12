@@ -3,6 +3,7 @@ package com.hasyame.marvelchampions.data.sync
 import com.hasyame.marvelchampions.data.backup.BackupSettings
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
+import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
@@ -62,6 +63,22 @@ object SyncMerge {
         // preserving, and taking one would resurrect the earlier moment.
         local.deletedAt != null || incoming.deletedAt != null -> incoming
         else -> incoming.copy(addedAt = minOf(incoming.addedAt, local.addedAt))
+    }
+
+    /**
+     * A rating: the later `ratedAt` wins, and on a tie the incoming.
+     *
+     * The opposite of a favourite. A star is put on once and the earliest
+     * date is the truth; a rating is an opinion, and the newer opinion is the
+     * current one, which is what "rate again after replaying" means. A
+     * tombstone is a write like any other and is compared by the same clock:
+     * taking a rating back after re-rating it on another device must not
+     * bring the older score back to life.
+     */
+    fun rating(incoming: RatingEntity, local: RatingEntity?): RatingEntity = when {
+        local == null -> incoming
+        local.ratedAt > incoming.ratedAt && local.deletedAt == null && incoming.deletedAt == null -> local
+        else -> incoming
     }
 
     /**

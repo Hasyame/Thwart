@@ -821,4 +821,33 @@
         <item quantity="other">%1$d campagnes</item>
         <item quantity="many">%1$d campagnes</item>
     </plurals>
+    <!-- Notes de difficulté. docs/spec/ratings-and-modular-sets.md dans le dépôt web. -->
+    <string name="rating_word_0">Une formalité</string>
+    <string name="rating_word_1">Facile</string>
+    <string name="rating_word_2">Équilibré</string>
+    <string name="rating_word_3">Difficile</string>
+    <string name="rating_word_4">Brutal</string>
+    <string name="rating_word_5">Impossible</string>
+    <string name="rating_title">C\'était difficile ?</string>
+    <string name="rating_campaign_title">Et la campagne dans son ensemble, difficile ?</string>
+    <string name="rating_optional">Facultatif. Votre note reste visible pour vous ; la moyenne de la communauté apparaît à partir de cinq notes.</string>
+    <string name="rating_sub_scenario">Scénario</string>
+    <string name="rating_sub_modular">Set modulaire, avec ce scénario</string>
+    <string name="rating_yours">Votre note : %1$d · %2$s</string>
+    <string name="rating_clear">Effacer</string>
+    <string name="rating_rate">Noter cette partie</string>
+    <string name="rating_none_to_rate">Rien à noter ici : l\'application ne peut pas dire contre quel set de scénario cette partie a été jouée. Sa campagne a été supprimée, ou elle tire son méchant à la table.</string>
+    <plurals name="rating_community">
+        <item quantity="one">%1$s · %2$d note</item>
+        <item quantity="other">%1$s · %2$d notes</item>
+    </plurals>
+    <plurals name="rating_count_only">
+        <item quantity="one">%1$d note pour l\'instant</item>
+        <item quantity="other">%1$d notes pour l\'instant</item>
+    </plurals>
+    <plurals name="sync_rejected_ratings">
+        <item quantity="one">Une note a été refusée par le serveur : elle portait sur une partie que le serveur n\'a pas. Elle a été retirée.</item>
+        <item quantity="other">%1$d notes ont été refusées par le serveur : elles portaient sur des parties que le serveur n\'a pas. Elles ont été retirées.</item>
+    </plurals>
+    <string name="sync_rejected_dismiss">Compris</string>
 </resources>

@@ -59,6 +59,8 @@ import com.hasyame.marvelchampions.ui.plays.CorrectTimeDialog
 import com.hasyame.marvelchampions.ui.plays.EncounterPanel
 import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.ui.ratings.RatingPanel
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.ui.plays.LongBreakNotes
@@ -215,6 +217,7 @@ fun CampaignRunScreen(
                     RunPage.RESULT -> ResultPage(
                         run = run,
                         summary = state.summary,
+                        ratings = { RatingRows(state, viewModel::rate) },
                         onNext = viewModel::continueFromOutcome,
                         onConcede = viewModel::concedeCampaign,
                         onMarket = { viewModel.goTo(RunPage.MARKET) },
@@ -224,6 +227,7 @@ fun CampaignRunScreen(
 
                     RunPage.DEFEAT -> DefeatPage(
                         summary = state.summary,
+                        ratings = { RatingRows(state, viewModel::rate) },
                         onRetry = viewModel::retryScenario,
                         onContinue = viewModel::continueFromOutcome,
                         onBreak = onBack,
@@ -884,6 +888,7 @@ private fun PlayingPage(
 private fun ResultPage(
     run: CampaignRun,
     summary: ScenarioOutcomeSummary?,
+    ratings: @Composable () -> Unit = {},
     onNext: () -> Unit,
     onConcede: (() -> Unit)? = null,
     onMarket: () -> Unit,
@@ -989,6 +994,11 @@ private fun ResultPage(
             }
         }
 
+        // Optional, after the result is saved, never before and never as a
+        // step: the scenario as its card set, the modular sets its rules put
+        // out, and once the campaign is done, the campaign itself.
+        ratings()
+
         HorizontalDivider()
 
         if (summary?.campaignFinished == true) {
@@ -1048,6 +1058,7 @@ private fun ResultPage(
 @Composable
 private fun DefeatPage(
     summary: ScenarioOutcomeSummary?,
+    ratings: @Composable () -> Unit = {},
     onRetry: () -> Unit,
     onContinue: () -> Unit,
     onBreak: () -> Unit,
@@ -1077,6 +1088,8 @@ private fun DefeatPage(
                 summary?.outcomeMessage?.let { Text(campaignText(it)) }
             }
         }
+        // A lost game is still a game that was played, and can be as hard.
+        ratings()
         // Retrying settles nothing, so it comes first: the job is still
         // there to be won until the players decide otherwise.
         // Each way out says what it costs. Some of these are hard to undo and
@@ -1450,4 +1463,30 @@ private fun ChoosePage(
             Text(stringResource(R.string.campaign_take_a_break))
         }
     }
+}
+
+/**
+ * The rating rows a result page shows: the scenario's, and the campaign's
+ * once it is finished. Nothing when the campaign's villains are not on the
+ * card database, which is what an empty list of subjects means.
+ */
+@Composable
+private fun RatingRows(state: CampaignRunUiState, onRate: (RatingSubject, Int?) -> Unit) {
+    val scenarioSubjects = state.ratingSubjects.filter { it.kind != RatingSubject.Kind.CAMPAIGN }
+    val campaignSubjects = state.ratingSubjects.filter { it.kind == RatingSubject.Kind.CAMPAIGN }
+    val labelOf: (RatingSubject) -> String = { state.ratingLabels[it.code] ?: it.code }
+    RatingPanel(
+        title = stringResource(R.string.rating_title),
+        subjects = scenarioSubjects,
+        own = state.ownRatings,
+        labelOf = labelOf,
+        onRate = onRate,
+    )
+    RatingPanel(
+        title = stringResource(R.string.rating_campaign_title),
+        subjects = campaignSubjects,
+        own = state.ownRatings,
+        labelOf = labelOf,
+        onRate = onRate,
+    )
 }

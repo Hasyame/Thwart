@@ -15,6 +15,13 @@ import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
 import com.hasyame.marvelchampions.domain.randomizer.ScenarioRandomizer
 import com.hasyame.marvelchampions.domain.randomizer.ScenarioRule
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.hasyame.marvelchampions.data.repository.RatingRepository
+import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -38,12 +45,17 @@ data class RandomizerUiState(
     val hasNoOwnedPacks: Boolean = false,
     /** The drawn scenario's rules could not be parsed with confidence. */
     val scenarioNeedsReview: Boolean = false,
+    /** The community's summaries, by subject key, for the drawn scenario and sets. */
+    val ratingSummaries: Map<String, RatingSummaryDto> = emptyMap(),
+    /** The player's own ratings for the same. */
+    val ownRatings: Map<String, Int> = emptyMap(),
 )
 
 @HiltViewModel
 class RandomizerViewModel @Inject constructor(
     private val repository: RandomizerRepository,
     private val preferences: AppPreferences,
+    private val ratings: RatingRepository,
 ) : ViewModel() {
 
     private val draw = MutableStateFlow(RandomizerDraw())
@@ -60,14 +72,39 @@ class RandomizerViewModel @Inject constructor(
     /** Sets the collection says are missing. Never drawn, and see below. */
     private var missingModularSets: Set<String> = emptySet()
 
+    /*
+        The averages beside the draw, and the player's own, following the
+        draw: refetched when the scenario or the sets change, and nothing
+        else. Decoration on a decision: a draw renders with or without them.
+    */
+    private val ratingSummaries = MutableStateFlow<Map<String, RatingSummaryDto>>(emptyMap())
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val ownRatings: Flow<Map<String, Int>> = draw
+        .map { it.scenarioCode to it.modularSetCodes }
+        .distinctUntilChanged()
+        .flatMapLatest { (scenario, sets) ->
+            val keys = ratingKeys(scenario, sets)
+            viewModelScope.launch {
+                ratingSummaries.value = ratings.summaries(
+                    keys + sets.map { RatingSubject.modularOverallKey(it) },
+                )
+            }
+            ratings.observeOwn(keys)
+        }
+
     val uiState: StateFlow<RandomizerUiState> = combine(
         combine(draw, locked, filters, excludeBeaten, ::Quad),
         combine(pools, names, loading, ::Triple),
         repository.observeHistory(),
+        combine(ratingSummaries, ownRatings, ::Pair),
     ) { (currentDraw, currentLocked, currentFilters, skipBeaten),
         (currentPools, currentNames, isLoading),
-        history ->
+        history,
+        (summaries, own) ->
         RandomizerUiState(
+            ratingSummaries = summaries,
+            ownRatings = own,
             draw = currentDraw,
             names = currentNames,
             pools = currentPools,
@@ -85,6 +122,18 @@ class RandomizerViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
         initialValue = RandomizerUiState(),
     )
+
+    private fun ratingKeys(scenario: String?, sets: List<String>): List<String> {
+        val code = scenario ?: return emptyList()
+        return listOf(RatingSubject.scenario(code).key) + sets.map { RatingSubject.modular(it, code).key }
+    }
+
+    /** The summary to show for a drawn set: its pairing with the drawn scenario when that has one, the set overall otherwise. */
+    fun summaryForSet(code: String): RatingSummaryDto? {
+        val scenario = draw.value.scenarioCode ?: return null
+        val paired = ratingSummaries.value[RatingSubject.modular(code, scenario).key]
+        return if (paired?.mean != null) paired else ratingSummaries.value[RatingSubject.modularOverallKey(code)]
+    }
 
     init {
         viewModelScope.launch {

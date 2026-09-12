@@ -9,6 +9,12 @@ import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.sync.AutoSync
 import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Job
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
+import com.hasyame.marvelchampions.data.db.entity.PlayEntity
+import com.hasyame.marvelchampions.data.repository.RandomizerRepository
+import com.hasyame.marvelchampions.data.repository.RatingRepository
 import com.hasyame.marvelchampions.ui.plays.LongBreakDraft
 import java.util.UUID
 import com.hasyame.marvelchampions.data.repository.CampaignRun
@@ -140,6 +146,19 @@ data class CampaignRunUiState(
      * with questions goes through the same page, and this says so.
      */
     val answeringVictory: Boolean = true,
+    /**
+     * What the result page can be rated on: the scenario just played, as its
+     * card set, and the modular sets its rules put out; then, once the
+     * campaign is finished, the campaign itself. Empty for a campaign whose
+     * villains the card database does not know.
+     */
+    val ratingSubjects: List<RatingSubject> = emptyList(),
+    /** The player's own ratings for those, live. */
+    val ownRatings: Map<String, Int> = emptyMap(),
+    /** Set names by code, in the card language, for the rating rows. */
+    val ratingLabels: Map<String, String> = emptyMap(),
+    /** The play just filed, which a scenario rating cites. */
+    val lastPlay: PlayEntity? = null,
 
     /** Counting villain health and scheme threat, if the setting asks for it. */
     val trackEncounter: Boolean = false,
@@ -192,6 +211,8 @@ class CampaignRunViewModel @Inject constructor(
     private val autoSync: AutoSync,
     private val json: Json,
     val photoStore: PhotoStore,
+    private val ratings: RatingRepository,
+    private val randomizerRepository: RandomizerRepository,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(CampaignRunUiState())
@@ -646,6 +667,7 @@ class CampaignRunViewModel @Inject constructor(
 
             if (finished) {
                 repository.markFinished(id, true)
+                offerCampaignRating()
             }
 
             state.value = state.value.copy(
@@ -667,6 +689,46 @@ class CampaignRunViewModel @Inject constructor(
                     scenarioId = scenarioId,
                 ),
             )
+        }
+    }
+
+    private var ownRatingsJob: Job? = null
+
+    /** Keeps the player's own ratings for the subjects in view live. */
+    private fun watchOwnRatings() {
+        ownRatingsJob?.cancel()
+        val keys = state.value.ratingSubjects.map { it.key }
+        ownRatingsJob = viewModelScope.launch {
+            ratings.observeOwn(keys).collect { own -> state.update { it.copy(ownRatings = own) } }
+        }
+    }
+
+    /**
+     * The campaign as a whole, once the run is finished: one more subject
+     * beside the scenario's, unlocked by finishing and requiring nothing else.
+     */
+    private fun offerCampaignRating() {
+        val run = state.value.run ?: return
+        val subject = RatingSubject.campaign(run.template.id)
+        state.update {
+            it.copy(
+                ratingSubjects = (it.ratingSubjects + subject).distinctBy { s -> s.key },
+                ratingLabels = it.ratingLabels + (run.template.id to run.template.name.resolve(run.localeCode)),
+            )
+        }
+        watchOwnRatings()
+    }
+
+    /** A rating for the game or campaign just finished, or its removal. */
+    fun rate(subject: RatingSubject, score: Int?) {
+        val run = state.value.run ?: return
+        viewModelScope.launch {
+            when {
+                score == null -> ratings.unrate(subject.key)
+                subject.kind == RatingSubject.Kind.CAMPAIGN ->
+                    ratings.rateCampaign(run.entity, score, run.state.heroes.size)
+                else -> state.value.lastPlay?.let { ratings.rate(subject, score, it) }
+            }
         }
     }
 
@@ -965,15 +1027,28 @@ class CampaignRunViewModel @Inject constructor(
         elapsedMillis: Long,
         victoryPoints: Int = 0,
     ) {
-        runCatching {
+        val locale = preferences.currentCardLocale()
+        val play = runCatching {
             repository.recordScenarioPlay(
                 runId = id,
                 scenarioId = scenarioId,
                 won = won,
                 elapsedMillis = elapsedMillis,
                 victoryPoints = victoryPoints,
-                locale = preferences.currentCardLocale(),
+                locale = locale,
+            )
+        }.getOrNull()
+        // What the result page can ask about. Resolved now, while the run
+        // still says which villain this was, and before the page is shown.
+        val subjects = repository.ratingSubjects(id, scenarioId, locale)
+        val names = randomizerRepository.loadNames(locale)
+        state.update {
+            it.copy(
+                lastPlay = play,
+                ratingSubjects = subjects,
+                ratingLabels = names.scenarios + names.modularSets,
             )
         }
+        watchOwnRatings()
     }
 }

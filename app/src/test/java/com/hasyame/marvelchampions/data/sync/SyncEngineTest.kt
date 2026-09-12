@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
+import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.security.SecretStore
 import com.hasyame.marvelchampions.data.settings.AppPreferences
@@ -174,6 +175,51 @@ class SyncEngineTest {
 
         assertNotNull("the other device's record must survive", database.syncRecordDao().play("server-2"))
     }
+
+    // --- ratings -----------------------------------------------------------------
+
+    @Test
+    fun `a rating of a game the server holds is sent after the game, and kept`() = runTest {
+        givenLocalPlays(1)
+        database.ratingDao().put(rating("scenario:rhino", playId = "local-0"))
+
+        val outcome = engine.sync()
+
+        assertEquals(0, outcome.rejected)
+        assertNotNull("the server holds the rating", api.stored(SyncCollection.RATINGS.key, "scenario:rhino"))
+        assertNotNull("and the phone still has it", database.ratingDao().get("scenario:rhino"))
+        assertFalse("clean", database.syncStateDao().get(SyncCollection.RATINGS.key, "scenario:rhino")!!.dirty)
+    }
+
+    @Test
+    fun `a rating the server refuses is forgotten, and said so once`() = runTest {
+        // Cites a play the server has never seen. The row must go, with its
+        // bookkeeping: marked synced instead, this device would show a rating
+        // that does not exist, permanently, and never send it again either.
+        givenLocalPlays(1)
+        database.ratingDao().put(rating("scenario:klaw", playId = "play-never"))
+
+        val outcome = engine.sync()
+
+        assertEquals(1, outcome.rejected)
+        assertNull("the server holds nothing", api.stored(SyncCollection.RATINGS.key, "scenario:klaw"))
+        assertNull("the row is gone", database.ratingDao().get("scenario:klaw"))
+        assertNull("and its state with it", database.syncStateDao().get(SyncCollection.RATINGS.key, "scenario:klaw"))
+        assertNotNull("the play beside it still applied", api.stored(SyncCollection.PLAYS.key, "local-0"))
+        assertEquals("the notice waits to be read", 1, sessions.current().rejectedRatings)
+
+        val again = engine.sync()
+        assertEquals("nothing is sent twice", 0, again.rejected)
+        assertEquals(0, again.pushed)
+    }
+
+    private fun rating(subject: String, playId: String) = RatingEntity(
+        subject = subject,
+        score = 3,
+        ratedAt = 1_000L,
+        playId = playId,
+        updatedAt = 1_000L,
+    )
 
     // --- collections this build does not read ------------------------------
 

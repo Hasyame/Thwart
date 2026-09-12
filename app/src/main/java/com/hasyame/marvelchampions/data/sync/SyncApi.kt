@@ -132,6 +132,13 @@ interface SyncApi {
         @Query("collections") collections: String,
     ): Response<PullResponseDto>
 
+    /** Up to fifty subjects; the query key repeats, `subject=a&subject=b`. */
+    @GET
+    suspend fun ratingSummary(
+        @Url url: String,
+        @Query("subject") subjects: List<String>,
+    ): Response<Map<String, RatingSummaryDto>>
+
     @POST
     suspend fun push(
         @Url url: String,
@@ -159,6 +166,13 @@ class SyncEndpoints(baseUrl: String) {
     val changes: String get() = "$base/v1/sync/changes"
     val resendVerification: String get() = "$base/v1/auth/verify/resend"
     val account: String get() = "$base/v1/account"
+
+    /**
+     * Community averages. Public: the scenario browser shows them to people
+     * with no account, and the threshold is applied on the server, so no
+     * client can show a mean the contract says not to.
+     */
+    val ratingSummary: String get() = "$base/v1/ratings/summary"
 
     fun device(id: String): String = "$base/v1/auth/devices/$id"
 

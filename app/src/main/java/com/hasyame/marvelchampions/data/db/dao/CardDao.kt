@@ -216,6 +216,10 @@ interface CardDao {
     )
     suspend fun getCardSets(setType: String, locale: String): List<CardSetSummary>
 
+    /** The kind of one set (`villain`, `modular`, ...), or null for a code no card carries. */
+    @Query("SELECT cardSetTypeNameCode FROM cards WHERE cardSetCode = :setCode LIMIT 1")
+    suspend fun getSetType(setCode: String): String?
+
     /**
      * Villain sets you can actually sit down and play.
      *

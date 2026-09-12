@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
+import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 
 /**
@@ -140,4 +141,22 @@ interface SyncRecordDao {
 
     @Upsert
     suspend fun putDraw(row: RandomizerHistoryEntity)
+
+    // --- ratings ------------------------------------------------------------
+
+    @Query("SELECT * FROM ratings WHERE subject = :subject")
+    suspend fun rating(subject: String): RatingEntity?
+
+    @Query("SELECT * FROM ratings")
+    suspend fun ratings(): List<RatingEntity>
+
+    @Upsert
+    suspend fun putRating(row: RatingEntity)
+
+    /**
+     * The server refused it and holds nothing: the row goes, and its
+     * bookkeeping with it, so nothing tries to send it again.
+     */
+    @Query("DELETE FROM ratings WHERE subject = :subject")
+    suspend fun forgetRating(subject: String)
 }

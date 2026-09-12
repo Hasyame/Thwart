@@ -70,6 +70,14 @@ class SyncClient @Inject constructor(
         api.version(SyncEndpoints(base).version)
     }
 
+    /**
+     * Community averages for the subjects a screen shows. Unauthenticated:
+     * the endpoint is public and the answer is the same for everyone.
+     */
+    suspend fun ratingSummary(subjects: List<String>): Map<String, RatingSummaryDto> = call {
+        api.ratingSummary(endpoints().ratingSummary, subjects)
+    }
+
     // --- accounts -----------------------------------------------------------
 
     suspend fun register(handle: String, email: String, password: String): AuthResponseDto {

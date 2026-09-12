@@ -10,6 +10,7 @@ import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.domain.model.CardLocale
+import com.hasyame.marvelchampions.domain.ratings.RatingWire
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
 import kotlinx.serialization.Serializable
 
@@ -54,6 +55,13 @@ data class Backup(
     val plays: List<PlayEntity> = emptyList(),
     val randomizerHistory: List<RandomizerHistoryEntity> = emptyList(),
     val favouriteCards: List<FavouriteCardEntity> = emptyList(),
+    /**
+     * Difficulty ratings, in the shape they take on the wire rather than as
+     * rows: the server's export writes this field from the sync bodies, and a
+     * file it produces has to restore here. Empty in a backup from before
+     * ratings existed.
+     */
+    val ratings: List<RatingWire> = emptyList(),
     /**
      * Names of the table photographs travelling with this backup.
      *

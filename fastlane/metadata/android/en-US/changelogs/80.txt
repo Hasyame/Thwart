@@ -1,0 +1,16 @@
+Rate how hard it was.
+
+After a game, and on any game in your history, you can say how hard the
+scenario was and how hard each modular set was with that scenario, on a
+scale from 0, Effortless, to 5, Impossible. A finished campaign can be
+rated as a whole. Nothing is preselected and nothing has to be answered;
+rating again replaces your earlier opinion.
+
+Your own rating shows wherever the scenario or set does. The community's
+average, with its count and spread, appears beside a choice, on the setup
+page, the randomiser's draw and the campaign to start, once a subject has
+five ratings; below that, only how many so far.
+
+With an account, ratings sync like everything else, and the server keeps
+only ratings of games it holds: one it refuses is removed here and the
+account screen says so once. Without an account they stay on this phone.

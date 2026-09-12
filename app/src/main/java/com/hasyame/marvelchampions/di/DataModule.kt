@@ -7,6 +7,7 @@ import com.hasyame.marvelchampions.data.db.dao.CampaignDao
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import com.hasyame.marvelchampions.data.db.dao.FavouriteDao
+import com.hasyame.marvelchampions.data.db.dao.RatingDao
 import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.db.dao.PlayDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
@@ -151,4 +152,8 @@ object DataModule {
     @Provides
     fun provideFavouriteDao(database: MarvelChampionsDatabase): FavouriteDao =
         database.favouriteDao()
+
+    @Provides
+    fun provideRatingDao(database: MarvelChampionsDatabase): RatingDao =
+        database.ratingDao()
 }

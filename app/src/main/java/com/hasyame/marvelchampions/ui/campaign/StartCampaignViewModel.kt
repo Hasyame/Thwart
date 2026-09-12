@@ -4,6 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Job
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
+import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
+import com.hasyame.marvelchampions.data.repository.RatingRepository
 import com.hasyame.marvelchampions.data.repository.CollectionRepository
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
@@ -32,6 +37,10 @@ data class RosterCandidate(
 
 data class StartCampaignUiState(
     val templates: List<CampaignTemplate> = emptyList(),
+    /** The community's summary per campaign, by subject key `campaign:<id>`. */
+    val ratingSummaries: Map<String, RatingSummaryDto> = emptyMap(),
+    /** The player's own rating per campaign, by the same key. */
+    val ownRatings: Map<String, Int> = emptyMap(),
     val candidates: List<RosterCandidate> = emptyList(),
     val isLoading: Boolean = true,
     /** Campaign names follow the card language, like the rest of the campaign. */
@@ -79,9 +88,26 @@ class StartCampaignViewModel @Inject constructor(
     private val builderRepository: DeckBuilderRepository,
     private val collectionRepository: CollectionRepository,
     private val preferences: AppPreferences,
+    private val ratings: RatingRepository,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(StartCampaignUiState())
+
+    private var ratingsJob: Job? = null
+
+    /**
+     * The averages beside the campaigns on offer, and the player's own. One
+     * request for the lot, then the player's own kept live; decoration on a
+     * choice, so a campaign renders with or without them.
+     */
+    private fun watchRatings(keys: List<String>) {
+        ratingsJob?.cancel()
+        ratingsJob = viewModelScope.launch {
+            val summaries = ratings.summaries(keys)
+            state.update { it.copy(ratingSummaries = summaries) }
+            ratings.observeOwn(keys).collect { own -> state.update { it.copy(ownRatings = own) } }
+        }
+    }
     val uiState: StateFlow<StartCampaignUiState> = state.asStateFlow()
 
     init {
@@ -103,8 +129,11 @@ class StartCampaignViewModel @Inject constructor(
                 collectionRepository.observeOwnedCodes(),
             ) { decks, owned -> decks to owned }.collect { (decks, owned) ->
                 val templates = bundled.filter { it.packCode.isNullOrBlank() || it.packCode in owned }
+                watchRatings(templates.map { RatingSubject.campaign(it.id).key })
                 state.value = StartCampaignUiState(
                     templates = templates,
+                    ratingSummaries = state.value.ratingSummaries,
+                    ownRatings = state.value.ownRatings,
                     // Counted here rather than in the composable: it walks the
                     // whole template, and the list is rebuilt on every deck
                     // change.

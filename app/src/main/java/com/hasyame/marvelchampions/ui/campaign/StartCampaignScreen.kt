@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.ui.ratings.RatingBadge
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
 import com.hasyame.marvelchampions.domain.campaign.template.chooserName
@@ -154,6 +156,12 @@ fun StartCampaignScreen(
                         )
                     }
                 }
+            }
+
+            // The average beside the campaign chosen, never beside a question.
+            template?.let { chosen ->
+                val key = RatingSubject.campaign(chosen.id).key
+                RatingBadge(summary = state.ratingSummaries[key], own = state.ownRatings[key])
             }
 
             // Only a campaign that has something to say shows this.

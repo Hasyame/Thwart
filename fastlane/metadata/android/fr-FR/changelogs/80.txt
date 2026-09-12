@@ -1,0 +1,18 @@
+Notez la difficulté.
+
+Après une partie, et sur toute partie de votre historique, vous pouvez dire
+à quel point le scénario était difficile, et chaque set modulaire avec ce
+scénario, sur une échelle de 0, Une formalité, à 5, Impossible. Une campagne
+terminée se note dans son ensemble. Rien n'est présélectionné et rien n'est
+obligatoire ; noter à nouveau remplace votre avis précédent.
+
+Votre propre note s'affiche partout où le scénario ou le set apparaît. La
+moyenne de la communauté, avec son nombre et sa répartition, apparaît à
+côté d'un choix, sur la page de préparation, le tirage aléatoire et la
+campagne à lancer, à partir de cinq notes ; en dessous, seulement leur
+nombre.
+
+Avec un compte, les notes se synchronisent comme le reste, et le serveur ne
+garde que les notes de parties qu'il détient : une note refusée est retirée
+ici et l'écran du compte le dit une fois. Sans compte, elles restent sur ce
+téléphone.

@@ -93,15 +93,23 @@ data class RecordResultDto(
     val id: String,
     val collection: String,
     val revision: Long,
-    /** `applied`, `applied_over_conflict`, or `already_present`. */
+    /** `applied`, `applied_over_conflict`, `already_present`, or `rejected`. */
     val outcome: String = OUTCOME_APPLIED,
     /** Set only on `applied_over_conflict`: the revision this write replaced. */
     val supersededRevision: Long? = null,
+    /**
+     * Why a record was `rejected`: `not_played`, `invalid_score`,
+     * `subject_mismatch`, `run_unfinished`, `rate_limited`. Only ratings are
+     * ever refused by name; the server checks each against the play or run
+     * it cites. Ratings contract, section 2.4.
+     */
+    val reason: String? = null,
 ) {
     companion object {
         const val OUTCOME_APPLIED = "applied"
         const val OUTCOME_OVER_CONFLICT = "applied_over_conflict"
         const val OUTCOME_ALREADY_PRESENT = "already_present"
+        const val OUTCOME_REJECTED = "rejected"
     }
 }
 
@@ -259,6 +267,20 @@ data class VersionDto(
      */
     val registrationOpen: Boolean = false,
     val limits: LimitsDto = LimitsDto(),
+)
+
+/**
+ * A subject's community summary, as `/v1/ratings/summary` serves it.
+ *
+ * [mean] and [histogram] are present only from the server's threshold; below
+ * it there is a [count] and nothing else. The histogram has six bins, index
+ * = score.
+ */
+@Serializable
+data class RatingSummaryDto(
+    val count: Int = 0,
+    val mean: Double? = null,
+    val histogram: List<Int>? = null,
 )
 
 /**

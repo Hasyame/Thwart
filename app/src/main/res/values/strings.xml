@@ -793,4 +793,33 @@
         <item quantity="one">%1$d campaign</item>
         <item quantity="other">%1$d campaigns</item>
     </plurals>
+    <!-- Difficulty ratings. docs/spec/ratings-and-modular-sets.md in the web repository. -->
+    <string name="rating_word_0">Effortless</string>
+    <string name="rating_word_1">Easy</string>
+    <string name="rating_word_2">Fair</string>
+    <string name="rating_word_3">Hard</string>
+    <string name="rating_word_4">Brutal</string>
+    <string name="rating_word_5">Impossible</string>
+    <string name="rating_title">How hard was it?</string>
+    <string name="rating_campaign_title">How hard was the campaign, all told?</string>
+    <string name="rating_optional">Optional. Your rating is yours to see; the community average appears once a subject has five.</string>
+    <string name="rating_sub_scenario">Scenario</string>
+    <string name="rating_sub_modular">Modular set, with this scenario</string>
+    <string name="rating_yours">Your rating: %1$d · %2$s</string>
+    <string name="rating_clear">Clear</string>
+    <string name="rating_rate">Rate this game</string>
+    <string name="rating_none_to_rate">Nothing to rate here: the app cannot tell which scenario set this game was played against. Its campaign is gone, or it draws its villain at the table.</string>
+    <plurals name="rating_community">
+        <item quantity="one">%1$s · %2$d rating</item>
+        <item quantity="other">%1$s · %2$d ratings</item>
+    </plurals>
+    <plurals name="rating_count_only">
+        <item quantity="one">%1$d rating so far</item>
+        <item quantity="other">%1$d ratings so far</item>
+    </plurals>
+    <plurals name="sync_rejected_ratings">
+        <item quantity="one">One rating was refused by the server: it was for a game the server does not have. It has been removed.</item>
+        <item quantity="other">%1$d ratings were refused by the server: they were for games the server does not have. They have been removed.</item>
+    </plurals>
+    <string name="sync_rejected_dismiss">Understood</string>
 </resources>

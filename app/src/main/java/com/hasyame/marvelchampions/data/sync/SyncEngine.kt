@@ -21,6 +21,14 @@ data class SyncOutcome(
     val overwrittenOnServer: Int = 0,
     /** Decks that were kept twice rather than one version being discarded. */
     val forkedDecks: List<String> = emptyList(),
+    /**
+     * Records the server refused and this device has forgotten.
+     *
+     * Only a rating can be refused, when the play or run it cites is not one
+     * the server holds. The row is gone by the time this is read; it is here
+     * so the screen can say so once.
+     */
+    val rejected: Int = 0,
     /** True when the whole account had to be re-read from revision zero. */
     val fullResync: Boolean = false,
     /**
@@ -168,6 +176,7 @@ class SyncEngine @Inject constructor(
                 pulled = pull.pulled,
                 pushed = pushed.pushed,
                 overwrittenOnServer = pushed.overwrittenOnServer,
+                rejected = pushed.rejected,
                 forkedDecks = pull.forkedDecks,
                 fullResync = pull.fullResync,
                 collectionsGrew = pull.collectionsGrew,
@@ -398,6 +407,7 @@ class SyncEngine @Inject constructor(
         }
         var pushed = 0
         var overwritten = 0
+        var rejected = 0
         var cursor = 0L
         val assigned = mutableListOf<Long>()
         val startedAt = sessions.current().cursor
@@ -432,6 +442,23 @@ class SyncEngine @Inject constructor(
             cursor = maxOf(cursor, response.cursor)
             database.withTransaction {
                 for (result in response.results) {
+                    /*
+                        Refused. Not stored on the server and never will be,
+                        so the only state that is not a lie is none: the row
+                        goes, and its bookkeeping with it, so nothing tries to
+                        send it again. Marked synced instead, as every other
+                        outcome is, this device would show a rating that does
+                        not exist, permanently. No revision was assigned, so
+                        there is none to step the cursor past.
+                    */
+                    if (result.outcome == RecordResultDto.OUTCOME_REJECTED) {
+                        rejected++
+                        if (result.collection == SyncCollection.RATINGS.key) {
+                            codec.forgetRating(result.id)
+                        }
+                        syncState.forget(result.collection, result.id)
+                        continue
+                    }
                     if (result.outcome == RecordResultDto.OUTCOME_OVER_CONFLICT) {
                         overwritten++
                     }
@@ -451,10 +478,21 @@ class SyncEngine @Inject constructor(
                     }
                 }
             }
-            pushed += response.results.size
+            pushed += response.results.size - rejected
         }
         advanceCursorPast(assigned, startedAt)
-        return SyncOutcome(pushed = pushed, overwrittenOnServer = overwritten, cursor = cursor)
+        if (rejected > 0) {
+            // Kept until somebody reads it: the live stream syncs again within
+            // seconds, and a notice that lived only in this run's outcome was
+            // gone before it was seen.
+            sessions.noteRejected(rejected)
+        }
+        return SyncOutcome(
+            pushed = pushed,
+            overwrittenOnServer = overwritten,
+            rejected = rejected,
+            cursor = cursor,
+        )
     }
 
     /**

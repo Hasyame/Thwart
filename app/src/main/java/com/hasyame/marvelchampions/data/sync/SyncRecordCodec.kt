@@ -10,9 +10,11 @@ import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
+import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.domain.ratings.RatingWire
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -129,6 +131,13 @@ class SyncRecordCodec @Inject constructor(
             record(collection, it.id, it.updatedAt, it.deletedAt) { encode(it) }
         }
 
+        // The one collection whose body is not its row: the contract nests
+        // the evidence and the context, and the web keeps and pushes back
+        // whatever keys it is sent, so the row's own columns stay here.
+        SyncCollection.RATINGS -> dao.rating(id)?.let {
+            record(collection, it.subject, it.updatedAt, it.deletedAt) { encode(RatingWire.of(it)) }
+        }
+
         SyncCollection.SETTINGS -> LocalRecord(
             collection = collection,
             id = SyncCollection.SETTINGS_ID,
@@ -177,6 +186,10 @@ class SyncRecordCodec @Inject constructor(
 
         SyncCollection.RANDOMIZER_HISTORY -> dao.draws().map {
             record(collection, it.id, it.updatedAt, it.deletedAt) { encode(it) }
+        }
+
+        SyncCollection.RATINGS -> dao.ratings().map {
+            record(collection, it.subject, it.updatedAt, it.deletedAt) { encode(RatingWire.of(it)) }
         }
 
         SyncCollection.SETTINGS -> listOfNotNull(read(collection, SyncCollection.SETTINGS_ID))
@@ -360,6 +373,15 @@ class SyncRecordCodec @Inject constructor(
                 )
             }
 
+            SyncCollection.RATINGS -> {
+                val local = dao.rating(incoming.id)
+                val remote = incoming.body?.let { decode<RatingWire>(it) }
+                    ?.toEntity(updatedAt = incoming.updatedAt.toEpochMillis(), deletedAt = deletedAt)
+                    ?: local?.copy(deletedAt = deletedAt, updatedAt = incoming.updatedAt.toEpochMillis())
+                    ?: return ApplyResult.Unknown
+                dao.putRating(SyncMerge.rating(remote.copy(subject = incoming.id), local))
+            }
+
             SyncCollection.SETTINGS -> {
                 val remote = incoming.body?.let { decode<BackupSettings>(it) } ?: return ApplyResult.Unknown
                 preferences.restore(SyncMerge.settings(remote, preferences.snapshot(), firstMerge))
@@ -369,6 +391,9 @@ class SyncRecordCodec @Inject constructor(
         }
         return ApplyResult.Applied
     }
+
+    /** Drops a rating the server refused. See SyncEngine's push loop. */
+    suspend fun forgetRating(subject: String) = dao.forgetRating(subject)
 
     // --- plumbing -----------------------------------------------------------
 

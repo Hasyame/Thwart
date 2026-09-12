@@ -53,6 +53,9 @@ enum class SyncTrigger(internal val settleSeconds: Long) {
     DECK_ADDED(TINKERING),
     COLLECTION_CHANGED(TINKERING),
     CARD_FAVOURITED(TINKERING),
+
+    /** A rating given or taken back. An opinion, and the other devices can wait a moment for it. */
+    RATED(TINKERING),
 }
 
 /**

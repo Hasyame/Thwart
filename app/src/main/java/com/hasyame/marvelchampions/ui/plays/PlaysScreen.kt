@@ -4,6 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import com.hasyame.marvelchampions.ui.ratings.RatingPanel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -237,6 +240,7 @@ fun PlaysScreen(
                     expanded = historyOpen,
                     photoStore = viewModel.photoStore,
                     onToggle = { historyOpen = !historyOpen },
+                    onOpen = viewModel::openRating,
                     onPlayAgain = { onPlayAgain(it.id) },
                     onPage = {
                         historyPage = it
@@ -267,6 +271,37 @@ fun PlaysScreen(
             dismissButton = {
                 TextButton(onClick = { confirmDelete = null }) {
                     Text(stringResource(R.string.action_cancel))
+                }
+            },
+        )
+    }
+
+    // A game tapped in the history: how hard was it? The same row as after
+    // the game, showing the player's current rating for each subject and
+    // letting them change it.
+    viewModel.ratingSheet.collectAsStateWithLifecycle().value?.let { open ->
+        val own by viewModel.ownRatings.collectAsStateWithLifecycle()
+        AlertDialog(
+            onDismissRequest = viewModel::closeRating,
+            title = { Text(open.play.scenarioName) },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    if (open.subjects.isEmpty()) {
+                        Text(stringResource(R.string.rating_none_to_rate))
+                    } else {
+                        RatingPanel(
+                            title = stringResource(R.string.rating_title),
+                            subjects = open.subjects,
+                            own = own,
+                            labelOf = { open.labels[it.code] ?: it.code },
+                            onRate = viewModel::rate,
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = viewModel::closeRating) {
+                    Text(stringResource(R.string.action_done))
                 }
             },
         )
@@ -956,6 +991,7 @@ private fun HistorySection(
     expanded: Boolean,
     photoStore: PhotoStore,
     onToggle: () -> Unit,
+    onOpen: (PlayEntity) -> Unit,
     onPlayAgain: (PlayEntity) -> Unit,
     onPage: (Int) -> Unit,
     onDelete: (PlayEntity) -> Unit,
@@ -1007,6 +1043,7 @@ private fun HistorySection(
                         PlayRow(
                             play = play,
                             photoStore = photoStore,
+                            onOpen = { onOpen(play) },
                             onPlayAgain = { onPlayAgain(play) },
                             onDelete = { onDelete(play) },
                             onReport = { onReport(play) },
@@ -1061,6 +1098,7 @@ private const val HISTORY_PAGE = 10
 private fun PlayRow(
     play: PlayEntity,
     photoStore: PhotoStore,
+    onOpen: () -> Unit,
     onPlayAgain: () -> Unit,
     onDelete: () -> Unit,
     onReport: () -> Unit,
@@ -1073,6 +1111,12 @@ private fun PlayRow(
     val photos = play.photos.split(",").filter { it.isNotBlank() }
 
     ListItem(
+        // The row itself opens the game for rating; the buttons on its right
+        // are for what else can be done with it.
+        modifier = Modifier.clickable(
+            onClick = onOpen,
+            onClickLabel = stringResource(R.string.rating_rate),
+        ),
         overlineContent = {
             Text(DateFormat.getDateInstance().format(Date(play.playedAt)))
         },

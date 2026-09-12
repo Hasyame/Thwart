@@ -55,6 +55,9 @@ import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.halftone
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
+import com.hasyame.marvelchampions.ui.ratings.RatingPanel
+import com.hasyame.marvelchampions.ui.ratings.RatingBadge
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
@@ -229,7 +232,10 @@ fun GameSessionScreen(
             // sized to its content, which left a stack of three squashed
             // against the right edge.
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     Text(
                         when (outcome) {
                             is PlayRecorded.SavedOnly -> stringResource(R.string.session_saved)
@@ -243,6 +249,24 @@ fun GameSessionScreen(
                                 stringResource(R.string.session_saved_not_sent, outcome.detail)
                         },
                     )
+
+                    // Optional, after the result is saved, never before and
+                    // never as a step: the scenario, then each modular set
+                    // that was on the table.
+                    state.lastPlay?.let { played ->
+                        RatingPanel(
+                            title = stringResource(R.string.rating_title),
+                            subjects = RatingSubject.ofPlay(played),
+                            own = state.ownRatings,
+                            labelOf = { subject ->
+                                when (subject.kind) {
+                                    RatingSubject.Kind.SCENARIO -> state.names.scenarios[subject.code]
+                                    else -> state.names.modularSets[subject.code]
+                                } ?: subject.code
+                            },
+                            onRate = viewModel::rate,
+                        )
+                    }
 
                     Button(
                         onClick = viewModel::reset,
@@ -349,6 +373,11 @@ private fun SetupPhase(
             value = state.scenarioCode?.let { state.names.scenarios[it] ?: it },
             onClick = { choosing = SetupPicker.SCENARIO },
         )
+        // The average beside the choice, never beside the question.
+        state.scenarioCode?.let { code ->
+            val key = RatingSubject.scenario(code).key
+            RatingBadge(summary = state.ratingSummaries[key], own = state.ownRatings[key])
+        }
 
         ChosenRow(
             label = stringResource(R.string.session_modular_sets),
@@ -358,6 +387,24 @@ private fun SetupPhase(
                 ?.joinToString(", "),
             onClick = { choosing = SetupPicker.MODULAR_SETS },
         )
+        state.scenarioCode?.let { scenario ->
+            state.modularSetCodes.forEach { set ->
+                val summary = viewModel.summaryForSet(set)
+                val own = state.ownRatings[RatingSubject.modular(set, scenario).key]
+                if (summary != null || own != null) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = state.names.modularSets[set] ?: set,
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                        RatingBadge(summary = summary, own = own)
+                    }
+                }
+            }
+        }
 
         // Decks rather than heroes: a seat at this table is a deck somebody
         // built, and asking for a hero and an aspect separately made the player

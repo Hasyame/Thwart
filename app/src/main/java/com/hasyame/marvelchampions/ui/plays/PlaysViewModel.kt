@@ -7,6 +7,13 @@ import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.repository.PlayRepository
+import com.hasyame.marvelchampions.data.repository.CampaignRepository
+import com.hasyame.marvelchampions.data.repository.RandomizerRepository
+import com.hasyame.marvelchampions.data.repository.RatingRepository
+import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -101,10 +108,28 @@ internal fun summarise(
 /** A play saved but not yet sent, while the app asks whether to send it. */
 data class PendingReport(val playId: String, val summary: String)
 
+/**
+ * A game from the history, open for rating.
+ *
+ * [subjects] is empty when there is nothing to rate: a campaign whose
+ * villain is drawn at the table names no set, and the sheet says so rather
+ * than showing a row for a key that means nothing.
+ */
+data class RatingSheet(
+    val play: PlayEntity,
+    val subjects: List<RatingSubject>,
+    /** Set and scenario names by code, in the card language. */
+    val labels: Map<String, String>,
+)
+
 @HiltViewModel
 class PlaysViewModel @Inject constructor(
     private val repository: PlayRepository,
     val photoStore: PhotoStore,
+    private val ratings: RatingRepository,
+    private val campaigns: CampaignRepository,
+    private val randomizerRepository: RandomizerRepository,
+    private val preferences: AppPreferences,
 ) : ViewModel() {
 
     /**
@@ -147,6 +172,46 @@ class PlaysViewModel @Inject constructor(
 
     private val messages = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = messages.asStateFlow()
+
+    private val sheet = MutableStateFlow<RatingSheet?>(null)
+    val ratingSheet: StateFlow<RatingSheet?> = sheet.asStateFlow()
+
+    /** The player's own ratings for the open sheet's subjects, live. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val ownRatings: StateFlow<Map<String, Int>> = sheet
+        .flatMapLatest { open -> ratings.observeOwn(open?.subjects.orEmpty().map { it.key }) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), emptyMap())
+
+    /**
+     * Opens a game for rating: its scenario and each modular set it was
+     * played with. A campaign's scenario is resolved through its run, so it
+     * is rated as the same subject as the scenario played on its own.
+     */
+    fun openRating(play: PlayEntity) {
+        viewModelScope.launch {
+            val locale = preferences.currentCardLocale()
+            val subjects = play.campaignRunId
+                ?.let { campaigns.ratingSubjects(it, play.scenarioCode, locale) }
+                ?: RatingSubject.ofPlay(play)
+            val names = randomizerRepository.loadNames(locale)
+            sheet.value = RatingSheet(
+                play = play,
+                subjects = subjects,
+                labels = names.scenarios + names.modularSets,
+            )
+        }
+    }
+
+    fun closeRating() {
+        sheet.value = null
+    }
+
+    fun rate(subject: RatingSubject, score: Int?) {
+        val play = sheet.value?.play ?: return
+        viewModelScope.launch {
+            if (score == null) ratings.unrate(subject.key) else ratings.rate(subject, score, play)
+        }
+    }
 
     fun record(play: PlayEntity) {
         viewModelScope.launch {

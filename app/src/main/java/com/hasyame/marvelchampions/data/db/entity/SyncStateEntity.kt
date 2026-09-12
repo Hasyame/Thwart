@@ -100,6 +100,15 @@ enum class SyncCollection(val key: String) {
      * table behind it, which is why it is the one that has to name its own id.
      */
     SETTINGS("settings"),
+
+    /**
+     * Difficulty ratings. Last on purpose: this enum's order is the push
+     * order, and the server checks a rating against the play or run it
+     * cites as the server holds it, pushed earlier or earlier in the same
+     * batch. Put before `plays`, every rating of a new game is refused as
+     * `not_played`. See the ratings contract, section 2.4.
+     */
+    RATINGS("ratings"),
     ;
 
     /** True when a record is never rewritten and never deleted. */

@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -103,6 +104,16 @@ data class SyncSession(
      * A fresh id on a retry is precisely the duplicate this exists to prevent.
      */
     val inFlightBatchId: String = "",
+    /**
+     * Ratings the server has refused since the person last read the notice.
+     *
+     * A refused rating is deleted at once (see SyncEngine's push loop), so
+     * this count is the only trace of it. Kept here rather than in a sync
+     * outcome because the live stream syncs again within seconds, and a
+     * notice that lived only in the last run's result was gone before it
+     * was read.
+     */
+    val rejectedRatings: Int = 0,
 ) {
     val isSignedIn: Boolean get() = !token.isNullOrBlank() && accountId.isNotBlank()
 
@@ -132,6 +143,7 @@ class SyncSessionStore @Inject constructor(
             recoveryIssuedAt = preferences[KEY_RECOVERY_ISSUED].orEmpty(),
             lastSyncedAt = preferences[KEY_LAST_SYNCED] ?: 0,
             inFlightBatchId = preferences[KEY_IN_FLIGHT].orEmpty(),
+            rejectedRatings = preferences[KEY_REJECTED] ?: 0,
         )
     }
 
@@ -262,6 +274,16 @@ class SyncSessionStore @Inject constructor(
         context.syncStore.edit { it[KEY_LAST_SYNCED] = at }
     }
 
+    /** Adds refused records to the notice the account screen shows. */
+    suspend fun noteRejected(count: Int) {
+        context.syncStore.edit { it[KEY_REJECTED] = (it[KEY_REJECTED] ?: 0) + count }
+    }
+
+    /** The notice has been read. */
+    suspend fun clearRejected() {
+        context.syncStore.edit { it.remove(KEY_REJECTED) }
+    }
+
     /** Remembers a batch id before it is sent, so a retry can reuse it. */
     suspend fun beginBatch(batchId: String) {
         context.syncStore.edit { it[KEY_IN_FLIGHT] = batchId }
@@ -309,6 +331,7 @@ class SyncSessionStore @Inject constructor(
         val KEY_ENABLED = booleanPreferencesKey("enabled")
         val KEY_AUTO_SYNC = booleanPreferencesKey("auto_sync")
         val KEY_CURSOR = longPreferencesKey("cursor")
+        val KEY_REJECTED = intPreferencesKey("rejected_ratings")
         val KEY_CURSOR_COLLECTIONS = stringPreferencesKey("cursor_collections")
         val KEY_RECOVERY_ISSUED = stringPreferencesKey("recovery_issued_at")
         val KEY_LAST_SYNCED = longPreferencesKey("last_synced_at")

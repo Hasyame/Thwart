@@ -5,6 +5,7 @@ import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
+import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -229,4 +230,30 @@ class SyncMergeTest {
         rawJson = "{}",
         lastSyncedAt = 1,
     )
+
+    // --- ratings ---------------------------------------------------------------
+
+    private fun rated(score: Int, at: Long, deletedAt: Long? = null) =
+        RatingEntity(subject = "scenario:rhino", score = score, ratedAt = at, updatedAt = at, deletedAt = deletedAt)
+
+    @Test
+    fun `the newer opinion of a subject wins, whichever side holds it`() {
+        assertEquals(4, SyncMerge.rating(incoming = rated(4, at = 20), local = rated(2, at = 10)).score)
+        assertEquals(2, SyncMerge.rating(incoming = rated(4, at = 10), local = rated(2, at = 20)).score)
+    }
+
+    @Test
+    fun `on a tie the incoming rating wins`() {
+        assertEquals(4, SyncMerge.rating(incoming = rated(4, at = 10), local = rated(2, at = 10)).score)
+    }
+
+    @Test
+    fun `taking a rating back is a write like any other`() {
+        // A tombstone from the account must not be outvoted by an older local
+        // score, and a local tombstone must not resurrect an older incoming one.
+        val gone = SyncMerge.rating(incoming = rated(0, at = 30, deletedAt = 30), local = rated(2, at = 20))
+        assertTrue(gone.deletedAt != null)
+        val kept = SyncMerge.rating(incoming = rated(4, at = 10), local = rated(2, at = 20, deletedAt = 20))
+        assertEquals("the incoming is taken when either side is a tombstone", 4, kept.score)
+    }
 }
