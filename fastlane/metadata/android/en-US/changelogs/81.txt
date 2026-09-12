@@ -1,0 +1,5 @@
+A screen nobody could leave.
+
+After losing a campaign scenario, the defeat page did not scroll, and the
+rating rows added in 1.52.0 pushed its buttons below the edge of the
+screen on most phones: no retry, no continue, no way out. It scrolls now.

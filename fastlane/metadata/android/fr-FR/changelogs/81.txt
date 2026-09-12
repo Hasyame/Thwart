@@ -1,0 +1,6 @@
+Un écran dont on ne pouvait pas sortir.
+
+Après une défaite dans un scénario de campagne, la page de défaite ne
+défilait pas, et les lignes de notation ajoutées en 1.52.0 poussaient ses
+boutons sous le bord de l'écran sur la plupart des téléphones : ni rejouer,
+ni continuer, aucune issue. Elle défile désormais.

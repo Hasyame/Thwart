@@ -1065,7 +1065,10 @@ private fun DefeatPage(
     onConcede: (() -> Unit)? = null,
 ) {
     Column(
-        Modifier.fillMaxSize().padding(24.dp),
+        // Scrolls, like the result page. It did not, and once the rating rows
+        // were added above the buttons the way out was below the fold with
+        // no way to reach it: a screen nobody could leave.
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
