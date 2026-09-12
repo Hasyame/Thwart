@@ -17,6 +17,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -27,7 +28,6 @@ import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
 import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.domain.ratings.RatingWire
-import java.util.Locale
 
 /** The word beside a score: each is a translation of a feeling, not of each other. */
 @Composable
@@ -176,13 +176,15 @@ fun RatingBadge(
                 text = pluralStringResource(
                     R.plurals.rating_community,
                     summary.count,
-                    String.format(Locale.getDefault(), "%.1f", mean),
+                    // The locale from the composition, which recomposes when
+                    // it changes; Locale.getDefault() here would not.
+                    String.format(LocalConfiguration.current.locales[0], "%.1f", mean),
                     summary.count,
                 ),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            // Five... six bars, index = score: where the truth of a bimodal
+            // Six bars, index = score: where the truth of a bimodal
             // subject lives, and one small element.
             histogram?.let { bins ->
                 val tallest = maxOf(1, bins.maxOrNull() ?: 1)

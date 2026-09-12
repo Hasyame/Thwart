@@ -818,7 +818,7 @@
         <item quantity="other">%1$d ratings so far</item>
     </plurals>
     <plurals name="sync_rejected_ratings">
-        <item quantity="one">One rating was refused by the server: it was for a game the server does not have. It has been removed.</item>
+        <item quantity="one">%1$d rating was refused by the server: it was for a game the server does not have. It has been removed.</item>
         <item quantity="other">%1$d ratings were refused by the server: they were for games the server does not have. They have been removed.</item>
     </plurals>
     <string name="sync_rejected_dismiss">Understood</string>

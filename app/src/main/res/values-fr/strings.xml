@@ -839,14 +839,17 @@
     <string name="rating_none_to_rate">Rien à noter ici : l\'application ne peut pas dire contre quel set de scénario cette partie a été jouée. Sa campagne a été supprimée, ou elle tire son méchant à la table.</string>
     <plurals name="rating_community">
         <item quantity="one">%1$s · %2$d note</item>
+        <item quantity="many">%1$s · %2$d de notes</item>
         <item quantity="other">%1$s · %2$d notes</item>
     </plurals>
     <plurals name="rating_count_only">
         <item quantity="one">%1$d note pour l\'instant</item>
+        <item quantity="many">%1$d de notes pour l\'instant</item>
         <item quantity="other">%1$d notes pour l\'instant</item>
     </plurals>
     <plurals name="sync_rejected_ratings">
-        <item quantity="one">Une note a été refusée par le serveur : elle portait sur une partie que le serveur n\'a pas. Elle a été retirée.</item>
+        <item quantity="one">%1$d note a été refusée par le serveur : elle portait sur une partie que le serveur n\'a pas. Elle a été retirée.</item>
+        <item quantity="many">%1$d de notes ont été refusées par le serveur : elles portaient sur des parties que le serveur n\'a pas. Elles ont été retirées.</item>
         <item quantity="other">%1$d notes ont été refusées par le serveur : elles portaient sur des parties que le serveur n\'a pas. Elles ont été retirées.</item>
     </plurals>
     <string name="sync_rejected_dismiss">Compris</string>
