@@ -896,6 +896,12 @@ private fun PlayingPhase(
                     onAdvanceScheme = viewModel::advanceScheme,
                     onEndRound = viewModel::endRound,
                     onKeepAwake = viewModel::setKeepAwake,
+                    onDamageVillainAt = viewModel::damageVillainAt,
+                    onAdvanceVillainAt = viewModel::advanceVillainAt,
+                    onChangeThreatAt = viewModel::changeThreatAt,
+                    onAdvanceSchemeAt = viewModel::advanceSchemeAt,
+                    onDamageStructure = viewModel::damageStructure,
+                    onTurnStructure = viewModel::turnStructure,
                 )
             }
 

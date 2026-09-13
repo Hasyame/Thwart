@@ -339,4 +339,113 @@ class EncounterTest {
         assertEquals(6, resumed.threatOn(0))
         assertEquals(0, resumed.threatOn(1))
     }
+
+    // --- Tower Defense: two villains, two schemes, and the tower --------------
+
+    private val proxima = listOf(
+        EncounterSide("Proxima Midnight", "I", 9, perPlayer = true),
+        EncounterSide("Proxima Midnight", "II", 12, perPlayer = true),
+    )
+    private val corvus = listOf(
+        EncounterSide("Corvus Glaive", "I", 8, perPlayer = true),
+        EncounterSide("Corvus Glaive", "II", 11, perPlayer = true),
+    )
+    private val siege = EncounterSide("Under Siege", "1B", 6, perPlayer = true, startingThreat = 1, startingThreatPerPlayer = true, escalation = 1, escalationPerPlayer = true)
+    private val armies = EncounterSide("The Armies of Thanos", "2B", 6, perPlayer = true, startingThreat = 1, startingThreatPerPlayer = true, escalation = 1, escalationPerPlayer = true)
+    private val tower = StructureSetup(
+        name = "Avengers Tower",
+        sides = listOf(
+            EncounterSide("Avengers Tower", "Stronghold", 9, perPlayer = true),
+            EncounterSide("Avengers Tower", "Damaged", 9, perPlayer = true),
+        ),
+        startingDamage = 2,
+    )
+    private val towerDefense = EncounterSetup(
+        villain = proxima,
+        moreVillains = listOf(corvus),
+        villainsLinked = true,
+        scheme = listOf(siege),
+        moreSchemes = listOf(listOf(armies)),
+        schemesReset = true,
+        structure = tower,
+        players = 2,
+    )
+
+    @Test
+    fun `linked villains are not defeated one without the other`() {
+        val fight = Encounter.startOf(towerDefense).damagedAt(0, 18)
+
+        assertTrue("Proxima is at her health", fight.villainDownAt(0))
+        assertFalse("but not defeated while Corvus stands", fight.villainDefeatedAt(0))
+        assertEquals("damage stops at the health", 18, fight.villainDamageAt(0))
+
+        val both = fight.damagedAt(1, 16)
+        assertTrue(both.villainDefeatedAt(0))
+        assertTrue(both.villainDefeatedAt(1))
+    }
+
+    @Test
+    fun `linked villains turn to their next stage together`() {
+        val turned = Encounter.startOf(towerDefense).damagedAt(0, 18).damagedAt(1, 16).villainAdvancedAt(1)
+
+        assertEquals("II", turned.villainSideAt(0)?.stage)
+        assertEquals("II", turned.villainSideAt(1)?.stage)
+        assertEquals(0, turned.villainDamageAt(0))
+        assertEquals(0, turned.villainDamageAt(1))
+        assertEquals(24, turned.villainHealthAt(0))
+        assertEquals(22, turned.villainHealthAt(1))
+    }
+
+    @Test
+    fun `every main scheme starts at its printed threat and accelerates each round`() {
+        val start = Encounter.startOf(towerDefense)
+        assertEquals(2, start.threatOnTrack(0, 0))
+        assertEquals(2, start.threatOnTrack(1, 0))
+
+        val later = start.roundEnded().roundEnded()
+        assertEquals(6, later.threatOnTrack(0, 0))
+        assertEquals(6, later.threatOnTrack(1, 0))
+    }
+
+    @Test
+    fun `a scheme that clears rather than completes goes back to nothing at its limit`() {
+        val full = Encounter.startOf(towerDefense).threatenedAt(1, 0, 20)
+        assertEquals("stops at the limit", 12, full.threatOnTrack(1, 0))
+        assertTrue(full.schemeCompleteAt(1))
+
+        val cleared = full.schemeAdvancedAt(1)
+        assertEquals(0, cleared.threatOnTrack(1, 0))
+        assertEquals("the stage is the same card", "2B", cleared.schemeSideAt(1)?.stage)
+        assertEquals("the other scheme is untouched", 2, cleared.threatOnTrack(0, 0))
+    }
+
+    @Test
+    fun `the tower starts with the campaign's damage, turns over full, and is lost full again`() {
+        val start = Encounter.startOf(towerDefense)
+        assertEquals(2, start.progress.structureDamage)
+        assertEquals(18, start.structureLimit)
+
+        val full = start.structureDamaged(30)
+        assertTrue(full.structureFull)
+        assertFalse(full.structureLost)
+
+        val turned = full.structureTurned()
+        assertEquals("Damaged", turned.structureSide?.stage)
+        assertEquals("the damage came off with the turn", 0, turned.progress.structureDamage)
+
+        val lost = turned.structureDamaged(18)
+        assertTrue(lost.structureLost)
+        assertEquals("nothing past the last side", "Damaged", lost.structureTurned().structureSide?.stage)
+    }
+
+    @Test
+    fun `a game put away before the tracks existed comes back with its first villain and scheme`() {
+        // Only the old fields: no second track, no tower.
+        val old = EncounterProgress(villainIndex = 1, damage = 5, schemeIndex = 0, threat = 4)
+        val back = Encounter(towerDefense, old)
+        assertEquals(5, back.villainDamageAt(0))
+        assertEquals(0, back.villainDamageAt(1))
+        assertEquals("I", back.villainSideAt(1)?.stage)
+        assertEquals(0, back.threatOnTrack(1, 0))
+    }
 }

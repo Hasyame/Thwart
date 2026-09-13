@@ -636,6 +636,12 @@
     <string name="session_damage">Dégâts sur le méchant</string>
     <string name="session_threat">Menace sur la manigance principale</string>
     <string name="session_flip_villain">Retourner le méchant sur son stade suivant</string>
+    <string name="session_villain_holds">À zéro, mais pas vaincu tant que l\'autre méchant a des points de vie.</string>
+    <string name="session_flip_villains">Les deux sont à terre : retournez les méchants sur leur stade suivant</string>
+    <string name="session_clear_scheme">Limite atteinte : retirez toute la menace, et résolvez la carte</string>
+    <string name="session_structure_damage">Dégâts sur la carte</string>
+    <string name="session_turn_structure">Pleine : retirez les dégâts et retournez la carte</string>
+    <string name="session_structure_lost">La carte dit que les joueurs perdent la partie.</string>
     <string name="session_advance_scheme">Faire avancer la manigance principale</string>
     <string name="session_end_round">Terminer le round</string>
     <string name="session_keep_awake">Garder l\'écran allumé</string>

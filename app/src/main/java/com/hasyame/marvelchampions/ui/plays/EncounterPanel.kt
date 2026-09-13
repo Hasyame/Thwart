@@ -40,6 +40,17 @@ fun EncounterPanel(
     onAdvanceScheme: () -> Unit,
     onEndRound: () -> Unit,
     onKeepAwake: (Boolean) -> Unit,
+    /*
+        The same, by track, for a scenario with several villains or several
+        main schemes on the table at once. A screen with one of each need
+        not know: the defaults hand track zero to the callbacks above.
+    */
+    onDamageVillainAt: (Int, Int) -> Unit = { _, amount -> onDamageVillain(amount) },
+    onAdvanceVillainAt: (Int) -> Unit = { onAdvanceVillain() },
+    onChangeThreatAt: (Int, Int, Int) -> Unit = { _, copy, amount -> onChangeThreat(copy, amount) },
+    onAdvanceSchemeAt: (Int) -> Unit = { onAdvanceScheme() },
+    onDamageStructure: (Int) -> Unit = {},
+    onTurnStructure: () -> Unit = {},
 ) {
 
     ComicPanel(Modifier.fillMaxWidth()) {
@@ -52,45 +63,106 @@ fun EncounterPanel(
                 style = MaterialTheme.typography.titleSmall,
             )
 
-            encounter.villainSide?.let { villain ->
+            // One villain almost always. Tower Defense fields two at once, each
+            // its own counter, and neither is defeated while the other still
+            // stands: the turn to the next stage is offered once, below both,
+            // when both are down, because the cards turn together.
+            val linked = encounter.setup.villainsLinked
+            for (track in 0 until encounter.villainTrackCount) {
+                val villain = encounter.villainSideAt(track) ?: continue
+                if (track > 0) {
+                    HorizontalDivider()
+                }
                 CounterRow(
                     title = "${villain.name} ${villain.stage}".trim(),
-                    value = encounter.progress.damage,
-                    total = encounter.villainHealth,
+                    value = encounter.villainDamageAt(track),
+                    total = encounter.villainHealthAt(track),
                     unit = stringResource(R.string.session_damage),
                     unknown = villain.starred,
                     enabled = enabled,
-                    onChange = onDamageVillain,
-                    reached = encounter.villainDefeated,
+                    onChange = { amount -> onDamageVillainAt(track, amount) },
+                    reached = encounter.villainDefeatedAt(track),
                     advanceLabel = stringResource(R.string.session_flip_villain),
-                    onAdvance = if (encounter.isFinalVillainStage) null else onAdvanceVillain,
+                    onAdvance = if (linked || encounter.isFinalVillainStageAt(track)) null else ({ onAdvanceVillainAt(track) }),
                     flavour = VitalFlavour.BLOOD,
                 )
+                if (linked && encounter.villainDownAt(track) && !encounter.villainDefeatedAt(track)) {
+                    // At zero, and not done: the card says so, and so does this.
+                    Text(
+                        text = stringResource(R.string.session_villain_holds),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            if (linked && encounter.villainDefeated && !encounter.isFinalVillainStage) {
+                Button(
+                    onClick = { onAdvanceVillainAt(0) },
+                    enabled = enabled,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.session_flip_villains)) }
             }
 
-            encounter.schemeSide?.let { scheme ->
+            for (track in 0 until encounter.schemeTrackCount) {
+                val scheme = encounter.schemeSideAt(track) ?: continue
                 // Usually one, and then this reads exactly as it always did.
                 // A scenario that deals a main scheme to each player gets one
                 // counter each, named for whose it is, because they are
                 // separate games of thwarting that finish at different times.
-                repeat(encounter.schemeCopies) { index ->
+                val copies = if (track == 0) encounter.schemeCopies else 1
+                repeat(copies) { index ->
                     HorizontalDivider()
                     CounterRow(
-                        title = if (encounter.schemeCopies > 1) {
+                        title = if (copies > 1) {
                             stringResource(R.string.session_scheme_player, scheme.name, index + 1)
                         } else {
-                            scheme.name
+                            "${scheme.name} ${scheme.stage}".trim()
                         },
-                        value = encounter.threatOn(index),
-                        total = encounter.schemeLimit,
+                        value = encounter.threatOnTrack(track, index),
+                        total = encounter.schemeLimitAt(track),
                         unit = stringResource(R.string.session_threat),
                         unknown = scheme.starred,
                         enabled = enabled,
-                        onChange = { amount -> onChangeThreat(index, amount) },
-                        reached = encounter.schemeCompleteOn(index),
-                        advanceLabel = stringResource(R.string.session_advance_scheme),
-                        onAdvance = if (encounter.isFinalSchemeStage) null else onAdvanceScheme,
+                        onChange = { amount -> onChangeThreatAt(track, index, amount) },
+                        reached = encounter.schemeCompleteAt(track, index),
+                        // A scheme that clears rather than completes offers the
+                        // clearing, at the limit, in the words of its card.
+                        advanceLabel = stringResource(
+                            if (encounter.setup.schemesReset) R.string.session_clear_scheme else R.string.session_advance_scheme,
+                        ),
+                        onAdvance = when {
+                            encounter.setup.schemesReset -> ({ onAdvanceSchemeAt(track) })
+                            encounter.isFinalSchemeStageAt(track) -> null
+                            else -> ({ onAdvanceSchemeAt(track) })
+                        },
                         flavour = VitalFlavour.ELECTRIC,
+                    )
+                }
+            }
+
+            // A card with hit points of its own: Avengers Tower. Turning it
+            // over is offered when a side is full; the last side full is said,
+            // not acted on, because losing is the table's to declare.
+            encounter.structureSide?.let { side ->
+                HorizontalDivider()
+                CounterRow(
+                    title = "${side.name} · ${side.stage}".trim(),
+                    value = encounter.progress.structureDamage,
+                    total = encounter.structureLimit,
+                    unit = stringResource(R.string.session_structure_damage),
+                    unknown = false,
+                    enabled = enabled,
+                    onChange = onDamageStructure,
+                    reached = encounter.structureFull,
+                    advanceLabel = stringResource(R.string.session_turn_structure),
+                    onAdvance = if (encounter.isFinalStructureSide) null else onTurnStructure,
+                    flavour = VitalFlavour.BLOOD,
+                )
+                if (encounter.structureLost) {
+                    Text(
+                        text = stringResource(R.string.session_structure_lost),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
                     )
                 }
             }

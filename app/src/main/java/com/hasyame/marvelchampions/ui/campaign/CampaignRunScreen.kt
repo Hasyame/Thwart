@@ -203,6 +203,12 @@ fun CampaignRunScreen(
                         onAdvanceScheme = viewModel::advanceScheme,
                         onEndRound = viewModel::endRound,
                         onKeepAwake = viewModel::setKeepAwake,
+                        onDamageVillainAt = viewModel::damageVillainAt,
+                        onAdvanceVillainAt = viewModel::advanceVillainAt,
+                        onChangeThreatAt = viewModel::changeThreatAt,
+                        onAdvanceSchemeAt = viewModel::advanceSchemeAt,
+                        onDamageStructure = viewModel::damageStructure,
+                        onTurnStructure = viewModel::turnStructure,
                     )
 
                     RunPage.QUESTIONS -> QuestionsPage(
@@ -771,6 +777,12 @@ private fun PlayingPage(
     onChangeThreat: (Int, Int) -> Unit = { _, _ -> },
     onAdvanceVillain: () -> Unit = {},
     onAdvanceScheme: () -> Unit = {},
+    onDamageVillainAt: (Int, Int) -> Unit = { _, amount -> onDamageVillain(amount) },
+    onAdvanceVillainAt: (Int) -> Unit = { onAdvanceVillain() },
+    onChangeThreatAt: (Int, Int, Int) -> Unit = { _, copy, amount -> onChangeThreat(copy, amount) },
+    onAdvanceSchemeAt: (Int) -> Unit = { onAdvanceScheme() },
+    onDamageStructure: (Int) -> Unit = {},
+    onTurnStructure: () -> Unit = {},
     onEndRound: () -> Unit = {},
     onKeepAwake: (Boolean) -> Unit = {},
 ) {
@@ -846,6 +858,12 @@ private fun PlayingPage(
                 onAdvanceScheme = onAdvanceScheme,
                 onEndRound = onEndRound,
                 onKeepAwake = onKeepAwake,
+                onDamageVillainAt = onDamageVillainAt,
+                onAdvanceVillainAt = onAdvanceVillainAt,
+                onChangeThreatAt = onChangeThreatAt,
+                onAdvanceSchemeAt = onAdvanceSchemeAt,
+                onDamageStructure = onDamageStructure,
+                onTurnStructure = onTurnStructure,
             )
         } else if (trackerWanted) {
             // Only when the player asked for the tracker. Someone who switched

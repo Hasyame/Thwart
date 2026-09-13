@@ -615,6 +615,12 @@
     <string name="session_damage">Damage on the villain</string>
     <string name="session_threat">Threat on the main scheme</string>
     <string name="session_flip_villain">Flip the villain to its next stage</string>
+    <string name="session_villain_holds">At zero, but not defeated while the other villain has hit points left.</string>
+    <string name="session_flip_villains">Both are down: flip the villains to their next stage</string>
+    <string name="session_clear_scheme">At the limit: remove all the threat, and resolve the card</string>
+    <string name="session_structure_damage">Damage on the card</string>
+    <string name="session_turn_structure">Full: remove the damage and turn the card over</string>
+    <string name="session_structure_lost">The card says the players lose the game.</string>
     <string name="session_advance_scheme">Advance the main scheme</string>
     <string name="session_end_round">End the round</string>
     <string name="session_keep_awake">Keep the screen awake</string>

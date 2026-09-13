@@ -232,12 +232,30 @@
    "campaignSetup": [
     {
      "text": {
-      "fr": "Mettez {card:21100} en jeu sur sa face PLACE FORTE, et attachez {card:21101} au stade 2B",
-      "en": "Put {card:21100} into play on its Stronghold side, and attach {card:21101} to scheme 2B"
+      "fr": "Mettez {card:21100} en jeu sur sa face PLACE FORTE.",
+      "en": "Put {card:21100} into play on its Stronghold side."
      },
      "cards": [
-      "21100",
-      "21101"
+      "21100"
+     ]
+    },
+    {
+     "text": {
+      "fr": "Attachez {card:21101} à la manigance principale {card:21099b}.",
+      "en": "Attach {card:21101} to the main scheme {card:21099b}."
+     },
+     "cards": [
+      "21101",
+      "21099b"
+     ]
+    },
+    {
+     "text": {
+      "fr": "Chaque joueur cherche un exemplaire de {card:21102} et le met en jeu engagé avec lui.",
+      "en": "Each player searches for a copy of {card:21102} and puts it into play engaged with them."
+     },
+     "cards": [
+      "21102"
      ]
     },
     {
@@ -404,7 +422,34 @@
       "goto": "s2_tower_defense"
      }
     ]
-   }
+   },
+   "information": [
+    {
+     "text": {
+      "fr": "Deux manigances principales en jeu à la fois, {card:21098b} et {card:21099b} : le tracker compte les deux.",
+      "en": "Two main schemes in play at once, {card:21098b} and {card:21099b}: the tracker counts both."
+     },
+     "cards": [
+      "21098b",
+      "21099b"
+     ]
+    },
+    {
+     "text": {
+      "fr": "Deux méchants à la fois : le tracker les compte séparément, et ne les retourne que tous deux à zéro.",
+      "en": "Two villains at once: the tracker counts them apart, and turns them over only when both are at zero."
+     }
+    },
+    {
+     "text": {
+      "fr": "{card:21100} est comptée aussi : 9 dégâts par joueur sur chaque face.",
+      "en": "{card:21100} is counted too: 9 damage per player on each side."
+     },
+     "cards": [
+      "21100"
+     ]
+    }
+   ]
   },
   {
    "id": "s3_thanos",

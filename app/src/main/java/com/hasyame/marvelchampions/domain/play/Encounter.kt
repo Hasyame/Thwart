@@ -81,10 +81,61 @@ data class EncounterSetup(
      * scheme was nearly done.
      */
     val schemeCopies: Int = 1,
+    /**
+     * Villains fought at the same time, beyond the first: each its own stages,
+     * each its own damage. Tower Defense puts Proxima Midnight and Corvus
+     * Glaive on the table together, and a tracker that walked them one after
+     * the other was counting a fight nobody was having.
+     */
+    val moreVillains: List<List<EncounterSide>> = emptyList(),
+    /**
+     * True when the villains fall together: none is defeated while another
+     * has hit points left, and they turn to their next stage as one. Printed
+     * on both Tower Defense villains. Damage past a villain's health still
+     * stops at the health; what it cannot do is count as a defeat on its own.
+     */
+    val villainsLinked: Boolean = false,
+    /**
+     * Main schemes advancing side by side, beyond the first: each its own
+     * stages, its own threat, its own acceleration at the end of the round.
+     */
+    val moreSchemes: List<List<EncounterSide>> = emptyList(),
+    /**
+     * A scheme that clears rather than completes: when its threat reaches the
+     * limit the card removes all of it and does something else instead, so
+     * the button at the limit resets the count rather than turning a stage.
+     * Both Tower Defense schemes are printed this way.
+     */
+    val schemesReset: Boolean = false,
+    /** A card with hit points of its own, in play beside the villain. */
+    val structure: StructureSetup? = null,
 ) {
     /** Nothing to count is not worth showing. */
     val isUsable: Boolean get() = villain.isNotEmpty() || scheme.isNotEmpty()
+
+    /** Every villain on the table, the first included. */
+    val villainTracks: List<List<EncounterSide>> get() = listOf(villain) + moreVillains
+
+    /** Every main scheme on the table, the first included. */
+    val schemeTracks: List<List<EncounterSide>> get() = listOf(scheme) + moreSchemes
 }
+
+/**
+ * A card with hit points that is not a villain: Avengers Tower, which takes
+ * damage on its Stronghold side, turns over when it has taken enough, and
+ * loses the game for the players when its second side has too.
+ *
+ * Only counters, as everywhere here. Reaching a side's limit offers the turn
+ * rather than making it, and the last side's limit is reported, not acted on:
+ * losing is the table's to declare.
+ */
+data class StructureSetup(
+    val name: String,
+    /** The sides in the order they are turned through; each with its limit. */
+    val sides: List<EncounterSide>,
+    /** Damage already on the card when the game starts, worked out. */
+    val startingDamage: Int = 0,
+)
 
 /**
  * Where the counters stand. Separate from the scenario, which cannot change.
@@ -114,6 +165,25 @@ data class EncounterProgress(
     /** Filled in by the player, for the stages that print a star. */
     val manualVillainHealth: Int? = null,
     val manualSchemeLimit: Int? = null,
+    /**
+     * The second and later villains, where the first stays in the fields
+     * above: a game put away before these existed wrote those into its saved
+     * counters, and moving them would bring every paused game back empty.
+     */
+    val moreVillains: List<TrackProgress> = emptyList(),
+    /** The second and later main schemes, likewise. */
+    val moreSchemes: List<TrackProgress> = emptyList(),
+    /** Which side of the structure is up, and the damage on it. */
+    val structureIndex: Int = 0,
+    val structureDamage: Int = 0,
+)
+
+/** Where one further track stands: its stage, its count, and a typed limit for a star. */
+@Serializable
+data class TrackProgress(
+    val index: Int = 0,
+    val value: Int = 0,
+    val manual: Int? = null,
 )
 
 /**
@@ -146,7 +216,176 @@ data class Encounter(
     val schemeLimit: Int?
         get() = schemeSide?.totalFor(setup.players) ?: progress.manualSchemeLimit
 
-    val villainDefeated: Boolean get() = villainHealth?.let { progress.damage >= it } == true
+    val villainDefeated: Boolean get() = villainDefeatedAt(0)
+
+    // --- several villains at once --------------------------------------------
+
+    val villainTrackCount: Int get() = setup.villainTracks.size
+
+    private fun villainProgressAt(track: Int): TrackProgress =
+        if (track <= 0) {
+            TrackProgress(progress.villainIndex, progress.damage, progress.manualVillainHealth)
+        } else {
+            progress.moreVillains.getOrElse(track - 1) { TrackProgress() }
+        }
+
+    fun villainSideAt(track: Int): EncounterSide? =
+        setup.villainTracks.getOrNull(track)?.getOrNull(villainProgressAt(track).index)
+
+    fun villainHealthAt(track: Int): Int? =
+        villainSideAt(track)?.totalFor(setup.players) ?: villainProgressAt(track).manual
+
+    fun villainDamageAt(track: Int): Int = villainProgressAt(track).value
+
+    /** This villain is at its health; a defeat only if none of the others still stands. */
+    fun villainDownAt(track: Int): Boolean = villainHealthAt(track)?.let { villainDamageAt(track) >= it } == true
+
+    fun villainDefeatedAt(track: Int): Boolean =
+        if (setup.villainsLinked) {
+            (0 until villainTrackCount).all { villainDownAt(it) }
+        } else {
+            villainDownAt(track)
+        }
+
+    fun isFinalVillainStageAt(track: Int): Boolean =
+        villainProgressAt(track).index >= (setup.villainTracks.getOrNull(track)?.lastIndex ?: 0)
+
+    /** Damage on one villain. A negative amount heals. Stops at the stage's health, as [damaged] does. */
+    fun damagedAt(track: Int, amount: Int): Encounter {
+        if (track <= 0) {
+            return damaged(amount)
+        }
+        val raised = (villainDamageAt(track) + amount).coerceAtLeast(0)
+        val capped = villainHealthAt(track)?.let(raised::coerceAtMost) ?: raised
+        return withVillainProgress(track) { copy(value = capped) }
+    }
+
+    /**
+     * Turns one villain to its next stage; linked villains turn together.
+     *
+     * Together, because a table that has brought both to zero turns both
+     * cards, and a tracker that turned one and left the other at full damage
+     * on a stage nobody was playing would be describing no board at all.
+     */
+    fun villainAdvancedAt(track: Int): Encounter =
+        if (setup.villainsLinked) {
+            (0 until villainTrackCount).fold(this) { encounter, each -> encounter.advanceOneVillain(each) }
+        } else {
+            advanceOneVillain(track)
+        }
+
+    private fun advanceOneVillain(track: Int): Encounter {
+        if (track <= 0) {
+            return villainAdvanced()
+        }
+        if (isFinalVillainStageAt(track)) {
+            return this
+        }
+        return withVillainProgress(track) { copy(index = index + 1, value = 0, manual = null) }
+    }
+
+    private inline fun withVillainProgress(track: Int, change: TrackProgress.() -> TrackProgress): Encounter {
+        val current = villainProgressAt(track)
+        return withProgress {
+            copy(moreVillains = moreVillains.replacing(track - 1, current.change(), TrackProgress()))
+        }
+    }
+
+    // --- several main schemes at once ------------------------------------------
+
+    val schemeTrackCount: Int get() = setup.schemeTracks.size
+
+    private fun schemeProgressAt(track: Int): TrackProgress =
+        if (track <= 0) {
+            TrackProgress(progress.schemeIndex, progress.threat, progress.manualSchemeLimit)
+        } else {
+            progress.moreSchemes.getOrElse(track - 1) { TrackProgress() }
+        }
+
+    fun schemeSideAt(track: Int): EncounterSide? =
+        setup.schemeTracks.getOrNull(track)?.getOrNull(schemeProgressAt(track).index)
+
+    fun schemeLimitAt(track: Int): Int? =
+        schemeSideAt(track)?.totalFor(setup.players) ?: schemeProgressAt(track).manual
+
+    /** Threat on one copy of one main scheme. Copies exist on the first track only. */
+    fun threatOnTrack(track: Int, copyIndex: Int): Int =
+        if (track <= 0) threatOn(copyIndex) else schemeProgressAt(track).value
+
+    fun schemeCompleteAt(track: Int, copyIndex: Int = 0): Boolean =
+        schemeLimitAt(track)?.let { threatOnTrack(track, copyIndex) >= it } == true
+
+    fun isFinalSchemeStageAt(track: Int): Boolean =
+        schemeProgressAt(track).index >= (setup.schemeTracks.getOrNull(track)?.lastIndex ?: 0)
+
+    fun threatenedAt(track: Int, copyIndex: Int, amount: Int): Encounter {
+        if (track <= 0) {
+            return threatened(copyIndex, amount)
+        }
+        val raised = (threatOnTrack(track, 0) + amount).coerceAtLeast(0)
+        val capped = schemeLimitAt(track)?.let(raised::coerceAtMost) ?: raised
+        return withSchemeProgress(track) { copy(value = capped) }
+    }
+
+    /**
+     * Advances one main scheme; or, for a scheme that clears rather than
+     * completes, removes all its threat and leaves the stage where it is.
+     */
+    fun schemeAdvancedAt(track: Int): Encounter {
+        if (setup.schemesReset) {
+            return if (track <= 0) {
+                withProgress { copy(threat = 0, extraThreats = extraThreats.map { 0 }) }
+            } else {
+                withSchemeProgress(track) { copy(value = 0) }
+            }
+        }
+        if (track <= 0) {
+            return schemeAdvanced()
+        }
+        if (isFinalSchemeStageAt(track)) {
+            return this
+        }
+        val next = setup.schemeTracks[track][schemeProgressAt(track).index + 1]
+        return withSchemeProgress(track) {
+            copy(index = index + 1, value = next.startingThreatFor(setup.players), manual = null)
+        }
+    }
+
+    private inline fun withSchemeProgress(track: Int, change: TrackProgress.() -> TrackProgress): Encounter {
+        val current = schemeProgressAt(track)
+        return withProgress {
+            copy(moreSchemes = moreSchemes.replacing(track - 1, current.change(), TrackProgress()))
+        }
+    }
+
+    // --- a card with hit points of its own ---------------------------------------
+
+    val structureSide: EncounterSide? get() = setup.structure?.sides?.getOrNull(progress.structureIndex)
+
+    val structureLimit: Int? get() = structureSide?.totalFor(setup.players)
+
+    /** The side has taken all it can. */
+    val structureFull: Boolean get() = structureLimit?.let { progress.structureDamage >= it } == true
+
+    val isFinalStructureSide: Boolean
+        get() = progress.structureIndex >= (setup.structure?.sides?.lastIndex ?: 0)
+
+    /** The last side is full: the card says the players lose. Reported, never acted on. */
+    val structureLost: Boolean get() = structureFull && isFinalStructureSide
+
+    fun structureDamaged(amount: Int): Encounter {
+        val raised = (progress.structureDamage + amount).coerceAtLeast(0)
+        val capped = structureLimit?.let(raised::coerceAtMost) ?: raised
+        return withProgress { copy(structureDamage = capped) }
+    }
+
+    /** Turns the card over: the damage comes off with it, as the card says. */
+    fun structureTurned(): Encounter =
+        if (isFinalStructureSide) {
+            this
+        } else {
+            withProgress { copy(structureIndex = structureIndex + 1, structureDamage = 0) }
+        }
 
     /** Copies of the main scheme in play, never fewer than one. */
     val schemeCopies: Int get() = setup.schemeCopies.coerceAtLeast(1)
@@ -248,7 +487,12 @@ data class Encounter(
                 encounter.threatened(index, escalation)
             }
         }
-        return escalated.withProgress { copy(round = round + 1) }
+        // And every scheme beside the first, each by its own printed amount.
+        val allEscalated = (1 until schemeTrackCount).fold(escalated) { encounter, track ->
+            val own = encounter.schemeSideAt(track)?.escalationFor(setup.players) ?: 0
+            if (own == 0) encounter else encounter.threatenedAt(track, 0, own)
+        }
+        return allEscalated.withProgress { copy(round = round + 1) }
     }
 
     fun withManualVillainHealth(health: Int?): Encounter =
@@ -261,8 +505,10 @@ data class Encounter(
         copy(progress = progress.change())
 
     /** The list with one entry replaced, grown with zeroes if it is short. */
-    private fun List<Int>.replacing(index: Int, value: Int): List<Int> {
-        val grown = if (size > index) this else this + List(index + 1 - size) { 0 }
+    private fun List<Int>.replacing(index: Int, value: Int): List<Int> = replacing(index, value, 0)
+
+    private fun <T> List<T>.replacing(index: Int, value: T, filler: T): List<T> {
+        val grown = if (size > index) this else this + List(index + 1 - size) { filler }
         return grown.mapIndexed { at, existing -> if (at == index) value else existing }
     }
 
@@ -275,6 +521,10 @@ data class Encounter(
                 progress = EncounterProgress(
                     threat = start,
                     extraThreats = List((setup.schemeCopies - 1).coerceAtLeast(0)) { start },
+                    moreSchemes = setup.moreSchemes.map { stages ->
+                        TrackProgress(value = stages.firstOrNull()?.startingThreatFor(setup.players) ?: 0)
+                    },
+                    structureDamage = setup.structure?.startingDamage ?: 0,
                 ),
             )
         }

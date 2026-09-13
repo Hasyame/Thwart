@@ -407,11 +407,25 @@ class CampaignRunViewModel @Inject constructor(
         // The campaigns use the game's own word for the harder mode, and an
         // expert campaign plays the same later stages a one-off expert game
         // does.
-        return encounterRepository.setupFor(
+        val expert = run.state.difficulty.equals("expert", ignoreCase = true)
+        val players = run.state.heroes.size.coerceAtLeast(1)
+        val setup = encounterRepository.setupFor(
             scenarioCode = setCode,
-            players = run.state.heroes.size.coerceAtLeast(1),
-            expert = run.state.difficulty.equals("expert", ignoreCase = true),
+            players = players,
+            expert = expert,
         )
+        /*
+            The campaign's own opening damage on a card with hit points: The
+            Mad Titan's Shadow starts Tower Defense's tower with 1 damage per
+            player on a Standard campaign and 2 on Expert (its setup text says
+            so, with 3 for Heroic, which the app does not play). Counted from
+            the start rather than left for the table to add, since the setup
+            page already tells them to.
+        */
+        val opening = setup.structure?.let { structure ->
+            structure.copy(startingDamage = players * (if (expert) 2 else 1))
+        }
+        return if (opening == null) setup else setup.copy(structure = opening)
     }
 
     /**
@@ -444,6 +458,20 @@ class CampaignRunViewModel @Inject constructor(
     fun advanceScheme() = updateEncounter { schemeAdvanced() }
 
     fun endRound() = updateEncounter { roundEnded() }
+
+    // By track, for a table with several villains or main schemes at once.
+    fun damageVillainAt(track: Int, amount: Int) = updateEncounter { damagedAt(track, amount) }
+
+    fun advanceVillainAt(track: Int) = updateEncounter { villainAdvancedAt(track) }
+
+    fun changeThreatAt(track: Int, copyIndex: Int, amount: Int) =
+        updateEncounter { threatenedAt(track, copyIndex, amount) }
+
+    fun advanceSchemeAt(track: Int) = updateEncounter { schemeAdvancedAt(track) }
+
+    fun damageStructure(amount: Int) = updateEncounter { structureDamaged(amount) }
+
+    fun turnStructure() = updateEncounter { structureTurned() }
 
     fun setKeepAwake(value: Boolean) {
         state.value = state.value.copy(keepAwake = value)

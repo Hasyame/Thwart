@@ -4,6 +4,7 @@ import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
+import com.hasyame.marvelchampions.domain.play.StructureSetup
 import com.hasyame.marvelchampions.domain.play.EncounterSide
 import com.hasyame.marvelchampions.domain.play.VillainStages
 import javax.inject.Inject
@@ -39,16 +40,66 @@ class EncounterRepository @Inject constructor(
             }
             val rows = cardDao.getScenarioSides(scenarioCode, locale.code)
 
+            val villains = rows.filter { it.typeCode in VILLAIN_TYPES && !it.doubleSided }
+                // Standard walks the first two stages, Expert the last two.
+                .let { VillainStages.select(it, expert, { c -> c.name }, { c -> c.stage }) }
+                .map(::villainSide)
+            val schemes = rows.filter { it.typeCode == MAIN_SCHEME && it.isNumbersSide }
+                .map(::schemeSide)
+            shaped(scenarioCode, villains, schemes, players.coerceAtLeast(1), locale.code)
+        }
+
+    /**
+     * The scenarios whose table is not one villain and one scheme in a row.
+     *
+     * The card database lists what is in a set and in what order; it does
+     * not say which cards are in play at the same time, and the tracker's
+     * default of one after the other is right for almost every scenario and
+     * wrong for a few. Those few are named here, by set, with what the cards
+     * print about them. Everything else goes through untouched.
+     */
+    private suspend fun shaped(
+        setCode: String,
+        villains: List<EncounterSide>,
+        schemes: List<EncounterSide>,
+        players: Int,
+        locale: String,
+    ): EncounterSetup = when (setCode) {
+        /*
+            Tower Defense: Proxima Midnight and Corvus Glaive together, each
+            printing "cannot be defeated while the other has hit points
+            remaining"; two main schemes side by side (1A puts 2A out beside
+            it), each of which clears its threat when it would complete rather
+            than turning over; and Avengers Tower, which takes damage on its
+            Stronghold side, turns over at 9 per player, and loses the game at
+            9 per player again. The tower's numbers are not in the card
+            database, which stores it as an environment with no health.
+        */
+        TOWER_DEFENSE -> {
+            val byVillain = villains.groupBy { it.name }.values.toList()
+            val byScheme = schemes.groupBy { it.name }.values.toList()
+            val tower = cardDao.getCard(AVENGERS_TOWER, locale)?.name ?: "Avengers Tower"
+            val (stronghold, damaged) = if (locale == "fr") "Place forte" to "Endommagée" else "Stronghold" to "Damaged"
             EncounterSetup(
-                villain = rows.filter { it.typeCode in VILLAIN_TYPES && !it.doubleSided }
-                    // Standard walks the first two stages, Expert the last two.
-                    .let { VillainStages.select(it, expert, { c -> c.name }, { c -> c.stage }) }
-                    .map(::villainSide),
-                scheme = rows.filter { it.typeCode == MAIN_SCHEME && it.isNumbersSide }
-                    .map(::schemeSide),
-                players = players.coerceAtLeast(1),
+                villain = byVillain.firstOrNull().orEmpty(),
+                moreVillains = byVillain.drop(1),
+                villainsLinked = true,
+                scheme = byScheme.firstOrNull().orEmpty(),
+                moreSchemes = byScheme.drop(1),
+                schemesReset = true,
+                structure = StructureSetup(
+                    name = tower,
+                    sides = listOf(
+                        EncounterSide(name = tower, stage = stronghold, value = TOWER_HEALTH_PER_PLAYER, perPlayer = true),
+                        EncounterSide(name = tower, stage = damaged, value = TOWER_HEALTH_PER_PLAYER, perPlayer = true),
+                    ),
+                ),
+                players = players,
             )
         }
+
+        else -> EncounterSetup(villain = villains, scheme = schemes, players = players)
+    }
 
     /**
      * What a side can put on the board, for the versus setup to offer.
@@ -175,6 +226,13 @@ class EncounterRepository @Inject constructor(
         const val VERSUS_SEPARATOR = "__"
 
         const val VILLAIN = "villain"
+
+        /** The Mad Titan's Shadow's second scenario, shaped unlike the rest. */
+        const val TOWER_DEFENSE = "tower_defense"
+        const val AVENGERS_TOWER = "21100"
+
+        /** Printed on both sides of the tower: "at least 9 [per hero] damage". */
+        const val TOWER_HEALTH_PER_PLAYER = 9
 
         /** Civil War's leaders sit in the villain's place and behave as one. */
         val VILLAIN_TYPES = setOf(VILLAIN, "leader")

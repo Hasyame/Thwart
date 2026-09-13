@@ -1,0 +1,14 @@
+Tower Defense, counted as it is played.
+
+The tracker now knows a table with two villains at once: Proxima Midnight
+and Corvus Glaive each have their own counter, neither is defeated while
+the other has hit points left, and they turn to their next stage together
+once both are down. The two main schemes run side by side, each taking
+its own threat per player at the end of the round, and at the limit the
+button removes all the threat as the card says rather than turning a
+stage. Avengers Tower is counted too: 9 damage per player on its
+Stronghold side, then it turns over, and 9 per player again is the loss
+the card names. In a campaign it starts with the campaign's damage on it.
+
+The scenario's setup now names the main scheme Targeted Defense goes on,
+and the Black Order Assailant each player puts into play.

@@ -1,0 +1,15 @@
+Défense de la Tour, comptée comme elle se joue.
+
+Le tracker connaît désormais une table avec deux méchants à la fois : Proxima
+Minuit et Corvus Glaive ont chacun leur compteur, aucun n'est vaincu tant
+que l'autre a des points de vie, et ils passent ensemble à leur stade
+suivant une fois tous deux à terre. Les deux manigances principales avancent
+côte à côte, chacune recevant sa menace par joueur en fin de round, et à la
+limite le bouton retire toute la menace comme le dit la carte, au lieu de
+retourner un stade. La Tour des Avengers est comptée aussi : 9 dégâts par
+joueur sur sa face Place forte, puis elle se retourne, et 9 par joueur à
+nouveau est la défaite que la carte annonce. En campagne, elle commence avec
+les dégâts de la campagne.
+
+La mise en place nomme désormais la manigance principale sur laquelle va
+Défense Ciblée, et l'Assaillant de l'Ordre Noir que chaque joueur met en jeu.

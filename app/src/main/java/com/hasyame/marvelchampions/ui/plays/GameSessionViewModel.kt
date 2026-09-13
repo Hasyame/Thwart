@@ -731,6 +731,20 @@ class GameSessionViewModel @Inject constructor(
 
     fun advanceScheme() = updateEncounter { schemeAdvanced() }
 
+    // By track, for a table with several villains or main schemes at once.
+    fun damageVillainAt(track: Int, amount: Int) = updateEncounter { damagedAt(track, amount) }
+
+    fun advanceVillainAt(track: Int) = updateEncounter { villainAdvancedAt(track) }
+
+    fun changeThreatAt(track: Int, copyIndex: Int, amount: Int) =
+        updateEncounter { threatenedAt(track, copyIndex, amount) }
+
+    fun advanceSchemeAt(track: Int) = updateEncounter { schemeAdvancedAt(track) }
+
+    fun damageStructure(amount: Int) = updateEncounter { structureDamaged(amount) }
+
+    fun turnStructure() = updateEncounter { structureTurned() }
+
     /** For the handful of cards that print a star where the number goes. */
     fun setManualVillainHealth(health: Int?) =
         updateEncounter { withManualVillainHealth(health) }
