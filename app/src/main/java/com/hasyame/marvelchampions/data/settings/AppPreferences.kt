@@ -62,8 +62,14 @@ class AppPreferences @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) {
 
+    /**
+     * The card language: the one chosen in Settings, or, until then, the
+     * device's. Read each time rather than stored, so a phone whose language
+     * changes follows it, as the app language on "System" does.
+     */
     val cardLocale: Flow<CardLocale> = context.dataStore.data.map { preferences ->
-        preferences[KEY_CARD_LOCALE]?.let(CardLocale::fromCode) ?: CardLocale.FRENCH
+        preferences[KEY_CARD_LOCALE]?.let(CardLocale::fromCode)
+            ?: CardLocale.forSystem(context.resources.configuration.locales[0].language)
     }
 
     val lastCardSync: Flow<Long?> = context.dataStore.data.map { it[KEY_LAST_SYNC] }

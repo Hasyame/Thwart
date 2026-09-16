@@ -1,15 +1,17 @@
 AntiFeatures:
   NonFreeNet:
-    en-US: Card and pack data is downloaded from MarvelCDB, a third-party service.
-      Separately, and only if you set it up yourself, the app can sign in to BoardGameGeek
-      with your account credentials and post your finished games to your BoardGameGeek
-      play log. Both services are optional and neither is contacted until you ask
-      for it.
-    fr-FR: Les données des cartes et des extensions sont téléchargées depuis MarvelCDB,
-      un service tiers. Par ailleurs, et uniquement si vous le configurez vous-même,
+    en-US: Card and pack data must be downloaded once from MarvelCDB, a third-party
+      service; the app asks before it starts that download, and card pictures come
+      from the same service as they are shown. Separately, and only if you set it
+      up yourself, the app can sign in to BoardGameGeek with your account credentials
+      and post your finished games to your BoardGameGeek play log. Nothing is contacted
+      until you ask for it.
+    fr-FR: Les données des cartes et des extensions doivent être téléchargées une
+      fois depuis MarvelCDB, un service tiers ; l'application demande avant de lancer
+      ce téléchargement, et les images des cartes viennent du même service au moment
+      où elles s'affichent. Par ailleurs, et uniquement si vous le configurez vous-même,
       l'application peut se connecter à BoardGameGeek avec vos identifiants et y enregistrer
-      vos parties terminées. Les deux services sont facultatifs et aucun n'est contacté
-      sans votre demande.
+      vos parties terminées. Rien n'est contacté sans votre demande.
 Categories:
   - Game Helper
 License: MIT
@@ -24,14 +26,14 @@ RepoType: git
 Repo: https://github.com/Hasyame/Thwart.git
 
 Builds:
-  - versionName: 1.17.0
-    versionCode: 32
-    commit: 72791218405277ce3479e87d8e68cdfa1a1ffe39
+  - versionName: 1.53.0
+    versionCode: 82
+    commit: b8a474639465a584a909c96ee30fc2e083a31f9c
     subdir: app
     gradle:
       - yes
 
 AutoUpdateMode: Version
-UpdateCheckMode: Tags
-CurrentVersion: 1.17.0
-CurrentVersionCode: 32
+UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
+CurrentVersion: 1.53.0
+CurrentVersionCode: 82

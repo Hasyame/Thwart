@@ -24,5 +24,17 @@ enum class CardLocale(val code: String, val host: String) {
 
     companion object {
         fun fromCode(code: String): CardLocale? = entries.firstOrNull { it.code == code }
+
+        /**
+         * The language to read cards in when nobody has chosen one: the
+         * device's, when the cards exist in it, and English otherwise.
+         *
+         * This used to be French for everybody, the author's own. On an
+         * English phone that put "Plumage Adaptatif" under an English screen,
+         * and the first search ran against names the player had never seen.
+         * The choice in Settings still overrides this, and is kept.
+         */
+        fun forSystem(language: String): CardLocale =
+            fromCode(language.lowercase().substringBefore('-').substringBefore('_')) ?: ENGLISH
     }
 }
