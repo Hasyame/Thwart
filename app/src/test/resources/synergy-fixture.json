@@ -1,0 +1,98 @@
+{
+  "_note": "Shared between Thwart Android and Thwart Web: both test suites read this file unchanged. Spec: docs/spec/synergie-et-draft.md. Texts are MarvelCDB real_text; identities list the printed traits of every face.",
+  "identities": {
+    "adam_warlock": {
+      "hero": ["Guardian. Mystic."],
+      "alterEgo": ["Mystic."]
+    },
+    "magik": {
+      "hero": ["Mystic. X-Men."],
+      "alterEgo": ["Mutant. Mystic."]
+    },
+    "spider_man": {
+      "hero": ["Avenger."],
+      "alterEgo": ["Genius."]
+    },
+    "ant_man": {
+      "hero": ["Avenger. Giant.", "Avenger. Tiny."],
+      "alterEgo": ["Scientist."]
+    },
+    "captain_marvel": {
+      "hero": ["Avenger. Soldier."],
+      "alterEgo": ["S.H.I.E.L.D. Soldier."]
+    },
+    "psylocke": {
+      "hero": ["Psionic. X-Men."],
+      "alterEgo": ["Psionic. Mutant."]
+    },
+    "alter_ego_only_psionic": {
+      "_note": "Invented for the hero-only rule: the trait is on the alter ego alone.",
+      "hero": ["X-Men."],
+      "alterEgo": ["Psionic. Mutant."]
+    }
+  },
+  "cards": {
+    "rocket_raccoon": {
+      "code": "16019",
+      "text": "Play only if your identity has the [[guardian]] trait.\n<b>Interrupt</b>: When Rocket Raccoon attacks a minion, he gets +3 ATK for that attack. That attack gains overkill.",
+      "expected": { "anyOfTraits": ["guardian"], "heroOnly": false }
+    },
+    "moon_girl": {
+      "code": "28018",
+      "text": "Play only if your identity has the [[champion]] or [[genius]] trait.\n<b>Response</b>: After Moon Girl enters play, draw 1 card.",
+      "expected": { "anyOfTraits": ["champion", "genius"], "heroOnly": false }
+    },
+    "elixir": {
+      "code": "42011",
+      "text": "Play only if your identity has the [[X-Force]] or [[X-Men]] trait.\n<b>Action</b>: Exhaust Elixir → heal 2 damage from a character.",
+      "expected": { "anyOfTraits": ["x-force", "x-men"], "heroOnly": false }
+    },
+    "yellow_jacket": {
+      "code": "56019",
+      "text": "Play only if you have the [[Avenger]] trait.\n<b>Response</b>: After Yellow Jacket enters play, deal 1 damage to an enemy.",
+      "expected": { "anyOfTraits": ["avenger"], "heroOnly": false }
+    },
+    "shield_deputy": {
+      "code": "54033",
+      "text": "Play only if your identity has the [[S.H.I.E.L.D.]] trait.\n<b>Action</b>: Exhaust S.H.I.E.L.D. Deputy → give an enemy a stun.",
+      "expected": { "anyOfTraits": ["s.h.i.e.l.d"], "heroOnly": false }
+    },
+    "psi_bow_attack": {
+      "code": "41030",
+      "text": "Play only if your hero has the [[PSIONIC]] trait.\n<b>Hero Action</b> <i>(attack)</i>: Deal 4 damage to an enemy.",
+      "expected": { "anyOfTraits": ["psionic"], "heroOnly": true }
+    },
+    "helicarrier": {
+      "code": "01092",
+      "text": "<b>Resource</b>: Exhaust Helicarrier → generate a [wild] resource for any player.",
+      "expected": null
+    },
+    "martinex_bonus_only": {
+      "code": "21065",
+      "text": "Reduce the cost to play Martinex by 1 if your identity has the [[Guardian]] trait.\n<b>Response</b>: After Martinex enters play, deal 2 damage to an enemy.",
+      "expected": null
+    },
+    "spycraft_out_of_scope": {
+      "code": "08018",
+      "text": "Play only if you control a [[Spy]] character.\n<b>Action</b>: Exhaust Spycraft → look at the top card of the encounter deck.",
+      "expected": null,
+      "unrecognised": "Play only if you control a [[Spy]] character."
+    }
+  },
+  "cases": [
+    { "card": "rocket_raccoon", "identity": "adam_warlock", "compatible": true },
+    { "card": "rocket_raccoon", "identity": "magik", "compatible": false },
+    { "card": "helicarrier", "identity": "magik", "compatible": true },
+    { "card": "martinex_bonus_only", "identity": "magik", "compatible": true },
+    { "card": "moon_girl", "identity": "spider_man", "compatible": true },
+    { "card": "moon_girl", "identity": "magik", "compatible": false },
+    { "card": "elixir", "identity": "magik", "compatible": true },
+    { "card": "elixir", "identity": "adam_warlock", "compatible": false },
+    { "card": "yellow_jacket", "identity": "ant_man", "compatible": true },
+    { "card": "shield_deputy", "identity": "captain_marvel", "compatible": true },
+    { "card": "shield_deputy", "identity": "spider_man", "compatible": false },
+    { "card": "psi_bow_attack", "identity": "psylocke", "compatible": true },
+    { "card": "psi_bow_attack", "identity": "alter_ego_only_psionic", "compatible": false },
+    { "card": "spycraft_out_of_scope", "identity": "spider_man", "compatible": true }
+  ]
+}

@@ -1,5 +1,6 @@
 package com.hasyame.marvelchampions.domain.search
 
+import com.hasyame.marvelchampions.domain.deckbuilder.IdentityTraits
 import com.hasyame.marvelchampions.domain.model.CardFilter
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import org.junit.Assert.assertEquals
@@ -130,5 +131,39 @@ class CardQueryBuilderTest {
         val query = CardQueryBuilder.build(CardFilter(), CardLocale.FRENCH)
 
         assertTrue(query.sql.contains("ORDER BY cards.packCode, cards.position"))
+    }
+
+    @Test
+    fun `the synergy filter binds its keys in the order of its placeholders`() {
+        // Magik: Mystic and X-Men on the hero side, Mutant and Mystic on the
+        // alter ego. A card that needs Mutant is playable (the alter ego has
+        // it); one that needs the *hero* to be Mutant is not.
+        val magik = IdentityTraits(
+            heroFaces = setOf("mystic", "x-men"),
+            alterEgoFaces = setOf("mutant", "mystic"),
+        )
+        val query = CardQueryBuilder.build(CardFilter(synergyWith = magik), CardLocale.ENGLISH)
+
+        assertTrue(query.sql.contains("cards.synergyTraits = ''"))
+        assertTrue("underived rows stay visible", query.sql.contains("cards.synergyTraits IS NULL"))
+        // locale x3, then: the hero prefix for NOT LIKE, every face's key, the
+        // hero prefix for LIKE, the hero faces' keys, limit and offset.
+        assertEquals(
+            listOf<Any>(
+                "en", "fr", "en",
+                "hero:%", "%|mystic|%", "%|x-men|%", "%|mutant|%",
+                "hero:%", "%|mystic|%", "%|x-men|%",
+                200, 0,
+            ),
+            query.args,
+        )
+    }
+
+    @Test
+    fun `an identity without traits hides every conditional card`() {
+        val query = CardQueryBuilder.build(CardFilter(synergyWith = IdentityTraits.NONE), CardLocale.ENGLISH)
+        // "OR (... AND (0))" on both branches: only unconditional cards pass.
+        assertTrue(query.sql.contains("AND (0))"))
+        assertEquals(listOf<Any>("en", "fr", "en", "hero:%", "hero:%", 200, 0), query.args)
     }
 }

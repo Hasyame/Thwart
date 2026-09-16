@@ -1,5 +1,7 @@
 package com.hasyame.marvelchampions.domain.search
 
+import com.hasyame.marvelchampions.domain.deckbuilder.IdentityTraits
+import com.hasyame.marvelchampions.domain.deckbuilder.SynergyCondition
 import com.hasyame.marvelchampions.domain.model.CardFilter
 import com.hasyame.marvelchampions.domain.model.CardLocale
 
@@ -97,6 +99,10 @@ object CardQueryBuilder {
             args += "%${SearchNormalizer.normalize(trait)}%"
         }
 
+        filter.synergyWith?.let { identity ->
+            where += synergyClause(identity, args)
+        }
+
         args += limit
         args += offset
 
@@ -111,6 +117,37 @@ object CardQueryBuilder {
             append(" LIMIT ? OFFSET ?")
         }
         return CardQuery(sql, args)
+    }
+
+    /**
+     * Cards the identity can play: no condition, or one that a face of the
+     * identity answers. A "hero only" condition is matched against the hero
+     * faces alone. Each key is stored wrapped in bars, so the LIKE cannot
+     * match part of a longer trait; a row not yet derived (null) is left in
+     * rather than hidden, since hiding it would look like a missing card.
+     */
+    private fun synergyClause(identity: IdentityTraits, args: MutableList<Any>): String {
+        fun anyOf(keys: Set<String>): String {
+            if (keys.isEmpty()) {
+                return "0"
+            }
+            keys.forEach { args += "%${SynergyCondition.SEPARATOR}$it${SynergyCondition.SEPARATOR}%" }
+            return keys.joinToString(" OR ") { "cards.synergyTraits LIKE ?" }
+        }
+        // Bound in the order the placeholders appear below.
+        val heroPrefix = "${SynergyCondition.HERO_PREFIX}%"
+        args += heroPrefix
+        val identityWide = anyOf(identity.allFaces)
+        args += heroPrefix
+        val heroOnly = anyOf(identity.heroFaces)
+        return """
+            (
+                cards.synergyTraits IS NULL
+                OR cards.synergyTraits = ''
+                OR (cards.synergyTraits NOT LIKE ? AND ($identityWide))
+                OR (cards.synergyTraits LIKE ? AND ($heroOnly))
+            )
+        """.trimIndent()
     }
 
     private fun Collection<String>.addInClause(

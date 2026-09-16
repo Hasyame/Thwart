@@ -145,4 +145,13 @@ data class CardEntity(
     @ColumnInfo(name = "searchName") val searchName: String,
     @ColumnInfo(name = "searchText") val searchText: String,
     @ColumnInfo(name = "searchTraits") val searchTraits: String,
+
+    /**
+     * The card's condition on the identity playing it, derived from the
+     * English text when the row is written: `|guardian|`, `hero:|psionic|`,
+     * `""` for a card with no condition. Null only on a row written before
+     * the column existed, which the start-up pass fills in. See
+     * [com.hasyame.marvelchampions.domain.deckbuilder.SynergyCondition].
+     */
+    val synergyTraits: String? = null,
 )

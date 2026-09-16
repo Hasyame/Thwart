@@ -5,6 +5,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.core.app.ApplicationProvider
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
+import com.hasyame.marvelchampions.domain.deckbuilder.IdentityTraits
 import com.hasyame.marvelchampions.domain.model.CardFilter
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.search.CardQueryBuilder
@@ -153,6 +154,61 @@ class CardQueryExecutionTest {
         )
 
         assertEquals(listOf("01021"), results.map { it.code })
+    }
+
+    @Test
+    fun `the synergy filter keeps what the identity can play and what has never been derived`() = runTest {
+        dao.insertAll(
+            listOf(
+                card("16019", "Rocket Raccoon", "ally", "basic", "gmw", cost = 3, traits = "Gardien.")
+                    .copy(synergyTraits = "|guardian|"),
+                card("42011", "Elixir", "ally", "protection", "aoa", cost = 3, traits = "X-Men.")
+                    .copy(synergyTraits = "|x-force|x-men|"),
+                card("41030", "Psi-Bow Attack", "event", "aggression", "aoa", cost = 2, traits = "Attaque.")
+                    .copy(synergyTraits = "hero:|psionic|"),
+                card("01092", "Helicarrier", "support", "basic", "core", cost = 3, traits = null)
+                    .copy(synergyTraits = ""),
+                card("99999", "Underived", "support", "basic", "core", cost = 1, traits = null)
+                    .copy(synergyTraits = null),
+            ),
+        )
+        // Magik: Mystic and X-Men as a hero, Mutant and Mystic as Illyana.
+        val magik = IdentityTraits(heroFaces = setOf("mystic", "x-men"), alterEgoFaces = setOf("mutant", "mystic"))
+        val results = run(CardFilter(synergyWith = magik))
+
+        val codes = results.map { it.code }
+        assertTrue("Elixir needs X-Men, which Magik has", "42011" in codes)
+        assertTrue("no condition at all", "01092" in codes)
+        assertTrue("never derived stays visible", "99999" in codes)
+        assertTrue("cards without a condition of their own", "01021" in codes)
+        assertTrue("Rocket Raccoon needs a Guardian", "16019" !in codes)
+        assertTrue("Psi-Bow needs the hero to be Psionic", "41030" !in codes)
+
+        // An identity whose *alter ego* alone is Psionic still cannot play it.
+        val alterEgoOnly = IdentityTraits(heroFaces = setOf("x-men"), alterEgoFaces = setOf("psionic"))
+        assertTrue("41030" !in run(CardFilter(synergyWith = alterEgoOnly)).map { it.code })
+        val psylocke = IdentityTraits(heroFaces = setOf("psionic", "x-men"), alterEgoFaces = setOf("psionic"))
+        assertTrue("41030" in run(CardFilter(synergyWith = psylocke)).map { it.code })
+    }
+
+    @Test
+    fun `the start-up pass finds only rows written before the column existed`() = runTest {
+        dao.insertAll(
+            listOf(
+                card("16019", "Rocket Raccoon", "ally", "basic", "gmw", cost = 3, traits = null)
+                    .copy(realText = "Play only if your identity has the [[guardian]] trait.", synergyTraits = null),
+                card("01092", "Helicarrier", "support", "basic", "core", cost = 3, traits = null)
+                    .copy(synergyTraits = ""),
+            ),
+        )
+        // The four cards of setUp were written with the default, null, too.
+        val pending = dao.getUnderivedSynergy()
+        assertEquals(5, pending.size)
+        pending.forEach { dao.setSynergy(it.code, it.locale, deriveSynergy(it.realText, it.text)) }
+
+        assertEquals("nothing left for the next launch", 0, dao.getUnderivedSynergy().size)
+        assertEquals("|guardian|", dao.getCard("16019", "fr")!!.synergyTraits)
+        assertEquals("", dao.getCard("01021", "fr")!!.synergyTraits)
     }
 
 private fun englishCard(

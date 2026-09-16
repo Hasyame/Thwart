@@ -309,6 +309,10 @@ fun DeckDetailScreen(
                             modifier = Modifier.padding(horizontal = 16.dp),
                         )
                     }
+                    SynergyWarningText(
+                        state.synergyWarnings,
+                        Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                    )
                     if (state.hasLocalEdits) {
                         Text(
                             text = stringResource(R.string.decks_locally_edited),

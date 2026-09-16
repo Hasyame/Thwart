@@ -13,6 +13,7 @@ import com.hasyame.marvelchampions.domain.deckbuilder.DeckStatistics
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckStatisticsCalculator
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckValidation
+import com.hasyame.marvelchampions.domain.deckbuilder.SynergyWarning
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +34,8 @@ data class DeckDetailUiState(
     val statistics: DeckStatistics = DeckStatistics(),
     val campaignCards: List<CampaignCardRow> = emptyList(),
     val validation: DeckValidation = DeckValidation(),
+    /** Cards the identity cannot play, worked out on opening and never stored. */
+    val synergyWarnings: List<SynergyWarning> = emptyList(),
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val error: DeckImportError? = null,
@@ -67,6 +70,7 @@ class DeckDetailViewModel @Inject constructor(
                 statistics = contents.statistics(),
                 campaignCards = campaignCards(id, locale),
                 validation = validate(contents, locale),
+                synergyWarnings = synergyWarnings(contents, locale),
                 isLoading = false,
             )
         }
@@ -108,6 +112,12 @@ class DeckDetailViewModel @Inject constructor(
         )
     }
 
+    private suspend fun synergyWarnings(contents: DeckContents?, locale: CardLocale): List<SynergyWarning> {
+        val deck = contents?.deck ?: return emptyList()
+        val rules = builderRepository.heroRules(deck.heroCode, locale) ?: return emptyList()
+        return builderRepository.synergyWarnings(rules, DeckRepository.parseSlots(deck.slots), locale)
+    }
+
     fun revertToImported() {
         val id = deckId ?: return
         viewModelScope.launch {
@@ -144,6 +154,7 @@ class DeckDetailViewModel @Inject constructor(
                 statistics = contents.statistics(),
                 campaignCards = campaignCards(id, locale),
                 validation = validate(contents, locale),
+                synergyWarnings = synergyWarnings(contents, locale),
                 isLoading = false,
                 isRefreshing = false,
                 error = error,

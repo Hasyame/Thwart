@@ -8,6 +8,11 @@ import com.hasyame.marvelchampions.data.deckbuilder.toDeckCardInfo
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckValidation
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckValidator
 import com.hasyame.marvelchampions.domain.deckbuilder.HeroDeckRules
+import com.hasyame.marvelchampions.domain.deckbuilder.IdentityTraits
+import com.hasyame.marvelchampions.domain.deckbuilder.Synergy
+import com.hasyame.marvelchampions.domain.deckbuilder.SynergyCardInfo
+import com.hasyame.marvelchampions.domain.deckbuilder.SynergyCondition
+import com.hasyame.marvelchampions.domain.deckbuilder.SynergyWarning
 import com.hasyame.marvelchampions.domain.model.CardFilter
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.search.CardQueryBuilder
@@ -78,6 +83,48 @@ class DeckBuilderRepository @Inject constructor(
         }
 
     /**
+     * The traits of every face of the identity, from the English rows, which
+     * are what the trait keys are made of. Ant-Man's Giant and Tiny forms,
+     * Ironheart's three versions: all of a set's hero and alter-ego cards.
+     */
+    suspend fun identityTraits(heroCode: String): IdentityTraits = withContext(ioDispatcher) {
+        val hero = cardDao.getCardPreferringLocale(heroCode, CardLocale.ENGLISH.code)
+            ?: return@withContext IdentityTraits.NONE
+        val faces = hero.cardSetCode
+            ?.let { cardDao.getCardSet(it, CardLocale.ENGLISH.code) }
+            .orEmpty()
+            .ifEmpty { listOf(hero) }
+        IdentityTraits.of(
+            heroTraits = faces.filter { it.typeCode == HERO_TYPE }.map { it.realTraits ?: it.traits },
+            alterEgoTraits = faces.filter { it.typeCode == ALTER_EGO_TYPE }.map { it.realTraits ?: it.traits },
+        )
+    }
+
+    /**
+     * The cards of a deck its identity cannot play. Worked out each time it is
+     * asked, from the deck as it stands, and never written anywhere.
+     */
+    suspend fun synergyWarnings(
+        rules: HeroDeckRules,
+        slots: Map<String, Int>,
+        locale: CardLocale,
+    ): List<SynergyWarning> = withContext(ioDispatcher) {
+        val identity = identityTraits(rules.heroCode)
+        val cards = slots.filterValues { it > 0 }.keys
+            .mapNotNull { cardDao.getCardPreferringLocale(it, locale.code) }
+            .sortedBy { it.name }
+            .map { card ->
+                SynergyCardInfo(
+                    code = card.code,
+                    name = card.name,
+                    condition = SynergyCondition.decode(card.synergyTraits),
+                    signature = rules.heroSetCode != null && card.cardSetCode == rules.heroSetCode,
+                )
+            }
+        Synergy.warnings(identity, cards)
+    }
+
+    /**
      * Cards that can go in a deck: the hero's own signature cards, the chosen
      * aspects, and basic. Encounter and campaign cards are never player cards.
      */
@@ -87,12 +134,15 @@ class DeckBuilderRepository @Inject constructor(
         locale: CardLocale,
         query: String,
         ownedOnly: Boolean,
+        /** When set, cards without synergy with this identity are left out. */
+        synergyWith: IdentityTraits? = null,
     ): List<CardEntity> = withContext(ioDispatcher) {
         val factions = (aspects + BASIC_FACTION).toSet()
         val filter = CardFilter(
             query = query,
             factionCodes = factions,
             ownedOnly = ownedOnly,
+            synergyWith = synergyWith,
         )
         val owned = if (ownedOnly) collectionRepository.getOwnedCodes() else emptySet()
         val built = CardQueryBuilder.build(filter, locale, owned, limit = CANDIDATE_LIMIT)

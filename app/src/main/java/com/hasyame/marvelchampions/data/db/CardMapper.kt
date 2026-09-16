@@ -2,6 +2,8 @@ package com.hasyame.marvelchampions.data.db
 
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.marvelcdb.dto.CardDto
+import com.hasyame.marvelchampions.domain.deckbuilder.Synergy
+import com.hasyame.marvelchampions.domain.deckbuilder.SynergyCondition
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.search.SearchNormalizer
 import kotlinx.serialization.json.JsonElement
@@ -111,6 +113,15 @@ fun CardDto.toEntity(locale: CardLocale): CardEntity = CardEntity(
         listOfNotNull(text, flavor, backText).joinToString(" "),
     ),
     searchTraits = SearchNormalizer.normalize(traits),
+    synergyTraits = deriveSynergy(realText, text),
 )
+
+/**
+ * The English text is the one read, on every locale's row: MarvelCDB serves
+ * `real_text` in English beside the translation, and the French wording of
+ * the same condition varies more than the English does.
+ */
+fun deriveSynergy(realText: String?, text: String?): String =
+    Synergy.parse(realText ?: text)?.encode() ?: SynergyCondition.NONE
 
 private fun JsonElement?.asJsonString(): String? = this?.toString()

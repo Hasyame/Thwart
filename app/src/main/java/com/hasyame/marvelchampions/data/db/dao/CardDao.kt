@@ -22,6 +22,14 @@ data class CodeName(
     val name: String,
 )
 
+/** The columns the synergy pass reads. */
+data class SynergySource(
+    val code: String,
+    val locale: String,
+    val realText: String?,
+    val text: String?,
+)
+
 /** A card set or hero, with its name in the requested locale. */
 data class CardSetSummary(
     val code: String,
@@ -302,6 +310,16 @@ interface CardDao {
         """,
     )
     suspend fun getVersusSchemes(sideCode: String, locale: String): List<CardEntity>
+
+    /**
+     * Rows whose synergy condition has never been derived: written by a build
+     * that predates the column. Empty once the start-up pass has run.
+     */
+    @Query("SELECT code, locale, realText, text FROM cards WHERE synergyTraits IS NULL")
+    suspend fun getUnderivedSynergy(): List<SynergySource>
+
+    @Query("UPDATE cards SET synergyTraits = :synergyTraits WHERE code = :code AND locale = :locale")
+    suspend fun setSynergy(code: String, locale: String, synergyTraits: String)
 
     /** Hero identities, which are cards rather than sets. */
     @Query(

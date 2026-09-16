@@ -3,6 +3,8 @@ package com.hasyame.marvelchampions.ui.decks
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -141,6 +143,8 @@ private fun ValidationSummary(state: DeckEditorUiState) {
                     color = MaterialTheme.colorScheme.error,
                 )
             }
+            // After the problems, and never counted among them.
+            SynergyWarningText(state.synergyWarnings)
         }
     }
 }
@@ -175,6 +179,7 @@ private fun DeckContentsTab(state: DeckEditorUiState, viewModel: DeckEditorViewM
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AddCardsTab(state: DeckEditorUiState, viewModel: DeckEditorViewModel) {
     Column(Modifier.fillMaxSize()) {
@@ -191,12 +196,22 @@ private fun AddCardsTab(state: DeckEditorUiState, viewModel: DeckEditorViewModel
                 modifier = Modifier.weight(1f),
             )
         }
-        FilterChip(
-            selected = state.ownedOnly,
-            onClick = { viewModel.setOwnedOnly(!state.ownedOnly) },
-            label = { Text(stringResource(R.string.cards_filter_owned_only)) },
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
+        // Two chips that do not fit one line on a phone, in French least of all.
+        FlowRow(
+            Modifier.padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FilterChip(
+                selected = state.ownedOnly,
+                onClick = { viewModel.setOwnedOnly(!state.ownedOnly) },
+                label = { Text(stringResource(R.string.cards_filter_owned_only)) },
+            )
+            FilterChip(
+                selected = state.synergyOnly,
+                onClick = { viewModel.setSynergyOnly(!state.synergyOnly) },
+                label = { Text(stringResource(R.string.decks_synergy_hide)) },
+            )
+        }
         SortRow(state.sort, viewModel::setSort)
         val candidates = remember(state.candidates, state.sort) {
             state.candidates.sortedWith(state.sort.comparator)

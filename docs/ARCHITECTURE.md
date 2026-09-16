@@ -44,6 +44,14 @@ written at insert time — lowercased, `Normalizer.NFD`, combining marks strippe
 and normalising the query the same way. That is what makes `strategie` match
 `Stratégie` without a custom tokeniser.
 
+The same write-time idea carries the **synergy** condition: `cards.synergyTraits`
+holds the trait keys a card's "Play only if your identity has the X trait" line
+names, derived from the English text when the row is stored (empty string for
+no condition, null only on a row older than the column, which the start-up
+pass fills). The deck editor's "hide cards without synergy" filter is a `LIKE`
+on it; the warning is worked out from it on every open and never stored. The
+rule and the shared fixture are in `docs/spec/synergie-et-draft.md`.
+
 ## Card sync
 
 WorkManager `CoroutineWorker`, triggered manually from Settings only. Downloads
