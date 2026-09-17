@@ -107,6 +107,13 @@ data class DraftPlayer(
 }
 
 /** The table's constants. The deck bounds are the game's, restated for the draft. */
+/*
+ * Cited by the web client: `web/src/lib/draft/types.ts` mirrors these
+ * values by name, and `engine.ts` and `naming.ts` port `DraftEngine` and
+ * `DraftNaming` function for function. A change to the offer size, to what
+ * the strides mean, or to the naming is a change on both sides at once,
+ * or a draft written down on one is dealt differently on the other.
+ */
 object DraftRules {
     const val MIN_DECK_SIZE = 40
     const val MAX_DECK_SIZE = 50
