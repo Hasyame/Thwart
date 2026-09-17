@@ -26,14 +26,14 @@ RepoType: git
 Repo: https://github.com/Hasyame/Thwart.git
 
 Builds:
-  - versionName: 1.54.3
-    versionCode: 86
-    commit: 8ecadf7db345ca5daf2b55cf577325e05cb68154
+  - versionName: 1.54.4
+    versionCode: 87
+    commit: 589a17fb767e12d3d188822900efa02a8b121ff5
     subdir: app
     gradle:
       - yes
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
-CurrentVersion: 1.54.3
-CurrentVersionCode: 86
+CurrentVersion: 1.54.4
+CurrentVersionCode: 87
