@@ -16,6 +16,8 @@ import com.hasyame.marvelchampions.ui.cards.CardsScreen
 import com.hasyame.marvelchampions.ui.collection.CollectionScreen
 import com.hasyame.marvelchampions.ui.decks.DeckScreen
 import com.hasyame.marvelchampions.ui.decks.DecksScreen
+import com.hasyame.marvelchampions.ui.history.HistoryScreen
+import com.hasyame.marvelchampions.ui.history.PlayDetailScreen
 import com.hasyame.marvelchampions.ui.home.HomeScreen
 import com.hasyame.marvelchampions.ui.decks.NewDeckScreen
 import com.hasyame.marvelchampions.ui.plays.GameSessionScreen
@@ -49,10 +51,28 @@ fun MarvelChampionsNavHost(
                     // The account page lives in the settings graph; Home stays
                     // lit while it is open, as it does for Settings itself.
                     onAccount = { create -> navController.navigate(SyncAccountRoute(create)) },
+                    onHistory = { navController.navigate(HistoryRoute) },
+                    // The statistics keep their own graph, left the bar for
+                    // this tile; Home stays lit while they are open.
+                    onStats = { navController.navigate(StatsGraph) },
                     onRules = { navController.navigate(RulesRoute) },
                     onCollection = { navController.navigate(CollectionRoute) },
                     onRandomGame = { navController.navigate(RandomizerRoute) },
                     onCard = { code -> navController.navigate(CardDetailRoute(code)) },
+                )
+            }
+            composable<HistoryRoute> {
+                HistoryScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpen = { playId -> navController.navigate(PlayDetailRoute(playId)) },
+                )
+            }
+            composable<PlayDetailRoute> { entry ->
+                PlayDetailScreen(
+                    playId = entry.toRoute<PlayDetailRoute>().playId,
+                    onBack = { navController.popBackStack() },
+                    onPlayAgain = { playId -> navController.navigate(GameSessionRoute(replayId = playId)) },
+                    onOpenCampaign = { runId -> navController.navigate(CampaignRecordRoute(runId)) },
                 )
             }
             // A card drawn at random opens inside Home's stack, so back
@@ -249,10 +269,12 @@ fun MarvelChampionsNavHost(
         navigation<RulesGraph>(startDestination = RulesRoute) {
             composable<RulesRoute> { RulesScreen() }
         }
-        // Stats is its own tab, so its own graph and back stack.
+        // The statistics keep their own graph and back stack, reached from
+        // the home page since they left the bar.
         navigation<StatsGraph>(startDestination = PlaysRoute) {
             composable<PlaysRoute> {
                 PlaysScreen(
+                    onBack = { navController.popBackStack() },
                     // The session lives in the Play graph, and a game started
                     // from the history goes there: the Play tab lights up
                     // while it runs, and back returns to the history.

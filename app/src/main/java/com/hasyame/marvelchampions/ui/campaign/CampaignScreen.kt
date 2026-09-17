@@ -1,6 +1,7 @@
 package com.hasyame.marvelchampions.ui.campaign
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +62,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -91,9 +93,10 @@ import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
  *
  * A tile per campaign, as on the shelf of decks: the final villain's art
  * across the top with the status on it, and everything written on the band
- * under it, where the contrast is certain. No box art, since the boxes are
- * product photography nothing here bundles; a campaign whose villains come
- * from no database (Fear No Evil) gets a colour field and its initial.
+ * under it, where the contrast is certain. No box art as a rule, since the
+ * boxes are product photography; Fear No Evil, whose villains are on no
+ * database, is the one campaign shown by its bundled cover instead. See
+ * [CampaignCovers].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -348,9 +351,10 @@ private fun CampaignTile(summary: CampaignSummary, onOpen: () -> Unit, onDelete:
 /**
  * The art across the top of a tile, and the status badge on it. Nothing else
  * sits on the picture: text over art is the contrast trap the band avoids.
- * Without art the top is a colour field with the campaign's initial, the
- * same for the same campaign every time, and the tile looks finished all
- * the same, since offline the art will sometimes not arrive.
+ * A bundled cover first, the villain's card otherwise; without either the
+ * top is a colour field with the campaign's initial, the same for the same
+ * campaign every time, and the tile looks finished all the same, since
+ * offline the card art will sometimes not arrive.
  */
 @Composable
 private fun Face(summary: CampaignSummary, status: Status, modifier: Modifier = Modifier) {
@@ -364,8 +368,16 @@ private fun Face(summary: CampaignSummary, status: Status, modifier: Modifier = 
             .clipToBounds()
             .background(Color.hsl(hue.toFloat(), 0.35f, 0.22f)),
     ) {
+        val cover = CampaignCovers.of(summary.entity.templateId)
         val url = MarvelCdbUrls.cardImage(summary.faceImageSrc)
-        if (url != null) {
+        if (cover != null) {
+            Image(
+                painterResource(cover),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else if (url != null) {
             // Zoomed onto the picture, as the deck tiles are: fitted to the
             // width a card shows its title band and text box, neither of
             // which is the villain.

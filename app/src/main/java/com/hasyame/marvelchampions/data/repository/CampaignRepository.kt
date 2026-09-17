@@ -1057,6 +1057,28 @@ class CampaignRepository @Inject constructor(
             listOf(RatingSubject.scenario(setCode)) + modular.map { RatingSubject.modular(it, setCode) }
         }
 
+    /** The template a run was started from, or null for a run this device no longer has. */
+    suspend fun templateIdOf(runId: String): String? = withContext(ioDispatcher) {
+        campaignDao.getRun(runId)?.templateId
+    }
+
+    /**
+     * The picture of the villain a campaign scenario was fought against,
+     * for the history's tile. The same reading as [ratingSubjects]: the
+     * template's villain deck for the difficulty, or the one the campaign
+     * drew when the template draws them.
+     */
+    suspend fun villainFace(runId: String, scenarioId: String, locale: CardLocale): String? =
+        withContext(ioDispatcher) {
+            val run = load(runId, locale) ?: return@withContext null
+            val scenario = run.template.scenarios.firstOrNull { it.id == scenarioId } ?: return@withContext null
+            val setup = scenario.baseSetup ?: return@withContext null
+            val drawn = CampaignEngine.drawnCards(run.state, scenarioId, VILLAIN_DRAW_ID).firstOrNull()
+            val villain = setup.villainStages(run.state.difficulty, drawn).firstOrNull() ?: drawn
+                ?: return@withContext null
+            cardDao.getCardPreferringLocale(villain, locale.code)?.imageSrc
+        }
+
     suspend fun deleteRun(runId: String) = withContext(ioDispatcher) {
         campaignDao.deleteRun(runId, System.currentTimeMillis())
         syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)

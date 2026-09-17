@@ -30,8 +30,9 @@ enum class TopLevelDestination(
     @param:StringRes val labelRes: Int,
     /**
      * Other graphs that count as being on this tab. Home leads to the
-     * settings, which keep their own graph; while they are open the Home tab
-     * stays lit, since that is where the person came from.
+     * settings and to the statistics, which keep their own graphs; while
+     * they are open the Home tab stays lit, since that is where the person
+     * came from.
      */
     val alsoGraphs: List<KClass<*>> = emptyList(),
 ) {
@@ -40,7 +41,7 @@ enum class TopLevelDestination(
         graphRoute = HomeGraph::class,
         icon = Icons.Filled.Home,
         labelRes = R.string.destination_home,
-        alsoGraphs = listOf(SettingsGraph::class),
+        alsoGraphs = listOf(SettingsGraph::class, StatsGraph::class),
     ),
     CARDS(
         route = CardsRoute::class,
@@ -65,11 +66,5 @@ enum class TopLevelDestination(
         graphRoute = RulesGraph::class,
         icon = NavigationIcons.Book,
         labelRes = R.string.destination_rules,
-    ),
-    STATS(
-        route = PlaysRoute::class,
-        graphRoute = StatsGraph::class,
-        icon = NavigationIcons.Chart,
-        labelRes = R.string.destination_stats,
     ),
 }
