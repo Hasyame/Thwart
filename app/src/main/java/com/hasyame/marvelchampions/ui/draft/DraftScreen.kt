@@ -83,6 +83,7 @@ import com.hasyame.marvelchampions.domain.draft.DraftSettings
 import com.hasyame.marvelchampions.domain.draft.IdentityMode
 import com.hasyame.marvelchampions.ui.decks.problemMessage
 import com.hasyame.marvelchampions.ui.util.aspectLabel
+import kotlin.math.roundToInt
 
 /** A printed card is 63 by 88 mm. */
 private const val CARD_RATIO = 63f / 88f
@@ -299,7 +300,8 @@ private fun StepSlider(value: Int, range: IntRange, onChange: (Int) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Slider(
             value = value.toFloat(),
-            onValueChange = { onChange(it.toInt()) },
+            // Rounded, not truncated: a step that lands a hair under the whole number is that number.
+            onValueChange = { onChange(it.roundToInt()) },
             valueRange = range.first.toFloat()..range.last.toFloat(),
             steps = (range.last - range.first - 1).coerceAtLeast(0),
             modifier = Modifier.weight(1f),

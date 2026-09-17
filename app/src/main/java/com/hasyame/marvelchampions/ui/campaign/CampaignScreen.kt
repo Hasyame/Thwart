@@ -354,7 +354,8 @@ private fun CampaignTile(summary: CampaignSummary, onOpen: () -> Unit, onDelete:
  */
 @Composable
 private fun Face(summary: CampaignSummary, status: Status, modifier: Modifier = Modifier) {
-    val hue = summary.entity.templateId.fold(0) { acc, c -> (acc * 31 + c.code) % 360 }
+    // mod, not %: the sum wraps for a long id and hsl refuses a negative hue.
+    val hue = summary.entity.templateId.fold(0) { acc, c -> (acc * 31 + c.code).mod(360) }
     Box(
         modifier
             .fillMaxWidth()

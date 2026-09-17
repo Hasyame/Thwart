@@ -136,14 +136,16 @@ class DeckViewModel @Inject constructor(
     private val query = MutableStateFlow("")
     private var deckId: String? = null
     private var watching: Job? = null
+    /** The pool query under way, cancelled by the next: a slow one must not land after a fast one. */
+    private var searching: Job? = null
     private var identity: IdentityTraits = IdentityTraits.NONE
 
     init {
         viewModelScope.launch {
             state.update { it.copy(ownedOnly = preferences.isDeckCollectionOnly()) }
-            refreshCandidates()
+            requestCandidates()
         }
-        query.debounce(SEARCH_DEBOUNCE_MS).onEach { refreshCandidates() }.launchIn(viewModelScope)
+        query.debounce(SEARCH_DEBOUNCE_MS).onEach { requestCandidates() }.launchIn(viewModelScope)
         collectionRepository.observeOwnedCodes()
             .onEach { owned -> state.update { it.copy(ownedPackCodes = owned) } }
             .launchIn(viewModelScope)
@@ -180,7 +182,7 @@ class DeckViewModel @Inject constructor(
                 }
                 reload(deck, rules, locale)
                 if (first) {
-                    refreshCandidates()
+                    requestCandidates()
                 }
             }
             .launchIn(viewModelScope)
@@ -304,39 +306,43 @@ class DeckViewModel @Inject constructor(
 
     fun setOwnedOnly(ownedOnly: Boolean) {
         state.update { it.copy(ownedOnly = ownedOnly) }
-        viewModelScope.launch {
-            preferences.setDeckCollectionOnly(ownedOnly)
-            refreshCandidates()
-        }
+        viewModelScope.launch { preferences.setDeckCollectionOnly(ownedOnly) }
+        requestCandidates()
     }
 
     fun setSynergyOnly(synergyOnly: Boolean) {
         state.update { it.copy(synergyOnly = synergyOnly) }
-        viewModelScope.launch { refreshCandidates() }
+        requestCandidates()
     }
 
     fun toggleFaction(faction: String) {
         state.update { it.copy(factionFilter = it.factionFilter.toggled(faction)) }
-        viewModelScope.launch { refreshCandidates() }
+        requestCandidates()
     }
 
     fun toggleType(type: String) {
         state.update { it.copy(typeFilter = it.typeFilter.toggled(type)) }
-        viewModelScope.launch { refreshCandidates() }
+        requestCandidates()
     }
 
     fun setCost(cost: Int?) {
         state.update { it.copy(costFilter = if (it.costFilter == cost) null else cost) }
-        viewModelScope.launch { refreshCandidates() }
+        requestCandidates()
     }
 
     fun clearSearch() {
         state.update { it.copy(query = "", factionFilter = emptySet(), typeFilter = emptySet(), costFilter = null) }
         query.value = ""
-        viewModelScope.launch { refreshCandidates() }
+        requestCandidates()
     }
 
     private fun Set<String>.toggled(value: String): Set<String> = if (value in this) this - value else this + value
+
+    /** Queries the pool for the filters as they stand now, dropping any query still running for older ones. */
+    private fun requestCandidates() {
+        searching?.cancel()
+        searching = viewModelScope.launch { refreshCandidates() }
+    }
 
     private suspend fun refreshCandidates() {
         val deck = state.value.deck ?: return

@@ -61,23 +61,23 @@ class DecksViewModel @Inject constructor(
     private val importedDeckId = MutableStateFlow<String?>(null)
     private val cardHits = MutableStateFlow<Set<String>?>(null)
 
+    /**
+     * The shelf, then the import's progress folded on top. Two steps so the
+     * tiles, which take the card database, are worked out again only when
+     * the decks or the folders change, not on every turn of the import.
+     */
+    private val shelf = combine(repository.observeDecks(), folderRepository.observeFolders()) { decks, folders ->
+        DecksUiState(decks = tiles(decks), folders = folders)
+    }
+
     val uiState: StateFlow<DecksUiState> = combine(
-        repository.observeDecks(),
-        folderRepository.observeFolders(),
+        shelf,
         importing,
         importError,
         importedDeckId,
         cardHits,
-    ) { values ->
-        @Suppress("UNCHECKED_CAST")
-        DecksUiState(
-            decks = tiles(values[0] as List<SavedDeckEntity>),
-            folders = values[1] as List<DeckFolderEntity>,
-            isImporting = values[2] as Boolean,
-            importError = values[3] as DeckImportError?,
-            importedDeckId = values[4] as String?,
-            cardSearchHits = values[5] as Set<String>?,
-        )
+    ) { base, importing, error, imported, hits ->
+        base.copy(isImporting = importing, importError = error, importedDeckId = imported, cardSearchHits = hits)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
