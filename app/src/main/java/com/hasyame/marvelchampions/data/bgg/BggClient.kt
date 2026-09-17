@@ -150,13 +150,7 @@ class BggClient @Inject constructor(
 
         return runCatching { client.newCall(request).execute() }.fold(
             onSuccess = { response ->
-                response.use {
-                    when {
-                        it.isSuccessful -> BggResult.Success
-                        it.code == HTTP_UNAUTHORIZED -> BggResult.BadCredentials
-                        else -> BggResult.Rejected("HTTP ${it.code}")
-                    }
-                }
+                response.use { loginResult(it.code, it.body.string()) }
             },
             onFailure = { BggResult.Offline(it.message ?: "no connection") },
         )
@@ -203,15 +197,34 @@ class BggClient @Inject constructor(
             cookies.filter { it.matches(url) }
     }
 
-    private companion object {
-        const val BASE_URL = "https://boardgamegeek.com"
+    companion object {
+        /**
+         * What a login answer means.
+         *
+         * A wrong password comes back as 400 with "Invalid username or
+         * password" in the body, checked against the live endpoint on
+         * 2026-09-12 by the web's relay, not the 401 this client used to
+         * expect alone. Both are bad credentials, and were being reported
+         * here as "HTTP 400", which reads as BGG being down. A 400 that says
+         * something else is BGG refusing the request itself.
+         */
+        fun loginResult(code: Int, body: String): BggResult = when {
+            code in 200..299 -> BggResult.Success
+            code == HTTP_UNAUTHORIZED -> BggResult.BadCredentials
+            code == HTTP_BAD_REQUEST && body.contains(BAD_CREDENTIALS_MESSAGE, ignoreCase = true) -> BggResult.BadCredentials
+            else -> BggResult.Rejected("HTTP $code")
+        }
+
+        private const val BASE_URL = "https://boardgamegeek.com"
 
         /** Marvel Champions: The Card Game. */
-        const val MARVEL_CHAMPIONS_ID = "285774"
+        private const val MARVEL_CHAMPIONS_ID = "285774"
 
-        const val USER_AGENT = "MarvelChampionsCompanion/1.0 (github.com/Hasyame)"
-        const val HTTP_UNAUTHORIZED = 401
-        const val ERROR_DETAIL_LIMIT = 200
+        private const val USER_AGENT = "MarvelChampionsCompanion/1.0 (github.com/Hasyame)"
+        private const val HTTP_UNAUTHORIZED = 401
+        private const val HTTP_BAD_REQUEST = 400
+        private const val BAD_CREDENTIALS_MESSAGE = "invalid username or password"
+        private const val ERROR_DETAIL_LIMIT = 200
     }
 }
 
