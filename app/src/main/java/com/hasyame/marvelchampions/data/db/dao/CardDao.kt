@@ -321,6 +321,10 @@ interface CardDao {
     @Query("UPDATE cards SET synergyTraits = :synergyTraits WHERE code = :code AND locale = :locale")
     suspend fun setSynergy(code: String, locale: String, synergyTraits: String)
 
+    /** Forgets every derived condition, for a rule change to derive them afresh. */
+    @Query("UPDATE cards SET synergyTraits = NULL")
+    suspend fun clearSynergy()
+
     /**
      * Every card a player deck can hold, in one locale: the five aspects and
      * basic, identities excluded. What the draft puts on the shelf.

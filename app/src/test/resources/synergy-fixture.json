@@ -1,98 +1,222 @@
 {
-  "_note": "Shared between Thwart Android and Thwart Web: both test suites read this file unchanged. Spec: docs/spec/synergie-et-draft.md. Texts are MarvelCDB real_text; identities list the printed traits of every face.",
-  "identities": {
-    "adam_warlock": {
-      "hero": ["Guardian. Mystic."],
-      "alterEgo": ["Mystic."]
+  "_note": [
+    "Shared fixture for the synergy rule, identical on Thwart Web and Android.",
+    "docs/spec/synergie-et-draft.md, phase 1. Traits and conditions are real",
+    "cards' English text as MarvelCDB serves it (real_text, real_traits);",
+    "expected values are what scripts/lib/synergy.mjs derives and decides.",
+    "A change here is a change of contract: both clients' tests read it."
+  ],
+  "traitKeys": [
+    {
+      "traits": "Guardian. Mystic.",
+      "keys": [
+        "guardian",
+        "mystic"
+      ]
     },
-    "magik": {
-      "hero": ["Mystic. X-Men."],
-      "alterEgo": ["Mutant. Mystic."]
+    {
+      "traits": "Avenger. S.H.I.E.L.D. Spy.",
+      "keys": [
+        "avenger",
+        "shield",
+        "spy"
+      ]
     },
-    "spider_man": {
-      "hero": ["Avenger."],
-      "alterEgo": ["Genius."]
+    {
+      "traits": "Mystic. X-Men.",
+      "keys": [
+        "mystic",
+        "x-men"
+      ]
     },
-    "ant_man": {
-      "hero": ["Avenger. Giant.", "Avenger. Tiny."],
-      "alterEgo": ["Scientist."]
-    },
-    "captain_marvel": {
-      "hero": ["Avenger. Soldier."],
-      "alterEgo": ["S.H.I.E.L.D. Soldier."]
-    },
-    "psylocke": {
-      "hero": ["Psionic. X-Men."],
-      "alterEgo": ["Psionic. Mutant."]
-    },
-    "alter_ego_only_psionic": {
-      "_note": "Invented for the hero-only rule: the trait is on the alter ego alone.",
-      "hero": ["X-Men."],
-      "alterEgo": ["Psionic. Mutant."]
+    {
+      "traits": "",
+      "keys": []
     }
-  },
-  "cards": {
-    "rocket_raccoon": {
+  ],
+  "cards": [
+    {
       "code": "16019",
-      "text": "Play only if your identity has the [[guardian]] trait.\n<b>Interrupt</b>: When Rocket Raccoon attacks a minion, he gets +3 ATK for that attack. That attack gains overkill.",
-      "expected": { "anyOfTraits": ["guardian"], "heroOnly": false }
+      "name": "Rocket Raccoon",
+      "real_text": "Play only if your identity has the [[Guardian]] trait.\n<b>Interrupt</b>: When Rocket Raccoon attacks a minion, he gets +2 ATK for this attack.",
+      "synergy": {
+        "anyOfTraits": [
+          "guardian"
+        ]
+      }
     },
-    "moon_girl": {
-      "code": "28018",
-      "text": "Play only if your identity has the [[champion]] or [[genius]] trait.\n<b>Response</b>: After Moon Girl enters play, draw 1 card.",
-      "expected": { "anyOfTraits": ["champion", "genius"], "heroOnly": false }
-    },
-    "elixir": {
+    {
       "code": "42011",
-      "text": "Play only if your identity has the [[X-Force]] or [[X-Men]] trait.\n<b>Action</b>: Exhaust Elixir → heal 2 damage from a character.",
-      "expected": { "anyOfTraits": ["x-force", "x-men"], "heroOnly": false }
+      "name": "Elixir",
+      "real_text": "Play only if your identity has the [[X-Force]] or [[X-Men]] trait.",
+      "synergy": {
+        "anyOfTraits": [
+          "x-force",
+          "x-men"
+        ]
+      }
     },
-    "yellow_jacket": {
-      "code": "56019",
-      "text": "Play only if you have the [[Avenger]] trait.\n<b>Response</b>: After Yellow Jacket enters play, deal 1 damage to an enemy.",
-      "expected": { "anyOfTraits": ["avenger"], "heroOnly": false }
+    {
+      "code": "45021",
+      "name": "Marrow",
+      "real_text": "Play only if you have the [[X-FORCE]] or [[X-MEN]] trait.",
+      "synergy": {
+        "anyOfTraits": [
+          "x-force",
+          "x-men"
+        ]
+      }
     },
-    "shield_deputy": {
+    {
       "code": "54033",
-      "text": "Play only if your identity has the [[S.H.I.E.L.D.]] trait.\n<b>Action</b>: Exhaust S.H.I.E.L.D. Deputy → give an enemy a stun.",
-      "expected": { "anyOfTraits": ["s.h.i.e.l.d"], "heroOnly": false }
+      "name": "S.H.I.E.L.D. Deputy",
+      "real_text": "Play only if your identity has the [[S.H.I.E.L.D.]] trait.",
+      "synergy": {
+        "anyOfTraits": [
+          "shield"
+        ]
+      }
     },
-    "psi_bow_attack": {
+    {
+      "code": "01050",
+      "name": "Helicarrier",
+      "real_text": "<b>Resource</b>: Generate a [wild] resource for a card you play.",
+      "synergy": null
+    },
+    {
       "code": "41030",
-      "text": "Play only if your hero has the [[PSIONIC]] trait.\n<b>Hero Action</b> <i>(attack)</i>: Deal 4 damage to an enemy.",
-      "expected": { "anyOfTraits": ["psionic"], "heroOnly": true }
+      "name": "Psi-Bow Attack",
+      "real_text": "Play only if your hero has the [[PSIONIC]] trait.",
+      "synergy": null,
+      "_why": "A one-face condition; out of scope until the spec says how to encode it."
     },
-    "helicarrier": {
-      "code": "01092",
-      "text": "<b>Resource</b>: Exhaust Helicarrier → generate a [wild] resource for any player.",
-      "expected": null
+    {
+      "code": "27017",
+      "name": "Spider-Man",
+      "real_text": "Play only if you control a [[Web-Warrior]] card.",
+      "synergy": null,
+      "_why": "Not a trait of the identity."
     },
-    "martinex_bonus_only": {
-      "code": "21065",
-      "text": "Reduce the cost to play Martinex by 1 if your identity has the [[Guardian]] trait.\n<b>Response</b>: After Martinex enters play, deal 2 damage to an enemy.",
-      "expected": null
-    },
-    "spycraft_out_of_scope": {
-      "code": "08018",
-      "text": "Play only if you control a [[Spy]] character.\n<b>Action</b>: Exhaust Spycraft → look at the top card of the encounter deck.",
-      "expected": null,
-      "unrecognised": "Play only if you control a [[Spy]] character."
+    {
+      "code": "37021",
+      "name": "Mutant Education",
+      "real_text": "Play only if your identity has the [[MUTANT]] trait.",
+      "synergy": {
+        "anyOfTraits": [
+          "mutant"
+        ]
+      }
     }
-  },
-  "cases": [
-    { "card": "rocket_raccoon", "identity": "adam_warlock", "compatible": true },
-    { "card": "rocket_raccoon", "identity": "magik", "compatible": false },
-    { "card": "helicarrier", "identity": "magik", "compatible": true },
-    { "card": "martinex_bonus_only", "identity": "magik", "compatible": true },
-    { "card": "moon_girl", "identity": "spider_man", "compatible": true },
-    { "card": "moon_girl", "identity": "magik", "compatible": false },
-    { "card": "elixir", "identity": "magik", "compatible": true },
-    { "card": "elixir", "identity": "adam_warlock", "compatible": false },
-    { "card": "yellow_jacket", "identity": "ant_man", "compatible": true },
-    { "card": "shield_deputy", "identity": "captain_marvel", "compatible": true },
-    { "card": "shield_deputy", "identity": "spider_man", "compatible": false },
-    { "card": "psi_bow_attack", "identity": "psylocke", "compatible": true },
-    { "card": "psi_bow_attack", "identity": "alter_ego_only_psionic", "compatible": false },
-    { "card": "spycraft_out_of_scope", "identity": "spider_man", "compatible": true }
+  ],
+  "identities": [
+    {
+      "id": "adam-warlock",
+      "faces": [
+        "Guardian. Mystic.",
+        "Mystic."
+      ]
+    },
+    {
+      "id": "magik",
+      "faces": [
+        "Mystic. X-Men.",
+        "Mutant. Mystic."
+      ]
+    },
+    {
+      "id": "spider-man",
+      "faces": [
+        "Avenger.",
+        "Genius."
+      ]
+    },
+    {
+      "id": "alter-ego-only-mutant",
+      "faces": [
+        "Mystic.",
+        "Mutant."
+      ]
+    },
+    {
+      "id": "hero-only-x-force",
+      "faces": [
+        "X-Force.",
+        "Scientist."
+      ]
+    },
+    {
+      "id": "maria-hill",
+      "faces": [
+        "Avenger. S.H.I.E.L.D. Spy.",
+        "S.H.I.E.L.D."
+      ]
+    }
+  ],
+  "compatibility": [
+    {
+      "card": "16019",
+      "identity": "adam-warlock",
+      "compatible": true
+    },
+    {
+      "card": "16019",
+      "identity": "magik",
+      "compatible": false
+    },
+    {
+      "card": "16019",
+      "identity": "spider-man",
+      "compatible": false
+    },
+    {
+      "card": "01050",
+      "identity": "magik",
+      "compatible": true
+    },
+    {
+      "card": "42011",
+      "identity": "magik",
+      "compatible": true
+    },
+    {
+      "card": "42011",
+      "identity": "hero-only-x-force",
+      "compatible": true
+    },
+    {
+      "card": "42011",
+      "identity": "adam-warlock",
+      "compatible": false
+    },
+    {
+      "card": "45021",
+      "identity": "magik",
+      "compatible": true
+    },
+    {
+      "card": "37021",
+      "identity": "alter-ego-only-mutant",
+      "compatible": true
+    },
+    {
+      "card": "54033",
+      "identity": "maria-hill",
+      "compatible": true
+    },
+    {
+      "card": "54033",
+      "identity": "spider-man",
+      "compatible": false
+    },
+    {
+      "card": "41030",
+      "identity": "spider-man",
+      "compatible": true
+    },
+    {
+      "card": "27017",
+      "identity": "adam-warlock",
+      "compatible": true
+    }
   ]
 }

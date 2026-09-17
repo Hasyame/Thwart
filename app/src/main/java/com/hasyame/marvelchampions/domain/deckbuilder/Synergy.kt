@@ -6,9 +6,10 @@ package com.hasyame.marvelchampions.domain.deckbuilder
  * deck; without the trait it is only ever a resource, which is what the
  * synergy warning is for.
  *
- * Spelled out in `docs/spec/synergie-et-draft.md`, which the web client
- * follows too; the fixture in `src/test/resources/synergy-fixture.json` is the
- * contract between the two.
+ * Spelled out in `docs/spec/synergie-et-draft.md`. The web client's
+ * `scripts/lib/synergy.mjs` is the contract between the two, ported here
+ * function for function, and `src/test/resources/synergy-fixture.json` is
+ * its fixture, copied unchanged.
  */
 data class SynergyCondition(
     /** Trait keys, any one of which satisfies the card. See [TraitKey]. */
@@ -95,16 +96,37 @@ data class SynergyWarning(val cardCode: String, val cardName: String)
 object Synergy {
 
     /**
-     * The three phrasings the pool uses, all on the identity's traits:
-     * "your identity has the [[X]] trait", "you have the [[X]] trait", and
-     * "your hero has the [[X]] trait", with an optional "or [[Y]]". The tag
-     * case varies from card to card ([[guardian]], [[Avenger]], [[X-MEN]]),
-     * so it is normalised away.
+     * Whether "Play only if your hero has the [[X]] trait" is read as a
+     * condition on the hero faces alone.
+     *
+     * Off, because the contract does not encode it yet: the web lists those
+     * cards among the unrecognised, and turning this on here alone would
+     * make the two clients disagree on Psi-Bow Attack. The model, the stored
+     * form (`hero:|psionic|`) and [SynergyCondition.compatibleWith] are all
+     * ready; when the web adds the field to `synergy.mjs` and the fixture,
+     * this flips and both sides change together.
+     */
+    private const val HERO_FACE_RECOGNISED = false
+
+    /**
+     * The trait condition, in the forms the cards actually use, as the web
+     * writes it: "your identity has the [[X]] trait", "you have the [[X]]
+     * trait", any number of "[[Y]]" joined by "or" or "and", and the full
+     * stop after "trait". The tag case varies from card to card
+     * ([[guardian]], [[Avenger]], [[X-MEN]]), so it is normalised away.
      */
     private val TRAIT_CONDITION = Regex(
-        """play only if (your identity has|you have|your hero has) the \[\[([^\]]+)]](?: or \[\[([^\]]+)]])? traits?""",
+        buildString {
+            append("""play only if (your identity has|you have""")
+            if (HERO_FACE_RECOGNISED) {
+                append("""|your hero has""")
+            }
+            append(""") the ((?:\[\[[^\]]+]](?:,? (?:or|and) )?)+) traits?\.""")
+        },
         RegexOption.IGNORE_CASE,
     )
+
+    private val TRAIT_TOKEN = Regex("""\[\[([^\]]+)]]""")
 
     /** Anything else that gates the card, reported so no case slips by. */
     private val ANY_CONDITION = Regex("""play only if[^\n]*""", RegexOption.IGNORE_CASE)
@@ -112,25 +134,31 @@ object Synergy {
     /** The condition on the card, or null when it has none. */
     fun parse(realText: String?): SynergyCondition? {
         val match = TRAIT_CONDITION.find(realText ?: return null) ?: return null
-        val keys = listOfNotNull(match.groups[2]?.value, match.groups[3]?.value)
-            .map(TraitKey::normalize)
+        val keys = TRAIT_TOKEN.findAll(match.groupValues[2])
+            .map { TraitKey.normalize(it.groupValues[1]) }
+            .distinct()
+            .toList()
+        if (keys.isEmpty()) {
+            return null
+        }
         return SynergyCondition(
             anyOfTraits = keys,
-            heroOnly = match.groups[1]!!.value.equals("your hero has", ignoreCase = true),
+            heroOnly = match.groupValues[1].equals("your hero has", ignoreCase = true),
         )
     }
 
     /**
-     * The "Play only if" line of a card whose condition is not one of the
-     * recognised trait forms, for the census; null when the card has no such
-     * line or when it was recognised.
+     * The "Play only if" lines of a card whose condition is not one of the
+     * recognised trait forms, for the census; empty when the card has no
+     * such line or when every one was recognised. The rest of the line, not
+     * the sentence: a full stop inside [[S.H.I.E.L.D.]] is not the end of one.
      */
-    fun unrecognised(realText: String?): String? {
-        if (realText == null || parse(realText) != null) {
-            return null
-        }
-        return ANY_CONDITION.find(realText)?.value?.trim()
-    }
+    fun unrecognised(realText: String?): List<String> =
+        ANY_CONDITION.findAll(realText ?: return emptyList())
+            .map { it.value }
+            .filterNot { TRAIT_CONDITION.containsMatchIn(it) }
+            .map { it.trim() }
+            .toList()
 
     /**
      * The cards of a deck that [identity] cannot play, in the order given.

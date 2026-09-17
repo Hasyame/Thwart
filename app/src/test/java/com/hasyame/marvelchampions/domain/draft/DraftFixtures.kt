@@ -67,8 +67,8 @@ object DraftFixtures {
     val identities = mapOf(
         SPIDER_MAN to IdentityTraits(setOf("avenger"), setOf("genius")),
         ADAM_WARLOCK to IdentityTraits(setOf("guardian", "mystic"), setOf("mystic")),
-        SPIDER_WOMAN to IdentityTraits(setOf("avenger", "spy"), setOf("s.h.i.e.l.d")),
-        MARIA_HILL to IdentityTraits(setOf("s.h.i.e.l.d", "spy"), setOf("s.h.i.e.l.d", "spy")),
+        SPIDER_WOMAN to IdentityTraits(setOf("avenger", "spy"), setOf("shield")),
+        MARIA_HILL to IdentityTraits(setOf("shield", "spy"), setOf("shield", "spy")),
     )
 
     fun card(
