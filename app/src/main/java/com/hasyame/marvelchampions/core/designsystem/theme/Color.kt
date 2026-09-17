@@ -112,3 +112,11 @@ val AspectProtection = Color(0xFF3E8E5A)
 val AspectPool = Color(0xFF8E44AD)
 val AspectBasic = Color(0xFF7A7A7A)
 
+
+/**
+ * A scenario's result, as a mark in a strip: won and lost. Green and red as
+ * the web writes them, and the one place green is used, since the strip is
+ * read as a run of marks and nothing else on the page competes with it.
+ */
+val ResultWon = Color(0xFF3FB56A)
+val ResultLost = IronRedBright

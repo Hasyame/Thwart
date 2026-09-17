@@ -765,6 +765,20 @@ data class PromptOption(
 )
 
 /**
+ * The card that stands for the campaign: its final villain.
+ *
+ * No box art, since the boxes are product photography nothing here
+ * bundles. What a campaign builds towards is its last villain, read from
+ * the last scenario that writes a villain deck, and drawn from the card
+ * database like any other card. Fear No Evil draws its villains and writes
+ * none, so it has no face; null says so.
+ */
+fun CampaignTemplate.faceCardCode(): String? = scenarios.asReversed().firstNotNullOfOrNull { scenario ->
+    val decks = scenario.baseSetup?.villainDeck.orEmpty()
+    (decks["standard"] ?: decks["expert"] ?: decks.values.firstOrNull())?.firstOrNull()?.takeIf { it.isNotBlank() }
+}
+
+/**
  * The villain stages to show, whether the scenario fixed them or drew them.
  *
  * Falls back to the written deck when nothing has been drawn yet, so a briefing

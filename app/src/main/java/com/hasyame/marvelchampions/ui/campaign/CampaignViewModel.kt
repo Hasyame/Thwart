@@ -89,7 +89,7 @@ class CampaignListViewModel @Inject constructor(
      * break is something the box says about itself.
      */
     val summaries: StateFlow<List<CampaignSummary>> = combine(
-        repository.observeRuns().map { repository.summaries() },
+        repository.observeRuns().map { repository.summaries(preferences.currentCardLocale()) },
         pausedGameDao.observe(),
     ) { runs, paused ->
         runs.map { summary ->

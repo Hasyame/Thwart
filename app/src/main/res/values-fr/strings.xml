@@ -397,7 +397,6 @@
         <item quantity="many">%1$d de joueurs</item>
         <item quantity="other">%1$d joueurs</item>
     </plurals>
-    <string name="campaign_empty">Aucune campagne. Démarrez-en une avec le bouton ci-dessous.</string>
     <string name="settings_play_location">Où vous jouez</string>
     <string name="settings_play_location_summary">Envoyé avec une partie à BoardGameGeek, qui le note en texte libre. Laissé vide, rien n\'est envoyé.</string>
     <string name="settings_play_location_label">Lieu</string>
@@ -420,7 +419,34 @@
     <string name="settings_contact_summary">Poser une question ou signaler un bug par e-mail.</string>
     <string name="settings_no_mail_app">Aucune application de messagerie. Écrivez à %1$s.</string>
     <string name="campaign_in_progress_section">En cours</string>
-    <string name="campaign_finished_section">Campagnes terminées</string>
+    <string name="campaign_finished_section">Terminées</string>
+    <string name="campaign_tab_stats">Stats</string>
+    <string name="campaign_status_not_started">Pas commencée</string>
+    <string name="campaign_status_in_progress">En cours</string>
+    <string name="campaign_status_won">Gagnée</string>
+    <string name="campaign_status_lost">Perdue</string>
+    <plurals name="campaign_beaten">
+        <item quantity="one">%1$d scénario battu sur %2$d</item>
+        <item quantity="many">%1$d scénarios battus sur %2$d</item>
+        <item quantity="other">%1$d scénarios battus sur %2$d</item>
+    </plurals>
+    <string name="campaign_results_label">Gagnés : %1$d/%2$d</string>
+    <string name="campaign_details">Détails</string>
+    <string name="campaign_hide_details">Masquer les détails</string>
+    <string name="campaign_forget">Oublier cette campagne</string>
+    <string name="campaign_empty_in_progress">Aucune campagne sur la table. Démarrez-en une avec le bouton ci-dessous.</string>
+    <string name="campaign_empty_finished">Aucune campagne terminée pour l\'instant. Elles resteront ici, gagnées ou perdues.</string>
+    <string name="campaign_stats_empty">Les chiffres viendront avec les campagnes jouées.</string>
+    <string name="campaign_stats_overview">Vue d\'ensemble</string>
+    <string name="campaign_stats_campaigns">Campagnes</string>
+    <string name="campaign_stats_by_box">Par campagne</string>
+    <string name="campaign_stats_by_hero">Par héros</string>
+    <plurals name="campaign_stats_runs">
+        <item quantity="one">%1$d campagne</item>
+        <item quantity="many">%1$d campagnes</item>
+        <item quantity="other">%1$d campagnes</item>
+    </plurals>
+    <string name="campaign_stats_won_lost">Gagnées %1$d · Perdues %2$d</string>
     <string name="campaign_delete_title">Oublier cette campagne ?</string>
     <string name="campaign_delete_message">%1$s et tout ce qui a été enregistré seront supprimés. Action irréversible.</string>
     <string name="campaign_forget_warning">Cette campagne et tout ce qui a été enregistré seront supprimés. Action irréversible.</string>
@@ -776,7 +802,7 @@
     <string name="campaign_environment_pushed_twice">Seul dans la pile — progresse de deux cases</string>
     <string name="campaign_pressure_board">Où en est chaque lieu</string>
     <string name="campaign_lost_title">Campagne abandonnée</string>
-    <string name="campaign_lost_message">Vous avez choisi d’en rester là face au Caïd. La campagne s’arrête ici.</string>
+    <string name="campaign_lost_message">Vous avez choisi d’en rester là plutôt que de réessayer. La campagne s’arrête ici.</string>
     <string name="campaign_lost_leave">Fermer la campagne</string>
     <plurals name="photo_take_more">
         <item quantity="one">Autre photo (%1$d prise)</item>
@@ -821,7 +847,6 @@
     <string name="campaign_set_random_hint">L\'application choisit parmi vos sets au lancement, et le garde pour toute la campagne.</string>
     <string name="paused_game_resume">Reprendre cette partie</string>
     <string name="paused_game_stopped_at">Arrêté au stade du méchant</string>
-    <string name="campaign_progress">Scénario %1$d sur %2$d</string>
     <string name="campaign_time_so_far">jouée %1$s</string>
     <string name="campaign_scenario_won">Gagné</string>
     <string name="campaign_scenario_lost">Perdu</string>

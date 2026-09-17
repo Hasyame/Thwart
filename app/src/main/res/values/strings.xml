@@ -376,7 +376,6 @@
         <item quantity="one">%1$d player</item>
         <item quantity="other">%1$d players</item>
     </plurals>
-    <string name="campaign_empty">No campaign yet. Start one with the button below.</string>
     <string name="settings_play_location">Where you play</string>
     <string name="settings_play_location_summary">Sent with a game to BoardGameGeek, which records it as free text. Left empty, nothing is sent.</string>
     <string name="settings_play_location_label">Location</string>
@@ -398,7 +397,32 @@
     <string name="settings_contact_summary">Ask a question or report a bug by email.</string>
     <string name="settings_no_mail_app">No mail app installed. Write to %1$s.</string>
     <string name="campaign_in_progress_section">In progress</string>
-    <string name="campaign_finished_section">Finished campaigns</string>
+    <string name="campaign_finished_section">Finished</string>
+    <string name="campaign_tab_stats">Stats</string>
+    <string name="campaign_status_not_started">Not started</string>
+    <string name="campaign_status_in_progress">In progress</string>
+    <string name="campaign_status_won">Won</string>
+    <string name="campaign_status_lost">Lost</string>
+    <plurals name="campaign_beaten">
+        <item quantity="one">%1$d scenario beaten of %2$d</item>
+        <item quantity="other">%1$d scenarios beaten of %2$d</item>
+    </plurals>
+    <string name="campaign_results_label">Won: %1$d/%2$d</string>
+    <string name="campaign_details">Details</string>
+    <string name="campaign_hide_details">Hide details</string>
+    <string name="campaign_forget">Forget this campaign</string>
+    <string name="campaign_empty_in_progress">No campaign on the table. Start one with the button below.</string>
+    <string name="campaign_empty_finished">No campaign finished yet. They will be kept here, won or lost.</string>
+    <string name="campaign_stats_empty">The figures come as campaigns are played.</string>
+    <string name="campaign_stats_overview">Overview</string>
+    <string name="campaign_stats_campaigns">Campaigns</string>
+    <string name="campaign_stats_by_box">By campaign</string>
+    <string name="campaign_stats_by_hero">By hero</string>
+    <plurals name="campaign_stats_runs">
+        <item quantity="one">%1$d campaign</item>
+        <item quantity="other">%1$d campaigns</item>
+    </plurals>
+    <string name="campaign_stats_won_lost">Won %1$d · Lost %2$d</string>
     <string name="campaign_delete_title">Forget this campaign?</string>
     <string name="campaign_delete_message">%1$s and everything recorded for it will be deleted. This cannot be undone.</string>
     <string name="campaign_forget_warning">This campaign and everything recorded for it will be deleted. This cannot be undone.</string>
@@ -752,7 +776,7 @@
     <string name="campaign_environment_pushed_twice">Alone in the pile — pushed two steps</string>
     <string name="campaign_pressure_board">Where every place stands</string>
     <string name="campaign_lost_title">Campaign abandoned</string>
-    <string name="campaign_lost_message">You chose to stop here rather than face Kingpin again. The campaign ends here.</string>
+    <string name="campaign_lost_message">You chose to stop here rather than try again. The campaign ends here.</string>
     <string name="campaign_lost_leave">Close the campaign</string>
     <plurals name="photo_take_more">
         <item quantity="one">Another photo (%1$d taken)</item>
@@ -795,7 +819,6 @@
     <string name="campaign_set_random_hint">The app picks from the sets you own when the campaign starts, and keeps it for the whole run.</string>
     <string name="paused_game_resume">Carry on with this game</string>
     <string name="paused_game_stopped_at">Stopped at villain stage</string>
-    <string name="campaign_progress">Scenario %1$d of %2$d</string>
     <string name="campaign_time_so_far">played for %1$s</string>
     <string name="campaign_scenario_won">Won</string>
     <string name="campaign_scenario_lost">Lost</string>

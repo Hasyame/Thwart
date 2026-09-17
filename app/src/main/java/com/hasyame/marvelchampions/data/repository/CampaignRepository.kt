@@ -21,6 +21,7 @@ import com.hasyame.marvelchampions.domain.campaign.engine.HeroCardStats
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.campaign.template.allSetupSteps
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
+import com.hasyame.marvelchampions.domain.campaign.template.faceCardCode
 import com.hasyame.marvelchampions.domain.campaign.template.LocalizedText
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateError
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidationException
@@ -181,6 +182,15 @@ data class CampaignSummary(
     val hasMarket: Boolean = false,
     /** True once the campaign has been seen through to its end. */
     val finished: Boolean = false,
+    /**
+     * True when the campaign was lost rather than won: a finale that
+     * failed, a job the box says ends it, or a table that conceded. The
+     * engine's reading, not a guess from the last scenario's result, since
+     * most campaigns let a table lose a scenario and carry on.
+     */
+    val lost: Boolean = false,
+    /** The image of the card standing for the campaign, or null when it has none. */
+    val faceImageSrc: String? = null,
     val scenarios: List<ScenarioLogEntry> = emptyList(),
     /** What the run is waiting for. [CampaignStage.LONG_BREAK] is added later. */
     val stage: CampaignStage = CampaignStage.CHOOSING,
@@ -1119,6 +1129,10 @@ class CampaignRepository @Inject constructor(
                 cardsBought = state.purchases.size,
                 hasMarket = template.market != null,
                 finished = state.finished,
+                lost = state.campaignLost,
+                faceImageSrc = template.faceCardCode()
+                    ?.let { cardDao.getCardPreferringLocale(it, locale.code) }
+                    ?.imageSrc,
                 stage = when {
                     state.finished -> CampaignStage.FINISHED
                     state.campaignLost -> CampaignStage.LOST
@@ -1175,14 +1189,19 @@ class CampaignRepository @Inject constructor(
         state: CampaignState,
         localeCode: String,
     ): List<ScenarioProgress> {
-        val choosable = CampaignEngine.choosableScenarios(template, state).map { it.id }.toSet()
+        // Once the campaign is over nothing is current, replayable or still
+        // to come: a table that stopped on a defeat left that scenario lost,
+        // and the ones it never reached are gone.
+        val over = state.finished
+        val choosable = if (over) emptySet() else CampaignEngine.choosableScenarios(template, state).map { it.id }.toSet()
         return template.scenarios.map { scenario ->
             val results = state.completedScenarios.filter { it.scenarioId == scenario.id }
             val standing = when {
-                state.currentScenarioId == scenario.id -> ScenarioStanding.CURRENT
+                state.currentScenarioId == scenario.id && !over -> ScenarioStanding.CURRENT
                 results.any { it.victory } -> ScenarioStanding.WON
                 results.isNotEmpty() && scenario.id in choosable -> ScenarioStanding.REPLAYABLE
                 results.isNotEmpty() -> ScenarioStanding.LOST
+                over -> ScenarioStanding.GONE
                 scenario.id == template.finaleScenarioId -> ScenarioStanding.TO_PLAY
                 scenario.id in choosable -> ScenarioStanding.TO_PLAY
                 else -> ScenarioStanding.GONE
