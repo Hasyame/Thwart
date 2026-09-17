@@ -5,6 +5,10 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonArray
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.security.SecretStore
@@ -211,6 +215,37 @@ class SyncEngineTest {
         val again = engine.sync()
         assertEquals("nothing is sent twice", 0, again.rejected)
         assertEquals(0, again.pushed)
+    }
+
+    // --- deck folders --------------------------------------------------------------
+
+    @Test
+    fun `a folder made here reaches the server, and one the web made reaches here`() = runTest {
+        database.deckFolderDao().upsert(
+            DeckFolderEntity(id = "folder-mine", name = "Solo", deckIds = listOf("local-1"), createdAt = 5, updatedAt = 5),
+        )
+        database.syncStateDao().markDirty(SyncCollection.DECK_FOLDERS.key, "folder-mine")
+        api.seed(
+            SyncCollection.DECK_FOLDERS.key,
+            "folder-web",
+            buildJsonObject {
+                put("id", "folder-web")
+                put("name", "Duo")
+                put("deckIds", JsonArray(listOf(JsonPrimitive("decklist-2"))))
+                put("createdAt", 7)
+                put("updatedAt", 7)
+            },
+        )
+
+        engine.sync()
+
+        val sent = api.stored(SyncCollection.DECK_FOLDERS.key, "folder-mine")
+        assertNotNull("the server holds the folder", sent)
+        assertEquals("Solo", sent!!.body!!["name"]!!.jsonPrimitive.content)
+        val received = database.deckFolderDao().getFolder("folder-web")
+        assertNotNull("the web's folder is on the shelf", received)
+        assertEquals(listOf("decklist-2"), received!!.deckIds)
+        assertEquals(listOf("Duo", "Solo"), database.deckFolderDao().getFolders().map { it.name })
     }
 
     private fun rating(subject: String, playId: String) = RatingEntity(

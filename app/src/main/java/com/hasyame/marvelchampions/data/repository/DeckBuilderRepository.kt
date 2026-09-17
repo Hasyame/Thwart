@@ -82,6 +82,11 @@ class DeckBuilderRepository @Inject constructor(
             )
         }
 
+    /** A card's name in [locale], or in the other language when untranslated. */
+    suspend fun cardName(code: String, locale: CardLocale): String? = withContext(ioDispatcher) {
+        cardDao.getCardPreferringLocale(code, locale.code)?.name
+    }
+
     /**
      * The traits of every face of the identity, from the English rows, which
      * are what the trait keys are made of. Ant-Man's Giant and Tiny forms,
@@ -136,27 +141,70 @@ class DeckBuilderRepository @Inject constructor(
         ownedOnly: Boolean,
         /** When set, cards without synergy with this identity are left out. */
         synergyWith: IdentityTraits? = null,
+        /** The editor's chips: a subset of the aspects and basic, or empty for all of them. */
+        factions: Set<String> = emptySet(),
+        typeCodes: Set<String> = emptySet(),
+        /** A printed cost, or [COST_AND_ABOVE] and up. */
+        cost: Int? = null,
+        /** Whether the hero's own cards are listed too; off when a chip narrows the pool to an aspect. */
+        includeHeroCards: Boolean = true,
+        /** Whether the aspects and basic are listed; off when the hero chip alone is on. */
+        includeAspectCards: Boolean = true,
     ): List<CardEntity> = withContext(ioDispatcher) {
-        val factions = (aspects + BASIC_FACTION).toSet()
+        val allowed = (aspects + BASIC_FACTION).toSet()
+        val chosen = factions.filter { it in allowed }.toSet().ifEmpty { allowed }
         val filter = CardFilter(
             query = query,
-            factionCodes = factions,
+            factionCodes = chosen,
+            typeCodes = typeCodes,
+            minCost = cost,
+            maxCost = cost?.takeIf { it < COST_AND_ABOVE },
             ownedOnly = ownedOnly,
             synergyWith = synergyWith,
         )
         val owned = if (ownedOnly) collectionRepository.getOwnedCodes() else emptySet()
         val built = CardQueryBuilder.build(filter, locale, owned, limit = CANDIDATE_LIMIT)
-        val aspectCards = cardDao.queryCards(
-            SimpleSQLiteQuery(built.sql, built.args.toTypedArray()),
-        )
+        val aspectCards = if (includeAspectCards) {
+            cardDao.queryCards(SimpleSQLiteQuery(built.sql, built.args.toTypedArray()))
+        } else {
+            emptyList()
+        }
 
-        val heroCards = heroSetCode?.let { setCode ->
+        val heroCards = heroSetCode?.takeIf { includeHeroCards }?.let { setCode ->
             cardDao.getCardSet(setCode, locale.code)
                 .filter { it.factionCode == HERO_FACTION && it.typeCode != HERO_TYPE }
                 .filter { query.isBlank() || it.name.contains(query, ignoreCase = true) }
+                .filter { typeCodes.isEmpty() || it.typeCode in typeCodes }
+                .filter { cost == null || (it.cost != null && if (cost >= COST_AND_ABOVE) it.cost >= cost else it.cost == cost) }
         }.orEmpty()
 
         (heroCards + aspectCards).distinctBy { it.code }
+    }
+
+    /**
+     * How many cards the deck may draw on in all, before any chip narrows
+     * them: the aspects and basic, and the hero's own. The "N of M" under
+     * the search box.
+     */
+    suspend fun poolSize(heroSetCode: String?, aspects: List<String>, locale: CardLocale, ownedOnly: Boolean): Int =
+        withContext(ioDispatcher) {
+            val owned = if (ownedOnly) collectionRepository.getOwnedCodes() else null
+            val factions = (aspects + BASIC_FACTION).toSet()
+            val filter = CardFilter(factionCodes = factions, ownedOnly = ownedOnly)
+            val built = CardQueryBuilder.build(filter, locale, owned.orEmpty(), limit = Int.MAX_VALUE)
+            val pool = cardDao.queryCards(SimpleSQLiteQuery(built.sql, built.args.toTypedArray())).size
+            val heroCards = heroSetCode?.let { cardDao.getCardSet(it, locale.code) }
+                .orEmpty()
+                .count { it.factionCode == HERO_FACTION && it.typeCode != HERO_TYPE && (owned == null || it.packCode in owned) }
+            pool + heroCards
+        }
+
+    /** The card types a player deck can hold, with their names in [locale], for the editor's chips. */
+    suspend fun playerCardTypes(locale: CardLocale): List<Pair<String, String>> = withContext(ioDispatcher) {
+        cardDao.distinctTypeNames(locale.code)
+            .filter { it.code in PLAYER_TYPES }
+            .sortedBy { PLAYER_TYPES.indexOf(it.code) }
+            .map { it.code to it.name }
     }
 
     suspend fun validate(
@@ -177,12 +225,19 @@ class DeckBuilderRepository @Inject constructor(
     private suspend fun findHeroCard(setCode: String, locale: CardLocale): CardEntity? =
         cardDao.getCardSet(setCode, locale.code).firstOrNull { it.typeCode == HERO_TYPE }
 
-    private companion object {
-        const val BASIC_FACTION = "basic"
-        const val HERO_FACTION = "hero"
-        const val HERO_TYPE = "hero"
-        const val ALTER_EGO_TYPE = "alter_ego"
-        const val ENCOUNTER_FACTION = "encounter"
-        const val CANDIDATE_LIMIT = 400
+    companion object {
+        private const val BASIC_FACTION = "basic"
+        private const val HERO_FACTION = "hero"
+        private const val HERO_TYPE = "hero"
+        private const val ALTER_EGO_TYPE = "alter_ego"
+        private const val ENCOUNTER_FACTION = "encounter"
+        // The pool is a few hundred cards and the list is lazy: no cap worth having.
+        private const val CANDIDATE_LIMIT = 5_000
+
+        /** The last cost chip stands for this cost and everything dearer. */
+        const val COST_AND_ABOVE = 5
+
+        /** In the order the chips are shown. */
+        val PLAYER_TYPES = listOf("ally", "upgrade", "event", "resource", "support", "player_side_scheme")
     }
 }

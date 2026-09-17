@@ -1,0 +1,23 @@
+A new face for decks, campaigns and the home page, and a draft.
+
+The home page comes first in the bar: what this version changed, a menu
+of the things done most, and the links to Patreon, the web app and the
+source. Rules stay in the bar; the top bars are dark and centred.
+
+Decks are a shelf of tiles with the hero's art, filed in folders that
+sync with the web, with a search that looks through deck names, hero
+names or the cards inside. The deck page has three tabs: the cards and
+the pool to add from, with a stepper on each; the breakdown; and the
+information, where the problems are explained, the packs the deck draws
+on are listed with what is missing from your collection, and your notes
+live. A card the identity cannot play is flagged as having no synergy.
+
+Draft, from the Play page: each player takes a hero and aspects, then
+the table picks cards five at a time from what the collection holds
+until every deck is full. Tap a card to take it, hold it to read it.
+
+Campaigns are a shelf too: in progress, finished, and the figures, with
+the final villain's art, the status, and every game's result in the
+order it was played.
+
+Cards read in the device's language until one is chosen in Settings.

@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hasyame.marvelchampions.ui.navigation.CardsGraph
 import com.hasyame.marvelchampions.ui.navigation.CollectionRoute
+import com.hasyame.marvelchampions.ui.navigation.HomeGraph
 import com.hasyame.marvelchampions.ui.navigation.DecksGraph
 import com.hasyame.marvelchampions.ui.navigation.MarvelChampionsNavHost
 import com.hasyame.marvelchampions.ui.navigation.SettingsGraph
@@ -149,7 +150,7 @@ private fun AppContent(
                 // when there are no cards at all it is the screen holding the
                 // only button that helps.
                 startInSettings -> SettingsGraph
-                else -> CardsGraph
+                else -> HomeGraph
             },
             sharedLink = sharedLink,
             onSharedLinkHandled = onSharedLinkHandled,

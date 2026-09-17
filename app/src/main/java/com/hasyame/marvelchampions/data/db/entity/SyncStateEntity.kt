@@ -102,6 +102,13 @@ enum class SyncCollection(val key: String) {
     SETTINGS("settings"),
 
     /**
+     * Folders on the shelf of decks, whole records, the later `updatedAt`
+     * winning. The web client had these first; the phone joins it here,
+     * and declares the name so the server sends them (it is opt-in there).
+     */
+    DECK_FOLDERS("deck_folders"),
+
+    /**
      * Difficulty ratings. Last on purpose: this enum's order is the push
      * order, and the server checks a rating against the play or run it
      * cites as the server holds it, pushed earlier or earlier in the same

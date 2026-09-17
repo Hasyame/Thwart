@@ -329,11 +329,12 @@ class SoftDeleteTest {
     @Test
     fun `the guard is reading real files`() {
         // If the DAO folder ever moves, the search above would find nothing and
-        // pass by saying nothing. Eleven DAO files are expected; a new one is a
-        // deliberate change to this number. The eleventh is the ratings, and
-        // the one before it was deliberate too: the file allowed to read
-        // tombstones.
-        assertEquals(11, daoSources().size)
+        // pass by saying nothing. Thirteen DAO files are expected; a new one is
+        // a deliberate change to this number. The thirteenth is the deck
+        // folders, the twelfth the draft session (device-local, no tombstone),
+        // the eleventh the ratings; the one before it was deliberate too: the
+        // file allowed to read tombstones.
+        assertEquals(13, daoSources().size)
     }
 
     // --------------------------------------------------------------- helpers --
@@ -396,8 +397,9 @@ class SoftDeleteTest {
     )
 
     private companion object {
-        /** The nine tables that belong to the user and will sync. */
+        /** The ten tables that belong to the user and will sync. */
         val USER_TABLES = listOf(
+            "deck_folders",
             "owned_packs",
             "excluded_modular_sets",
             "excluded_scenarios",

@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.data.backup
 
 import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
@@ -62,6 +63,8 @@ data class Backup(
      * ratings existed.
      */
     val ratings: List<RatingWire> = emptyList(),
+    /** Folders on the shelf of decks. Empty in a backup from before folders existed. */
+    val deckFolders: List<DeckFolderEntity> = emptyList(),
     /**
      * Names of the table photographs travelling with this backup.
      *

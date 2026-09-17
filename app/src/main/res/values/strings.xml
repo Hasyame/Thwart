@@ -11,6 +11,18 @@
     <string name="rules_no_results">No rule matches your search.</string>
     <string name="rules_english_only">English only for now.</string>
     <string name="rules_credit">Rules reference compiled by %1$s, released under %2$s. Unofficial, and not endorsed by Fantasy Flight Games.</string>
+    <string name="destination_home">Home</string>
+    <string name="home_whats_new">What changed</string>
+    <string name="home_all_releases">Every release</string>
+    <string name="home_dismiss_notes">Put these notes away</string>
+    <string name="home_random_card">Random card</string>
+    <string name="home_links_title">Thwart elsewhere</string>
+    <string name="home_links_note">Each of these opens your browser. The app itself never goes online for this page.</string>
+    <string name="home_patreon_note">Free, and staying free. This helps me keep making it.</string>
+    <string name="home_web">Thwart on the web</string>
+    <string name="home_web_note">thwart.app: the same decks, campaigns and statistics in a browser, in step with this phone when you sign in.</string>
+    <string name="home_github">Source code</string>
+    <string name="home_github_note">GitHub: the code, the releases, and where to report a bug.</string>
     <string name="destination_settings">Settings</string>
 
     <!-- Common actions -->
@@ -140,6 +152,7 @@
     <string name="aspect_leadership">Leadership</string>
     <string name="aspect_protection">Protection</string>
     <string name="aspect_pool">\'Pool</string>
+    <string name="aspect_basic">Basic</string>
 
     <!-- Decks -->
     <string name="decks_add">Add a deck</string>
@@ -151,7 +164,6 @@
     <string name="decks_refresh">Refresh from MarvelCDB</string>
     <string name="decks_hero">Hero</string>
     <string name="decks_import_failed">Import failed</string>
-    <string name="decks_card_missing">%1$s — not in your collection</string>
     <plurals name="decks_unknown_cards">
         <item quantity="one">%1$d card in this deck is not in the local database. Update the cards from Settings.</item>
         <item quantity="other">%1$d cards in this deck are not in the local database. Update the cards from Settings.</item>
@@ -204,7 +216,6 @@
 
     <!-- Deck builder -->
     <string name="decks_new">New deck</string>
-    <string name="decks_build_from_scratch">Or build one from scratch</string>
     <string name="decks_name">Deck name</string>
     <string name="decks_rename">Rename this deck</string>
     <string name="decks_delete_title">Delete this deck?</string>
@@ -220,8 +231,6 @@
     <string name="decks_no_owned_heroes">No hero comes from a pack in your collection. Turn the switch off on the Decks page, or add your packs under Settings.</string>
     <string name="decks_hero_not_owned">%1$s — pack not in your collection</string>
     <string name="decks_edit">Edit deck</string>
-    <string name="decks_tab_deck">Deck</string>
-    <string name="decks_tab_add">Add cards</string>
     <string name="decks_editor_empty">No card yet. Use the “Add cards” tab.</string>
     <string name="decks_add_card">Add a copy</string>
     <string name="decks_sort">Sort</string>
@@ -229,7 +238,6 @@
     <string name="decks_sort_cost">Cost</string>
     <string name="decks_sort_name">Name</string>
     <string name="decks_remove_card">Remove a copy</string>
-    <string name="decks_limit">limit %1$d</string>
     <plurals name="decks_card_total">
         <item quantity="one">%1$d card</item>
         <item quantity="other">%1$d cards</item>
@@ -237,7 +245,59 @@
     <string name="decks_legal">This deck is legal.</string>
     <string name="decks_synergy_issue">Synergy issue: %1$s has no synergy with this identity</string>
     <string name="decks_synergy_and_others">%1$s (and %2$s)</string>
+    <string name="decks_tab_cards">Cards</string>
+    <string name="decks_tab_info">Information</string>
+    <string name="decks_add_cards_hint">Add cards</string>
+    <string name="decks_problems_title">Deck problems (%1$d)</string>
+    <string name="decks_problems_note">Legal means the deck-building rules on the identity card are met. A campaign will not accept a deck that is not.</string>
+    <string name="decks_synergy_note">A card without synergy stays legal: it can only ever be spent as a resource with this identity.</string>
+    <string name="decks_packs_title">Packs this deck draws on</string>
+    <string name="decks_notes">Notes</string>
+    <string name="decks_notes_hint">Strategy, what to mulligan for, anything worth remembering. Yours to write.</string>
+    <string name="decks_notes_edit">Edit the notes</string>
     <string name="decks_synergy_hide">Hide cards without synergy with this identity</string>
+    <string name="decks_folder_name">Folder name</string>
+    <string name="decks_folder_new">New folder</string>
+    <string name="decks_folder_rename">Rename folder</string>
+    <string name="decks_folder_delete">Delete folder</string>
+    <string name="decks_folder_delete_message">Delete the folder “%1$s”? Its decks stay on the shelf.</string>
+    <string name="decks_folder_all">All</string>
+    <string name="decks_folder_empty">Nothing in this folder yet. Move a deck here with the folder button on its tile.</string>
+    <string name="decks_tab_decks">Decks</string>
+    <string name="decks_tab_explorer">Explorer</string>
+    <string name="decks_explorer_soon">Decks to browse will come here: the ready-made ones, and other people’s. Not yet.</string>
+    <string name="decks_search_decks">Search your decks…</string>
+    <string name="decks_new_deck">New deck</string>
+    <string name="decks_import_deck">Import a deck</string>
+    <string name="decks_move_to_folder">Move to folder</string>
+    <string name="decks_no_folder_yet">No folder yet. Make one with the + on the shelf.</string>
+    <string name="decks_sort_modified">Last edited</string>
+    <string name="decks_sort_created">Added</string>
+    <string name="decks_sort_aspect">Aspect</string>
+    <string name="decks_sort_asc">ASC</string>
+    <string name="decks_sort_desc">DESC</string>
+    <string name="decks_search_scope">Search in</string>
+    <string name="decks_scope_decks">Decks</string>
+    <string name="decks_scope_heroes">Heroes</string>
+    <string name="decks_scope_cards">Cards</string>
+    <string name="decks_folder_none">No folder</string>
+    <plurals name="decks_count">
+        <item quantity="one">%1$d deck</item>
+        <item quantity="other">%1$d decks</item>
+    </plurals>
+    <string name="decks_legal_short">legal</string>
+    <string name="decks_illegal_short">not legal</string>
+    <string name="decks_hand_size">Hand size</string>
+    <string name="decks_hit_points">Hit points</string>
+    <string name="decks_own_everything">You own everything in this deck.</string>
+    <string name="decks_nemesis">Nemesis set</string>
+    <string name="decks_nemesis_note">Shuffled into the encounter deck when the hero’s obligation is drawn. Not part of the deck, and not chosen.</string>
+    <string name="decks_card_language_note">Card names are shown in %1$s, the card language chosen in Settings.</string>
+    <string name="decks_hero_cards">Hero cards</string>
+    <string name="decks_hero_cards_note">In every deck this hero builds, at the printed count.</string>
+    <string name="decks_not_owned">not owned</string>
+    <string name="decks_pool_count">Cards: %1$d of %2$d</string>
+    <string name="decks_filter_owned">Only what I own</string>
     <plurals name="decks_problem_too_few">
         <item quantity="one">Only %1$d card, %2$d required.</item>
         <item quantity="other">Only %1$d cards, %2$d required.</item>
@@ -316,7 +376,6 @@
         <item quantity="one">%1$d player</item>
         <item quantity="other">%1$d players</item>
     </plurals>
-    <string name="campaign_empty">No campaign yet. Start one with the button below.</string>
     <string name="settings_play_location">Where you play</string>
     <string name="settings_play_location_summary">Sent with a game to BoardGameGeek, which records it as free text. Left empty, nothing is sent.</string>
     <string name="settings_play_location_label">Location</string>
@@ -330,20 +389,40 @@
         <item quantity="one">Not legal: %1$d problem. Fix it in the Decks tab.</item>
         <item quantity="other">Not legal: %1$d problems. Fix them in the Decks tab.</item>
     </plurals>
-    <string name="decks_locally_edited">Changed here since it was imported.</string>
     <string name="decks_revert">Revert to the imported version</string>
     <string name="decks_refresh_discards_edits">Refreshing replaces this deck with the MarvelCDB version and discards the changes made here.</string>
-    <plurals name="decks_not_legal">
-        <item quantity="one">Not legal: %1$d problem. A campaign will not accept it.</item>
-        <item quantity="other">Not legal: %1$d problems. A campaign will not accept it.</item>
-    </plurals>
     <string name="campaign_nothing_recorded">Nothing recorded</string>
     <string name="campaign_nobody">Nobody</string>
     <string name="settings_contact">Contact</string>
     <string name="settings_contact_summary">Ask a question or report a bug by email.</string>
     <string name="settings_no_mail_app">No mail app installed. Write to %1$s.</string>
     <string name="campaign_in_progress_section">In progress</string>
-    <string name="campaign_finished_section">Finished campaigns</string>
+    <string name="campaign_finished_section">Finished</string>
+    <string name="campaign_tab_stats">Stats</string>
+    <string name="campaign_status_not_started">Not started</string>
+    <string name="campaign_status_in_progress">In progress</string>
+    <string name="campaign_status_won">Won</string>
+    <string name="campaign_status_lost">Lost</string>
+    <plurals name="campaign_beaten">
+        <item quantity="one">%1$d scenario beaten of %2$d</item>
+        <item quantity="other">%1$d scenarios beaten of %2$d</item>
+    </plurals>
+    <string name="campaign_results_label">Won: %1$d/%2$d</string>
+    <string name="campaign_details">Details</string>
+    <string name="campaign_hide_details">Hide details</string>
+    <string name="campaign_forget">Forget this campaign</string>
+    <string name="campaign_empty_in_progress">No campaign on the table. Start one with the button below.</string>
+    <string name="campaign_empty_finished">No campaign finished yet. They will be kept here, won or lost.</string>
+    <string name="campaign_stats_empty">The figures come as campaigns are played.</string>
+    <string name="campaign_stats_overview">Overview</string>
+    <string name="campaign_stats_campaigns">Campaigns</string>
+    <string name="campaign_stats_by_box">By campaign</string>
+    <string name="campaign_stats_by_hero">By hero</string>
+    <plurals name="campaign_stats_runs">
+        <item quantity="one">%1$d campaign</item>
+        <item quantity="other">%1$d campaigns</item>
+    </plurals>
+    <string name="campaign_stats_won_lost">Won %1$d · Lost %2$d</string>
     <string name="campaign_delete_title">Forget this campaign?</string>
     <string name="campaign_delete_message">%1$s and everything recorded for it will be deleted. This cannot be undone.</string>
     <string name="campaign_forget_warning">This campaign and everything recorded for it will be deleted. This cannot be undone.</string>
@@ -504,6 +583,65 @@
     <string name="play_own_detail">Choose everything yourself. The app times the game.</string>
     <string name="play_campaign">Campaign</string>
     <string name="play_campaign_detail">Start a campaign, or open one you have finished.</string>
+    <string name="play_draft">Draft</string>
+    <string name="play_draft_detail">Build decks one pick at a time, from your own collection. One to four players.</string>
+    <string name="play_draft_resume">Draft in progress</string>
+    <string name="draft_title">Draft</string>
+    <string name="draft_no_heroes">No identity in your collection. Tick the packs you own in Settings first.</string>
+    <string name="draft_setup_players">Players</string>
+    <string name="draft_setup_synergy">Leave out cards without synergy with the identity</string>
+    <string name="draft_setup_synergy_detail">Cards that call for a trait the identity lacks are not offered. Cards without a condition always are.</string>
+    <string name="draft_setup_identity_mode">Identities</string>
+    <string name="draft_mode_random">Random</string>
+    <string name="draft_mode_random_of_five">Random among five</string>
+    <string name="draft_mode_choice">Chosen</string>
+    <string name="draft_setup_offer_size">Cards offered at each pick</string>
+    <string name="draft_setup_begin">Choose identities</string>
+    <string name="draft_player_n">Player %1$d</string>
+    <string name="draft_identity_title">Player %1$d: identity</string>
+    <string name="draft_identity_drawn">Drawn for you</string>
+    <string name="draft_identity_draw_again">Draw again</string>
+    <string name="draft_identity_choose">Choose an identity</string>
+    <string name="draft_identity_choose_five">Choose one of the five</string>
+    <string name="draft_identity_taken">Taken by player %1$d</string>
+    <string name="draft_aspects_title">Aspect</string>
+    <plurals name="draft_aspects_choose">
+        <item quantity="one">Choose %1$d aspect</item>
+        <item quantity="other">Choose %1$d aspects</item>
+    </plurals>
+    <string name="draft_aspects_imposed">This identity plays all four aspects; its rule decides.</string>
+    <string name="draft_aspects_draw">Draw at random</string>
+    <string name="draft_deck_size">Deck size</string>
+    <string name="draft_deck_size_detail">Cards: %1$d. From the identity: %2$d. Picks: %3$d.</string>
+    <string name="draft_identity_confirm">Next</string>
+    <string name="draft_identity_start">Start the draft</string>
+    <string name="draft_shortfall_title">Not enough cards on the shelf</string>
+    <string name="draft_shortfall_line">Player %1$d: cards needed, %2$d; on the shelf with these aspects, %3$d.</string>
+    <string name="draft_shortfall_hint">Lower a deck size, choose other aspects, or turn the synergy option off.</string>
+    <string name="draft_shortfall_revise">Back to player %1$d</string>
+    <string name="draft_pick_progress">%1$d / %2$d</string>
+    <string name="draft_pick_round">Round %1$d \u00b7 pick one card</string>
+    <string name="draft_picks_made">picks made</string>
+    <string name="draft_your_deck">Your deck</string>
+    <string name="draft_deck_identity">Identity</string>
+    <plurals name="draft_pick_empty">
+        <item quantity="one">Nothing legal is left on the shelf for this deck. It stops at %1$d card.</item>
+        <item quantity="other">Nothing legal is left on the shelf for this deck. It stops at %1$d cards.</item>
+    </plurals>
+    <string name="draft_pick_skip">Stop here</string>
+    <string name="draft_finish_title">Name the decks</string>
+    <string name="draft_finish_detail">Each deck goes through the usual check, then all of them are saved at once.</string>
+    <string name="draft_finish_name">Deck name</string>
+    <string name="draft_finish_save">End the draft</string>
+    <plurals name="draft_finish_short">
+        <item quantity="one">Stopped short at %1$d card: this deck cannot be saved.</item>
+        <item quantity="other">Stopped short at %1$d cards: this deck cannot be saved.</item>
+    </plurals>
+    <string name="draft_illegal_title">This should not happen</string>
+    <string name="draft_illegal_detail">Player %1$d\'s deck failed the standard check, which the draft promised to satisfy. Nothing was saved; the details are in the log. Please report it.</string>
+    <string name="draft_abandon">Abandon the draft</string>
+    <string name="draft_abandon_confirm">Abandon this draft? The picks made so far are lost.</string>
+    <string name="draft_abandon_yes">Abandon</string>
     <string name="randomizer_play_this">Play this game</string>
     <string name="session_leave_title">Leave this game?</string>
     <string name="session_leave_message">The clock is running. Leaving now discards the game and nothing is recorded.</string>
@@ -638,7 +776,7 @@
     <string name="campaign_environment_pushed_twice">Alone in the pile — pushed two steps</string>
     <string name="campaign_pressure_board">Where every place stands</string>
     <string name="campaign_lost_title">Campaign abandoned</string>
-    <string name="campaign_lost_message">You chose to stop here rather than face Kingpin again. The campaign ends here.</string>
+    <string name="campaign_lost_message">You chose to stop here rather than try again. The campaign ends here.</string>
     <string name="campaign_lost_leave">Close the campaign</string>
     <plurals name="photo_take_more">
         <item quantity="one">Another photo (%1$d taken)</item>
@@ -681,7 +819,6 @@
     <string name="campaign_set_random_hint">The app picks from the sets you own when the campaign starts, and keeps it for the whole run.</string>
     <string name="paused_game_resume">Carry on with this game</string>
     <string name="paused_game_stopped_at">Stopped at villain stage</string>
-    <string name="campaign_progress">Scenario %1$d of %2$d</string>
     <string name="campaign_time_so_far">played for %1$s</string>
     <string name="campaign_scenario_won">Won</string>
     <string name="campaign_scenario_lost">Lost</string>

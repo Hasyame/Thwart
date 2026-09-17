@@ -5,6 +5,7 @@ import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.repository.CollectionRepository
+import com.hasyame.marvelchampions.data.repository.DraftRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,6 +37,7 @@ data class CampaignListUiState(
 class CampaignListViewModel @Inject constructor(
     private val repository: CampaignRepository,
     private val pausedGameDao: PausedGameDao,
+    private val draftRepository: DraftRepository,
     private val cardDao: CardDao,
     private val collectionRepository: CollectionRepository,
     private val preferences: AppPreferences,
@@ -68,6 +70,11 @@ class CampaignListViewModel @Inject constructor(
         viewModelScope.launch { pausedGameDao.clear() }
     }
 
+    /** A draft left mid-way, if there is one: another thing the table left standing. */
+    val draftInProgress: StateFlow<Boolean> = draftRepository.observeSession()
+        .map { it != null && it.players.isNotEmpty() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
     private val importErrors = MutableStateFlow<List<TemplateError>>(emptyList())
     private val importMessage = MutableStateFlow<String?>(null)
 
@@ -82,7 +89,7 @@ class CampaignListViewModel @Inject constructor(
      * break is something the box says about itself.
      */
     val summaries: StateFlow<List<CampaignSummary>> = combine(
-        repository.observeRuns().map { repository.summaries() },
+        repository.observeRuns().map { repository.summaries(preferences.currentCardLocale()) },
         pausedGameDao.observe(),
     ) { runs, paused ->
         runs.map { summary ->

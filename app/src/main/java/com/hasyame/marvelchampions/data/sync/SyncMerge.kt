@@ -3,6 +3,7 @@ package com.hasyame.marvelchampions.data.sync
 import com.hasyame.marvelchampions.data.backup.BackupSettings
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
@@ -75,6 +76,19 @@ object SyncMerge {
      * taking a rating back after re-rating it on another device must not
      * bring the older score back to life.
      */
+    /**
+     * A folder is one thing a person edits, whole: the later edit is the
+     * folder, its deck list included. A tombstone is an edit like any other,
+     * so a folder removed on the tablet after being renamed on the phone is
+     * removed, and the reverse keeps the rename. The web applies the same
+     * rule, which is what makes the two agree.
+     */
+    fun folder(incoming: DeckFolderEntity, local: DeckFolderEntity?): DeckFolderEntity = when {
+        local == null -> incoming
+        local.updatedAt > incoming.updatedAt -> local
+        else -> incoming
+    }
+
     fun rating(incoming: RatingEntity, local: RatingEntity?): RatingEntity = when {
         local == null -> incoming
         local.ratedAt > incoming.ratedAt && local.deletedAt == null && incoming.deletedAt == null -> local

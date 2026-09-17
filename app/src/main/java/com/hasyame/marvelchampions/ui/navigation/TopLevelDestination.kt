@@ -2,14 +2,16 @@ package com.hasyame.marvelchampions.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.hasyame.marvelchampions.R
 import kotlin.reflect.KClass
 
 /**
  * The five top level destinations, in the order they appear in the navigation bar
- * (or the navigation rail on a wide screen).
+ * (or the navigation rail on a wide screen). Settings left the bar when Home
+ * arrived, one tap from it behind the gear; the rules stayed, because a rule
+ * is looked up mid-game and has to be one tap away.
  *
  * Each one owns its own back stack: switching tabs saves the outgoing stack and
  * restores the incoming one, so leaving Cards for Settings and coming back lands
@@ -26,7 +28,20 @@ enum class TopLevelDestination(
     val graphRoute: KClass<*>,
     val icon: ImageVector,
     @param:StringRes val labelRes: Int,
+    /**
+     * Other graphs that count as being on this tab. Home leads to the
+     * settings, which keep their own graph; while they are open the Home tab
+     * stays lit, since that is where the person came from.
+     */
+    val alsoGraphs: List<KClass<*>> = emptyList(),
 ) {
+    HOME(
+        route = HomeRoute::class,
+        graphRoute = HomeGraph::class,
+        icon = Icons.Filled.Home,
+        labelRes = R.string.destination_home,
+        alsoGraphs = listOf(SettingsGraph::class),
+    ),
     CARDS(
         route = CardsRoute::class,
         graphRoute = CardsGraph::class,
@@ -56,11 +71,5 @@ enum class TopLevelDestination(
         graphRoute = StatsGraph::class,
         icon = NavigationIcons.Chart,
         labelRes = R.string.destination_stats,
-    ),
-    SETTINGS(
-        route = SettingsRoute::class,
-        graphRoute = SettingsGraph::class,
-        icon = Icons.Filled.Settings,
-        labelRes = R.string.destination_settings,
     ),
 }

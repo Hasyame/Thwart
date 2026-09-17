@@ -4,10 +4,13 @@ import com.hasyame.marvelchampions.data.backup.BackupSettings
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
@@ -255,5 +258,23 @@ class SyncMergeTest {
         assertTrue(gone.deletedAt != null)
         val kept = SyncMerge.rating(incoming = rated(4, at = 10), local = rated(2, at = 20, deletedAt = 20))
         assertEquals("the incoming is taken when either side is a tombstone", 4, kept.score)
+    }
+
+    // --- deck folders ------------------------------------------------------
+
+    private fun folder(name: String, at: Long, decks: List<String> = emptyList(), deletedAt: Long? = null) =
+        DeckFolderEntity(id = "folder-1", name = name, deckIds = decks, createdAt = 1, updatedAt = at, deletedAt = deletedAt)
+
+    @Test
+    fun `the later edit is the folder, deck list included`() {
+        assertEquals(listOf("a", "b"), SyncMerge.folder(incoming = folder("Solo", 20, listOf("a", "b")), local = folder("Solo", 10, listOf("a"))).deckIds)
+        assertEquals(listOf("a"), SyncMerge.folder(incoming = folder("Solo", 10, listOf("a", "b")), local = folder("Solo", 20, listOf("a"))).deckIds)
+        assertEquals("on a tie the incoming wins", "Renamed", SyncMerge.folder(incoming = folder("Renamed", 10), local = folder("Solo", 10)).name)
+    }
+
+    @Test
+    fun `a folder removed later stays removed, and one renamed later stays`() {
+        assertNotNull(SyncMerge.folder(incoming = folder("Solo", 30, deletedAt = 30), local = folder("Renamed", 20)).deletedAt)
+        assertNull(SyncMerge.folder(incoming = folder("Solo", 20, deletedAt = 20), local = folder("Renamed", 30)).deletedAt)
     }
 }

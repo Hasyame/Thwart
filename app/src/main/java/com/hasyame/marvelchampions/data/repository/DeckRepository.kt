@@ -76,6 +76,7 @@ class DeckRepository @Inject constructor(
     private val cardDao: CardDao,
     private val collectionRepository: CollectionRepository,
     private val autoSync: AutoSync,
+    private val folders: DeckFolderRepository,
     private val json: Json,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -90,6 +91,8 @@ class DeckRepository @Inject constructor(
     suspend fun delete(id: String) = withContext(ioDispatcher) {
         savedDeckDao.delete(id, System.currentTimeMillis())
         syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, id)
+        // So the folder does not keep a ghost, here and on the other devices.
+        folders.forgetDeck(id)
     }
 
     /**
@@ -247,6 +250,18 @@ class DeckRepository @Inject constructor(
         }
     }
 
+    /**
+     * The player's notes on the deck: strategy, what to mulligan for,
+     * anything. Kept in the description the deck already carries, which an
+     * imported deck fills from MarvelCDB and a built one starts empty, so
+     * nothing new travels on the wire.
+     */
+    suspend fun setNotes(deckId: String, text: String) = withContext(ioDispatcher) {
+        savedDeckDao.getDeck(deckId)?.let {
+            save(it.copy(descriptionMd = text.trim().ifEmpty { null }, locallyEdited = true))
+        }
+    }
+
     /** Puts an imported deck back to exactly what MarvelCDB returned. */
     suspend fun revertToImported(deckId: String): Boolean = withContext(ioDispatcher) {
         val deck = savedDeckDao.getDeck(deckId) ?: return@withContext false
@@ -316,6 +331,20 @@ class DeckRepository @Inject constructor(
      * Works entirely offline: the deck rows and the card rows are both local,
      * so this never touches the network.
      */
+    /**
+     * The hero's nemesis set: the cards shuffled into the encounter deck when
+     * the obligation comes up. In the hero's own pack, in a set named after
+     * the hero's with `_nemesis` on the end. Part of playing the hero, not of
+     * the deck, and shown as such.
+     */
+    suspend fun nemesisSet(heroCode: String, locale: CardLocale): List<CardEntity> = withContext(ioDispatcher) {
+        val hero = cardDao.getCardPreferringLocale(heroCode, locale.code) ?: return@withContext emptyList()
+        val setCode = hero.cardSetCode ?: return@withContext emptyList()
+        cardDao.getCardSet("${setCode}_nemesis", locale.code)
+            .ifEmpty { cardDao.getCardSet("${setCode}_nemesis", locale.fallback().code) }
+            .sortedBy { it.code }
+    }
+
     suspend fun contents(id: String, locale: CardLocale): DeckContents? =
         withContext(ioDispatcher) {
             val deck = savedDeckDao.getDeck(id) ?: return@withContext null

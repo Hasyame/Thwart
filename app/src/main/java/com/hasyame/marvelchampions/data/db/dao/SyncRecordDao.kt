@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 
@@ -141,6 +142,17 @@ interface SyncRecordDao {
 
     @Upsert
     suspend fun putDraw(row: RandomizerHistoryEntity)
+
+    // --- deck folders -------------------------------------------------------
+
+    @Query("SELECT * FROM deck_folders WHERE id = :id")
+    suspend fun folder(id: String): DeckFolderEntity?
+
+    @Query("SELECT * FROM deck_folders")
+    suspend fun folders(): List<DeckFolderEntity>
+
+    @Upsert
+    suspend fun putFolder(row: DeckFolderEntity)
 
     // --- ratings ------------------------------------------------------------
 

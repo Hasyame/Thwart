@@ -19,7 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -66,6 +66,7 @@ fun PlayScreen(
     onOwnSetup: () -> Unit,
     onCampaigns: () -> Unit,
     onVersus: () -> Unit,
+    onDraft: () -> Unit,
     onResumeCampaign: (String) -> Unit,
     onResumePausedGame: (String) -> Unit,
     viewModel: CampaignListViewModel = hiltViewModel(),
@@ -73,6 +74,7 @@ fun PlayScreen(
     val summaries by viewModel.summaries.collectAsStateWithLifecycle()
     val paused by viewModel.pausedGame.collectAsStateWithLifecycle()
     val hasVersusPack by viewModel.hasVersusPack.collectAsStateWithLifecycle()
+    val draftInProgress by viewModel.draftInProgress.collectAsStateWithLifecycle()
     var showPaused by remember { mutableStateOf(false) }
     val inProgress = summaries.filterNot { it.entity.finished }
 
@@ -106,7 +108,7 @@ fun PlayScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.destination_play)) },
             )
@@ -146,6 +148,15 @@ fun PlayScreen(
                 )
             }
 
+            if (draftInProgress) {
+                Choice(
+                    icon = Icons.Filled.PlayArrow,
+                    title = stringResource(R.string.play_draft_resume),
+                    subtitle = stringResource(R.string.play_draft_detail),
+                    onClick = onDraft,
+                )
+            }
+
             Text(
                 text = stringResource(R.string.play_start_something),
                 style = MaterialTheme.typography.labelLarge,
@@ -170,6 +181,14 @@ fun PlayScreen(
                 subtitle = stringResource(R.string.play_campaign_detail),
                 onClick = onCampaigns,
             )
+            if (!draftInProgress) {
+                Choice(
+                    icon = Icons.Filled.Refresh,
+                    title = stringResource(R.string.play_draft),
+                    subtitle = stringResource(R.string.play_draft_detail),
+                    onClick = onDraft,
+                )
+            }
 
             // Civil War and Synthezoid Smackdown only: two teams, two boards,
             // one device between them. Hidden without one of those boxes,

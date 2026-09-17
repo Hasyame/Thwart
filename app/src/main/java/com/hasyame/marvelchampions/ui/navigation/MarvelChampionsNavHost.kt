@@ -14,15 +14,16 @@ import com.hasyame.marvelchampions.ui.campaign.StartCampaignScreen
 import com.hasyame.marvelchampions.ui.cards.CardDetailScreen
 import com.hasyame.marvelchampions.ui.cards.CardsScreen
 import com.hasyame.marvelchampions.ui.collection.CollectionScreen
-import com.hasyame.marvelchampions.ui.decks.DeckDetailScreen
-import com.hasyame.marvelchampions.ui.decks.DeckEditorScreen
+import com.hasyame.marvelchampions.ui.decks.DeckScreen
 import com.hasyame.marvelchampions.ui.decks.DecksScreen
+import com.hasyame.marvelchampions.ui.home.HomeScreen
 import com.hasyame.marvelchampions.ui.decks.NewDeckScreen
 import com.hasyame.marvelchampions.ui.plays.GameSessionScreen
 import com.hasyame.marvelchampions.ui.plays.PlaysScreen
 import com.hasyame.marvelchampions.ui.rules.RulesScreen
 import com.hasyame.marvelchampions.ui.play.PlayScreen
 import com.hasyame.marvelchampions.ui.randomizer.RandomizerScreen
+import com.hasyame.marvelchampions.ui.draft.DraftScreen
 import com.hasyame.marvelchampions.ui.versus.VersusScreen
 import com.hasyame.marvelchampions.ui.settings.AboutScreen
 import com.hasyame.marvelchampions.ui.settings.SettingsScreen
@@ -41,6 +42,25 @@ fun MarvelChampionsNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
+        navigation<HomeGraph>(startDestination = HomeRoute) {
+            composable<HomeRoute> {
+                HomeScreen(
+                    onSettings = { navController.navigate(SettingsRoute) },
+                    onRules = { navController.navigate(RulesRoute) },
+                    onCollection = { navController.navigate(CollectionRoute) },
+                    onRandomGame = { navController.navigate(RandomizerRoute) },
+                    onCard = { code -> navController.navigate(CardDetailRoute(code)) },
+                )
+            }
+            // A card drawn at random opens inside Home's stack, so back
+            // returns to the page it came from.
+            composable<CardDetailRoute> { entry ->
+                CardDetailScreen(
+                    code = entry.toRoute<CardDetailRoute>().code,
+                    onBack = { navController.popBackStack() },
+                )
+            }
+        }
         navigation<CardsGraph>(startDestination = CardsRoute) {
             composable<CardsRoute> {
                 CardsScreen(
@@ -60,21 +80,18 @@ fun MarvelChampionsNavHost(
                     onDeckClick = { deckId -> navController.navigate(DeckDetailRoute(deckId)) },
                     // A freshly imported deck opens straight in the editor, so
                     // its legality is visible and fixable there and then.
-                    onDeckImported = { deckId ->
-                        navController.navigate(DeckDetailRoute(deckId))
-                        navController.navigate(DeckEditorRoute(deckId))
-                    },
+                    onDeckImported = { deckId -> navController.navigate(DeckDetailRoute(deckId)) },
                     onBuildDeck = { navController.navigate(NewDeckRoute) },
+                    onEditDeck = { deckId -> navController.navigate(DeckDetailRoute(deckId)) },
                     sharedLink = sharedLink,
                     onSharedLinkHandled = onSharedLinkHandled,
                 )
             }
             composable<DeckDetailRoute> { entry ->
-                DeckDetailScreen(
+                DeckScreen(
                     deckId = entry.toRoute<DeckDetailRoute>().deckId,
                     onBack = { navController.popBackStack() },
                     onCardClick = { code -> navController.navigate(CardDetailRoute(code)) },
-                    onEdit = { deckId -> navController.navigate(DeckEditorRoute(deckId)) },
                 )
             }
             composable<NewDeckRoute> {
@@ -88,10 +105,13 @@ fun MarvelChampionsNavHost(
                     },
                 )
             }
+            // The same screen: looking and building are one page now, so an
+            // old link to the editor lands on it too.
             composable<DeckEditorRoute> { entry ->
-                DeckEditorScreen(
+                DeckScreen(
                     deckId = entry.toRoute<DeckEditorRoute>().deckId,
                     onBack = { navController.popBackStack() },
+                    onCardClick = { code -> navController.navigate(CardDetailRoute(code)) },
                 )
             }
             // A card opened from a deck belongs to the Decks back stack, so it
@@ -114,6 +134,7 @@ fun MarvelChampionsNavHost(
                     },
                     onCampaigns = { navController.navigate(CampaignRoute) },
                     onVersus = { navController.navigate(VersusRoute) },
+                    onDraft = { navController.navigate(DraftRoute) },
                     onResumeCampaign = { runId ->
                         navController.navigate(CampaignRunRoute(runId))
                     },
@@ -121,6 +142,23 @@ fun MarvelChampionsNavHost(
             }
             composable<VersusRoute> {
                 VersusScreen(onBack = { navController.popBackStack() })
+            }
+            composable<DraftRoute> {
+                DraftScreen(
+                    onBack = { navController.popBackStack() },
+                    // The decks are in the Decks tab like any other; the
+                    // draft itself has nothing left to show.
+                    onSaved = { navController.popBackStack() },
+                    onCardDetail = { code -> navController.navigate(CardDetailRoute(code)) },
+                )
+            }
+            // A card held on the draft table opens here, inside the play graph,
+            // so the back gesture returns to the table.
+            composable<CardDetailRoute> { entry ->
+                CardDetailScreen(
+                    code = entry.toRoute<CardDetailRoute>().code,
+                    onBack = { navController.popBackStack() },
+                )
             }
             composable<RandomizerRoute> {
                 RandomizerScreen(

@@ -6,6 +6,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.hasyame.marvelchampions.data.db.dao.CampaignDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.db.dao.DeckFolderDao
+import com.hasyame.marvelchampions.data.db.dao.DraftSessionDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedModularSetDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedScenarioDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
@@ -19,6 +21,8 @@ import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.CardFtsEntity
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
+import com.hasyame.marvelchampions.data.db.entity.DraftSessionEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
@@ -34,6 +38,7 @@ import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.db.dao.SyncRecordDao
 import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
+import com.hasyame.marvelchampions.data.db.entity.StringListConverters
 import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
 
 /**
@@ -55,7 +60,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
  * They share a file because the cross-device bundle is a separate
  * serialisation concern, not a storage one.
  */
-@TypeConverters(PlayHeroConverters::class)
+@TypeConverters(PlayHeroConverters::class, StringListConverters::class)
 @Database(
     entities = [
         CardEntity::class,
@@ -73,9 +78,11 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         ExcludedModularSetEntity::class,
         ExcludedScenarioEntity::class,
         PausedGameEntity::class,
+        DraftSessionEntity::class,
+        DeckFolderEntity::class,
         SyncStateEntity::class,
     ],
-    version = 23,
+    version = 25,
     exportSchema = true,
     // Room generates these from the exported schemas, which it can do for
     // anything that only adds a table, or adds a column with a SQL default.
@@ -105,11 +112,15 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         AutoMigration(from = 20, to = 21),
         AutoMigration(from = 21, to = 22),
         AutoMigration(from = 22, to = 23),
+        AutoMigration(from = 23, to = 24),
+        AutoMigration(from = 24, to = 25),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {
     abstract fun cardDao(): CardDao
     abstract fun pausedGameDao(): PausedGameDao
+    abstract fun draftSessionDao(): DraftSessionDao
+    abstract fun deckFolderDao(): DeckFolderDao
     abstract fun packDao(): PackDao
     abstract fun ownedPackDao(): OwnedPackDao
     abstract fun randomizerHistoryDao(): RandomizerHistoryDao

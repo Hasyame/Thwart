@@ -24,8 +24,8 @@ android {
         // Must increase for every release. v1.0.0 is already published, and a
         // device refuses an install whose versionCode is not higher than the
         // one it already has — silently, from the user's point of view.
-        versionCode = 82
-        versionName = "1.53.0"
+        versionCode = 83
+        versionName = "1.54.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -254,6 +254,46 @@ tasks.matching { it.name.startsWith("merge") && it.name.endsWith("Resources") }
  * install if you want the app usable offline on first launch; without it the
  * app simply asks for a sync, which is how CI builds.
  */
+/*
+ * The release notes, bundled: the home screen shows the current version's
+ * changelog, which fastlane already holds per version and per language for
+ * the stores. Copied into a generated asset directory at build time rather
+ * than committed twice, so the notes exist in one place.
+ */
+abstract class BundleChangelogs : DefaultTask() {
+    @get:InputDirectory
+    abstract val metadata: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val output: DirectoryProperty
+
+    @TaskAction
+    fun bundle() {
+        val target = output.get().asFile.resolve("changelogs")
+        target.deleteRecursively()
+        metadata.get().asFile.listFiles { file -> file.isDirectory }.orEmpty().forEach { locale ->
+            val notes = locale.resolve("changelogs")
+            if (notes.isDirectory) {
+                notes.copyRecursively(target.resolve(locale.name).resolve("changelogs"), overwrite = true)
+            }
+        }
+    }
+}
+
+val bundleChangelogs = tasks.register<BundleChangelogs>("bundleChangelogs") {
+    group = "marvelchampions"
+    description = "Copies the fastlane changelogs into the assets, for the home screen."
+    metadata.set(rootProject.layout.projectDirectory.dir("fastlane/metadata/android"))
+    output.set(layout.buildDirectory.dir("generated/changelogs"))
+}
+
+// The variant API is the one that accepts a generated directory as assets.
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(bundleChangelogs, BundleChangelogs::output)
+    }
+}
+
 tasks.register("fetchCardSeed") {
     group = "marvelchampions"
     description = "Downloads the MarvelCDB card and pack snapshot into assets/seed (not committed)."

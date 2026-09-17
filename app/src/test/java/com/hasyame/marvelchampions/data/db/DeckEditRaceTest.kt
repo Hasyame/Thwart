@@ -7,6 +7,7 @@ import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.dto.CardDto
 import com.hasyame.marvelchampions.data.marvelcdb.dto.PackDto
 import com.hasyame.marvelchampions.data.repository.CollectionRepository
+import com.hasyame.marvelchampions.data.repository.DeckFolderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.security.SecretStore
 import com.hasyame.marvelchampions.data.seed.SetNameOverrides
@@ -84,6 +85,7 @@ class DeckEditRaceTest {
                 autoSync = autoSync,
             ),
             autoSync = autoSync,
+            folders = DeckFolderRepository(database, autoSync, Dispatchers.Unconfined),
             json = json,
             ioDispatcher = Dispatchers.Unconfined,
         )

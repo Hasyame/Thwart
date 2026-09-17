@@ -4,6 +4,7 @@ import com.hasyame.marvelchampions.data.backup.BackupSettings
 import com.hasyame.marvelchampions.data.db.dao.SyncRecordDao
 import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
@@ -131,6 +132,10 @@ class SyncRecordCodec @Inject constructor(
             record(collection, it.id, it.updatedAt, it.deletedAt) { encode(it) }
         }
 
+        SyncCollection.DECK_FOLDERS -> dao.folder(id)?.let {
+            record(collection, it.id, it.updatedAt, it.deletedAt) { encode(it) }
+        }
+
         // The one collection whose body is not its row: the contract nests
         // the evidence and the context, and the web keeps and pushes back
         // whatever keys it is sent, so the row's own columns stay here.
@@ -185,6 +190,10 @@ class SyncRecordCodec @Inject constructor(
         }
 
         SyncCollection.RANDOMIZER_HISTORY -> dao.draws().map {
+            record(collection, it.id, it.updatedAt, it.deletedAt) { encode(it) }
+        }
+
+        SyncCollection.DECK_FOLDERS -> dao.folders().map {
             record(collection, it.id, it.updatedAt, it.deletedAt) { encode(it) }
         }
 
@@ -371,6 +380,19 @@ class SyncRecordCodec @Inject constructor(
                         deletedAt = deletedAt,
                     ),
                 )
+            }
+
+            SyncCollection.DECK_FOLDERS -> {
+                val local = dao.folder(incoming.id)
+                val remote = incoming.body?.let { decode<DeckFolderEntity>(it) }
+                    ?: local?.copy(deletedAt = deletedAt)
+                    ?: return ApplyResult.Unknown
+                val stamped = remote.copy(
+                    id = incoming.id,
+                    updatedAt = incoming.updatedAt.toEpochMillis(),
+                    deletedAt = deletedAt,
+                )
+                dao.putFolder(SyncMerge.folder(stamped, local))
             }
 
             SyncCollection.RATINGS -> {

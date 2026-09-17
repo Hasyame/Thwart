@@ -1,0 +1,27 @@
+Un nouveau visage pour les decks, les campagnes et l'accueil, et un draft.
+
+La page d'accueil vient en premier dans la barre : ce que cette version
+change, un menu des choses les plus faites, et les liens vers Patreon,
+l'application web et le code source. Les règles restent dans la barre ;
+les barres du haut sont sombres et centrées.
+
+Les decks sont une étagère de tuiles avec l'illustration du héros, rangées
+dans des dossiers synchronisés avec le web, avec une recherche par nom de
+deck, par héros ou par carte contenue. La page du deck a trois onglets :
+les cartes et la réserve où en ajouter, avec un compteur sur chacune ; la
+répartition ; et les informations, où les problèmes sont expliqués, les
+extensions utilisées listées avec ce qui manque à votre collection, et où
+vivent vos notes. Une carte que l'identité ne peut pas jouer est signalée
+comme sans synergie.
+
+Le draft, depuis la page Jouer : chaque joueur prend un héros et des
+aspects, puis la table pioche ses cartes cinq par cinq dans ce que la
+collection contient jusqu'à ce que chaque deck soit plein. Touchez une
+carte pour la prendre, restez appuyé pour la lire.
+
+Les campagnes sont aussi une étagère : en cours, terminées, et les
+chiffres, avec l'illustration du méchant final, le statut et le résultat
+de chaque partie dans l'ordre joué.
+
+Les cartes se lisent dans la langue du téléphone tant qu'aucune n'est
+choisie dans les réglages.
