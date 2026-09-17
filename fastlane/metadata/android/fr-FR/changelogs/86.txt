@@ -1,0 +1,11 @@
+L'historique de vos parties, depuis la page d'accueil.
+
+Toutes les parties jouées, en tuiles avec le visage du méchant, le
+résultat, les héros et la date. Ouvrez-en une pour tout retrouver : la
+table, la mise en place, le temps, les notes et les photos, avec les
+boutons pour rejouer la même table, l'envoyer à BoardGameGeek ou
+l'oublier. Peur de Rien montre l'illustration de sa boîte, sur la
+campagne et dans l'historique.
+
+Les stats passent de la barre du bas à une tuile de l'accueil, à côté de
+l'historique.

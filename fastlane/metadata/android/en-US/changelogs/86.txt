@@ -1,0 +1,11 @@
+The history of your games, from the home page.
+
+Every game you have played, as a shelf of tiles with the villain's face,
+the result, the heroes and the day. Open one for the whole record: the
+table, the setup, the time, the notes and the photographs, with the
+buttons to play the same table again, send it to BoardGameGeek, or
+forget it. Fear No Evil shows its box art, on the campaign and in the
+history.
+
+Stats moves from the bottom bar to a tile on the home page, beside
+History.
