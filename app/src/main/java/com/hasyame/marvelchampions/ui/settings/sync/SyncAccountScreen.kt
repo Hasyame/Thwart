@@ -66,6 +66,8 @@ private enum class AccountForm { SIGN_IN, CREATE, RECOVER }
 @Composable
 fun SyncAccountScreen(
     onBack: () -> Unit,
+    /** True to open on the "create an account" form rather than sign-in. */
+    startOnCreate: Boolean = false,
     viewModel: SyncAccountViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -112,7 +114,7 @@ fun SyncAccountScreen(
             if (state.signedIn) {
                 SignedIn(state, viewModel)
             } else {
-                SignedOut(state, viewModel)
+                SignedOut(state, viewModel, startOnCreate)
             }
         }
     }
@@ -138,8 +140,8 @@ fun SyncAccountScreen(
 // --- signed out --------------------------------------------------------------
 
 @Composable
-private fun SignedOut(state: SyncAccountUiState, viewModel: SyncAccountViewModel) {
-    var form by remember { mutableStateOf(AccountForm.SIGN_IN) }
+private fun SignedOut(state: SyncAccountUiState, viewModel: SyncAccountViewModel, startOnCreate: Boolean) {
+    var form by remember { mutableStateOf(if (startOnCreate) AccountForm.CREATE else AccountForm.SIGN_IN) }
     var identifier by remember { mutableStateOf("") }
     var handle by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

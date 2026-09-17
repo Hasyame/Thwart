@@ -121,7 +121,11 @@ data object CollectionRoute
  * answered, none of which belong in a list of switches.
  */
 @Serializable
-data object SyncAccountRoute
+/**
+ * The account page. [create] opens it on the "create an account" form,
+ * for the home page's button; otherwise it opens on sign-in.
+ */
+data class SyncAccountRoute(val create: Boolean = false)
 
 /** Who made this, why, and what it is not. */
 @Serializable

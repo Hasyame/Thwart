@@ -13,10 +13,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +57,8 @@ import com.hasyame.marvelchampions.ui.navigation.NavigationIcons
 @Composable
 fun HomeScreen(
     onSettings: () -> Unit,
+    /** Opens the account page; true asks for the "create an account" form. */
+    onAccount: (create: Boolean) -> Unit,
     onRules: () -> Unit,
     onCollection: () -> Unit,
     onRandomGame: () -> Unit,
@@ -124,6 +129,12 @@ fun HomeScreen(
                 }
             }
 
+            // The account, between the news and the menu: what signing in is
+            // for while nobody is, and a greeting by name once somebody is.
+            // A tap on either opens the account page, where the sync switch
+            // lives.
+            AccountPanel(handle = state.accountHandle, onAccount = onAccount)
+
             // The menu: two by two, then the draw across the width.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 MenuTile(stringResource(R.string.destination_rules), NavigationIcons.Book, onRules, Modifier.weight(1f))
@@ -168,6 +179,60 @@ fun HomeScreen(
                     onClick = { browser.openUri(GITHUB_URL) },
                 )
             }
+        }
+    }
+}
+
+/**
+ * Signed out: what an account does, and the two ways to get one. Signed
+ * in: the pseudonym, as a greeting, since the rest is on the account page.
+ */
+@Composable
+private fun AccountPanel(handle: String?, onAccount: (create: Boolean) -> Unit) {
+    if (handle != null) {
+        Surface(
+            onClick = { onAccount(false) },
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Filled.AccountCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.width(16.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        stringResource(R.string.home_ready_to_play, handle),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        stringResource(R.string.sync_title),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+        return
+    }
+    Panel {
+        Text(
+            stringResource(R.string.home_account_title),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Text(
+            stringResource(R.string.home_account_note),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
+        )
+        Button(onClick = { onAccount(false) }, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.home_sign_in))
+        }
+        TextButton(onClick = { onAccount(true) }, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.sync_create))
         }
     }
 }

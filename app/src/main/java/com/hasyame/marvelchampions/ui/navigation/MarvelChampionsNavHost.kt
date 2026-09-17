@@ -46,6 +46,9 @@ fun MarvelChampionsNavHost(
             composable<HomeRoute> {
                 HomeScreen(
                     onSettings = { navController.navigate(SettingsRoute) },
+                    // The account page lives in the settings graph; Home stays
+                    // lit while it is open, as it does for Settings itself.
+                    onAccount = { create -> navController.navigate(SyncAccountRoute(create)) },
                     onRules = { navController.navigate(RulesRoute) },
                     onCollection = { navController.navigate(CollectionRoute) },
                     onRandomGame = { navController.navigate(RandomizerRoute) },
@@ -263,15 +266,18 @@ fun MarvelChampionsNavHost(
             composable<SettingsRoute> {
                 SettingsScreen(
                     onOpenCollection = { navController.navigate(CollectionRoute) },
-                    onOpenSyncAccount = { navController.navigate(SyncAccountRoute) },
+                    onOpenSyncAccount = { navController.navigate(SyncAccountRoute()) },
                     onOpenAbout = { navController.navigate(AboutRoute) },
                 )
             }
             composable<CollectionRoute> {
                 CollectionScreen(onBack = { navController.popBackStack() })
             }
-            composable<SyncAccountRoute> {
-                SyncAccountScreen(onBack = { navController.popBackStack() })
+            composable<SyncAccountRoute> { entry ->
+                SyncAccountScreen(
+                    onBack = { navController.popBackStack() },
+                    startOnCreate = entry.toRoute<SyncAccountRoute>().create,
+                )
             }
             composable<AboutRoute> {
                 AboutScreen(onBack = { navController.popBackStack() })

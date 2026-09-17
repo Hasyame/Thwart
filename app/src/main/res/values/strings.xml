@@ -12,6 +12,10 @@
     <string name="rules_english_only">English only for now.</string>
     <string name="rules_credit">Rules reference compiled by %1$s, released under %2$s. Unofficial, and not endorsed by Fantasy Flight Games.</string>
     <string name="destination_home">Home</string>
+    <string name="home_account_title">Sign in to Thwart</string>
+    <string name="home_account_note">An account keeps your decks, campaigns and games saved as you play, in step between your devices, and shared with thwart.app in the browser. Free, and optional: everything works without one.</string>
+    <string name="home_sign_in">Sign in</string>
+    <string name="home_ready_to_play">Ready to play, %1$s</string>
     <string name="home_whats_new">What changed</string>
     <string name="home_all_releases">Every release</string>
     <string name="home_dismiss_notes">Put these notes away</string>
