@@ -35,7 +35,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
@@ -277,7 +276,7 @@ fun DeckScreen(
                         selected = tab == 2,
                         onClick = { tab = 2 },
                         icon = {
-                            BadgedBox(badge = { if (problems > 0) Badge { Text(problems.toString()) } }) {
+                            BadgedBox(badge = { if (problems > 0) WarningBadge(problems) }) {
                                 Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.decks_tab_info))
                             }
                         },

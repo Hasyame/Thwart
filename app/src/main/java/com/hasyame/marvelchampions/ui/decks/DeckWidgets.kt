@@ -1,6 +1,10 @@
 package com.hasyame.marvelchampions.ui.decks
 
 import androidx.compose.foundation.background
+import com.hasyame.marvelchampions.core.designsystem.theme.PanelInk
+import com.hasyame.marvelchampions.core.designsystem.theme.ArcGold
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -130,6 +135,39 @@ fun Pill(text: String, modifier: Modifier = Modifier, tint: Color? = null) {
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(14.dp))
             .padding(horizontal = 10.dp, vertical = 5.dp),
     )
+}
+
+/**
+ * A warning sign with a number in it: the count of problems a deck has,
+ * on the tab that explains them. A triangle, yellow, as a road sign is.
+ */
+@Composable
+fun WarningBadge(count: Int, modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            // Up and out, so the sign hangs off the icon's corner rather than over it.
+            .offset(x = 9.dp, y = (-3).dp)
+            .size(22.dp)
+            .drawBehind {
+                val path = Path().apply {
+                    moveTo(size.width / 2f, 0f)
+                    lineTo(size.width, size.height)
+                    lineTo(0f, size.height)
+                    close()
+                }
+                drawPath(path, ArcGold)
+            },
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        Text(
+            count.toString(),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Bold,
+            color = PanelInk,
+            // The triangle is widest at its base: the number sits low.
+            modifier = Modifier.padding(bottom = 1.dp),
+        )
+    }
 }
 
 /** An aspect, with its colour as a dot before the word. */
