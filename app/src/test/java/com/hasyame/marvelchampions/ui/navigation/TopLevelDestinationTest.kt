@@ -10,14 +10,17 @@ class TopLevelDestinationTest {
     fun `destinations are in the order specified for the navigation bar`() {
         assertEquals(
             listOf(
+                // Home first: the notes, the menu, and the gear that leads to
+                // Settings, which gave up its tab for it.
+                TopLevelDestination.HOME,
                 TopLevelDestination.CARDS,
                 TopLevelDestination.DECKS,
                 // Play holds the random draw, the player's own setup and
                 // campaigns. Campaign had a tab of its own, which made six.
                 TopLevelDestination.PLAY,
+                // Looked up mid-game, so it stays one tap away.
                 TopLevelDestination.RULES,
                 TopLevelDestination.STATS,
-                TopLevelDestination.SETTINGS,
             ),
             TopLevelDestination.entries,
         )

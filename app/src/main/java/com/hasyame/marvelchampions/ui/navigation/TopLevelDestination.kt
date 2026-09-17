@@ -9,9 +9,9 @@ import kotlin.reflect.KClass
 
 /**
  * The five top level destinations, in the order they appear in the navigation bar
- * (or the navigation rail on a wide screen). Rules and Settings left the bar
- * when Home arrived: both are one tap from it, and five is what a phone shows
- * without truncating labels.
+ * (or the navigation rail on a wide screen). Settings left the bar when Home
+ * arrived, one tap from it behind the gear; the rules stayed, because a rule
+ * is looked up mid-game and has to be one tap away.
  *
  * Each one owns its own back stack: switching tabs saves the outgoing stack and
  * restores the incoming one, so leaving Cards for Settings and coming back lands
@@ -29,9 +29,9 @@ enum class TopLevelDestination(
     val icon: ImageVector,
     @param:StringRes val labelRes: Int,
     /**
-     * Other graphs that count as being on this tab. Home leads to the rules
-     * and the settings, which keep their own graphs; while one of those is
-     * open the Home tab stays lit, since that is where the person came from.
+     * Other graphs that count as being on this tab. Home leads to the
+     * settings, which keep their own graph; while they are open the Home tab
+     * stays lit, since that is where the person came from.
      */
     val alsoGraphs: List<KClass<*>> = emptyList(),
 ) {
@@ -40,7 +40,7 @@ enum class TopLevelDestination(
         graphRoute = HomeGraph::class,
         icon = Icons.Filled.Home,
         labelRes = R.string.destination_home,
-        alsoGraphs = listOf(RulesGraph::class, SettingsGraph::class),
+        alsoGraphs = listOf(SettingsGraph::class),
     ),
     CARDS(
         route = CardsRoute::class,
@@ -59,6 +59,12 @@ enum class TopLevelDestination(
         graphRoute = PlayGraph::class,
         icon = NavigationIcons.Fist,
         labelRes = R.string.destination_play,
+    ),
+    RULES(
+        route = RulesRoute::class,
+        graphRoute = RulesGraph::class,
+        icon = NavigationIcons.Book,
+        labelRes = R.string.destination_rules,
     ),
     STATS(
         route = PlaysRoute::class,
