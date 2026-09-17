@@ -205,7 +205,6 @@
 
     <!-- Deck builder -->
     <string name="decks_new">New deck</string>
-    <string name="decks_build_from_scratch">Or build one from scratch</string>
     <string name="decks_name">Deck name</string>
     <string name="decks_rename">Rename this deck</string>
     <string name="decks_delete_title">Delete this deck?</string>
@@ -243,6 +242,23 @@
     <string name="decks_folder_delete_message">Delete the folder “%1$s”? Its decks stay on the shelf.</string>
     <string name="decks_folder_all">All</string>
     <string name="decks_folder_empty">Nothing in this folder yet. Move a deck here with the folder button on its tile.</string>
+    <string name="decks_tab_decks">Decks</string>
+    <string name="decks_tab_explorer">Explorer</string>
+    <string name="decks_explorer_soon">Decks to browse will come here: the ready-made ones, and other people’s. Not yet.</string>
+    <string name="decks_search_decks">Search your decks…</string>
+    <string name="decks_new_deck">New deck</string>
+    <string name="decks_import_deck">Import a deck</string>
+    <string name="decks_move_to_folder">Move to folder</string>
+    <string name="decks_no_folder_yet">No folder yet. Make one with the + on the shelf.</string>
+    <string name="decks_sort_modified">Last edited</string>
+    <string name="decks_sort_created">Added</string>
+    <string name="decks_sort_aspect">Aspect</string>
+    <string name="decks_sort_asc">ASC</string>
+    <string name="decks_sort_desc">DESC</string>
+    <string name="decks_search_scope">Search in</string>
+    <string name="decks_scope_decks">Decks</string>
+    <string name="decks_scope_heroes">Heroes</string>
+    <string name="decks_scope_cards">Cards</string>
     <string name="decks_folder_none">No folder</string>
     <plurals name="decks_count">
         <item quantity="one">%1$d deck</item>

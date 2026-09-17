@@ -12,6 +12,7 @@ import com.hasyame.marvelchampions.data.repository.DeckFolderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.deeplink.MarvelCdbDeckUrl
+import com.hasyame.marvelchampions.domain.search.SearchNormalizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,6 +39,12 @@ data class DecksUiState(
     val importError: DeckImportError? = null,
     /** Set when an import succeeds, so the UI can open the new deck. */
     val importedDeckId: String? = null,
+    /**
+     * The decks holding a card the search names, or null while the search
+     * is not by card. Worked out here because it takes the card database:
+     * the word finds cards, and the cards find the decks they are in.
+     */
+    val cardSearchHits: Set<String>? = null,
 )
 
 @HiltViewModel
@@ -52,6 +59,7 @@ class DecksViewModel @Inject constructor(
     private val importing = MutableStateFlow(false)
     private val importError = MutableStateFlow<DeckImportError?>(null)
     private val importedDeckId = MutableStateFlow<String?>(null)
+    private val cardHits = MutableStateFlow<Set<String>?>(null)
 
     val uiState: StateFlow<DecksUiState> = combine(
         repository.observeDecks(),
@@ -59,6 +67,7 @@ class DecksViewModel @Inject constructor(
         importing,
         importError,
         importedDeckId,
+        cardHits,
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         DecksUiState(
@@ -67,6 +76,7 @@ class DecksViewModel @Inject constructor(
             isImporting = values[2] as Boolean,
             importError = values[3] as DeckImportError?,
             importedDeckId = values[4] as String?,
+            cardSearchHits = values[5] as Set<String>?,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -90,6 +100,31 @@ class DecksViewModel @Inject constructor(
                 builderRepository.validate(rules, DeckRepository.parseAspects(deck.aspects), slots, locale).isLegal
             }
             DeckTile(deck = deck, heroImageSrc = hero?.imageSrc, cardCount = slots.values.sum(), legal = legal)
+        }
+    }
+
+    /**
+     * Searches the decks by the cards in them: the word is matched against
+     * card names in the card language, and a deck holding any of those cards
+     * is a hit. Blank clears the search.
+     */
+    fun searchByCard(query: String) {
+        if (query.isBlank()) {
+            cardHits.value = null
+            return
+        }
+        viewModelScope.launch {
+            val locale = preferences.currentCardLocale()
+            val match = SearchNormalizer.toPrefixMatchQuery(query) ?: run {
+                cardHits.value = null
+                return@launch
+            }
+            val codes = cardDao.search(match, locale.code, limit = CARD_SEARCH_LIMIT).map { it.code }.toSet()
+            val decks = repository.getDecks()
+            cardHits.value = decks
+                .filter { deck -> DeckRepository.parseSlots(deck.slots).keys.any { it in codes } }
+                .map { it.id }
+                .toSet()
         }
     }
 
@@ -153,5 +188,6 @@ class DecksViewModel @Inject constructor(
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
+        const val CARD_SEARCH_LIMIT = 500
     }
 }

@@ -3,9 +3,11 @@ package com.hasyame.marvelchampions.ui.decks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
 import com.hasyame.marvelchampions.data.repository.CardSearchRepository
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
+import com.hasyame.marvelchampions.data.repository.DeckFolderRepository
 import com.hasyame.marvelchampions.data.repository.DeckContents
 import com.hasyame.marvelchampions.data.repository.DeckImportError
 import com.hasyame.marvelchampions.data.repository.DeckImportResult
@@ -20,6 +22,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
@@ -44,6 +48,8 @@ data class DeckDetailUiState(
     val deleted: Boolean = false,
     /** The card language, named in the app's language, for the note at the foot. */
     val cardLanguage: String = "",
+    /** The shelf's folders, for the "move to folder" choice. */
+    val folders: List<DeckFolderEntity> = emptyList(),
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val error: DeckImportError? = null,
@@ -59,11 +65,23 @@ class DeckDetailViewModel @Inject constructor(
     private val campaignRepository: CampaignRepository,
     private val cardSearchRepository: CardSearchRepository,
     private val builderRepository: DeckBuilderRepository,
+    private val folderRepository: DeckFolderRepository,
     private val preferences: AppPreferences,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(DeckDetailUiState())
     val uiState: StateFlow<DeckDetailUiState> = state.asStateFlow()
+
+    init {
+        folderRepository.observeFolders()
+            .onEach { folders -> state.value = state.value.copy(folders = folders) }
+            .launchIn(viewModelScope)
+    }
+
+    fun moveToFolder(folderId: String?) {
+        val id = deckId ?: return
+        viewModelScope.launch { folderRepository.moveDeck(id, folderId) }
+    }
 
     private var deckId: String? = null
 
@@ -74,6 +92,7 @@ class DeckDetailViewModel @Inject constructor(
             val locale = preferences.currentCardLocale()
             val contents = repository.contents(id, locale)
             state.value = DeckDetailUiState(
+                folders = state.value.folders,
                 contents = contents,
                 statistics = contents.statistics(),
                 campaignCards = campaignCards(id, locale),
@@ -168,6 +187,7 @@ class DeckDetailViewModel @Inject constructor(
             val locale = preferences.currentCardLocale()
             val contents = repository.contents(id, locale)
             state.value = DeckDetailUiState(
+                folders = state.value.folders,
                 contents = contents,
                 statistics = contents.statistics(),
                 campaignCards = campaignCards(id, locale),

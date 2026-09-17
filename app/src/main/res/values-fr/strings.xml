@@ -212,7 +212,6 @@
 
     <!-- Deck builder -->
     <string name="decks_new">Nouveau deck</string>
-    <string name="decks_build_from_scratch">Ou construire un deck de zéro</string>
     <string name="decks_name">Nom du deck</string>
     <string name="decks_rename">Renommer ce deck</string>
     <string name="decks_delete_title">Supprimer ce deck ?</string>
@@ -252,6 +251,23 @@
     <string name="decks_folder_delete_message">Supprimer le dossier « %1$s » ? Ses decks restent sur l\'étagère.</string>
     <string name="decks_folder_all">Tous</string>
     <string name="decks_folder_empty">Rien dans ce dossier pour l\'instant. D\u00e9placez-y un deck avec le bouton de dossier de sa vignette.</string>
+    <string name="decks_tab_decks">Decks</string>
+    <string name="decks_tab_explorer">Explorer</string>
+    <string name="decks_explorer_soon">Des decks à parcourir viendront ici : les préconstruits, et ceux des autres. Pas encore.</string>
+    <string name="decks_search_decks">Rechercher dans vos decks…</string>
+    <string name="decks_new_deck">Nouveau deck</string>
+    <string name="decks_import_deck">Importer un deck</string>
+    <string name="decks_move_to_folder">Déplacer dans un dossier</string>
+    <string name="decks_no_folder_yet">Aucun dossier pour l\'instant. Créez-en un avec le + de l\'étagère.</string>
+    <string name="decks_sort_modified">Dernière modification</string>
+    <string name="decks_sort_created">Ajout</string>
+    <string name="decks_sort_aspect">Aspect</string>
+    <string name="decks_sort_asc">ASC</string>
+    <string name="decks_sort_desc">DESC</string>
+    <string name="decks_search_scope">Rechercher dans</string>
+    <string name="decks_scope_decks">Decks</string>
+    <string name="decks_scope_heroes">Héros</string>
+    <string name="decks_scope_cards">Cartes</string>
     <string name="decks_folder_none">Sans dossier</string>
     <plurals name="decks_count">
         <item quantity="one">%1$d deck</item>

@@ -55,6 +55,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
+import com.hasyame.marvelchampions.data.repository.DeckFolderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckText
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckTextCard
@@ -74,6 +75,7 @@ fun DeckDetailScreen(
     var noShareApp by remember { mutableStateOf(false) }
     var confirmRefresh by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
+    var filing by remember { mutableStateOf(false) }
     var menuOpen by remember { mutableStateOf(false) }
     // A word to find a card in this deck, an order, and names or pictures.
     // Page state, not remembered: a question about this deck, not a preference.
@@ -85,6 +87,18 @@ fun DeckDetailScreen(
         if (state.deleted) {
             onBack()
         }
+    }
+
+    if (filing) {
+        FolderChoiceDialog(
+            folders = state.folders,
+            current = DeckFolderRepository.folderOf(state.folders, deckId)?.id,
+            onDismiss = { filing = false },
+            onChoose = {
+                viewModel.moveToFolder(it)
+                filing = false
+            },
+        )
     }
 
     if (confirmDelete) {
@@ -263,6 +277,13 @@ fun DeckDetailScreen(
                             onClick = {
                                 menuOpen = false
                                 renaming = deck?.name.orEmpty()
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.decks_move_to_folder)) },
+                            onClick = {
+                                menuOpen = false
+                                filing = true
                             },
                         )
                         DropdownMenuItem(
