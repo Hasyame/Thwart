@@ -122,6 +122,13 @@ class AppPreferences @Inject constructor(
 
     suspend fun isDeckCollectionOnly(): Boolean = deckCollectionOnly.first()
 
+    /** The synergy rule the stored conditions were derived with, or 0. See CardDataRepository. */
+    suspend fun synergyRuleVersion(): Int = context.dataStore.data.map { it[KEY_SYNERGY_RULE] ?: 0 }.first()
+
+    suspend fun setSynergyRuleVersion(version: Int) {
+        context.dataStore.edit { it[KEY_SYNERGY_RULE] = version }
+    }
+
     /** The version whose notes the home page was told to put away, or 0. */
     val dismissedNotesVersion: Flow<Int> = context.dataStore.data.map { it[KEY_DISMISSED_NOTES] ?: 0 }
 
@@ -240,6 +247,7 @@ class AppPreferences @Inject constructor(
         private val KEY_TRACK_ENCOUNTER = booleanPreferencesKey("track_encounter")
         private val KEY_DECK_COLLECTION_ONLY = booleanPreferencesKey("deck_collection_only")
         private val KEY_DISMISSED_NOTES = intPreferencesKey("dismissed_notes_version")
+        private val KEY_SYNERGY_RULE = intPreferencesKey("synergy_rule_version")
         private val KEY_DISMISSED_PACKS = stringSetPreferencesKey("dismissed_packs")
     }
 }

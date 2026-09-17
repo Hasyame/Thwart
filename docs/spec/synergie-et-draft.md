@@ -161,12 +161,17 @@ chaque joueur à son tour)
 
 ## Décisions prises pendant l'implémentation
 
-Arrêtées avec l'auteur le 2026-09-16, à appliquer à l'identique sur le Web.
+Arrêtées avec l'auteur le 2026-09-16, alignées le 2026-09-17 sur le contrat
+du Web : `web/scripts/lib/synergy.mjs` est la référence (`traitKey`,
+`traitKeys`, `synergyOf`, `compatible`), portée fonction pour fonction sur
+Android, et `web/scripts/fixtures/synergy.json` la fixture que les deux
+suites de tests lisent sans la modifier.
 
-* **Clés de traits.** Anglais, minuscules, point final retiré, tirets et points
-  internes conservés : `guardian`, `x-men`, `s.h.i.e.l.d`, `deadpool corps`.
-  Les traits imprimés se découpent sur « point espace » et non sur le point
-  seul, sinon « S.H.I.E.L.D. » éclate en lettres.
+* **Clés de traits.** Anglais, minuscules, tous les points retirés, tirets
+  conservés, espaces réduits : `guardian`, `x-men`, `shield`, `deadpool
+  corps`. Les traits imprimés se découpent sur « point puis blanc » et sur le
+  point final, jamais sur le point seul, sinon « S.H.I.E.L.D. » éclate en
+  lettres. Lus dans `real_traits`, pas dans les traits traduits.
 * **Faces d'une identité.** Toutes les cartes `hero` et `alter_ego` du
   `card_set_code` de l'identité (Ant-Man et Wasp ont deux formes héros, Angel
   et Archangel, Ironheart trois versions).
@@ -175,9 +180,15 @@ Arrêtées avec l'auteur le 2026-09-16, à appliquer à l'identique sur le Web.
   * « Play only if your identity has the [[X]] trait » et « … the [[X]] or
     [[Y]] trait » : compatible si une face quelconque porte X (ou Y).
   * « Play only if you have the [[X]] trait » : même sens, identité.
-  * « Play only if your hero has the [[X]] trait » : seules les faces `hero`
-    comptent (Psi-Bow Attack, Psi-Flail Strike, Telekinesis). Une identité dont
-    seul l'alter ego a le trait est incompatible.
+  * Plusieurs traits enchaînés par « or » ou « and » : n'importe lequel
+    suffit (`anyOfTraits`).
+  * « Play only if your hero has the [[X]] trait » (Psi-Bow Attack, Psi-Flail
+    Strike, Telekinesis) : **mis de côté pour l'instant**, dans la liste des
+    28 cartes non reconnues qui est le contrat actuel. La décision de
+    l'auteur reste que seules les faces `hero` comptent ; l'encoder demande
+    un champ de plus dans `synergyOf` et la fixture, à ajouter des deux côtés
+    en même temps. Android garde le modèle prêt (`heroOnly`, forme stockée
+    `hero:|psionic|`) derrière un interrupteur éteint.
 * **Hors périmètre pour l'instant**, listées par le rapport et sans
   avertissement : contrôle d'un personnage ou d'une carte à trait (Spy,
   Web-Warrior, Martial Artist), forme héros (Giant, Tiny, masses de Vision,

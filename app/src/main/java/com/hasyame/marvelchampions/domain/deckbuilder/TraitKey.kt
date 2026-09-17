@@ -1,33 +1,37 @@
 package com.hasyame.marvelchampions.domain.deckbuilder
 
 /**
- * A trait as a key: the English word, lowercased, without its printed full
- * stop. `guardian`, `x-men`, `s.h.i.e.l.d`, `deadpool corps`.
+ * A trait as a language-independent key: `guardian`, `x-men`, `shield`,
+ * `deadpool corps`.
  *
- * The same key on both sides of the sync, whatever language the cards are
- * read in, so a French card and an English identity agree. Display goes
- * through the translated `traits` string, never through this.
+ * Ported from the web client's `scripts/lib/synergy.mjs`, which is the
+ * contract between the two: `traitKey` and `traitKeys` there, `normalize`
+ * and `split` here, and the shared fixture checks that they agree. The same
+ * function is applied to a card's traits and to a condition's, which is what
+ * makes them comparable; display goes through the translated `traits`
+ * string on the card, never through this.
  */
 object TraitKey {
 
-    /** `[[X-MEN]]` and `X-Men.` both become `x-men`. */
+    /**
+     * Lowercase, the dots taken out (`S.H.I.E.L.D.` and `[[S.H.I.E.L.D.]]`
+     * are both `shield`), hyphens kept (`x-men`), spaces collapsed.
+     */
     fun normalize(trait: String): String =
-        trait.trim().trimEnd('.').trim().lowercase()
+        trait.lowercase().replace(".", "").replace(WHITESPACE, " ").trim()
 
     /**
-     * The traits printed on a card, as keys.
-     *
-     * Traits are printed as `Avenger. Gamma.`: split on the full stop *and* the
-     * space, not the full stop alone, because `S.H.I.E.L.D.` is one trait with
-     * five of them. Splitting on the dot alone is what stopped Maria Hill's
-     * deck_options allowance ever matching a S.H.I.E.L.D. support.
+     * A MarvelCDB traits string as keys: "Avenger. S.H.I.E.L.D. Spy." gives
+     * `avenger`, `shield`, `spy`. Traits are separated by a dot and a space
+     * and the string ends with a dot; the dots inside S.H.I.E.L.D. are
+     * neither, which is why the split is not on every dot.
      */
-    fun split(printed: String?): List<String> {
-        if (printed.isNullOrBlank()) {
-            return emptyList()
-        }
-        return printed.split(". ")
-            .map { normalize(it) }
+    fun split(printed: String?): List<String> =
+        printed.orEmpty()
+            .split(TRAIT_SEPARATOR)
+            .map(::normalize)
             .filter { it.isNotEmpty() }
-    }
+
+    private val WHITESPACE = Regex("""\s+""")
+    private val TRAIT_SEPARATOR = Regex("""\.\s+|\.$""")
 }

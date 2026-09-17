@@ -5,6 +5,7 @@ import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
 import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
 import com.hasyame.marvelchampions.data.db.deriveSynergy
+import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.data.db.toEntity
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls
@@ -37,6 +38,7 @@ class CardDataRepository @Inject constructor(
     private val api: MarvelCdbApi,
     private val database: MarvelChampionsDatabase,
     private val seed: CardSeedSource,
+    private val preferences: AppPreferences,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
@@ -195,17 +197,24 @@ class CardDataRepository @Inject constructor(
     }
 
     /**
-     * Fills `synergyTraits` on rows written before the column existed.
+     * Fills `synergyTraits` on rows written before the column existed, or
+     * before the rule last changed.
      *
      * The condition is derived when a row is stored, so this only ever has
-     * work to do once, after the update that added the column: about nine
-     * thousand rows, one read and one small update each, and nothing at all
-     * on every launch after. Rows without a condition are stamped with the
-     * empty string rather than left null, which is what makes the second run
-     * find nothing.
+     * work to do once, after the update that added the column or changed
+     * the rule: about nine thousand rows, one read and one small update
+     * each, and nothing at all on every launch after. Rows without a
+     * condition are stamped with the empty string rather than left null,
+     * which is what makes the second run find nothing. A rule change
+     * (version 2: dots out of the keys, the hero-face form set aside) blanks
+     * every row first, since a stored key in the old form would never match.
      */
     suspend fun deriveSynergy(): Unit = withContext(ioDispatcher) {
         val dao = database.cardDao()
+        if (preferences.synergyRuleVersion() < SYNERGY_RULE_VERSION) {
+            dao.clearSynergy()
+            preferences.setSynergyRuleVersion(SYNERGY_RULE_VERSION)
+        }
         val pending = dao.getUnderivedSynergy()
         if (pending.isEmpty()) {
             return@withContext
@@ -224,5 +233,8 @@ class CardDataRepository @Inject constructor(
     private companion object {
         const val UNKNOWN_PACK_TYPE = "UNKNOWN"
         const val UNCURATED_WAVE = 0
+
+        /** Bumped when the synergy rule changes, so every stored condition is derived again. */
+        const val SYNERGY_RULE_VERSION = 2
     }
 }
