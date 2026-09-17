@@ -79,6 +79,7 @@ class BackupRepository @Inject constructor(
                 randomizerHistory = database.randomizerHistoryDao().getHistory(),
                 favouriteCards = database.favouriteDao().getAll(),
                 ratings = database.ratingDao().getAll().map { RatingWire.of(it) },
+                deckFolders = database.deckFolderDao().getFolders(),
                 photos = photoFiles.map { it.name },
                 settings = preferences.snapshot(),
             )
@@ -171,6 +172,7 @@ class BackupRepository @Inject constructor(
                 database.randomizerHistoryDao().clear()
                 database.favouriteDao().deleteAll()
                 database.ratingDao().deleteAll()
+                database.deckFolderDao().deleteAll()
                 // The revisions described rows that are no longer here, and
                 // every restored row is new to a server until it is pushed.
                 database.syncStateDao().clear()
@@ -187,6 +189,7 @@ class BackupRepository @Inject constructor(
                 database.randomizerHistoryDao().insertAll(backup.randomizerHistory)
                 database.favouriteDao().addAll(backup.favouriteCards)
                 database.ratingDao().putAll(backup.ratings.map { it.toEntity() })
+                database.deckFolderDao().upsertAll(backup.deckFolders)
             }
             // Outside the transaction because the settings are a DataStore
             // rather than a table, so they cannot be rolled back with it. After

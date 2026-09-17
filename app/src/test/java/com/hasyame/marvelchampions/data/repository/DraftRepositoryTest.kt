@@ -9,6 +9,7 @@ import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.dto.CardDto
 import com.hasyame.marvelchampions.data.marvelcdb.dto.PackDto
+import com.hasyame.marvelchampions.data.repository.DeckFolderRepository
 import com.hasyame.marvelchampions.data.security.SecretStore
 import com.hasyame.marvelchampions.data.seed.SetNameOverrides
 import com.hasyame.marvelchampions.data.sync.AutoSync
@@ -86,6 +87,7 @@ class DraftRepositoryTest {
             cardDao = database.cardDao(),
             collectionRepository = collection,
             autoSync = autoSync,
+            folders = DeckFolderRepository(database, autoSync, Dispatchers.Unconfined),
             json = json,
             ioDispatcher = Dispatchers.Unconfined,
         )

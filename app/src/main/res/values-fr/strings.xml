@@ -245,6 +245,19 @@
     <string name="decks_synergy_issue">Problème de synergie : la carte %1$s n\'a pas de synergie avec l\'identité</string>
     <string name="decks_synergy_and_others">%1$s (et %2$s)</string>
     <string name="decks_synergy_hide">Masquer les cartes sans synergie avec l\'identité</string>
+    <string name="decks_folder_name">Nom du dossier</string>
+    <string name="decks_folder_new">Nouveau dossier</string>
+    <string name="decks_folder_rename">Renommer le dossier</string>
+    <string name="decks_folder_delete">Supprimer le dossier</string>
+    <string name="decks_folder_delete_message">Supprimer le dossier « %1$s » ? Ses decks restent sur l\'étagère.</string>
+    <string name="decks_folder_all">Tous</string>
+    <string name="decks_folder_empty">Rien dans ce dossier pour l\'instant. D\u00e9placez-y un deck avec le bouton de dossier de sa vignette.</string>
+    <string name="decks_folder_none">Sans dossier</string>
+    <plurals name="decks_count">
+        <item quantity="one">%1$d deck</item>
+        <item quantity="many">%1$d de decks</item>
+        <item quantity="other">%1$d decks</item>
+    </plurals>
     <string name="decks_legal_short">légal</string>
     <string name="decks_illegal_short">non légal</string>
     <string name="decks_hand_size">Taille de main</string>

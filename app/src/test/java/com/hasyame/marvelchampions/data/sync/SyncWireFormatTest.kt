@@ -109,6 +109,7 @@ class SyncWireFormatTest {
             "randomizer_history",
             "favourite_cards",
             "settings",
+            "deck_folders",
             "ratings",
         )
 

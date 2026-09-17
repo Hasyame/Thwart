@@ -236,6 +236,18 @@
     <string name="decks_synergy_issue">Synergy issue: %1$s has no synergy with this identity</string>
     <string name="decks_synergy_and_others">%1$s (and %2$s)</string>
     <string name="decks_synergy_hide">Hide cards without synergy with this identity</string>
+    <string name="decks_folder_name">Folder name</string>
+    <string name="decks_folder_new">New folder</string>
+    <string name="decks_folder_rename">Rename folder</string>
+    <string name="decks_folder_delete">Delete folder</string>
+    <string name="decks_folder_delete_message">Delete the folder “%1$s”? Its decks stay on the shelf.</string>
+    <string name="decks_folder_all">All</string>
+    <string name="decks_folder_empty">Nothing in this folder yet. Move a deck here with the folder button on its tile.</string>
+    <string name="decks_folder_none">No folder</string>
+    <plurals name="decks_count">
+        <item quantity="one">%1$d deck</item>
+        <item quantity="other">%1$d decks</item>
+    </plurals>
     <string name="decks_legal_short">legal</string>
     <string name="decks_illegal_short">not legal</string>
     <string name="decks_hand_size">Hand size</string>

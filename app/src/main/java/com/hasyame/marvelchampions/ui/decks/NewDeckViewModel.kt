@@ -69,17 +69,31 @@ class NewDeckViewModel @Inject constructor(
     val uiState: StateFlow<NewDeckUiState> = state.asStateFlow()
 
     init {
+        viewModelScope.launch { loadHeroes() }
+    }
+
+    /**
+     * Whether only the collection's heroes are offered. The same setting the
+     * editor's tick reads; this is the one place it is shown as a switch,
+     * since building a deck is where it makes a difference.
+     */
+    fun setCollectionOnly(enabled: Boolean) {
         viewModelScope.launch {
-            val locale = preferences.currentCardLocale()
-            // Loaded into a local before the state is read. Written inline the
-            // state is read before the load suspends, so an aspect ticked while
-            // the sixty-five heroes were being fetched was quietly discarded.
-            val collectionOnly = preferences.isDeckCollectionOnly()
-            val heroes = builderRepository.heroes(locale)
-                .filter { !collectionOnly || it.owned }
-            state.update {
-                it.copy(heroes = heroes, collectionOnly = collectionOnly, isLoading = false)
-            }
+            preferences.setDeckCollectionOnly(enabled)
+            loadHeroes()
+        }
+    }
+
+    private suspend fun loadHeroes() {
+        val locale = preferences.currentCardLocale()
+        // Loaded into a local before the state is read. Written inline the
+        // state is read before the load suspends, so an aspect ticked while
+        // the sixty-five heroes were being fetched was quietly discarded.
+        val collectionOnly = preferences.isDeckCollectionOnly()
+        val heroes = builderRepository.heroes(locale)
+            .filter { !collectionOnly || it.owned }
+        state.update {
+            it.copy(heroes = heroes, collectionOnly = collectionOnly, isLoading = false)
         }
     }
 

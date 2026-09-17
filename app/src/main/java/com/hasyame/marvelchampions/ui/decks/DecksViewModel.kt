@@ -6,7 +6,9 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.repository.DeckImportError
 import com.hasyame.marvelchampions.data.repository.DeckImportResult
 import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
+import com.hasyame.marvelchampions.data.repository.DeckFolderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.deeplink.MarvelCdbDeckUrl
@@ -30,18 +32,19 @@ data class DeckTile(
 
 data class DecksUiState(
     val decks: List<DeckTile> = emptyList(),
+    /** The shelf's folders, by name. */
+    val folders: List<DeckFolderEntity> = emptyList(),
     val isImporting: Boolean = false,
     val importError: DeckImportError? = null,
     /** Set when an import succeeds, so the UI can open the new deck. */
     val importedDeckId: String? = null,
-    /** Whether building a deck offers only what the collection holds. */
-    val collectionOnly: Boolean = true,
 )
 
 @HiltViewModel
 class DecksViewModel @Inject constructor(
     private val repository: DeckRepository,
     private val builderRepository: DeckBuilderRepository,
+    private val folderRepository: DeckFolderRepository,
     private val cardDao: CardDao,
     private val preferences: AppPreferences,
 ) : ViewModel() {
@@ -52,17 +55,18 @@ class DecksViewModel @Inject constructor(
 
     val uiState: StateFlow<DecksUiState> = combine(
         repository.observeDecks(),
+        folderRepository.observeFolders(),
         importing,
         importError,
         importedDeckId,
-        preferences.deckCollectionOnly,
-    ) { decks, isImporting, error, imported, collectionOnly ->
+    ) { values ->
+        @Suppress("UNCHECKED_CAST")
         DecksUiState(
-            decks = tiles(decks),
-            isImporting = isImporting,
-            importError = error,
-            importedDeckId = imported,
-            collectionOnly = collectionOnly,
+            decks = tiles(values[0] as List<SavedDeckEntity>),
+            folders = values[1] as List<DeckFolderEntity>,
+            isImporting = values[2] as Boolean,
+            importError = values[3] as DeckImportError?,
+            importedDeckId = values[4] as String?,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -89,8 +93,20 @@ class DecksViewModel @Inject constructor(
         }
     }
 
-    fun setCollectionOnly(enabled: Boolean) {
-        viewModelScope.launch { preferences.setDeckCollectionOnly(enabled) }
+    fun createFolder(name: String) {
+        viewModelScope.launch { folderRepository.create(name) }
+    }
+
+    fun renameFolder(id: String, name: String) {
+        viewModelScope.launch { folderRepository.rename(id, name) }
+    }
+
+    fun deleteFolder(id: String) {
+        viewModelScope.launch { folderRepository.delete(id) }
+    }
+
+    fun moveDeck(deckId: String, folderId: String?) {
+        viewModelScope.launch { folderRepository.moveDeck(deckId, folderId) }
     }
 
     /** Imports from anything the user pasted, or a share sheet delivered. */

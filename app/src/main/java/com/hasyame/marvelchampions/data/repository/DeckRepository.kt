@@ -76,6 +76,7 @@ class DeckRepository @Inject constructor(
     private val cardDao: CardDao,
     private val collectionRepository: CollectionRepository,
     private val autoSync: AutoSync,
+    private val folders: DeckFolderRepository,
     private val json: Json,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -90,6 +91,8 @@ class DeckRepository @Inject constructor(
     suspend fun delete(id: String) = withContext(ioDispatcher) {
         savedDeckDao.delete(id, System.currentTimeMillis())
         syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, id)
+        // So the folder does not keep a ghost, here and on the other devices.
+        folders.forgetDeck(id)
     }
 
     /**

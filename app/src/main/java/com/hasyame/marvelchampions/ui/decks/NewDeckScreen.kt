@@ -20,6 +20,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.ui.semantics.Role
+import androidx.compose.material3.Switch
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -81,6 +84,24 @@ fun NewDeckScreen(
         }
 
         LazyColumn(Modifier.fillMaxSize().padding(padding)) {
+            item {
+                // Shown here and only here: it changes which heroes are offered
+                // below and which cards the editor lists, and building a deck
+                // is the moment that matters.
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.decks_collection_only)) },
+                    supportingContent = { Text(stringResource(R.string.decks_collection_only_summary)) },
+                    trailingContent = {
+                        Switch(checked = state.collectionOnly, onCheckedChange = viewModel::setCollectionOnly)
+                    },
+                    modifier = Modifier.toggleable(
+                        value = state.collectionOnly,
+                        role = Role.Switch,
+                        onValueChange = viewModel::setCollectionOnly,
+                    ),
+                )
+                HorizontalDivider()
+            }
             item {
                 OutlinedTextField(
                     value = state.name,
