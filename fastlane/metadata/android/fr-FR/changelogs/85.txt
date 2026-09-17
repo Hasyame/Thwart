@@ -1,0 +1,6 @@
+Connexion depuis la page d'accueil.
+
+Un panneau sous les nouveautés explique à quoi sert un compte Thwart : vos
+decks, campagnes et parties enregistrés au fil du jeu, à jour entre vos
+appareils et avec thwart.app dans le navigateur. Connectez-vous ou créez un
+compte depuis là ; une fois connecté, l'accueil vous salue par votre nom.

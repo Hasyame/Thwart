@@ -1,0 +1,6 @@
+Sign in from the home page.
+
+A panel under the news says what a Thwart account is for: your decks,
+campaigns and games saved as you play, in step between your devices and
+with thwart.app in the browser. Sign in or create an account from there;
+once you are in, the home page greets you by name.
