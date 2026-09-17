@@ -573,6 +573,7 @@
     <string name="plays_stat_best_streak">Best streak</string>
     <string name="plays_stat_campaign">Campaign</string>
     <string name="session_title">New game</string>
+    <string name="session_villain">Villain</string>
     <string name="session_scenario">Scenario</string>
     <string name="session_table">At the table</string>
     <string name="session_start">Start playing</string>

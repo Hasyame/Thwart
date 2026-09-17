@@ -236,7 +236,11 @@ class RandomizerViewModel @Inject constructor(
     fun choose(field: DrawField, values: List<String>) {
         val current = draw.value
         draw.value = when (field) {
-            DrawField.SCENARIO -> current.copy(scenarioCode = values.firstOrNull())
+            // A Fear No Evil job chosen by hand still draws its villain: this
+            // is the randomiser, and the villain is the part it is for.
+            DrawField.SCENARIO -> current.copy(
+                scenarioCode = values.firstOrNull()?.let { ScenarioRandomizer.withVillain(it, pools.value) },
+            )
             DrawField.DIFFICULTY -> {
                 val picked = values.firstOrNull()
                     ?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }

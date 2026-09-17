@@ -17,6 +17,7 @@ import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
 import com.hasyame.marvelchampions.domain.randomizer.ScenarioRule
 import com.hasyame.marvelchampions.domain.randomizer.SetRef
 import kotlinx.coroutines.CoroutineDispatcher
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -37,6 +38,8 @@ data class RandomizerNames(
     val heroes: Map<String, String> = emptyMap(),
     /** Pack code to its name, so a picker can say where a scenario came from. */
     val packs: Map<String, String> = emptyMap(),
+    /** The villains a scenario can be drawn against, by id: Fear No Evil's subordinates. */
+    val villains: Map<String, String> = emptyMap(),
 )
 
 /**
@@ -58,6 +61,7 @@ class RandomizerRepository @Inject constructor(
     private val collectionRepository: CollectionRepository,
     private val seed: CardSeedSource,
     private val setNameOverrides: SetNameOverrides,
+    private val fearNoEvil: FearNoEvilCatalog,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
@@ -74,6 +78,11 @@ class RandomizerRepository @Inject constructor(
         // My own setup and the pickers too, not only from the roll.
         val missingScenarios = collectionRepository.getExcludedScenarios()
         val versus = versusScenarios(locale)
+        // Fear No Evil is on no card database: its scenarios come from the
+        // campaign template, and its jobs draw their villain at the table.
+        val fnePack = fearNoEvil.packCode()
+        val fne = if (fnePack != null && fnePack in owned) fearNoEvil.scenarios(locale) else emptyList()
+        val subordinates = fearNoEvil.villains(locale).map { it.id }
         val scenarios = cardDao.getPlayableScenarios(locale.code)
         val modulars = cardDao.getCardSets(MODULAR_SET, locale.code)
         val heroes = cardDao.getHeroes(locale.code)
@@ -87,7 +96,11 @@ class RandomizerRepository @Inject constructor(
                 .map { SetRef(it.code, it.packCode) } +
                 versus
                     .filter { it.packCode in owned && it.code !in missingScenarios }
-                    .map { SetRef(it.code, it.packCode) },
+                    .map { SetRef(it.code, it.packCode) } +
+                fne
+                    .filter { it.code !in missingScenarios }
+                    .map { SetRef(it.code, fnePack.orEmpty()) },
+            villainChoices = fne.filter { it.needsVillain }.associate { it.code to subordinates },
             modularSets = modulars.filter { it.packCode in owned }
                 .map { SetRef(it.code, it.packCode) },
             heroes = heroes.filter { it.packCode in owned }
@@ -202,7 +215,13 @@ class RandomizerRepository @Inject constructor(
     suspend fun schemeBriefing(
         scenarioCode: String,
         locale: CardLocale,
+        /** The difficulty being played, which decides some of Fear No Evil's steps. */
+        difficulty: String? = null,
     ): SchemeBriefing = withContext(ioDispatcher) {
+        // Fear No Evil's setup is the campaign's text, not a card's.
+        if (FearNoEvil.isFne(scenarioCode)) {
+            return@withContext SchemeBriefing(steps = fearNoEvil.briefing(scenarioCode, difficulty, locale))
+        }
         val schemes = cardDao.getCardSet(scenarioCode, locale.code)
             .filter { it.typeCode == MAIN_SCHEME_TYPE }
         if (schemes.isEmpty()) {
@@ -236,7 +255,9 @@ class RandomizerRepository @Inject constructor(
         RandomizerNames(
             scenarios = cardDao.getPlayableScenarios(locale.code)
                 .mapNotNull { s -> (overrides[s.code] ?: s.name)?.let { s.code to it } }.toMap() +
-                versusScenarios(locale).associate { it.code to it.name },
+                versusScenarios(locale).associate { it.code to it.name } +
+                fearNoEvil.names(locale),
+            villains = fearNoEvil.villains(locale).associate { it.id to it.name },
             modularSets = cardDao.getCardSets(MODULAR_SET, locale.code)
                 .mapNotNull { s -> (overrides[s.code] ?: s.name)?.let { s.code to it } }.toMap(),
             heroes = cardDao.getHeroes(locale.code)

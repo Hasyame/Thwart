@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.data.repository.PlayRecorded
 import com.hasyame.marvelchampions.data.repository.PlayRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.model.CardLocale
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 import com.hasyame.marvelchampions.ui.campaign.CampaignCovers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,6 +67,10 @@ class HistoryViewModel @Inject constructor(
     private val templates = mutableMapOf<String, String?>()
 
     private suspend fun coverOf(play: PlayEntity): Int? {
+        // Fear No Evil played on its own: the box's own art, as in its campaign.
+        if (FearNoEvil.isFne(play.scenarioCode)) {
+            return CampaignCovers.of(FearNoEvil.TEMPLATE_ID)
+        }
         val runId = play.campaignRunId ?: return null
         val templateId = templates.getOrPut(runId) { campaigns.templateIdOf(runId) }
         return CampaignCovers.of(templateId)
