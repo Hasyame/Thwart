@@ -601,7 +601,7 @@
         <item quantity="other">%1$d entrées</item>
     </plurals>
     <string name="settings_images">Images hors ligne</string>
-    <string name="settings_images_summary">Le texte des cartes fonctionne déjà hors ligne ; les images sont téléchargées à la première ouverture d\'une carte. Téléchargez-les maintenant et toutes les cartes de votre collection s\'afficheront sans réseau. Des centaines de fichiers : préférez le wi-fi.</string>
+    <string name="settings_images_summary">Le texte des cartes fonctionne déjà hors ligne ; les images sont téléchargées la première fois qu\'elles s\'affichent, dans la liste des cartes comme sur une carte. Téléchargez-les maintenant et toutes les cartes de votre collection s\'afficheront sans réseau. Des centaines de fichiers : préférez le wi-fi.</string>
     <string name="settings_images_download">Télécharger les images de mes extensions</string>
     <string name="settings_images_running">Téléchargement %1$s</string>
     <string name="plays_page_previous">Précédent</string>

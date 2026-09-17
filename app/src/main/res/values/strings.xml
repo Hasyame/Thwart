@@ -580,7 +580,7 @@
         <item quantity="other">%1$d entries</item>
     </plurals>
     <string name="settings_images">Card images offline</string>
-    <string name="settings_images_summary">Card text already works offline; pictures are fetched the first time you open a card. Download them now and every card in your collection will show at a table with no signal. Hundreds of files — best on wi-fi.</string>
+    <string name="settings_images_summary">Card text already works offline; pictures are fetched the first time they are shown, in the card list as much as on a card. Download them now and every card in your collection will show at a table with no signal. Hundreds of files — best on wi-fi.</string>
     <string name="settings_images_download">Download images for my packs</string>
     <string name="settings_images_running">Downloading %1$s</string>
     <string name="plays_page_previous">Previous</string>
