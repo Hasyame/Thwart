@@ -18,9 +18,9 @@ class TopLevelDestinationTest {
                 // Play holds the random draw, the player's own setup and
                 // campaigns. Campaign had a tab of its own, which made six.
                 TopLevelDestination.PLAY,
-                // Looked up mid-game, so it stays one tap away.
+                // Looked up mid-game, so it stays one tap away. Stats left
+                // the bar for a tile on the home page, beside the history.
                 TopLevelDestination.RULES,
-                TopLevelDestination.STATS,
             ),
             TopLevelDestination.entries,
         )

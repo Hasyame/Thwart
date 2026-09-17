@@ -17,6 +17,14 @@ data object HomeGraph
 @Serializable
 data object HomeRoute
 
+/** Every game played, as a shelf of tiles. Reached from Home. */
+@Serializable
+data object HistoryRoute
+
+/** One game of the history, read back. */
+@Serializable
+data class PlayDetailRoute(val playId: String)
+
 @Serializable
 data object CardsGraph
 

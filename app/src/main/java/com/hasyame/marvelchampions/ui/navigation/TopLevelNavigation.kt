@@ -48,5 +48,4 @@ private fun TopLevelDestination.graphRouteInstance(): Any = when (this) {
     TopLevelDestination.DECKS -> DecksGraph
     TopLevelDestination.PLAY -> PlayGraph
     TopLevelDestination.RULES -> RulesGraph
-    TopLevelDestination.STATS -> StatsGraph
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -59,6 +60,8 @@ fun HomeScreen(
     onSettings: () -> Unit,
     /** Opens the account page; true asks for the "create an account" form. */
     onAccount: (create: Boolean) -> Unit,
+    onHistory: () -> Unit,
+    onStats: () -> Unit,
     onRules: () -> Unit,
     onCollection: () -> Unit,
     onRandomGame: () -> Unit,
@@ -135,7 +138,8 @@ fun HomeScreen(
             // lives.
             AccountPanel(handle = state.accountHandle, onAccount = onAccount)
 
-            // The menu: two by two, then the draw across the width.
+            // The menu, two by two: the rules and the collection, a game and
+            // a card at random, then the games played and what they add up to.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 MenuTile(stringResource(R.string.destination_rules), NavigationIcons.Book, onRules, Modifier.weight(1f))
                 MenuTile(stringResource(R.string.collection_title), NavigationIcons.Card, onCollection, Modifier.weight(1f))
@@ -143,6 +147,10 @@ fun HomeScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 MenuTile(stringResource(R.string.play_random), Icons.Filled.Refresh, onRandomGame, Modifier.weight(1f))
                 MenuTile(stringResource(R.string.home_random_card), NavigationIcons.Deck, viewModel::drawRandomCard, Modifier.weight(1f))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                MenuTile(stringResource(R.string.history_title), Icons.Filled.DateRange, onHistory, Modifier.weight(1f))
+                MenuTile(stringResource(R.string.destination_stats), NavigationIcons.Chart, onStats, Modifier.weight(1f))
             }
 
             Panel {
