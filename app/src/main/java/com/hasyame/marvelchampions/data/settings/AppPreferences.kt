@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -114,6 +115,13 @@ class AppPreferences @Inject constructor(
     }
 
     suspend fun isDeckCollectionOnly(): Boolean = deckCollectionOnly.first()
+
+    /** The version whose notes the home page was told to put away, or 0. */
+    val dismissedNotesVersion: Flow<Int> = context.dataStore.data.map { it[KEY_DISMISSED_NOTES] ?: 0 }
+
+    suspend fun setDismissedNotesVersion(versionCode: Int) {
+        context.dataStore.edit { it[KEY_DISMISSED_NOTES] = versionCode }
+    }
 
     suspend fun setDeckCollectionOnly(enabled: Boolean) {
         context.dataStore.edit { it[KEY_DECK_COLLECTION_ONLY] = enabled }
@@ -225,6 +233,7 @@ class AppPreferences @Inject constructor(
         private val KEY_PLAY_LOCATION = stringPreferencesKey("play_location")
         private val KEY_TRACK_ENCOUNTER = booleanPreferencesKey("track_encounter")
         private val KEY_DECK_COLLECTION_ONLY = booleanPreferencesKey("deck_collection_only")
+        private val KEY_DISMISSED_NOTES = intPreferencesKey("dismissed_notes_version")
         private val KEY_DISMISSED_PACKS = stringSetPreferencesKey("dismissed_packs")
     }
 }

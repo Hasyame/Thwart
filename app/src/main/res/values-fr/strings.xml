@@ -11,6 +11,18 @@
     <string name="rules_no_results">Aucune règle ne correspond à votre recherche.</string>
     <string name="rules_english_only">En anglais seulement pour le moment.</string>
     <string name="rules_credit">Guide de référence compilé par %1$s, publié sous %2$s. Non officiel, sans lien avec Fantasy Flight Games.</string>
+    <string name="destination_home">Accueil</string>
+    <string name="home_whats_new">Dernières modifications</string>
+    <string name="home_all_releases">Toutes les versions</string>
+    <string name="home_dismiss_notes">Ranger ces notes</string>
+    <string name="home_random_card">Carte au hasard</string>
+    <string name="home_links_title">Thwart ailleurs</string>
+    <string name="home_links_note">Chacun de ces liens ouvre votre navigateur. L\'application elle-même ne se connecte jamais pour cette page.</string>
+    <string name="home_patreon_note">Gratuite, et qui le reste. Cela m\'aide à continuer.</string>
+    <string name="home_web">Thwart sur le web</string>
+    <string name="home_web_note">thwart.app : les mêmes decks, campagnes et statistiques dans un navigateur, synchronisés avec ce téléphone une fois connecté.</string>
+    <string name="home_github">Code source</string>
+    <string name="home_github_note">GitHub : le code, les versions, et où signaler un bug.</string>
     <string name="destination_settings">Réglages</string>
 
     <!-- Common actions -->

@@ -335,6 +335,18 @@ interface CardDao {
     )
     suspend fun getPlayerCards(locale: String): List<CardEntity>
 
+    /** Any one player card, for the home page's draw. */
+    @Query(
+        """
+        SELECT * FROM cards
+        WHERE locale = :locale
+          AND factionCode IN ('basic', 'aggression', 'justice', 'leadership', 'protection', 'pool', 'hero')
+          AND typeCode NOT IN ('hero', 'alter_ego')
+        ORDER BY RANDOM() LIMIT 1
+        """,
+    )
+    suspend fun randomPlayerCard(locale: String): CardEntity?
+
     /** Hero identities, which are cards rather than sets. */
     @Query(
         """

@@ -17,6 +17,7 @@ import com.hasyame.marvelchampions.ui.collection.CollectionScreen
 import com.hasyame.marvelchampions.ui.decks.DeckDetailScreen
 import com.hasyame.marvelchampions.ui.decks.DeckEditorScreen
 import com.hasyame.marvelchampions.ui.decks.DecksScreen
+import com.hasyame.marvelchampions.ui.home.HomeScreen
 import com.hasyame.marvelchampions.ui.decks.NewDeckScreen
 import com.hasyame.marvelchampions.ui.plays.GameSessionScreen
 import com.hasyame.marvelchampions.ui.plays.PlaysScreen
@@ -42,6 +43,25 @@ fun MarvelChampionsNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
+        navigation<HomeGraph>(startDestination = HomeRoute) {
+            composable<HomeRoute> {
+                HomeScreen(
+                    onSettings = { navController.navigate(SettingsRoute) },
+                    onRules = { navController.navigate(RulesRoute) },
+                    onCollection = { navController.navigate(CollectionRoute) },
+                    onRandomGame = { navController.navigate(RandomizerRoute) },
+                    onCard = { code -> navController.navigate(CardDetailRoute(code)) },
+                )
+            }
+            // A card drawn at random opens inside Home's stack, so back
+            // returns to the page it came from.
+            composable<CardDetailRoute> { entry ->
+                CardDetailScreen(
+                    code = entry.toRoute<CardDetailRoute>().code,
+                    onBack = { navController.popBackStack() },
+                )
+            }
+        }
         navigation<CardsGraph>(startDestination = CardsRoute) {
             composable<CardsRoute> {
                 CardsScreen(

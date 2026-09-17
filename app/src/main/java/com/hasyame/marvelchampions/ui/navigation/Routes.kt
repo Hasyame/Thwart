@@ -10,6 +10,13 @@ import kotlinx.serialization.Serializable
  * gives each tab an independent back stack.
  */
 
+/** The home page: the version's notes, the links, and a menu. First in the bar. */
+@Serializable
+data object HomeGraph
+
+@Serializable
+data object HomeRoute
+
 @Serializable
 data object CardsGraph
 

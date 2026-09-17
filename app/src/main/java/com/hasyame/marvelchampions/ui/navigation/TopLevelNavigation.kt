@@ -35,16 +35,17 @@ fun NavController.navigateToTopLevelDestination(destination: TopLevelDestination
 
 /** True when [this] destination, or any of its parents, is [destination]'s graph. */
 fun NavDestination?.isOn(destination: TopLevelDestination): Boolean =
-    this?.hierarchy?.any { it.hasRoute(destination.graphRoute) } == true
+    this?.hierarchy?.any { node ->
+        node.hasRoute(destination.graphRoute) || destination.alsoGraphs.any { node.hasRoute(it) }
+    } == true
 
 private val NavDestination.hierarchy: Sequence<NavDestination>
     get() = generateSequence(this) { it.parent }
 
 private fun TopLevelDestination.graphRouteInstance(): Any = when (this) {
+    TopLevelDestination.HOME -> HomeGraph
     TopLevelDestination.CARDS -> CardsGraph
     TopLevelDestination.DECKS -> DecksGraph
     TopLevelDestination.PLAY -> PlayGraph
-    TopLevelDestination.RULES -> RulesGraph
     TopLevelDestination.STATS -> StatsGraph
-    TopLevelDestination.SETTINGS -> SettingsGraph
 }
