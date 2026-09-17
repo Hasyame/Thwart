@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.data.sync.SyncSessionStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,8 @@ data class HomeUiState(
     val notesDismissed: Boolean = false,
     /** A card drawn at random, set for the screen to open and then cleared. */
     val randomCardCode: String? = null,
+    /** The pseudonym of the account signed in on this phone, or null when none is. */
+    val accountHandle: String? = null,
 )
 
 /**
@@ -39,6 +42,7 @@ class HomeViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val preferences: AppPreferences,
     private val cardDao: CardDao,
+    private val sessions: SyncSessionStore,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(HomeUiState())
@@ -56,6 +60,11 @@ class HomeViewModel @Inject constructor(
         }
         preferences.dismissedNotesVersion
             .onEach { dismissed -> state.update { it.copy(notesDismissed = dismissed >= code) } }
+            .launchIn(viewModelScope)
+        sessions.session
+            .onEach { session ->
+                state.update { it.copy(accountHandle = session.handle.takeIf { session.isSignedIn }) }
+            }
             .launchIn(viewModelScope)
     }
 

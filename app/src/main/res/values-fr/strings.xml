@@ -12,6 +12,10 @@
     <string name="rules_english_only">En anglais seulement pour le moment.</string>
     <string name="rules_credit">Guide de référence compilé par %1$s, publié sous %2$s. Non officiel, sans lien avec Fantasy Flight Games.</string>
     <string name="destination_home">Accueil</string>
+    <string name="home_account_title">Se connecter à Thwart</string>
+    <string name="home_account_note">Un compte garde vos decks, campagnes et parties enregistrés au fil du jeu, à jour entre vos appareils, et partagés avec thwart.app dans le navigateur. Gratuit, et facultatif : tout fonctionne sans.</string>
+    <string name="home_sign_in">Se connecter</string>
+    <string name="home_ready_to_play">Prêt à jouer, %1$s</string>
     <string name="home_whats_new">Dernières modifications</string>
     <string name="home_all_releases">Toutes les versions</string>
     <string name="home_dismiss_notes">Ranger ces notes</string>
