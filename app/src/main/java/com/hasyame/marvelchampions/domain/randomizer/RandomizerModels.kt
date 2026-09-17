@@ -110,6 +110,13 @@ data class RandomizerPools(
      * owned rather than a preference.
      */
     val difficulties: List<Difficulty> = Difficulty.entries,
+    /**
+     * Scenarios that are played against a villain drawn at the table, and
+     * the villains to draw from: Fear No Evil's jobs and its subordinates.
+     * A draw of such a scenario draws its villain too, and a choice of one
+     * asks for it. See FearNoEvil.
+     */
+    val villainChoices: Map<String, List<String>> = emptyMap(),
 )
 
 data class RandomizerFilters(

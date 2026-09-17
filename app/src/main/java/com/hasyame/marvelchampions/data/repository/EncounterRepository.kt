@@ -12,6 +12,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 
 /**
  * The numbers a scenario puts on the table, read from the cards.
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 class EncounterRepository @Inject constructor(
     private val cardDao: CardDao,
     private val preferences: AppPreferences,
+    private val fearNoEvil: FearNoEvilCatalog,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
@@ -35,6 +37,11 @@ class EncounterRepository @Inject constructor(
     ): EncounterSetup =
         withContext(ioDispatcher) {
             val locale = preferences.cardLocale.first()
+            // Fear No Evil's numbers are the campaign template's, since the
+            // box is on no card database.
+            if (FearNoEvil.isFne(scenarioCode)) {
+                return@withContext fearNoEvil.encounterSetup(scenarioCode, players, expert, locale)
+            }
             versusHalves(scenarioCode)?.let { (side, leader) ->
                 return@withContext versusSetup(side, leader, players, locale.code)
             }

@@ -597,6 +597,7 @@
     <string name="plays_stat_best_streak">Meilleure série</string>
     <string name="plays_stat_campaign">Campagne</string>
     <string name="session_title">Nouvelle partie</string>
+    <string name="session_villain">Méchant</string>
     <string name="session_scenario">Scénario</string>
     <string name="session_table">À la table</string>
     <string name="session_start">Commencer la partie</string>

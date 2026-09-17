@@ -1,6 +1,7 @@
 package com.hasyame.marvelchampions.domain.randomizer
 
 import kotlin.random.Random
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 
 /**
  * Draws a scenario setup from the packs the user owns.
@@ -45,6 +46,9 @@ object ScenarioRandomizer {
                 }
                 .randomOrNull(random)
                 ?.code
+                // A job of Fear No Evil is played against a villain drawn
+                // with it; the draw is not complete without one.
+                ?.let { withVillain(it, pools, random) }
         }
 
         val difficulty = if (DrawField.DIFFICULTY in locked) {
@@ -148,6 +152,15 @@ object ScenarioRandomizer {
             return set.packCode in allowed
         }
         return set.packCode !in restrictedPacks
+    }
+
+    /** A scenario that draws its villain gets one; every other code comes back as it is. */
+    fun withVillain(scenarioCode: String, pools: RandomizerPools, random: Random = Random.Default): String {
+        if (!FearNoEvil.needsVillain(scenarioCode, pools.villainChoices)) {
+            return scenarioCode
+        }
+        val villain = pools.villainChoices.getValue(scenarioCode).random(random)
+        return FearNoEvil.compose(scenarioCode, villain)
     }
 
     private fun drawModularSets(

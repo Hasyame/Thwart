@@ -229,10 +229,23 @@ private fun VillainArt(imageSrc: String?, @DrawableRes coverRes: Int?, modifier:
     }
 }
 
-private fun heroesOf(play: PlayEntity): String = listOfNotNull(
-    play.heroName.takeIf { it.isNotBlank() },
-    play.otherHeroes.takeIf { it.isNotBlank() },
-).joinToString(", ")
+/**
+ * The heroes at the table, from the roster when the play has one: it names
+ * every seat, where the older fields can carry a code for a hero picked by
+ * deck.
+ */
+private fun heroesOf(play: PlayEntity): String =
+    play.roster.map { it.name }.filter { it.isNotBlank() }.takeIf { it.isNotEmpty() }?.joinToString(", ")
+        ?: listOfNotNull(
+            play.heroName.takeIf { it.isNotBlank() },
+            play.otherHeroes.takeIf { it.isNotBlank() },
+        ).joinToString(", ")
+
+/** "standard_i" as a game records it, read back as "Standard I". */
+private fun difficultyLabel(stored: String): String =
+    stored.split('_', ' ').filter { it.isNotBlank() }.joinToString(" ") { word ->
+        if (word.length <= 3 && word.all { it in "ivx" }) word.uppercase() else word.replaceFirstChar(Char::uppercase)
+    }
 
 // --- one game --------------------------------------------------------------------------------
 
@@ -332,7 +345,10 @@ fun PlayDetailScreen(
 
                 // The game: how it was set up and how long it took.
                 Panel(stringResource(R.string.history_game)) {
-                    Line(stringResource(R.string.campaign_stat_difficulty), listOfNotNull(play.difficulty.replaceFirstChar(Char::uppercase), play.standardSet.takeIf { it.isNotBlank() }).joinToString(" · "))
+                    Line(
+                        stringResource(R.string.campaign_stat_difficulty),
+                        listOfNotNull(difficultyLabel(play.difficulty), play.standardSet.takeIf { it.isNotBlank() }?.let(::difficultyLabel)).joinToString(" · "),
+                    )
                     Line(stringResource(R.string.history_players), play.players.toString())
                     if (play.elapsedMillis > 0) {
                         Line(stringResource(R.string.history_duration), duration(play.elapsedMillis))

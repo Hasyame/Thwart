@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 
 /**
  * One player at the table: who they are and which aspect they brought.
@@ -234,7 +235,9 @@ data class GameSessionUiState(
 ) {
     /** A game needs somewhere to happen, someone to play it, and a legal setup. */
     val canStart: Boolean
-        get() = scenarioCode != null && heroes.isNotEmpty() && difficultyIsComplete
+        get() = scenarioCode != null && heroes.isNotEmpty() && difficultyIsComplete &&
+            // A Fear No Evil job needs its villain before there is a game to start.
+            !FearNoEvil.needsVillain(scenarioCode, pools.villainChoices)
 
     /**
      * False while an Expert difficulty has no Standard set chosen.
@@ -437,7 +440,7 @@ class GameSessionViewModel @Inject constructor(
                 heroes = heroes,
                 modularSetCodes = saved.modularSetCodes.split(",").filter { it.isNotBlank() },
                 photos = saved.photos.split(",").filter { it.isNotBlank() },
-                briefing = randomizerRepository.schemeBriefing(saved.scenarioCode, locale),
+                briefing = randomizerRepository.schemeBriefing(saved.scenarioCode, locale, saved.difficulty),
                 encounter = Encounter(setup = setup, progress = saved.restoredProgress(setup, json)),
                 trackEncounter = setup.isUsable,
                 elapsedMillis = saved.elapsedMillis,
@@ -668,7 +671,7 @@ class GameSessionViewModel @Inject constructor(
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
             val tracking = preferences.trackEncounter.first()
-            val briefing = randomizerRepository.schemeBriefing(scenario, locale)
+            val briefing = randomizerRepository.schemeBriefing(scenario, locale, current.difficulty)
             // Read into locals before touching the state: the same stale-read
             // trap the pools above are commented for.
             val setup = if (tracking) {

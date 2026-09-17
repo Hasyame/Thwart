@@ -70,6 +70,7 @@ import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.ui.util.aspectLabel
 import com.hasyame.marvelchampions.ui.util.labelRes
 import kotlinx.coroutines.delay
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 
 /**
  * Set up a game yourself, then have the app time it.
@@ -373,6 +374,17 @@ private fun SetupPhase(
             value = state.scenarioCode?.let { state.names.scenarios[it] ?: it },
             onClick = { choosing = SetupPicker.SCENARIO },
         )
+        // A Fear No Evil job is played against one of the box's subordinates,
+        // chosen here: the scenario row names the pair, and this row is where
+        // the villain half is changed.
+        val fneJob = state.scenarioCode?.let { FearNoEvil.split(it).first }
+        if (fneJob != null && state.pools.villainChoices[fneJob].orEmpty().isNotEmpty()) {
+            ChosenRow(
+                label = stringResource(R.string.session_villain),
+                value = FearNoEvil.split(state.scenarioCode.orEmpty()).second?.let { state.names.villains[it] ?: it },
+                onClick = { choosing = SetupPicker.VILLAIN },
+            )
+        }
         // The average beside the choice, never beside the question.
         state.scenarioCode?.let { code ->
             val key = RatingSubject.scenario(code).key
@@ -492,9 +504,30 @@ private fun SetupPhase(
             onDismiss = { choosing = null },
             onConfirm = { picked ->
                 picked.firstOrNull()?.let(viewModel::setScenario)
-                choosing = null
+                // A job of Fear No Evil is not a scenario until its villain is
+                // chosen, so the question follows at once.
+                choosing = picked.firstOrNull()
+                    ?.takeIf { FearNoEvil.needsVillain(it, state.pools.villainChoices) }
+                    ?.let { SetupPicker.VILLAIN }
             },
         )
+
+        SetupPicker.VILLAIN -> {
+            val job = state.scenarioCode?.let { FearNoEvil.split(it).first }.orEmpty()
+            ChooseValueDialog(
+                title = stringResource(R.string.session_villain),
+                options = state.pools.villainChoices[job].orEmpty().map {
+                    ChoiceOption(id = it, label = state.names.villains[it] ?: it, detail = null)
+                }.sortedBy { it.label },
+                selected = listOfNotNull(state.scenarioCode?.let { FearNoEvil.split(it).second }),
+                limit = 1,
+                onDismiss = { choosing = null },
+                onConfirm = { picked ->
+                    picked.firstOrNull()?.let { viewModel.setScenario(FearNoEvil.compose(job, it)) }
+                    choosing = null
+                },
+            )
+        }
 
         SetupPicker.MODULAR_SETS -> ChooseValueDialog(
             title = stringResource(R.string.session_modular_sets),
@@ -519,7 +552,7 @@ private fun SetupPhase(
 }
 
 /** The long lists on the setup screen, each picked in a dialog of its own. */
-private enum class SetupPicker { SCENARIO, MODULAR_SETS }
+private enum class SetupPicker { SCENARIO, VILLAIN, MODULAR_SETS }
 
 /**
  * One decision, showing what it is currently set to.
