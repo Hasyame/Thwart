@@ -1,5 +1,7 @@
 package com.hasyame.marvelchampions.domain.model
 
+import com.hasyame.marvelchampions.domain.deckbuilder.IdentityTraits
+
 /**
  * The filters applied to a card search. Every field is additive; an empty
  * collection means "do not filter on this".
@@ -16,6 +18,12 @@ data class CardFilter(
     val ownedOnly: Boolean = false,
     /** Show only starred cards. */
     val favouritesOnly: Boolean = false,
+    /**
+     * When set, only cards the identity can play: those with no condition, and
+     * those whose condition one of these faces answers. The deck editor's
+     * "hide cards without synergy" box; null leaves every card in.
+     */
+    val synergyWith: IdentityTraits? = null,
     /** Ordering. Not part of [isEmpty]: a sort is not a filter. */
     val sort: CardSort = CardSort.SET,
 ) {

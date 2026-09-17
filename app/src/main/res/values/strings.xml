@@ -235,6 +235,9 @@
         <item quantity="other">%1$d cards</item>
     </plurals>
     <string name="decks_legal">This deck is legal.</string>
+    <string name="decks_synergy_issue">Synergy issue: %1$s has no synergy with this identity</string>
+    <string name="decks_synergy_and_others">%1$s (and %2$s)</string>
+    <string name="decks_synergy_hide">Hide cards without synergy with this identity</string>
     <plurals name="decks_problem_too_few">
         <item quantity="one">Only %1$d card, %2$d required.</item>
         <item quantity="other">Only %1$d cards, %2$d required.</item>

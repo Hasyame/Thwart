@@ -4,6 +4,7 @@ import androidx.room.withTransaction
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
 import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
+import com.hasyame.marvelchampions.data.db.deriveSynergy
 import com.hasyame.marvelchampions.data.db.toEntity
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls
@@ -191,6 +192,29 @@ class CardDataRepository @Inject constructor(
                 PackTranslationEntity(packCode = it.code, locale = locale.code, name = it.name)
             },
         )
+    }
+
+    /**
+     * Fills `synergyTraits` on rows written before the column existed.
+     *
+     * The condition is derived when a row is stored, so this only ever has
+     * work to do once, after the update that added the column: about nine
+     * thousand rows, one read and one small update each, and nothing at all
+     * on every launch after. Rows without a condition are stamped with the
+     * empty string rather than left null, which is what makes the second run
+     * find nothing.
+     */
+    suspend fun deriveSynergy(): Unit = withContext(ioDispatcher) {
+        val dao = database.cardDao()
+        val pending = dao.getUnderivedSynergy()
+        if (pending.isEmpty()) {
+            return@withContext
+        }
+        database.withTransaction {
+            pending.forEach { row ->
+                dao.setSynergy(row.code, row.locale, deriveSynergy(row.realText, row.text))
+            }
+        }
     }
 
     private suspend fun storeCards(cards: List<CardDto>, locale: CardLocale) {

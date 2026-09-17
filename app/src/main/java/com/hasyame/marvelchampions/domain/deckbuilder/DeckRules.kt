@@ -106,7 +106,7 @@ data class DeckCardInfo(
     val resourceWild: Int? = null,
 ) {
     fun hasTrait(trait: String): Boolean =
-        traits?.split('.')?.any { it.trim().equals(trait.trim(), ignoreCase = true) } == true
+        TraitKey.normalize(trait) in TraitKey.split(traits)
 
     fun hasResource(resource: String): Boolean = when (resource.lowercase()) {
         "physical" -> (resourcePhysical ?: 0) > 0

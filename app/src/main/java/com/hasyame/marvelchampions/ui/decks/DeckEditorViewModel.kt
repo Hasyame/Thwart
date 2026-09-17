@@ -9,6 +9,8 @@ import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckValidation
 import com.hasyame.marvelchampions.domain.deckbuilder.HeroDeckRules
+import com.hasyame.marvelchampions.domain.deckbuilder.IdentityTraits
+import com.hasyame.marvelchampions.domain.deckbuilder.SynergyWarning
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -29,8 +31,17 @@ data class DeckEditorUiState(
     val deckCards: List<CardEntity> = emptyList(),
     val candidates: List<CardEntity> = emptyList(),
     val validation: DeckValidation = DeckValidation(),
+    /** Cards in the deck the identity cannot play. A warning, never a problem. */
+    val synergyWarnings: List<SynergyWarning> = emptyList(),
     val query: String = "",
     val ownedOnly: Boolean = true,
+    /**
+     * The "hide cards without synergy" box. Off on every opening, on purpose:
+     * it hides cards silently, and a box left ticked last week would read as
+     * half the basics having gone missing. The collection chip is remembered
+     * because it describes the boxes on the shelf, not a mood.
+     */
+    val synergyOnly: Boolean = false,
     val sort: DeckSort = DeckSort.TYPE,
     val isLoading: Boolean = true,
 ) {
@@ -62,6 +73,9 @@ class DeckEditorViewModel @Inject constructor(
 
     /** The subscription to the deck row, cancelled if this screen is reused. */
     private var watching: Job? = null
+
+    /** The identity's traits, read once with the rules; what the filter uses. */
+    private var identity: IdentityTraits = IdentityTraits.NONE
 
     init {
         // The same setting as the switch on the Decks page, so the two agree;
@@ -112,6 +126,9 @@ class DeckEditorViewModel @Inject constructor(
                         preferences.currentCardLocale(),
                     )
                 val first = state.value.deck == null
+                if (first) {
+                    identity = builderRepository.identityTraits(deck.heroCode)
+                }
                 state.value = state.value.copy(deck = deck, rules = rules, isLoading = false)
                 reloadDeckContents()
                 if (first) {
@@ -136,6 +153,11 @@ class DeckEditorViewModel @Inject constructor(
             preferences.setDeckCollectionOnly(ownedOnly)
             refreshCandidates()
         }
+    }
+
+    fun setSynergyOnly(synergyOnly: Boolean) {
+        state.update { it.copy(synergyOnly = synergyOnly) }
+        viewModelScope.launch { refreshCandidates() }
     }
 
     fun addCard(code: String) = changeQuantity(code, +1)
@@ -184,12 +206,15 @@ class DeckEditorViewModel @Inject constructor(
         val validation = rules?.let {
             builderRepository.validate(it, aspects, slots, locale)
         } ?: DeckValidation(totalCards = slots.values.sum())
+        // Recomputed with every change, so the warning goes as the card does.
+        val warnings = rules?.let { builderRepository.synergyWarnings(it, slots, locale) }.orEmpty()
 
         state.value = state.value.copy(
             deck = deck,
             slots = slots,
             deckCards = contents?.cardsByType?.values?.flatten()?.map { it.card }.orEmpty(),
             validation = validation,
+            synergyWarnings = warnings,
         )
     }
 
@@ -206,6 +231,7 @@ class DeckEditorViewModel @Inject constructor(
             locale = locale,
             query = state.value.query,
             ownedOnly = state.value.ownedOnly,
+            synergyWith = identity.takeIf { state.value.synergyOnly },
         )
         state.value = state.value.copy(candidates = candidates)
     }

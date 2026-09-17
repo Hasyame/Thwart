@@ -54,6 +54,9 @@ class FirstRunInitializer @Inject constructor(
             // is the player's to refresh; this file ships with the app, and
             // before this a correction to it reached new installs only.
             cardDataRepository.reapplyPackCuration()
+            // Same idea for the synergy column: rows from before it existed
+            // are filled in once, and this finds nothing to do after that.
+            cardDataRepository.deriveSynergy()
             return FirstRunOutcome.ALREADY_READY
         }
 
