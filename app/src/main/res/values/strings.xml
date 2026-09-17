@@ -140,6 +140,7 @@
     <string name="aspect_leadership">Leadership</string>
     <string name="aspect_protection">Protection</string>
     <string name="aspect_pool">\'Pool</string>
+    <string name="aspect_basic">Basic</string>
 
     <!-- Decks -->
     <string name="decks_add">Add a deck</string>
@@ -220,8 +221,6 @@
     <string name="decks_no_owned_heroes">No hero comes from a pack in your collection. Turn the switch off on the Decks page, or add your packs under Settings.</string>
     <string name="decks_hero_not_owned">%1$s — pack not in your collection</string>
     <string name="decks_edit">Edit deck</string>
-    <string name="decks_tab_deck">Deck</string>
-    <string name="decks_tab_add">Add cards</string>
     <string name="decks_editor_empty">No card yet. Use the “Add cards” tab.</string>
     <string name="decks_add_card">Add a copy</string>
     <string name="decks_sort">Sort</string>
@@ -229,7 +228,6 @@
     <string name="decks_sort_cost">Cost</string>
     <string name="decks_sort_name">Name</string>
     <string name="decks_remove_card">Remove a copy</string>
-    <string name="decks_limit">limit %1$d</string>
     <plurals name="decks_card_total">
         <item quantity="one">%1$d card</item>
         <item quantity="other">%1$d cards</item>
@@ -238,6 +236,33 @@
     <string name="decks_synergy_issue">Synergy issue: %1$s has no synergy with this identity</string>
     <string name="decks_synergy_and_others">%1$s (and %2$s)</string>
     <string name="decks_synergy_hide">Hide cards without synergy with this identity</string>
+    <string name="decks_legal_short">legal</string>
+    <string name="decks_illegal_short">not legal</string>
+    <string name="decks_hand_size">Hand size</string>
+    <string name="decks_hit_points">Hit points</string>
+    <string name="decks_own_everything">You own everything in this deck.</string>
+    <string name="decks_search_in">Search this deck…</string>
+    <string name="decks_view_list">List</string>
+    <string name="decks_view_grid">Grid</string>
+    <string name="decks_nemesis">Nemesis set</string>
+    <string name="decks_nemesis_note">Shuffled into the encounter deck when the hero’s obligation is drawn. Not part of the deck, and not chosen.</string>
+    <string name="decks_card_language_note">Card names are shown in %1$s, the card language chosen in Settings.</string>
+    <string name="decks_hero_cards">Hero cards</string>
+    <string name="decks_hero_cards_note">In every deck this hero builds, at the printed count.</string>
+    <string name="decks_not_owned">not owned</string>
+    <string name="decks_pool_count">Cards: %1$d of %2$d</string>
+    <plurals name="decks_problems">
+        <item quantity="one">%1$d problem</item>
+        <item quantity="other">%1$d problems</item>
+    </plurals>
+    <plurals name="decks_problems_in_deck">
+        <item quantity="one">%1$d problem in this deck:</item>
+        <item quantity="other">%1$d problems in this deck:</item>
+    </plurals>
+    <string name="decks_tab_deck_count">Deck %1$d</string>
+    <string name="decks_tab_cards_count">Cards %1$d</string>
+    <string name="decks_filter_owned">Only what I own</string>
+    <string name="decks_stats_made_of">What it is made of</string>
     <plurals name="decks_problem_too_few">
         <item quantity="one">Only %1$d card, %2$d required.</item>
         <item quantity="other">Only %1$d cards, %2$d required.</item>

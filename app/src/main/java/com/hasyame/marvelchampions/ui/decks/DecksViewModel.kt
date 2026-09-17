@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.repository.DeckImportError
 import com.hasyame.marvelchampions.data.repository.DeckImportResult
+import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.deeplink.MarvelCdbDeckUrl
@@ -17,8 +19,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/** A deck on the shelf, with what the tile shows beside its name. */
+data class DeckTile(
+    val deck: SavedDeckEntity,
+    val heroImageSrc: String?,
+    val cardCount: Int,
+    /** Null while the rules are unknown, as for a hero the database lacks. */
+    val legal: Boolean?,
+)
+
 data class DecksUiState(
-    val decks: List<SavedDeckEntity> = emptyList(),
+    val decks: List<DeckTile> = emptyList(),
     val isImporting: Boolean = false,
     val importError: DeckImportError? = null,
     /** Set when an import succeeds, so the UI can open the new deck. */
@@ -30,6 +41,8 @@ data class DecksUiState(
 @HiltViewModel
 class DecksViewModel @Inject constructor(
     private val repository: DeckRepository,
+    private val builderRepository: DeckBuilderRepository,
+    private val cardDao: CardDao,
     private val preferences: AppPreferences,
 ) : ViewModel() {
 
@@ -45,7 +58,7 @@ class DecksViewModel @Inject constructor(
         preferences.deckCollectionOnly,
     ) { decks, isImporting, error, imported, collectionOnly ->
         DecksUiState(
-            decks = decks,
+            decks = tiles(decks),
             isImporting = isImporting,
             importError = error,
             importedDeckId = imported,
@@ -56,6 +69,25 @@ class DecksViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
         initialValue = DecksUiState(),
     )
+
+    /**
+     * The tiles: each deck with its hero's picture and whether it is legal.
+     *
+     * Judged here rather than on the deck page so the shelf can say it, the
+     * way the web's does; a shelf holds a handful of decks and the validator
+     * is cheap, so this is done afresh whenever the shelf changes.
+     */
+    private suspend fun tiles(decks: List<SavedDeckEntity>): List<DeckTile> {
+        val locale = preferences.currentCardLocale()
+        return decks.map { deck ->
+            val hero = cardDao.getCardPreferringLocale(deck.heroCode, locale.code)
+            val slots = DeckRepository.parseSlots(deck.slots)
+            val legal = builderRepository.heroRules(deck.heroCode, locale)?.let { rules ->
+                builderRepository.validate(rules, DeckRepository.parseAspects(deck.aspects), slots, locale).isLegal
+            }
+            DeckTile(deck = deck, heroImageSrc = hero?.imageSrc, cardCount = slots.values.sum(), legal = legal)
+        }
+    }
 
     fun setCollectionOnly(enabled: Boolean) {
         viewModelScope.launch { preferences.setDeckCollectionOnly(enabled) }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.repository.CollectionRepository
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
@@ -43,8 +44,23 @@ data class DeckEditorUiState(
      */
     val synergyOnly: Boolean = false,
     val sort: DeckSort = DeckSort.TYPE,
+    /** The pool tab's chips. Empty means every faction, every type, any cost. */
+    val factionFilter: Set<String> = emptySet(),
+    val typeFilter: Set<String> = emptySet(),
+    val costFilter: Int? = null,
+    /** The whole pool before the chips, for "N of M". */
+    val poolTotal: Int = 0,
+    /** The types a deck can hold, as code to name, for the chips. */
+    val typeChoices: List<Pair<String, String>> = emptyList(),
+    /** The hero's picture, for the header. */
+    val heroImageSrc: String? = null,
+    /** The packs the collection holds, so a row can say a card is not owned. */
+    val ownedPackCodes: Set<String> = emptySet(),
     val isLoading: Boolean = true,
 ) {
+    /** The factions a chip can pick: the hero's own cards, basic, and the chosen aspects. */
+    val factionChoices: List<String>
+        get() = listOf("hero", "basic") + (deck?.let { DeckRepository.parseAspects(it.aspects) }.orEmpty())
     /**
      * Every deck can be edited, imported ones included. An imported deck that
      * turns out to be illegal would otherwise be unfixable, and a campaign
@@ -62,6 +78,7 @@ data class DeckEditorUiState(
 class DeckEditorViewModel @Inject constructor(
     private val deckRepository: DeckRepository,
     private val builderRepository: DeckBuilderRepository,
+    private val collectionRepository: CollectionRepository,
     private val preferences: AppPreferences,
 ) : ViewModel() {
 
@@ -87,6 +104,9 @@ class DeckEditorViewModel @Inject constructor(
             state.update { it.copy(ownedOnly = preferences.isDeckCollectionOnly()) }
             refreshCandidates()
         }
+        collectionRepository.observeOwnedCodes()
+            .onEach { owned -> state.update { it.copy(ownedPackCodes = owned) } }
+            .launchIn(viewModelScope)
         // No distinctUntilChanged: StateFlow already conflates equal values.
         query
             .debounce(SEARCH_DEBOUNCE_MS)
@@ -160,6 +180,23 @@ class DeckEditorViewModel @Inject constructor(
         viewModelScope.launch { refreshCandidates() }
     }
 
+    fun toggleFaction(faction: String) {
+        state.update { it.copy(factionFilter = it.factionFilter.toggled(faction)) }
+        viewModelScope.launch { refreshCandidates() }
+    }
+
+    fun toggleType(type: String) {
+        state.update { it.copy(typeFilter = it.typeFilter.toggled(type)) }
+        viewModelScope.launch { refreshCandidates() }
+    }
+
+    fun setCost(cost: Int?) {
+        state.update { it.copy(costFilter = if (it.costFilter == cost) null else cost) }
+        viewModelScope.launch { refreshCandidates() }
+    }
+
+    private fun Set<String>.toggled(value: String): Set<String> = if (value in this) this - value else this + value
+
     fun addCard(code: String) = changeQuantity(code, +1)
 
     fun removeCard(code: String) = changeQuantity(code, -1)
@@ -215,6 +252,7 @@ class DeckEditorViewModel @Inject constructor(
             deckCards = contents?.cardsByType?.values?.flatten()?.map { it.card }.orEmpty(),
             validation = validation,
             synergyWarnings = warnings,
+            heroImageSrc = contents?.hero?.imageSrc,
         )
     }
 
@@ -225,18 +263,30 @@ class DeckEditorViewModel @Inject constructor(
         // Fetched first, and only then written back. Inline, the state is read
         // before the search suspends, so anything typed while four hundred
         // candidates were being queried was reverted under the player's hands.
+        val current = state.value
+        val aspects = DeckRepository.parseAspects(deck.aspects)
         val candidates = builderRepository.candidateCards(
             heroSetCode = rules?.heroSetCode,
-            aspects = DeckRepository.parseAspects(deck.aspects),
+            aspects = aspects,
             locale = locale,
-            query = state.value.query,
-            ownedOnly = state.value.ownedOnly,
-            synergyWith = identity.takeIf { state.value.synergyOnly },
+            query = current.query,
+            ownedOnly = current.ownedOnly,
+            synergyWith = identity.takeIf { current.synergyOnly },
+            factions = current.factionFilter - HERO_FACTION,
+            typeCodes = current.typeFilter,
+            cost = current.costFilter,
+            // The hero chip stands alone: with it off and others on, the
+            // hero's cards are out; with nothing on, everything is in.
+            includeHeroCards = current.factionFilter.isEmpty() || HERO_FACTION in current.factionFilter,
+            includeAspectCards = current.factionFilter.isEmpty() || (current.factionFilter - HERO_FACTION).isNotEmpty(),
         )
-        state.value = state.value.copy(candidates = candidates)
+        val poolTotal = builderRepository.poolSize(rules?.heroSetCode, aspects, locale, current.ownedOnly)
+        val types = current.typeChoices.ifEmpty { builderRepository.playerCardTypes(locale) }
+        state.value = state.value.copy(candidates = candidates, poolTotal = poolTotal, typeChoices = types)
     }
 
     private companion object {
         const val SEARCH_DEBOUNCE_MS = 250L
+        const val HERO_FACTION = "hero"
     }
 }

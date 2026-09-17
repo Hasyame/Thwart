@@ -316,6 +316,20 @@ class DeckRepository @Inject constructor(
      * Works entirely offline: the deck rows and the card rows are both local,
      * so this never touches the network.
      */
+    /**
+     * The hero's nemesis set: the cards shuffled into the encounter deck when
+     * the obligation comes up. In the hero's own pack, in a set named after
+     * the hero's with `_nemesis` on the end. Part of playing the hero, not of
+     * the deck, and shown as such.
+     */
+    suspend fun nemesisSet(heroCode: String, locale: CardLocale): List<CardEntity> = withContext(ioDispatcher) {
+        val hero = cardDao.getCardPreferringLocale(heroCode, locale.code) ?: return@withContext emptyList()
+        val setCode = hero.cardSetCode ?: return@withContext emptyList()
+        cardDao.getCardSet("${setCode}_nemesis", locale.code)
+            .ifEmpty { cardDao.getCardSet("${setCode}_nemesis", locale.fallback().code) }
+            .sortedBy { it.code }
+    }
+
     suspend fun contents(id: String, locale: CardLocale): DeckContents? =
         withContext(ioDispatcher) {
             val deck = savedDeckDao.getDeck(id) ?: return@withContext null

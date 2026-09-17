@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.ui.decks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
 import com.hasyame.marvelchampions.data.repository.CardSearchRepository
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 /** A card a campaign granted, resolved for display. */
@@ -36,6 +38,12 @@ data class DeckDetailUiState(
     val validation: DeckValidation = DeckValidation(),
     /** Cards the identity cannot play, worked out on opening and never stored. */
     val synergyWarnings: List<SynergyWarning> = emptyList(),
+    /** The hero's nemesis set, shown for what it is: not part of the deck. */
+    val nemesis: List<CardEntity> = emptyList(),
+    /** True once the deck has been removed, for the screen to leave on. */
+    val deleted: Boolean = false,
+    /** The card language, named in the app's language, for the note at the foot. */
+    val cardLanguage: String = "",
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val error: DeckImportError? = null,
@@ -71,6 +79,8 @@ class DeckDetailViewModel @Inject constructor(
                 campaignCards = campaignCards(id, locale),
                 validation = validate(contents, locale),
                 synergyWarnings = synergyWarnings(contents, locale),
+                nemesis = contents?.let { repository.nemesisSet(it.deck.heroCode, locale) }.orEmpty(),
+                cardLanguage = Locale.forLanguageTag(locale.code).getDisplayLanguage(Locale.getDefault()),
                 isLoading = false,
             )
         }
@@ -118,6 +128,14 @@ class DeckDetailViewModel @Inject constructor(
         return builderRepository.synergyWarnings(rules, DeckRepository.parseSlots(deck.slots), locale)
     }
 
+    fun delete() {
+        val id = deckId ?: return
+        viewModelScope.launch {
+            repository.delete(id)
+            state.value = state.value.copy(deleted = true)
+        }
+    }
+
     fun revertToImported() {
         val id = deckId ?: return
         viewModelScope.launch {
@@ -155,6 +173,8 @@ class DeckDetailViewModel @Inject constructor(
                 campaignCards = campaignCards(id, locale),
                 validation = validate(contents, locale),
                 synergyWarnings = synergyWarnings(contents, locale),
+                nemesis = contents?.let { repository.nemesisSet(it.deck.heroCode, locale) }.orEmpty(),
+                cardLanguage = Locale.forLanguageTag(locale.code).getDisplayLanguage(Locale.getDefault()),
                 isLoading = false,
                 isRefreshing = false,
                 error = error,

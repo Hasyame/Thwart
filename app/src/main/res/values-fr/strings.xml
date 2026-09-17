@@ -143,6 +143,7 @@
     <string name="aspect_leadership">Commandement</string>
     <string name="aspect_protection">Protection</string>
     <string name="aspect_pool">\'Pool</string>
+    <string name="aspect_basic">Basique</string>
 
     <!-- Decks -->
     <string name="decks_add">Ajouter un deck</string>
@@ -228,8 +229,6 @@
     <string name="decks_no_owned_heroes">Aucun héros ne vient d\'une extension de votre collection. Désactivez l\'interrupteur sur la page Decks, ou ajoutez vos extensions dans les réglages.</string>
     <string name="decks_hero_not_owned">%1$s — extension absente de votre collection</string>
     <string name="decks_edit">Modifier le deck</string>
-    <string name="decks_tab_deck">Deck</string>
-    <string name="decks_tab_add">Ajouter des cartes</string>
     <string name="decks_editor_empty">Aucune carte pour l\'instant. Utilisez l\'onglet « Ajouter des cartes ».</string>
     <string name="decks_add_card">Ajouter un exemplaire</string>
     <string name="decks_sort">Trier</string>
@@ -237,7 +236,6 @@
     <string name="decks_sort_cost">Coût</string>
     <string name="decks_sort_name">Nom</string>
     <string name="decks_remove_card">Retirer un exemplaire</string>
-    <string name="decks_limit">limite %1$d</string>
     <plurals name="decks_card_total">
         <item quantity="one">%1$d carte</item>
         <item quantity="many">%1$d de cartes</item>
@@ -247,6 +245,35 @@
     <string name="decks_synergy_issue">Problème de synergie : la carte %1$s n\'a pas de synergie avec l\'identité</string>
     <string name="decks_synergy_and_others">%1$s (et %2$s)</string>
     <string name="decks_synergy_hide">Masquer les cartes sans synergie avec l\'identité</string>
+    <string name="decks_legal_short">légal</string>
+    <string name="decks_illegal_short">non légal</string>
+    <string name="decks_hand_size">Taille de main</string>
+    <string name="decks_hit_points">Points de vie</string>
+    <string name="decks_own_everything">Vous possédez toutes les cartes de ce deck.</string>
+    <string name="decks_search_in">Chercher dans ce deck…</string>
+    <string name="decks_view_list">Liste</string>
+    <string name="decks_view_grid">Grille</string>
+    <string name="decks_nemesis">Set némésis</string>
+    <string name="decks_nemesis_note">Mélangé dans le deck de rencontre quand l’obligation du héros est piochée. Ni dans le deck, ni choisi.</string>
+    <string name="decks_card_language_note">Les noms de cartes sont affichés en %1$s, selon la langue des cartes choisie dans les réglages.</string>
+    <string name="decks_hero_cards">Cartes du héros</string>
+    <string name="decks_hero_cards_note">Dans chaque deck de ce héros, au nombre imprimé.</string>
+    <string name="decks_not_owned">non possédée</string>
+    <string name="decks_pool_count">Cartes : %1$d sur %2$d</string>
+    <plurals name="decks_problems">
+        <item quantity="one">%1$d problème</item>
+        <item quantity="many">%1$d de problèmes</item>
+        <item quantity="other">%1$d problèmes</item>
+    </plurals>
+    <plurals name="decks_problems_in_deck">
+        <item quantity="one">%1$d problème dans ce deck :</item>
+        <item quantity="many">%1$d de problèmes dans ce deck :</item>
+        <item quantity="other">%1$d problèmes dans ce deck :</item>
+    </plurals>
+    <string name="decks_tab_deck_count">Deck %1$d</string>
+    <string name="decks_tab_cards_count">Cartes %1$d</string>
+    <string name="decks_filter_owned">Seulement ce que je possède</string>
+    <string name="decks_stats_made_of">De quoi il est fait</string>
     <plurals name="decks_problem_too_few">
         <item quantity="one">Seulement %1$d carte, %2$d requises.</item>
         <item quantity="many">Seulement %1$d de cartes, %2$d requises.</item>

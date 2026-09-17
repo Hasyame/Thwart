@@ -1,6 +1,15 @@
 package com.hasyame.marvelchampions.ui.decks
 
 import androidx.compose.foundation.clickable
+import com.hasyame.marvelchampions.data.repository.DeckContents
+import androidx.compose.material3.FilterChip
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,17 +49,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
-import com.hasyame.marvelchampions.core.designsystem.component.CardTypeBadge
-import com.hasyame.marvelchampions.core.designsystem.component.aspectColor
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckText
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckTextCard
-import com.hasyame.marvelchampions.ui.util.aspectLabel
 import com.hasyame.marvelchampions.ui.util.shareText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +73,36 @@ fun DeckDetailScreen(
     val shareContext = LocalContext.current
     var noShareApp by remember { mutableStateOf(false) }
     var confirmRefresh by remember { mutableStateOf(false) }
+    var confirmDelete by remember { mutableStateOf(false) }
     var menuOpen by remember { mutableStateOf(false) }
+    // A word to find a card in this deck, an order, and names or pictures.
+    // Page state, not remembered: a question about this deck, not a preference.
+    var search by remember { mutableStateOf("") }
+    var sort by remember { mutableStateOf(DeckSort.TYPE) }
+    var grid by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.deleted) {
+        if (state.deleted) {
+            onBack()
+        }
+    }
+
+    if (confirmDelete) {
+        AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            title = { Text(stringResource(R.string.decks_delete_title)) },
+            text = { Text(stringResource(R.string.decks_delete_message, state.contents?.deck?.name.orEmpty())) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmDelete = false
+                    viewModel.delete()
+                }) { Text(stringResource(R.string.action_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
+        )
+    }
     // Null while the dialogue is closed; the name being typed while it is open.
     var renaming by remember { mutableStateOf<String?>(null) }
 
@@ -139,7 +175,7 @@ fun DeckDetailScreen(
         topBar = {
             TopAppBar(
             colors = comicTopBarColors(),
-                title = { Text(state.contents?.deck?.name ?: "") },
+                title = { Text(state.contents?.deck?.name ?: "", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -229,6 +265,13 @@ fun DeckDetailScreen(
                                 renaming = deck?.name.orEmpty()
                             },
                         )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.action_delete)) },
+                            onClick = {
+                                menuOpen = false
+                                confirmDelete = true
+                            },
+                        )
                     }
                 },
             )
@@ -246,191 +289,218 @@ fun DeckDetailScreen(
                 contentAlignment = Alignment.Center,
             ) { Text(stringResource(R.string.decks_not_found)) }
 
-            else -> LazyColumn(Modifier.fillMaxSize().padding(padding)) {
-                if (state.isRefreshing) {
-                    item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
-                }
-                state.error?.let { error ->
-                    item {
-                        Text(
-                            text = importErrorMessage(error),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(16.dp),
-                        )
-                    }
-                }
+            else -> DeckBody(
+                state = state,
+                contents = contents,
+                search = search,
+                onSearch = { search = it },
+                sort = sort,
+                onSort = { sort = it },
+                grid = grid,
+                onGrid = { grid = it },
+                onCardClick = onCardClick,
+                onRevert = viewModel::revertToImported,
+                modifier = Modifier.fillMaxSize().padding(padding),
+            )
+        }
+    }
+}
 
-                item {
-                    ListItem(
-                        overlineContent = { Text(stringResource(R.string.decks_hero)) },
-                        headlineContent = { Text(contents.deck.heroName) },
-                        supportingContent = {
-                            Text(
-                                DeckRepository.parseAspects(contents.deck.aspects)
-                                    .map { aspectLabel(it) }
-                                    .joinToString(" / "),
-                            )
-                        },
-                        modifier = Modifier.clickable { onCardClick(contents.deck.heroCode) },
+/**
+ * The page under the bar: the hero's art, the hero, the verdicts, the deck
+ * by type as names or as pictures, the nemesis set, and what the deck is
+ * made of. One list, so it scrolls as one page.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DeckBody(
+    state: DeckDetailUiState,
+    contents: DeckContents,
+    search: String,
+    onSearch: (String) -> Unit,
+    sort: DeckSort,
+    onSort: (DeckSort) -> Unit,
+    grid: Boolean,
+    onGrid: (Boolean) -> Unit,
+    onCardClick: (String) -> Unit,
+    onRevert: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val aspects = DeckRepository.parseAspects(contents.deck.aspects)
+    // What the toolbar leaves of the deck: the word narrows it, the order
+    // sorts inside each type, and the type groups themselves stay.
+    val shown = remember(contents, search, sort) {
+        val needle = search.trim()
+        contents.cardsByType.mapValues { (_, cards) ->
+            cards.filter { needle.isBlank() || it.card.name.contains(needle, ignoreCase = true) }
+                .sortedWith(compareBy(sort.comparator) { it.card })
+        }.filterValues { it.isNotEmpty() }
+    }
+    LazyColumn(modifier, contentPadding = PaddingValues(bottom = 32.dp)) {
+        if (state.isRefreshing) {
+            item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
+        }
+        state.error?.let { error ->
+            item {
+                Text(
+                    text = importErrorMessage(error),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(16.dp),
+                )
+            }
+        }
+
+        item(key = "banner") {
+            HeroBanner(imageSrc = contents.hero?.imageSrc, title = contents.deck.name, height = 200.dp) {
+                DeckChips(heroName = contents.deck.heroName, aspects = aspects, cardCount = contents.totalCards)
+            }
+        }
+
+        item(key = "hero") {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                contents.hero?.let { HeroCard(it, onClick = { onCardClick(it.code) }) }
+                if (state.validation.isLegal) {
+                    Verdict(stringResource(R.string.decks_legal), ok = true)
+                } else {
+                    Verdict(
+                        pluralStringResource(R.plurals.decks_not_legal, state.validation.problems.size, state.validation.problems.size),
+                        ok = false,
                     )
-                    HorizontalDivider()
+                }
+                if (contents.missingCards.isEmpty() && contents.unknownCardCodes.isEmpty()) {
+                    Verdict(stringResource(R.string.decks_own_everything), ok = true)
+                } else if (contents.missingCards.isNotEmpty()) {
+                    Verdict(
+                        pluralStringResource(R.plurals.decks_missing_count, contents.missingCards.size, contents.missingCards.size),
+                        ok = false,
+                    )
+                }
+                SynergyWarningText(state.synergyWarnings)
+                if (state.hasLocalEdits) {
+                    Text(stringResource(R.string.decks_locally_edited), style = MaterialTheme.typography.bodySmall)
+                    TextButton(onClick = onRevert) { Text(stringResource(R.string.decks_revert)) }
+                }
+                if (contents.unknownCardCodes.isNotEmpty()) {
+                    // Happens when the deck uses a pack MarvelCDB has added
+                    // since the last card sync.
                     Text(
-                        text = pluralStringResource(
-                            R.plurals.decks_card_count,
-                            contents.totalCards,
-                            contents.totalCards,
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(16.dp),
+                        text = pluralStringResource(R.plurals.decks_unknown_cards, contents.unknownCardCodes.size, contents.unknownCardCodes.size),
+                        style = MaterialTheme.typography.bodySmall,
                     )
-                    DeckStatisticsSection(state.statistics)
-                    HorizontalDivider()
+                }
+            }
+        }
 
-                    // Legality is shown here because a campaign refuses an
-                    // illegal deck, and finding that out at the campaign screen
-                    // would be too late.
-                    if (state.validation.isLegal) {
-                        Text(
-                            text = stringResource(R.string.decks_legal),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
-                    } else {
-                        Text(
-                            text = pluralStringResource(
-                                R.plurals.decks_not_legal,
-                                state.validation.problems.size,
-                                state.validation.problems.size,
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
-                    }
-                    SynergyWarningText(
-                        state.synergyWarnings,
-                        Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                    )
-                    if (state.hasLocalEdits) {
-                        Text(
-                            text = stringResource(R.string.decks_locally_edited),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
-                        TextButton(
-                            onClick = viewModel::revertToImported,
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                        ) { Text(stringResource(R.string.decks_revert)) }
-                    }
-                    if (contents.missingCards.isNotEmpty()) {
-                        Text(
-                            text = pluralStringResource(
-                                R.plurals.decks_missing_count,
-                                contents.missingCards.size,
-                                contents.missingCards.size,
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
-                    }
-                    if (contents.unknownCardCodes.isNotEmpty()) {
-                        // Happens when the deck uses a pack MarvelCDB has added
-                        // since the last card sync.
-                        Text(
-                            text = pluralStringResource(
-                                R.plurals.decks_unknown_cards,
-                                contents.unknownCardCodes.size,
-                                contents.unknownCardCodes.size,
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(16.dp),
-                        )
+        item(key = "toolbar") {
+            Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = search,
+                    onValueChange = onSearch,
+                    singleLine = true,
+                    placeholder = { Text(stringResource(R.string.decks_search_in)) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FilterChip(selected = sort == DeckSort.NAME, onClick = { onSort(DeckSort.NAME) }, label = { Text(stringResource(R.string.decks_sort_name)) })
+                    FilterChip(selected = sort == DeckSort.COST, onClick = { onSort(DeckSort.COST) }, label = { Text(stringResource(R.string.decks_sort_cost)) })
+                    Spacer(Modifier.width(8.dp))
+                    FilterChip(selected = !grid, onClick = { onGrid(false) }, label = { Text(stringResource(R.string.decks_view_list)) })
+                    FilterChip(selected = grid, onClick = { onGrid(true) }, label = { Text(stringResource(R.string.decks_view_grid)) })
+                }
+            }
+        }
+
+        if (state.campaignCards.isNotEmpty()) {
+            item(key = "campaign-cards") {
+                GroupHeading(stringResource(R.string.decks_campaign_cards), state.campaignCards.size)
+                Text(
+                    // They live on the campaign run, not in the deck, which is
+                    // also why they are outside the deck size limits.
+                    text = stringResource(R.string.decks_campaign_cards_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
+            items(state.campaignCards, key = { it.cardCode + it.campaignName }) { granted ->
+                ListItem(
+                    modifier = Modifier.clickable { onCardClick(granted.cardCode) },
+                    headlineContent = { Text(granted.name) },
+                    supportingContent = { Text(granted.campaignName) },
+                )
+            }
+        }
+
+        shown.forEach { (typeName, cards) ->
+            item(key = "type-$typeName") { GroupHeading(typeName, cards.sumOf { it.quantity }) }
+            if (grid) {
+                item(key = "grid-$typeName") {
+                    FlowRow(
+                        Modifier.padding(horizontal = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        maxItemsInEachRow = 3,
+                    ) {
+                        cards.forEach { deckCard ->
+                            CardTile(
+                                card = deckCard.card,
+                                quantity = deckCard.quantity,
+                                onClick = { onCardClick(deckCard.card.code) },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
                     }
                 }
-
-                if (state.campaignCards.isNotEmpty()) {
-                    item(key = "campaign-cards") {
-                        Text(
-                            text = stringResource(R.string.decks_campaign_cards),
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                        )
-                        Text(
-                            // They live on the campaign run, not in the deck,
-                            // which is also why they are outside the deck size
-                            // limits.
-                            text = stringResource(R.string.decks_campaign_cards_note),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                        )
-                    }
-                    items(state.campaignCards, key = { it.cardCode + it.campaignName }) { granted ->
-                        ListItem(
-                            modifier = Modifier.clickable { onCardClick(granted.cardCode) },
-                            headlineContent = { Text(granted.name) },
-                            supportingContent = { Text(granted.campaignName) },
-                        )
-                        HorizontalDivider()
-                    }
+            } else {
+                items(cards, key = { it.card.code }) { deckCard ->
+                    DeckCardRow(
+                        card = deckCard.card,
+                        quantity = deckCard.quantity,
+                        onClick = { onCardClick(deckCard.card.code) },
+                        subtitle = if (deckCard.missingFromCollection) {
+                            stringResource(R.string.decks_card_missing, deckCard.card.packCode.uppercase())
+                        } else {
+                            null
+                        },
+                        subtitleIsWarning = deckCard.missingFromCollection,
+                    )
                 }
+            }
+        }
 
-                contents.cardsByType.forEach { (typeName, cards) ->
-                    item(key = "type-$typeName") {
-                        Text(
-                            text = typeName,
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                        )
-                    }
-                    items(cards, key = { it.card.code }) { deckCard ->
-                        ListItem(
-                            modifier = Modifier.clickable { onCardClick(deckCard.card.code) },
-                            // Shape for the type, colour for the aspect. The
-                            // type is already the heading this row sits under,
-                            // so the colour is the part that earns its place:
-                            // it says how much leadership is in the deck at a
-                            // glance, which the list otherwise only gives by
-                            // reading every line. The aspect is written nowhere
-                            // here, so unlike in the editor the mark carries it
-                            // for a screen reader too.
-                            leadingContent = {
-                                CardTypeBadge(
-                                    typeCode = deckCard.card.typeCode,
-                                    factionCode = deckCard.card.factionCode,
-                                    contentDescription = deckCard.card.factionName
-                                        .takeIf { aspectColor(deckCard.card.factionCode) != null },
-                                )
-                            },
-                            headlineContent = {
-                                Text("${deckCard.quantity}× ${deckCard.card.name}")
-                            },
-                            supportingContent = {
-                                Text(
-                                    text = if (deckCard.missingFromCollection) {
-                                        stringResource(
-                                            R.string.decks_card_missing,
-                                            deckCard.card.packCode.uppercase(),
-                                        )
-                                    } else {
-                                        deckCard.card.packCode.uppercase()
-                                    },
-                                    color = if (deckCard.missingFromCollection) {
-                                        MaterialTheme.colorScheme.error
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    },
-                                )
-                            },
-                        )
-                        HorizontalDivider()
+        if (state.nemesis.isNotEmpty()) {
+            item(key = "nemesis") {
+                HorizontalDivider(Modifier.padding(vertical = 8.dp))
+                GroupHeading(stringResource(R.string.decks_nemesis), state.nemesis.size)
+                Text(
+                    stringResource(R.string.decks_nemesis_note),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                )
+                FlowRow(
+                    Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    maxItemsInEachRow = 3,
+                ) {
+                    state.nemesis.forEach { card ->
+                        CardTile(card = card, quantity = null, onClick = { onCardClick(card.code) }, modifier = Modifier.weight(1f))
                     }
                 }
             }
+        }
+
+        item(key = "stats") {
+            HorizontalDivider(Modifier.padding(vertical = 8.dp))
+            DeckStatisticsSection(state.statistics)
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
+            Text(
+                stringResource(R.string.decks_card_language_note, state.cardLanguage),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
         }
     }
 }

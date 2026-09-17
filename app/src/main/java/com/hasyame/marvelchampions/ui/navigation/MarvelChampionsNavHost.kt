@@ -66,6 +66,7 @@ fun MarvelChampionsNavHost(
                         navController.navigate(DeckEditorRoute(deckId))
                     },
                     onBuildDeck = { navController.navigate(NewDeckRoute) },
+                    onEditDeck = { deckId -> navController.navigate(DeckEditorRoute(deckId)) },
                     sharedLink = sharedLink,
                     onSharedLinkHandled = onSharedLinkHandled,
                 )
@@ -93,6 +94,7 @@ fun MarvelChampionsNavHost(
                 DeckEditorScreen(
                     deckId = entry.toRoute<DeckEditorRoute>().deckId,
                     onBack = { navController.popBackStack() },
+                    onCardClick = { code -> navController.navigate(CardDetailRoute(code)) },
                 )
             }
             // A card opened from a deck belongs to the Decks back stack, so it
