@@ -329,11 +329,11 @@ class SoftDeleteTest {
     @Test
     fun `the guard is reading real files`() {
         // If the DAO folder ever moves, the search above would find nothing and
-        // pass by saying nothing. Eleven DAO files are expected; a new one is a
-        // deliberate change to this number. The eleventh is the ratings, and
-        // the one before it was deliberate too: the file allowed to read
-        // tombstones.
-        assertEquals(11, daoSources().size)
+        // pass by saying nothing. Twelve DAO files are expected; a new one is a
+        // deliberate change to this number. The twelfth is the draft session,
+        // device-local with no tombstone, and the eleventh the ratings; the one
+        // before it was deliberate too: the file allowed to read tombstones.
+        assertEquals(12, daoSources().size)
     }
 
     // --------------------------------------------------------------- helpers --

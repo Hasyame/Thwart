@@ -226,7 +226,7 @@ object DeckValidator {
         usage: IntArray,
     ): Boolean {
         rules.options.forEachIndexed { index, option ->
-            if (!option.matches(card)) {
+            if (!option.admits(card)) {
                 return@forEachIndexed
             }
             val limit = option.limit
@@ -239,20 +239,5 @@ object DeckValidator {
             }
         }
         return false
-    }
-
-    private fun DeckOption.matches(card: DeckCardInfo): Boolean {
-        if (types.isNotEmpty() && card.typeCode !in types) {
-            return false
-        }
-        if (traits.isNotEmpty() && traits.none { card.hasTrait(it) }) {
-            return false
-        }
-        if (resources.isNotEmpty() && resources.none { card.hasResource(it) }) {
-            return false
-        }
-        // An allowance with no criteria at all would admit everything, which is
-        // never what the data means.
-        return types.isNotEmpty() || traits.isNotEmpty() || resources.isNotEmpty()
     }
 }

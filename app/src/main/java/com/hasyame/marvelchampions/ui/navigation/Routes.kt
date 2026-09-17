@@ -88,6 +88,10 @@ data object RandomizerRoute
 @Serializable
 data object VersusRoute
 
+/** Decks built one pick at a time, from the collection. Resumes where it was left. */
+@Serializable
+data object DraftRoute
+
 @Serializable
 data object SettingsGraph
 

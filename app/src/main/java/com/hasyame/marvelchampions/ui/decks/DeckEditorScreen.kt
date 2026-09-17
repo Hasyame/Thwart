@@ -313,7 +313,7 @@ private fun CardRow(
 }
 
 @Composable
-private fun problemMessage(problem: DeckProblem): String = when (problem) {
+internal fun problemMessage(problem: DeckProblem): String = when (problem) {
     is DeckProblem.TooFewCards -> pluralStringResource(
         R.plurals.decks_problem_too_few,
         problem.actual,

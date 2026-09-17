@@ -23,6 +23,7 @@ import com.hasyame.marvelchampions.ui.plays.PlaysScreen
 import com.hasyame.marvelchampions.ui.rules.RulesScreen
 import com.hasyame.marvelchampions.ui.play.PlayScreen
 import com.hasyame.marvelchampions.ui.randomizer.RandomizerScreen
+import com.hasyame.marvelchampions.ui.draft.DraftScreen
 import com.hasyame.marvelchampions.ui.versus.VersusScreen
 import com.hasyame.marvelchampions.ui.settings.AboutScreen
 import com.hasyame.marvelchampions.ui.settings.SettingsScreen
@@ -114,6 +115,7 @@ fun MarvelChampionsNavHost(
                     },
                     onCampaigns = { navController.navigate(CampaignRoute) },
                     onVersus = { navController.navigate(VersusRoute) },
+                    onDraft = { navController.navigate(DraftRoute) },
                     onResumeCampaign = { runId ->
                         navController.navigate(CampaignRunRoute(runId))
                     },
@@ -121,6 +123,23 @@ fun MarvelChampionsNavHost(
             }
             composable<VersusRoute> {
                 VersusScreen(onBack = { navController.popBackStack() })
+            }
+            composable<DraftRoute> {
+                DraftScreen(
+                    onBack = { navController.popBackStack() },
+                    // The decks are in the Decks tab like any other; the
+                    // draft itself has nothing left to show.
+                    onSaved = { navController.popBackStack() },
+                    onCardDetail = { code -> navController.navigate(CardDetailRoute(code)) },
+                )
+            }
+            // A card held on the draft table opens here, inside the play graph,
+            // so the back gesture returns to the table.
+            composable<CardDetailRoute> { entry ->
+                CardDetailScreen(
+                    code = entry.toRoute<CardDetailRoute>().code,
+                    onBack = { navController.popBackStack() },
+                )
             }
             composable<RandomizerRoute> {
                 RandomizerScreen(

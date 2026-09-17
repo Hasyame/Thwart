@@ -192,6 +192,19 @@ Arrêtées avec l'auteur le 2026-09-16, à appliquer à l'identique sur le Web.
   `deck_options` de l'identité admettent (les trois supports S.H.I.E.L.D. de
   Maria Hill, par exemple), la légalité en bornant le nombre.
 * **Taille du deck.** Réglée par joueur, sur la page 2.
+* **Cartes proposées.** Cinq par défaut (et non trois), bornes 2 à 10 inchangées.
+* **Pas d'écran de transition.** En multijoueur, la table passe directement d'un
+  joueur au suivant ; l'en-tête de la page nomme le joueur et son identité.
+* **Prendre une carte.** Un appui sur la carte la prend, sans bouton ni
+  confirmation ; un appui long ouvre la fiche de la carte. Sur téléphone, les
+  cartes proposées sont en grille de deux colonnes, le deck en cours (cartes
+  signature comprises, par type, avec le coût) en dessous ; sur tablette, le
+  deck est à côté.
+* **Vérification du stock.** Comptée en exemplaires qu'un deck peut vraiment
+  contenir (min du stock et de la limite d'exemplaires par titre, 1 pour une
+  carte unique ou pour Adam Warlock), par joueur puis tous ensemble. Un seul
+  Core Set ne suffit pas à deux decks Justice de 40 : 47 choix possibles pour
+  50 demandés, dit avant le premier tirage.
 * **Nom par défaut sans choix d'affinité.** `MULTI` pour une identité dont les
   règles imposent ses affinités (Adam Warlock : `DRAFT-ADAMWARLOCK-MULTI-01`).
   Une identité qui en choisit deux (Spider-Woman) les écrit toutes les deux,

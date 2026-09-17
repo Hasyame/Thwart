@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.data.db.dao.RatingDao
 import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.db.dao.PlayDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.db.dao.DraftSessionDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedModularSetDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedScenarioDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
@@ -141,6 +142,10 @@ object DataModule {
     @Provides
     fun providePausedGameDao(database: MarvelChampionsDatabase): PausedGameDao =
         database.pausedGameDao()
+
+    @Provides
+    fun provideDraftSessionDao(database: MarvelChampionsDatabase): DraftSessionDao =
+        database.draftSessionDao()
 
     @Provides
     @Singleton

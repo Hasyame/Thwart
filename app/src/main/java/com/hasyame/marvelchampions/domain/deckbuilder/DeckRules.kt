@@ -81,7 +81,23 @@ data class DeckOption(
     val resources: List<String> = emptyList(),
     /** Maximum number of cards admitted through this allowance. */
     val limit: Int? = null,
-)
+) {
+    /** True when the card is the kind this allowance is about, the limit aside. */
+    fun admits(card: DeckCardInfo): Boolean {
+        if (types.isNotEmpty() && card.typeCode !in types) {
+            return false
+        }
+        if (traits.isNotEmpty() && traits.none { card.hasTrait(it) }) {
+            return false
+        }
+        if (resources.isNotEmpty() && resources.none { card.hasResource(it) }) {
+            return false
+        }
+        // An allowance with no criteria at all would admit everything, which is
+        // never what the data means.
+        return types.isNotEmpty() || traits.isNotEmpty() || resources.isNotEmpty()
+    }
+}
 
 /** The subset of a card the validator needs. Keeps the rules free of Room types. */
 data class DeckCardInfo(
