@@ -167,7 +167,6 @@
     <string name="decks_refresh">Actualiser depuis MarvelCDB</string>
     <string name="decks_hero">Héros</string>
     <string name="decks_import_failed">Échec de l\'import</string>
-    <string name="decks_card_missing">%1$s — absent de votre collection</string>
     <plurals name="decks_unknown_cards">
         <item quantity="one">%1$d carte de ce deck est absente de la base locale. Mettez les cartes à jour depuis les réglages.</item>
         <item quantity="many">%1$d de cartes de ce deck sont absentes de la base locale. Mettez les cartes à jour depuis les réglages.</item>
@@ -255,6 +254,16 @@
     <string name="decks_legal">Ce deck est légal.</string>
     <string name="decks_synergy_issue">Problème de synergie : la carte %1$s n\'a pas de synergie avec l\'identité</string>
     <string name="decks_synergy_and_others">%1$s (et %2$s)</string>
+    <string name="decks_tab_cards">Cartes</string>
+    <string name="decks_tab_info">Informations</string>
+    <string name="decks_add_cards_hint">Ajouter des cartes</string>
+    <string name="decks_problems_title">Problèmes du deck (%1$d)</string>
+    <string name="decks_problems_note">Légal veut dire que les règles de construction de la carte d\'identité sont respectées. Une campagne refuse un deck qui ne l\'est pas.</string>
+    <string name="decks_synergy_note">Une carte sans synergie reste légale : avec cette identité, elle ne servira jamais que de ressource.</string>
+    <string name="decks_packs_title">Extensions dont ce deck se sert</string>
+    <string name="decks_notes">Notes</string>
+    <string name="decks_notes_hint">Stratégie, quoi garder en main de départ, tout ce qui mérite d\'être retenu. À vous d\'écrire.</string>
+    <string name="decks_notes_edit">Modifier les notes</string>
     <string name="decks_synergy_hide">Masquer les cartes sans synergie avec l\'identité</string>
     <string name="decks_folder_name">Nom du dossier</string>
     <string name="decks_folder_new">Nouveau dossier</string>
@@ -291,9 +300,6 @@
     <string name="decks_hand_size">Taille de main</string>
     <string name="decks_hit_points">Points de vie</string>
     <string name="decks_own_everything">Vous possédez toutes les cartes de ce deck.</string>
-    <string name="decks_search_in">Chercher dans ce deck…</string>
-    <string name="decks_view_list">Liste</string>
-    <string name="decks_view_grid">Grille</string>
     <string name="decks_nemesis">Set némésis</string>
     <string name="decks_nemesis_note">Mélangé dans le deck de rencontre quand l’obligation du héros est piochée. Ni dans le deck, ni choisi.</string>
     <string name="decks_card_language_note">Les noms de cartes sont affichés en %1$s, selon la langue des cartes choisie dans les réglages.</string>
@@ -301,20 +307,7 @@
     <string name="decks_hero_cards_note">Dans chaque deck de ce héros, au nombre imprimé.</string>
     <string name="decks_not_owned">non possédée</string>
     <string name="decks_pool_count">Cartes : %1$d sur %2$d</string>
-    <plurals name="decks_problems">
-        <item quantity="one">%1$d problème</item>
-        <item quantity="many">%1$d de problèmes</item>
-        <item quantity="other">%1$d problèmes</item>
-    </plurals>
-    <plurals name="decks_problems_in_deck">
-        <item quantity="one">%1$d problème dans ce deck :</item>
-        <item quantity="many">%1$d de problèmes dans ce deck :</item>
-        <item quantity="other">%1$d problèmes dans ce deck :</item>
-    </plurals>
-    <string name="decks_tab_deck_count">Deck %1$d</string>
-    <string name="decks_tab_cards_count">Cartes %1$d</string>
     <string name="decks_filter_owned">Seulement ce que je possède</string>
-    <string name="decks_stats_made_of">De quoi il est fait</string>
     <plurals name="decks_problem_too_few">
         <item quantity="one">Seulement %1$d carte, %2$d requises.</item>
         <item quantity="many">Seulement %1$d de cartes, %2$d requises.</item>
@@ -419,14 +412,8 @@
         <item quantity="many">Non légal : %1$d de problèmes. Corrigez-les dans l\'onglet Decks.</item>
         <item quantity="other">Non légal : %1$d problèmes. Corrigez-les dans l\'onglet Decks.</item>
     </plurals>
-    <string name="decks_locally_edited">Modifié ici depuis son import.</string>
     <string name="decks_revert">Revenir à la version importée</string>
     <string name="decks_refresh_discards_edits">Actualiser remplace ce deck par la version MarvelCDB et supprime les modifications faites ici.</string>
-    <plurals name="decks_not_legal">
-        <item quantity="one">Non légal : %1$d problème. Une campagne le refusera.</item>
-        <item quantity="many">Non légal : %1$d de problèmes. Une campagne le refusera.</item>
-        <item quantity="other">Non légal : %1$d problèmes. Une campagne le refusera.</item>
-    </plurals>
     <string name="campaign_nothing_recorded">Rien d\'enregistré</string>
     <string name="campaign_nobody">Personne</string>
     <string name="settings_contact">Contact</string>

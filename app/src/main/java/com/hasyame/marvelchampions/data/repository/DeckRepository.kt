@@ -250,6 +250,18 @@ class DeckRepository @Inject constructor(
         }
     }
 
+    /**
+     * The player's notes on the deck: strategy, what to mulligan for,
+     * anything. Kept in the description the deck already carries, which an
+     * imported deck fills from MarvelCDB and a built one starts empty, so
+     * nothing new travels on the wire.
+     */
+    suspend fun setNotes(deckId: String, text: String) = withContext(ioDispatcher) {
+        savedDeckDao.getDeck(deckId)?.let {
+            save(it.copy(descriptionMd = text.trim().ifEmpty { null }, locallyEdited = true))
+        }
+    }
+
     /** Puts an imported deck back to exactly what MarvelCDB returned. */
     suspend fun revertToImported(deckId: String): Boolean = withContext(ioDispatcher) {
         val deck = savedDeckDao.getDeck(deckId) ?: return@withContext false

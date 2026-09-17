@@ -82,6 +82,11 @@ class DeckBuilderRepository @Inject constructor(
             )
         }
 
+    /** A card's name in [locale], or in the other language when untranslated. */
+    suspend fun cardName(code: String, locale: CardLocale): String? = withContext(ioDispatcher) {
+        cardDao.getCardPreferringLocale(code, locale.code)?.name
+    }
+
     /**
      * The traits of every face of the identity, from the English rows, which
      * are what the trait keys are made of. Ant-Man's Giant and Tiny forms,
