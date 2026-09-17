@@ -1,0 +1,8 @@
+Synergy in step with the web, and a clearer BoardGameGeek error.
+
+The synergy rule now reads exactly as the web app's: a trait key drops
+its dots, so S.H.I.E.L.D. cards match Maria Hill's allowance and her
+synergy alike, and a condition may name any number of traits. Stored
+conditions are worked out again once, on first launch.
+
+A wrong BoardGameGeek password now says so, instead of "HTTP 400".

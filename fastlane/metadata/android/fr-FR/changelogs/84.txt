@@ -1,0 +1,9 @@
+La synergie alignée sur le web, et une erreur BoardGameGeek plus claire.
+
+La règle de synergie se lit désormais exactement comme dans l'application
+web : une clé de trait perd ses points, si bien que les cartes S.H.I.E.L.D.
+correspondent aussi bien à la permission de Maria Hill qu'à sa synergie, et
+une condition peut nommer autant de traits qu'elle veut. Les conditions
+enregistrées sont recalculées une fois, au premier lancement.
+
+Un mot de passe BoardGameGeek erroné le dit désormais, au lieu de « HTTP 400 ».
