@@ -16,9 +16,9 @@ import kotlin.random.Random
  * may hold once appears once across a player's packs, and no pack holds
  * the same title twice. The players then open their packs one at a time,
  * taking a single card from each; what they leave goes back on the shelf.
- * When the shelf could not fill every pack, the engine builds as many as
- * it can, and builds again from what came back once those are opened, so
- * the draft carries on.
+ * A pack is always full: when the shelf could not fill every pack, the
+ * engine builds as many full ones as it can, and builds full packs again
+ * from what came back once those are opened, so the draft carries on.
  */
 object DraftEngine {
 
@@ -162,11 +162,22 @@ object DraftEngine {
      * holds of it. Every card put in a pack leaves the shelf until the pack
      * is opened.
      *
-     * When the shelf runs dry a player gets fewer packs, or a smaller last
-     * one, and [deal] builds again from what opened packs give back. Seeded
-     * by the build count, so a draft reopened finds the same packs.
+     * A pack is always full. When the shelf has too few titles left to fill
+     * one, the player gets fewer packs, never a smaller one, and [deal]
+     * builds again from what opened packs give back. The one exception is a
+     * player with no pack at all and a shelf that cannot fill one even so:
+     * they open what there is rather than nothing. Seeded by the build
+     * count, so a draft reopened finds the same packs.
+     *
+     * [fit] narrows what may go into a player's packs beyond the deck's
+     * limits; [deal] uses it to build, for a deck down to its last aspect,
+     * packs of cards that deck can take now.
      */
-    fun buildPacks(state: DraftState, context: DraftContext): DraftState {
+    fun buildPacks(
+        state: DraftState,
+        context: DraftContext,
+        fit: (DraftPlayer, DraftCard) -> Boolean = { _, _ -> true },
+    ): DraftState {
         val random = Random(state.seed + BUILD_STRIDE * (state.builds + 1))
         val stock = state.stock.toMutableMap()
         val packs = state.players.indices.map { state.packsOf(it).toMutableList() }
@@ -184,9 +195,15 @@ object DraftEngine {
                     return@forEach
                 }
                 val candidates = playerPool(state.copy(stock = stock), player, context)
-                    .filter { card -> (held[at][card.canonicalCode] ?: 0) < copyLimit(player, card, context) }
+                    .filter { card -> (held[at][card.canonicalCode] ?: 0) < copyLimit(player, card, context) && fit(player, card) }
                 if (candidates.isEmpty()) {
                     // Nothing on the shelf this player may take: no more packs for them.
+                    wanted[at] = 0
+                    return@forEach
+                }
+                if (candidates.size < state.settings.offerSize && packs[at].isNotEmpty()) {
+                    // Too few titles left for a full pack: this player opens
+                    // what they have, and the shelf is fuller by then.
                     wanted[at] = 0
                     return@forEach
                 }
@@ -254,10 +271,9 @@ object DraftEngine {
      *
      * When what they have holds nothing the deck may take, as when the
      * packs are down to one aspect and the deck needs another to balance,
-     * the packs go back to the shelf and are built once more from what is
-     * there now; if even those hold nothing, they go back for the other
-     * players and the table is left empty, rather than the same packs
-     * being put back and built again without end.
+     * the packs go back to the shelf and are built once more, this time
+     * of cards the deck can take as it stands; if even the shelf holds
+     * none, the table is left empty and the deck stops short.
      */
     fun deal(state: DraftState, context: DraftContext): DraftState {
         val at = state.current
@@ -266,7 +282,9 @@ object DraftEngine {
             next = buildPacks(next, context)
         }
         if (!useful(next, at, context)) {
-            next = buildPacks(returnPacks(next, at), context)
+            next = buildPacks(returnPacks(next, at), context) { player, card ->
+                player.index != at || canTake(player, card, context)
+            }
             if (!useful(next, at, context)) {
                 return returnPacks(next, at).copy(offer = emptyList())
             }

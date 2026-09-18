@@ -134,11 +134,13 @@ chaque joueur à son tour)
 * Les paquets se construisent tour par tour (un paquet pour chaque joueur,
   puis le suivant), pour qu'un seul Core Set se partage entre trois joueurs
   au lieu d'aller entièrement au premier.
-* Si le stock ne permet pas tous les paquets, le moteur en prépare autant
-  qu'il peut (le dernier éventuellement plus petit) ; quand un joueur les a
-  ouverts et qu'il lui manque encore des cartes, ses paquets sont reconstruits
-  à partir du stock, qui contient alors les cartes rendues, et le draft
-  continue.
+* Un paquet est toujours complet (X cartes). Si le stock ne permet pas tous
+  les paquets, le moteur prépare autant de paquets complets qu'il peut, jamais
+  un paquet plus petit ; quand le joueur les a ouverts et qu'il lui manque
+  encore des cartes, ses paquets sont reconstruits, complets, à partir du
+  stock, qui contient alors les cartes rendues, et le draft continue. Seule
+  exception : un joueur sans aucun paquet dont le stock entier ne remplit pas
+  un paquet ouvre ce qu'il y a plutôt que rien.
 * Légalité au moment de prendre : une carte du paquet que le deck ne peut pas
   accueillir (quatrième exemplaire, affinité impossible à rééquilibrer) est
   grisée et ne peut être prise ; un paquet dont aucune carte ne convient est

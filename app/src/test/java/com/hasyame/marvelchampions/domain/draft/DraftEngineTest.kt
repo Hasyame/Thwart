@@ -30,14 +30,15 @@ class DraftEngineTest {
         assertEquals(DraftPhase.PICK, start.phase)
         assertEquals(1, start.builds)
         // 28 titles, three of each but one of the three that a deck holds
-        // once: 78 cards in packs of five, the last ones smaller, since two
-        // copies of one title cannot share a pack. The pack on the table
-        // stays in the list until it is spent.
-        assertEquals(78, start.packsOf(0).flatten().size)
-        assertTrue(start.packsOf(0).size in 16..18)
+        // once: 78 cards, fifteen full packs of five at most, and fewer when
+        // what is left lies in under five titles, since two copies of one
+        // title cannot share a pack. Never a smaller pack. The pack on the
+        // table stays in the list until it is spent.
+        assertTrue(start.packsOf(0).size in 13..15)
         assertEquals(5, start.offer.size)
         assertEquals("the pack on the table is the first built", start.packsOf(0).first(), start.offer)
         start.packsOf(0).forEach { pack ->
+            assertEquals("a full pack: $pack", 5, pack.size)
             assertEquals("distinct titles in a pack: $pack", pack.size, pack.toSet().size)
             pack.forEach { code ->
                 assertTrue(code, context.pool.getValue(code).factionCode in setOf("justice", "basic"))
@@ -79,13 +80,41 @@ class DraftEngineTest {
     }
 
     @Test
-    fun `fewer cards than asked go in a pack when fewer are left`() {
+    fun `the last full pack is the last built, and the rest waits for what comes back`() {
+        // Twelve titles, three copies: 36 cards, seven full packs of five
+        // at most, six when what is over lies in under five titles. The
+        // next pack is not built short of five.
+        val twelve = (1..12).associate { "jus$it" to DraftFixtures.card("jus$it", "justice") }
+        val start = DraftEngine.start(state(player(0, spiderMan, listOf("justice"), deckSize = 40), pool = twelve, copies = 3), context(twelve))
+        val built = start.packsOf(0).size
+        assertTrue("$built packs", built in 6..7)
+        assertTrue(start.packsOf(0).all { it.size == 5 })
+        assertEquals(36 - 5 * built, start.stock.values.sum())
+
+        // Once those are opened, as many picks are in the deck and the rest
+        // is back on the shelf: full packs again, built from what came back.
+        var state = start
+        repeat(built) {
+            state = DraftEngine.pick(state, state.offer.first { DraftEngine.takeable(state, it, context(twelve)) }, context(twelve))
+        }
+        assertEquals(2, state.builds)
+        assertTrue(state.packsOf(0).size >= 5)
+        assertTrue(state.packsOf(0).all { it.size == 5 })
+        assertEquals(5, state.offer.size)
+    }
+
+    @Test
+    fun `a pack smaller than asked is a last resort, for a player with none`() {
         val pool = mapOf("a" to DraftFixtures.card("a", "justice"), "b" to DraftFixtures.card("b", "justice"))
         val small = state(player(0, spiderMan, listOf("justice")), pool = pool, copies = 3)
         val start = DraftEngine.start(small, context(pool))
         assertEquals(setOf("a", "b"), start.offer.toSet())
-        // Six cards in all, two a pack: three packs, not thirty-five.
-        assertEquals(3, start.packsOf(0).size)
+        // Two titles cannot fill a pack of five: one short pack at a time,
+        // each built from what the last gave back, rather than none.
+        assertEquals(1, start.packsOf(0).size)
+        val next = DraftEngine.pick(start, "a", context(pool))
+        assertEquals(setOf("a", "b"), next.offer.toSet())
+        assertEquals(2, next.builds)
     }
 
     @Test
@@ -100,9 +129,9 @@ class DraftEngineTest {
 
     @Test
     fun `when the shelf runs out, packs are built again from what opened packs gave back`() {
-        // Ten titles, three copies: thirty cards, six packs of five, for a
+        // Twelve titles, three copies: 36 cards, seven packs of five, for a
         // deck of forty that needs thirty-five picks. Nothing legal is ever
-        // short: three of each title is thirty picks, the rest stops.
+        // short: three of each title is 36 picks, the rest stops.
         val ten = (1..12).associate { "jus$it" to DraftFixtures.card("jus$it", "justice") }
         var state = DraftEngine.start(state(player(0, spiderMan, listOf("justice"), deckSize = 40), pool = ten, copies = 3), context(ten))
         assertEquals(1, state.builds)
