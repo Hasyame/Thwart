@@ -56,6 +56,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -553,7 +554,7 @@ private fun OfferGrid(
         } else {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
-                    stringResource(R.string.draft_pick_round, player.picks.size + 1),
+                    stringResource(R.string.draft_pack_of, state.packsOpened, state.packsTotal),
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -562,9 +563,20 @@ private fun OfferGrid(
             items(state.offer, key = { it.canonicalCode }) { card ->
                 OfferedCard(
                     card = card,
+                    enabled = card.canonicalCode in state.takeable,
                     onTake = { viewModel.pick(card.canonicalCode) },
                     onDetail = { onCardDetail(card.canonicalCode) },
                 )
+            }
+            // A pack with nothing for this deck, as happens when one aspect
+            // is left to balance: it goes back, and the next one opens.
+            if (state.takeable.isEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column(Modifier.fillMaxWidth().padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(stringResource(R.string.draft_pack_nothing), textAlign = TextAlign.Center)
+                        Button(onClick = viewModel::skipPack) { Text(stringResource(R.string.draft_pack_next)) }
+                    }
+                }
             }
         }
         footer?.let { item(span = { GridItemSpan(maxLineSpan) }) { it() } }
@@ -614,14 +626,19 @@ private fun EmptyOffer(player: DraftPlayer, viewModel: DraftViewModel) {
     }
 }
 
-/** A card on the table: the picture, its name, its type and cost. Tap to take, hold to read. */
+/**
+ * A card in the pack: the picture, its name, its type and cost. Tap to
+ * take, hold to read. Greyed when the deck may not take it (a copy too
+ * many, an aspect that cannot be balanced), and then only readable.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun OfferedCard(card: DraftCard, onTake: () -> Unit, onDetail: () -> Unit) {
+private fun OfferedCard(card: DraftCard, enabled: Boolean, onTake: () -> Unit, onDetail: () -> Unit) {
     Column(
         Modifier
             .clip(RoundedCornerShape(8.dp))
-            .combinedClickable(onClick = onTake, onLongClick = onDetail)
+            .combinedClickable(onClick = { if (enabled) onTake() }, onLongClick = onDetail)
+            .alpha(if (enabled) 1f else 0.35f)
             .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),

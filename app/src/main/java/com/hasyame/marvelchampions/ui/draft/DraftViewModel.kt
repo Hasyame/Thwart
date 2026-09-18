@@ -48,8 +48,13 @@ data class DraftUiState(
     /** The identities on the shelf, with their rules, for the identity page. */
     val heroes: List<DraftHero> = emptyList(),
     val poolAspectAvailable: Boolean = false,
-    /** The cards on the table, resolved from the offer's codes. */
+    /** The pack on the table, resolved from its codes. */
     val offer: List<DraftCard> = emptyList(),
+    /** The cards of the pack the current player may take; the rest are shown greyed. */
+    val takeable: Set<String> = emptySet(),
+    /** Packs the current player has opened, this one included, and how many they get in all. */
+    val packsOpened: Int = 0,
+    val packsTotal: Int = 0,
     /** The current player's deck so far: the identity's own cards, then the picks. */
     val deck: List<DeckLine> = emptyList(),
     val message: DraftMessage? = null,
@@ -245,7 +250,19 @@ class DraftViewModel @Inject constructor(
         }
     }
 
-    /** Nothing legal is left for this player; their deck stops short. */
+    /** The pack holds nothing this deck may take: it goes back, the next one opens. */
+    fun skipPack() {
+        val draft = state.value.draft ?: return
+        val ctx = context ?: return
+        val next = DraftEngine.skipPack(draft, ctx)
+        commit(next)
+        resolveTable(next)
+        if (next.phase == DraftPhase.FINISH) {
+            proposeNames(next)
+        }
+    }
+
+    /** No pack could be built for this player; their deck stops short. */
     fun skipCurrent() {
         val draft = state.value.draft ?: return
         val ctx = context ?: return
@@ -336,9 +353,16 @@ class DraftViewModel @Inject constructor(
         val picked = player?.picks.orEmpty()
             .groupingBy { it }.eachCount()
             .mapNotNull { (code, count) -> ctx.pool[code]?.let { DeckLine(it, count, signature = false) } }
+        val left = draft.packsOf(draft.current).size
+        val opened = player?.picks?.size ?: 0
         state.update {
             it.copy(
                 offer = draft.offer.mapNotNull { code -> ctx.pool[code] },
+                takeable = draft.offer.filter { code -> DraftEngine.takeable(draft, code, ctx) }.toSet(),
+                // The pack open now counts as opened; what waits after it
+                // is what was built, which can be fewer than the picks left.
+                packsOpened = opened + 1,
+                packsTotal = opened + left,
                 deck = own + picked,
             )
         }

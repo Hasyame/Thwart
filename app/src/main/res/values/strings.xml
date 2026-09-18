@@ -612,7 +612,6 @@
     <string name="draft_mode_random">Random</string>
     <string name="draft_mode_random_of_five">Random among five</string>
     <string name="draft_mode_choice">Chosen</string>
-    <string name="draft_setup_offer_size">Cards offered at each pick</string>
     <string name="draft_setup_begin">Choose identities</string>
     <string name="draft_player_n">Player %1$d</string>
     <string name="draft_identity_title">Player %1$d: identity</string>
@@ -637,7 +636,10 @@
     <string name="draft_shortfall_hint">Lower a deck size, choose other aspects, or turn the synergy option off.</string>
     <string name="draft_shortfall_revise">Back to player %1$d</string>
     <string name="draft_pick_progress">%1$d / %2$d</string>
-    <string name="draft_pick_round">Round %1$d \u00b7 pick one card</string>
+    <string name="draft_setup_offer_size">Cards in each pack</string>
+    <string name="draft_pack_of">Pack %1$d of %2$d \u00b7 take one card</string>
+    <string name="draft_pack_nothing">Nothing in this pack fits the deck as it stands.</string>
+    <string name="draft_pack_next">Open the next pack</string>
     <string name="draft_picks_made">picks made</string>
     <string name="draft_your_deck">Your deck</string>
     <string name="draft_deck_identity">Identity</string>

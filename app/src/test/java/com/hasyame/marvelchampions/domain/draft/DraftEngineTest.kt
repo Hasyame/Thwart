@@ -21,37 +21,97 @@ class DraftEngineTest {
 
     private val context = context()
 
-    // --- offers -------------------------------------------------------------------
+    // --- packs ---------------------------------------------------------------------
 
     @Test
-    fun `an offer has the size asked for, from the player's aspects and basic`() {
+    fun `the packs are built before the first pick, one per card to take, of distinct titles`() {
         val start = DraftEngine.start(state(player(0, spiderMan, listOf("justice"))), context)
 
         assertEquals(DraftPhase.PICK, start.phase)
+        assertEquals(1, start.builds)
+        // 28 titles, three of each but one of the three that a deck holds
+        // once: 78 cards in packs of five, the last ones smaller, since two
+        // copies of one title cannot share a pack. The pack on the table
+        // stays in the list until it is spent.
+        assertEquals(78, start.packsOf(0).flatten().size)
+        assertTrue(start.packsOf(0).size in 16..18)
         assertEquals(5, start.offer.size)
-        start.offer.forEach { code ->
-            assertTrue(code, context.pool.getValue(code).factionCode in setOf("justice", "basic"))
+        assertEquals("the pack on the table is the first built", start.packsOf(0).first(), start.offer)
+        start.packsOf(0).forEach { pack ->
+            assertEquals("distinct titles in a pack: $pack", pack.size, pack.toSet().size)
+            pack.forEach { code ->
+                assertTrue(code, context.pool.getValue(code).factionCode in setOf("justice", "basic"))
+            }
         }
+        // Everything in a pack has left the shelf.
+        val inPacks = start.packsOf(0).flatten().groupingBy { it }.eachCount()
+        inPacks.forEach { (code, count) -> assertEquals(code, 3 - count, start.stock[code]) }
     }
 
     @Test
-    fun `the same state deals the same offer, and another seed deals another`() {
+    fun `the same seed builds the same packs, and another seed others`() {
         val once = DraftEngine.start(state(player(0, spiderMan, listOf("justice"))), context)
         val again = DraftEngine.start(state(player(0, spiderMan, listOf("justice"))), context)
         val other = DraftEngine.start(state(player(0, spiderMan, listOf("justice")), seed = 7L), context)
 
-        assertEquals(once.offer, again.offer)
-        assertNotEquals(once.offer, other.offer)
-        // Reopening a saved draft deals what was on the table before.
+        assertEquals(once.packs, again.packs)
+        assertNotEquals(once.packs, other.packs)
+        // Reopening a saved draft puts the same pack back on the table.
         assertEquals(once.offer, DraftEngine.deal(once.copy(offer = emptyList()), context).offer)
     }
 
     @Test
-    fun `fewer cards than asked are offered when fewer are left`() {
+    fun `a copy owned once goes into one pack only`() {
+        val start = DraftEngine.start(state(player(0, spiderMan, listOf("justice")), copies = 1), context)
+        val everywhere = start.packsOf(0).flatten()
+        assertEquals("no title twice across the packs", everywhere.size, everywhere.toSet().size)
+        assertTrue(start.stock.values.all { it >= 0 })
+    }
+
+    @Test
+    fun `a card a deck may hold once appears once across the packs, whatever the shelf holds`() {
+        val pool = (1..30).associate { "jus$it" to DraftFixtures.card("jus$it", "justice") } +
+            ("single" to DraftFixtures.card("single", "justice", limit = 1))
+        val start = DraftEngine.start(state(player(0, spiderMan, listOf("justice")), pool = pool, copies = 3), context(pool))
+        val everywhere = start.packsOf(0).flatten()
+        assertEquals(1, everywhere.count { it == "single" })
+        assertTrue("an ordinary title may recur, up to three", everywhere.count { it == "jus1" } in 1..3)
+    }
+
+    @Test
+    fun `fewer cards than asked go in a pack when fewer are left`() {
         val pool = mapOf("a" to DraftFixtures.card("a", "justice"), "b" to DraftFixtures.card("b", "justice"))
         val small = state(player(0, spiderMan, listOf("justice")), pool = pool, copies = 3)
         val start = DraftEngine.start(small, context(pool))
         assertEquals(setOf("a", "b"), start.offer.toSet())
+        // Six cards in all, two a pack: three packs, not thirty-five.
+        assertEquals(3, start.packsOf(0).size)
+    }
+
+    @Test
+    fun `packs are built a round at a time, so one shelf is shared fairly`() {
+        val pool = DraftFixtures.pool()
+        val two = state(player(0, spiderMan, listOf("justice")), player(1, spiderWoman, listOf("justice", "protection")), pool = pool, copies = 1)
+        val start = DraftEngine.start(two, context)
+        val one = start.packsOf(0).size
+        val other = start.packsOf(1).size
+        assertTrue("player one $one packs, player two $other", kotlin.math.abs(one - other) <= 1)
+    }
+
+    @Test
+    fun `when the shelf runs out, packs are built again from what opened packs gave back`() {
+        // Ten titles, three copies: thirty cards, six packs of five, for a
+        // deck of forty that needs thirty-five picks. Nothing legal is ever
+        // short: three of each title is thirty picks, the rest stops.
+        val ten = (1..12).associate { "jus$it" to DraftFixtures.card("jus$it", "justice") }
+        var state = DraftEngine.start(state(player(0, spiderMan, listOf("justice"), deckSize = 40), pool = ten, copies = 3), context(ten))
+        assertEquals(1, state.builds)
+        val firstBuild = state.packsOf(0).size
+        repeat(firstBuild) {
+            state = DraftEngine.pick(state, state.offer.first { DraftEngine.takeable(state, it, context(ten)) }, context(ten))
+        }
+        assertTrue("built again once the first packs were opened", state.builds >= 2)
+        assertTrue("and the draft carries on", state.offer.isNotEmpty())
     }
 
     // --- picks --------------------------------------------------------------------
@@ -64,7 +124,7 @@ class DraftEngineTest {
         val next = DraftEngine.pick(start, taken, context)
 
         assertEquals(listOf(taken), next.players[0].picks)
-        assertEquals(2, next.stock[taken])
+        assertEquals("the copy taken stays out; the shelf holds what the packs left", start.stock[taken], next.stock[taken])
         assertEquals(1, next.pickCount)
         assertEquals("straight to the next pick", DraftPhase.PICK, next.phase)
         assertEquals(5, next.offer.size)
@@ -75,6 +135,26 @@ class DraftEngineTest {
         val start = DraftEngine.start(state(player(0, spiderMan, listOf("justice"))), context)
         val off = context.pool.keys.first { it !in start.offer && it.startsWith("jus") }
         assertTrue(runCatching { DraftEngine.pick(start, off, context) }.isFailure)
+    }
+
+    @Test
+    fun `what is left in an opened pack goes back on the shelf`() {
+        val start = DraftEngine.start(state(player(0, spiderMan, listOf("justice"))), context)
+        val taken = start.offer.first()
+        val left = start.offer - taken
+        val next = DraftEngine.pick(start, taken, context)
+        left.forEach { code -> assertEquals(code, (start.stock[code] ?: 0) + 1, next.stock[code]) }
+        assertEquals(taken, start.stock[taken]?.let { next.stock[taken] }?.let { taken })
+        assertEquals("the pack is spent", start.packsOf(0).size - 1, next.packsOf(0).size)
+    }
+
+    @Test
+    fun `a pack with nothing for the deck can be put back, and the next opens`() {
+        val start = DraftEngine.start(state(player(0, spiderMan, listOf("justice"))), context)
+        val next = DraftEngine.skipPack(start, context)
+        start.offer.forEach { code -> assertEquals(code, (start.stock[code] ?: 0) + 1, next.stock[code]) }
+        assertEquals(start.packsOf(0)[1], next.offer)
+        assertEquals(0, next.pickCount)
     }
 
     @Test
@@ -101,7 +181,12 @@ class DraftEngineTest {
         var state = DraftEngine.start(two, ctx)
         var turns = 0
         while (state.phase != DraftPhase.FINISH) {
-            state = DraftEngine.pick(state, state.offer.first(), ctx)
+            val choice = state.offer.firstOrNull { DraftEngine.takeable(state, it, ctx) }
+            if (choice == null) {
+                state = DraftEngine.skipPack(state, ctx)
+                continue
+            }
+            state = DraftEngine.pick(state, choice, ctx)
             turns++
         }
         assertEquals(35 + 36, turns)
@@ -164,27 +249,31 @@ class DraftEngineTest {
     fun `one physical copy is drafted once, whoever takes it`() {
         val pool = DraftFixtures.pool()
         val two = state(player(0, spiderMan, listOf("justice")), player(1, spiderWoman, listOf("justice", "protection")), pool = pool, copies = 1)
-        var state = DraftEngine.start(two, context)
-        val takenByOne = mutableSetOf<String>()
-        repeat(6) {
-            if (state.current == 0) {
-                takenByOne += state.offer.first()
-            } else {
-                assertTrue("player two never sees player one's copies", state.offer.none { it in takenByOne })
-            }
-            state = DraftEngine.pick(state, state.offer.first(), context)
-        }
+        // One copy of everything is not two decks' worth: somebody stops short.
+        val end = draftToTheEnd(two, context, allowShort = true)
+        val drafted = end.players.flatMap { it.picks }
+        assertEquals("no copy in two decks", drafted.size, drafted.toSet().size)
     }
 
     // --- whole drafts ----------------------------------------------------------------
 
-    private fun draftToTheEnd(start: DraftState, ctx: DraftContext): DraftState {
+    /**
+     * Takes the first card the deck may take from each pack, putting back a
+     * pack with none, and stopping a player short when the shelf has no
+     * pack for them; [allowShort] says whether that is expected.
+     */
+    private fun draftToTheEnd(start: DraftState, ctx: DraftContext, allowShort: Boolean = false): DraftState {
         var state = DraftEngine.start(start, ctx)
         var guard = 0
         while (state.phase != DraftPhase.FINISH) {
-            check(state.offer.isNotEmpty()) { "nothing to offer at pick ${state.pickCount}" }
-            state = DraftEngine.pick(state, state.offer.first(), ctx)
-            check(++guard < 500)
+            if (state.offer.isEmpty()) {
+                check(allowShort) { "nothing to offer at pick ${state.pickCount}" }
+                state = DraftEngine.skipCurrent(state, ctx)
+                continue
+            }
+            val choice = state.offer.firstOrNull { DraftEngine.takeable(state, it, ctx) }
+            state = if (choice != null) DraftEngine.pick(state, choice, ctx) else DraftEngine.skipPack(state, ctx)
+            check(++guard < 2_000)
         }
         return state
     }
@@ -203,6 +292,7 @@ class DraftEngineTest {
             (1L..5L).forEach { seed ->
                 val end = draftToTheEnd(state(player(0, spiderMan, listOf("justice"), deckSize = size), seed = seed), context)
                 assertLegal(end, context)
+                assertTrue("built again once the first packs ran out", end.builds >= 2)
             }
         }
     }
@@ -278,6 +368,7 @@ class DraftEngineTest {
         val ctx = context(pool)
         val me = state(player(0, spiderMan, listOf("justice")), pool = pool, copies = 3)
         val start = DraftEngine.start(me, ctx)
+        assertEquals("one copy of a max-one card, in one pack", listOf(listOf("single")), start.packsOf(0))
         val after = DraftEngine.pick(start, "single", ctx)
         assertEquals("the one card is taken, nothing else is legal", emptyList<String>(), after.offer)
         val skipped = DraftEngine.skipCurrent(after, ctx)

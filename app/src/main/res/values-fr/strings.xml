@@ -636,7 +636,6 @@
     <string name="draft_mode_random">Aléatoire</string>
     <string name="draft_mode_random_of_five">Aléatoire parmi 5</string>
     <string name="draft_mode_choice">Au choix</string>
-    <string name="draft_setup_offer_size">Cartes proposées à chaque choix</string>
     <string name="draft_setup_begin">Choisir les identités</string>
     <string name="draft_player_n">Joueur %1$d</string>
     <string name="draft_identity_title">Joueur %1$d : identité</string>
@@ -662,7 +661,10 @@
     <string name="draft_shortfall_hint">Réduisez une taille de deck, changez d\'affinités, ou désactivez l\'option de synergie.</string>
     <string name="draft_shortfall_revise">Revenir au joueur %1$d</string>
     <string name="draft_pick_progress">%1$d / %2$d</string>
-    <string name="draft_pick_round">Tour %1$d \u00b7 choisissez une carte</string>
+    <string name="draft_setup_offer_size">Cartes par paquet</string>
+    <string name="draft_pack_of">Paquet %1$d sur %2$d \u00b7 prenez une carte</string>
+    <string name="draft_pack_nothing">Rien dans ce paquet ne convient au deck tel qu\'il est.</string>
+    <string name="draft_pack_next">Ouvrir le paquet suivant</string>
     <string name="draft_picks_made">choix faits</string>
     <string name="draft_your_deck">Votre deck</string>
     <string name="draft_deck_identity">Identit\u00e9</string>
