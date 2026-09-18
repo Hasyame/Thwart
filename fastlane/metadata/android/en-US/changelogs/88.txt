@@ -1,0 +1,11 @@
+The draft deals in packs.
+
+Once the table is set, the packs are built in advance from your
+collection: one pack per card to take, each of X distinct cards, a copy
+you own once in one pack only, a card a deck may hold once in one pack
+only. You open them one by one and take a single card from each; the rest
+goes back on the shelf. When the shelf runs short, packs are built again
+from what came back, always full.
+
+A card you own only as a reprint is now filed under the pack you own, and
+the deck page counts any printing you own as owned.

@@ -1,0 +1,13 @@
+Le draft se joue par paquets.
+
+Une fois la table réglée, les paquets sont préparés à l'avance à partir de
+votre collection : un paquet par carte à prendre, de X cartes distinctes
+chacun, un exemplaire possédé une fois dans un seul paquet, une carte
+limitée à un exemplaire par deck dans un seul paquet. Vous les ouvrez un à
+un et prenez une seule carte dans chacun ; le reste retourne en stock.
+Quand le stock manque, les paquets sont reconstruits à partir des cartes
+rendues, toujours complets.
+
+Une carte possédée seulement en réimpression est désormais rangée sous le
+pack possédé, et la page du deck compte comme possédée toute impression
+que vous avez.
