@@ -10,9 +10,10 @@ import kotlinx.serialization.Serializable
  * A draft, as it is written down between two taps.
  *
  * Everything here is what survives the app being closed: the settings, each
- * player's identity and picks, the stock left on the shelf, and the seed. The
- * card data behind it is not written down; [DraftContext] is rebuilt from the
- * database each time. See `docs/spec/synergie-et-draft.md`, phase 2.
+ * player's identity and picks, the packs built for them, the stock left on
+ * the shelf, and the seed. The card data behind it is not written down;
+ * [DraftContext] is rebuilt from the database each time. See
+ * `docs/spec/synergie-et-draft.md`, phase 2.
  */
 @Serializable
 data class DraftState(
@@ -21,12 +22,24 @@ data class DraftState(
     val phase: DraftPhase = DraftPhase.SETUP,
     /** Whose turn it is, on the identity pages and at the table. */
     val current: Int = 0,
-    /** Copies left of each card, by canonical code. Shared by every player. */
+    /**
+     * Copies of each card on the shelf, by canonical code: not in a pack,
+     * not in a deck. Shared by every player. Building packs takes from it;
+     * opening one puts back what was not taken.
+     */
     val stock: Map<String, Int> = emptyMap(),
-    /** How many picks have been made in all, which is what seeds each offer. */
+    /** How many picks have been made in all. */
     val pickCount: Int = 0,
-    /** The cards on the table for the current player, by canonical code. */
+    /** The pack open on the table for the current player, by canonical code. */
     val offer: List<String> = emptyList(),
+    /**
+     * Each player's packs still to open, one list per player, in the order
+     * they will be opened. Built before the first pick and again when a
+     * player runs out with cards still to take. See [DraftEngine.buildPacks].
+     */
+    val packs: List<List<List<String>>> = emptyList(),
+    /** How many times packs have been built, which seeds each build. */
+    val builds: Int = 0,
     val seed: Long = 0L,
     /** Identity and aspect draws made so far, so "draw again" draws again. */
     val rolls: Int = 0,
@@ -34,6 +47,9 @@ data class DraftState(
     val currentPlayer: DraftPlayer get() = players[current]
 
     val everyoneFull: Boolean get() = players.all { it.isFull }
+
+    /** The packs a player has not opened yet. */
+    fun packsOf(playerIndex: Int): List<List<String>> = packs.getOrNull(playerIndex).orEmpty()
 }
 
 @Serializable
@@ -42,7 +58,7 @@ data class DraftSettings(
     /** Leave out cards the identity cannot play: the phase 1 rule. */
     val synergyOnly: Boolean = false,
     val identityMode: IdentityMode = IdentityMode.RANDOM,
-    /** Cards offered at each pick, 2 to 10. */
+    /** Cards in each pack, 2 to 10. */
     val offerSize: Int = DEFAULT_OFFER_SIZE,
 ) {
     companion object {
@@ -110,9 +126,10 @@ data class DraftPlayer(
 /*
  * Cited by the web client: `web/src/lib/draft/types.ts` mirrors these
  * values by name, and `engine.ts` and `naming.ts` port `DraftEngine` and
- * `DraftNaming` function for function. A change to the offer size, to what
- * the strides mean, or to the naming is a change on both sides at once,
- * or a draft written down on one is dealt differently on the other.
+ * `DraftNaming` function for function. A change to the pack size, to how
+ * packs are built and seeded, or to the naming is a change on both sides
+ * at once, or a draft written down on one is dealt differently on the
+ * other.
  */
 object DraftRules {
     const val MIN_DECK_SIZE = 40

@@ -358,10 +358,13 @@ class DeckRepository @Inject constructor(
                 if (card == null) {
                     unknown += code
                 } else {
+                    // A reprint is the same card: a deck naming Ant-Man's
+                    // Swarm Tactics is covered by the copies in Wasp's pack.
+                    val printings = cardDao.getPrintingPacks(card.duplicateOfCode?.takeIf { it.isNotBlank() } ?: card.code)
                     resolved += DeckCard(
                         card = card,
                         quantity = quantity,
-                        missingFromCollection = card.packCode !in owned,
+                        missingFromCollection = (printings + card.packCode).none { it in owned },
                     )
                 }
             }

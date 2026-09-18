@@ -115,17 +115,40 @@ chaque joueur à son tour)
   affinités, plus les basiques. Jamais de cartes signature d'autres identités
   ni de cartes rencontre ou campagne. Filtre synergie appliqué si l'option est
   active.
-* À chaque tour, X cartes tirées au hasard dans le pool du joueur actif. Il en
-  choisit une, les autres retournent dans le pool. S'il reste moins de X
-  cartes, proposer ce qui reste.
-* Légalité garantie à chaque tirage : une carte n'est jamais proposée si
-  l'ajouter rendait le deck illégal (limite d'exemplaires `deck_limit`, règles
-  propres à l'identité comme un seul exemplaire par carte pour Adam Warlock,
-  réimpressions comptées comme une même carte).
-* Quantités possédées : un exemplaire physique ne peut être drafté qu'une
-  seule fois, tous joueurs confondus, puisque la collection est partagée sur
-  l'appareil. Le pool est donc un stock décrémenté à chaque choix, et les
-  réimpressions présentes dans plusieurs packs possédés s'additionnent.
+* **Paquets préparés à l'avance** (décision du 2026-09-18, qui remplace le
+  tirage à chaque tour). Une fois la table réglée (joueurs, identités,
+  affinités, tailles), le moteur construit pour chaque joueur autant de
+  paquets que de cartes à prendre, de X cartes distinctes chacun, tirés de
+  son pool. Le joueur ouvre ensuite ses paquets un à un et prend une seule
+  carte dans chacun ; les autres cartes du paquet retournent en stock.
+* Quantités possédées : un exemplaire physique ne va que dans un seul paquet,
+  tous joueurs confondus, puisque la collection est partagée sur l'appareil
+  (Charlie-27 possédé une fois : dans un paquet au plus). Le stock diminue à
+  la construction des paquets et remonte à leur ouverture ; les réimpressions
+  présentes dans plusieurs packs possédés s'additionnent.
+* Un titre n'entre dans les paquets d'un joueur que jusqu'à la limite de son
+  deck, en comptant ce qu'il a déjà pris et ce qui attend dans ses autres
+  paquets. Une carte « max 1 par deck » ou unique n'apparaît donc qu'une
+  fois dans tous les paquets d'un joueur, quel que soit le nombre
+  d'exemplaires possédés (un seul « Force » dans les paquets préparés).
+* Les paquets se construisent tour par tour (un paquet pour chaque joueur,
+  puis le suivant), pour qu'un seul Core Set se partage entre trois joueurs
+  au lieu d'aller entièrement au premier.
+* Un paquet est toujours complet (X cartes). Si le stock ne permet pas tous
+  les paquets, le moteur prépare autant de paquets complets qu'il peut, jamais
+  un paquet plus petit ; quand le joueur les a ouverts et qu'il lui manque
+  encore des cartes, ses paquets sont reconstruits, complets, à partir du
+  stock, qui contient alors les cartes rendues, et le draft continue. Seule
+  exception : un joueur sans aucun paquet dont le stock entier ne remplit pas
+  un paquet ouvre ce qu'il y a plutôt que rien.
+* Légalité au moment de prendre : une carte du paquet que le deck ne peut pas
+  accueillir (quatrième exemplaire, affinité impossible à rééquilibrer) est
+  grisée et ne peut être prise ; un paquet dont aucune carte ne convient est
+  remis en stock et le suivant s'ouvre. Si aucun des paquets d'un joueur ne
+  contient de carte prenable, ils sont reconstruits une fois depuis le stock ;
+  si c'est toujours le cas, son deck s'arrête là.
+* La construction est déterministe : graine du draft plus numéro de
+  construction, si bien qu'un draft rouvert retrouve les mêmes paquets.
 * Multijoueur : tour par tour (J1, J2, J3, J4, J1…). Un joueur qui a atteint
   sa taille est sauté. Un écran de transition « Au tour de Joueur N » permet de
   passer l'appareil sans voir le choix du précédent.
@@ -203,7 +226,7 @@ suites de tests lisent sans la modifier.
   `deck_options` de l'identité admettent (les trois supports S.H.I.E.L.D. de
   Maria Hill, par exemple), la légalité en bornant le nombre.
 * **Taille du deck.** Réglée par joueur, sur la page 2.
-* **Cartes proposées.** Cinq par défaut (et non trois), bornes 2 à 10 inchangées.
+* **Cartes par paquet.** Cinq par défaut (et non trois), bornes 2 à 10 inchangées.
 * **Pas d'écran de transition.** En multijoueur, la table passe directement d'un
   joueur au suivant ; l'en-tête de la page nomme le joueur et son identité.
 * **Prendre une carte.** Un appui sur la carte la prend, sans bouton ni

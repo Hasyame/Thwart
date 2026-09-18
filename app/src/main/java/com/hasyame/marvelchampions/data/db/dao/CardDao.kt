@@ -321,6 +321,10 @@ interface CardDao {
     @Query("UPDATE cards SET synergyTraits = :synergyTraits WHERE code = :code AND locale = :locale")
     suspend fun setSynergy(code: String, locale: String, synergyTraits: String)
 
+    /** The packs every printing of a card comes in: the original's and its reprints'. */
+    @Query("SELECT DISTINCT packCode FROM cards WHERE code = :originalCode OR duplicateOfCode = :originalCode")
+    suspend fun getPrintingPacks(originalCode: String): List<String>
+
     /** Forgets every derived condition, for a rule change to derive them afresh. */
     @Query("UPDATE cards SET synergyTraits = NULL")
     suspend fun clearSynergy()

@@ -21,27 +21,31 @@ data class DraftStock(
  * Counts the collection as physical cards.
  *
  * A reprint is the same card, so every printing of a title is folded onto
- * the original's code and their copies add up: three Swarm Tactics in Wasp's
- * pack and three in Ant-Man's are six on the shelf. A pack owned twice counts
- * twice. A card in no owned pack is not on the shelf at all.
+ * one code and their copies add up: three Swarm Tactics in Wasp's pack and
+ * three in Ant-Man's are six on the shelf. A pack owned twice counts twice.
+ * A card in no owned pack is not on the shelf at all.
+ *
+ * The code a title is filed under is a printing the player **owns**: the
+ * original's when its pack is owned, and otherwise the lowest-numbered
+ * owned reprint's. Filing a title under an original the player does not
+ * have, as this once did, put Ant-Man's Swarm Tactics into a deck built
+ * from Wasp's pack alone, and the deck page then called the card missing
+ * from a collection it was drafted from.
  */
 object DraftStockBuilder {
 
     fun build(rows: List<StockRow>, ownedPacks: Map<String, Int>): DraftStock {
         val stock = mutableMapOf<String, Int>()
         val pool = mutableMapOf<String, DraftCard>()
-        rows.forEach { row ->
-            val owned = ownedPacks[row.packCode] ?: 0
-            if (owned <= 0) {
+        rows.groupBy { it.duplicateOfCode ?: it.code }.forEach { (original, family) ->
+            val owned = family.filter { (ownedPacks[it.packCode] ?: 0) > 0 }
+            if (owned.isEmpty()) {
                 return@forEach
             }
-            val canonical = row.duplicateOfCode ?: row.code
-            stock[canonical] = (stock[canonical] ?: 0) + owned * row.printedQuantity
-            // The original printing names the card; a reprint only stands in
-            // for it when the original is in no owned pack.
-            if (row.duplicateOfCode == null || canonical !in pool) {
-                pool[canonical] = row.card.copy(canonicalCode = canonical, info = row.card.info.copy(code = canonical))
-            }
+            val representative = owned.firstOrNull { it.code == original } ?: owned.minBy { it.code }
+            val code = representative.code
+            stock[code] = owned.sumOf { (ownedPacks.getValue(it.packCode)) * it.printedQuantity }
+            pool[code] = representative.card.copy(canonicalCode = code, info = representative.card.info.copy(code = code))
         }
         return DraftStock(pool = pool, stock = stock)
     }
