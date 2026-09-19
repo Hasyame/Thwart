@@ -2,17 +2,34 @@ package com.hasyame.marvelchampions.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Reads and writes the sync bookkeeping.
+ * Reads and writes local synchronization and backup bookkeeping.
  *
  * See [SyncStateEntity] for what the two columns mean and why they are not on
  * the entities themselves.
  */
 @Dao
 interface SyncStateDao {
+
+    /** Local round-trip metadata; never a synced collection or user record. */
+    @Query("SELECT extras FROM backup_metadata WHERE id = 0")
+    suspend fun backupExtras(): String?
+
+    @Query("DELETE FROM backup_metadata")
+    suspend fun clearBackupExtras()
+
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    suspend fun storeBackupExtras(metadata: com.hasyame.marvelchampions.data.db.entity.BackupMetadataEntity)
+
+
+    /** Keep all writes of one logical operation on the same Room transaction. */
+    @Transaction
+    suspend fun <T> transaction(block: suspend () -> T): T = block()
+
 
     /**
      * Records that a record has local changes to push.

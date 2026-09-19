@@ -19,13 +19,13 @@ import com.hasyame.marvelchampions.domain.draft.DraftState
 import com.hasyame.marvelchampions.domain.draft.DraftStockBuilder
 import com.hasyame.marvelchampions.domain.draft.StockRow
 import com.hasyame.marvelchampions.domain.model.CardLocale
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /** An identity on the shelf, as the identity page shows it. */
 data class DraftHero(
@@ -184,25 +184,27 @@ class DraftRepository @Inject constructor(
                 }
             }
 
-            val taken = takenDeckNames().toMutableList()
-            val ids = state.players.map { player ->
-                val rules = context.rules.getValue(player.heroCode!!)
-                val name = player.deckName?.takeIf { it.isNotBlank() }
-                    ?: DraftNaming.defaultName(player.heroName, player.aspects, rules, taken)
-                taken += name
-                deckRepository.createLocalDeck(
-                    name = name,
-                    heroCode = player.heroCode,
-                    heroName = heroNameIn(player.heroCode, locale) ?: player.heroName,
-                    aspects = player.aspects,
-                    slots = player.slots(),
-                    // So a game played from it records the draft mode, which
-                    // the achievements read (docs/spec/achievements §5).
-                    tags = DeckRepository.DRAFT_TAG,
-                )
+            sessionDao.transaction {
+                val taken = takenDeckNames().toMutableList()
+                val ids = state.players.map { player ->
+                    val rules = context.rules.getValue(player.heroCode!!)
+                    val name = player.deckName?.takeIf { it.isNotBlank() }
+                        ?: DraftNaming.defaultName(player.heroName, player.aspects, rules, taken)
+                    taken += name
+                    deckRepository.createLocalDeck(
+                        name = name,
+                        heroCode = player.heroCode,
+                        heroName = heroNameIn(player.heroCode, locale) ?: player.heroName,
+                        aspects = player.aspects,
+                        slots = player.slots(),
+                        // So a game played from it records the draft mode, which
+                        // the achievements read (docs/spec/achievements §5).
+                        tags = DeckRepository.DRAFT_TAG,
+                    )
+                }
+                sessionDao.clear()
+                DraftOutcome.Saved(ids)
             }
-            sessionDao.clear()
-            DraftOutcome.Saved(ids)
         }
 
     private fun illegal(state: DraftState, playerIndex: Int, problems: List<DeckProblem>): DraftOutcome {

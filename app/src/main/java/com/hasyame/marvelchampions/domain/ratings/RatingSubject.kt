@@ -1,7 +1,5 @@
 package com.hasyame.marvelchampions.domain.ratings
 
-import com.hasyame.marvelchampions.data.db.entity.PlayEntity
-import com.hasyame.marvelchampions.domain.play.FearNoEvil
 
 /**
  * What a rating is about, and the key that names it.
@@ -41,24 +39,5 @@ data class RatingSubject(
          */
         fun modularOverallKey(setCode: String): String = "modular:$setCode"
 
-        /**
-         * What a recorded game can be rated on: its scenario, then each modular
-         * set that was on the table, paired with that scenario.
-         *
-         * [scenarioSetCode] is the villain set the game was played against. For
-         * a one-off game that is the play's own `scenarioCode`; a campaign's
-         * scenario is logged under the campaign's id and has to be resolved
-         * through its template first, and a campaign whose villain is drawn
-         * at the table (Fear No Evil) has no set to name, so nothing to rate.
-         */
-        fun ofPlay(play: PlayEntity, scenarioSetCode: String? = play.scenarioCode): List<RatingSubject> {
-            val scenario = scenarioSetCode?.takeIf { it.isNotBlank() } ?: return emptyList()
-            // Fear No Evil played on its own names no set either.
-            if (FearNoEvil.isFne(scenario)) {
-                return emptyList()
-            }
-            val sets = play.modularSets.split(",").map { it.trim() }.filter { it.isNotBlank() }.distinct()
-            return listOf(scenario(scenario)) + sets.map { modular(it, scenario) }
-        }
     }
 }

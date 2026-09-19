@@ -2,8 +2,9 @@
 
 An unofficial Android companion for **Marvel Champions: The Card Game**. It
 holds the card database, your deck lists, a scenario randomiser that only offers
-what you own, and a campaign tracker. It works offline, has no account, no
-server behind it and no advertising.
+what you own, and a campaign tracker. It works offline without an account and
+has no advertising. An optional Thwart account syncs your data with thwart.app
+and your other devices.
 
 *Thwart* is the app's own name. It is not a Marvel or Fantasy Flight Games
 product and uses none of their branding. The game is named here so you know what
@@ -35,7 +36,7 @@ app in French with English cards, or the other way round.
 2. Open it. Android will say the file came from an unknown source and offer a
    settings screen; allow your browser or file manager to install apps, then go
    back and open the file again.
-3. That is all. There is no account to create and nothing to sign in to.
+3. Start playing. Signing in is optional; offline features require no account.
 
 Android 9 or newer. If you already have Thwart installed from a GitHub release,
 a new APK installs straight over it and keeps your decks, campaigns and history.
@@ -248,8 +249,9 @@ rather than machinery.
   plain text, because a campaign is a dozen hours spread over weeks and the end
   of one is the moment somebody wants to show the people they played it with.
 - **Backup and restore.** Collection, decks, campaigns, play history and
-  favourites to a single readable JSON file, and back again on any device. There
-  is no account and no server, so without this the phone is the only copy.
+  favourites to a single readable JSON file, and back again on any device.
+  Photos can be included in an archive. Keep an independent backup even if
+  you use optional account sync.
 - **Two languages, chosen separately.** The language of the card text and the
   language of the app are different settings, because a French player with an
   English collection is a normal thing to be. Either can be French or English,
@@ -283,8 +285,9 @@ something going wrong at a real table.
 
 ## Privacy
 
-The app has no account, no server and no analytics, and nothing you make in it
-leaves your phone. The full policy is at
+The app has no analytics or advertising. Your data stays local unless you
+choose account sync, BoardGameGeek reporting, export, or another explicit sharing
+action. The full policy is at
 <https://hasyame.github.io/Thwart/privacy.html>
 ([en français](https://hasyame.github.io/Thwart/confidentialite.html)), and the
 same text is in [PRIVACY.md](PRIVACY.md) in this repository.
@@ -472,14 +475,12 @@ someone who already owns the campaign box and has the book to hand. On their own
 they do not explain how to play a campaign, and they are not a substitute for
 either the book or the game.
 
-The app collects nothing. There is no account, no analytics and no backend of any
-kind, and everything it stores stays on the device. Android's automatic backup is
-switched off for the same reason, since it would copy your play history and
-campaign log to Google Drive without asking. Settings offers a backup you ask for
-and keep yourself instead.
+The app has no analytics. Offline play requires no account; opt-in account sync
+uses thwart.app. Android cloud backup and device transfer are excluded, keeping
+credentials and device state out of implicit transfers. Settings offers a portable
+backup that you choose and keep yourself.
 
 If the app crashes it writes the stack trace to its own private storage and
 offers, in Settings, to open a mail draft containing it. That is not crash
 reporting. Nothing is sent anywhere unless you press the button, the trace is in
-the message body so you can read it first, and it is the only thing the app has
-ever offered to send.
+the message body so you can read it first, and no crash report is sent automatically.

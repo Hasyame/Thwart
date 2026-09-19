@@ -1,16 +1,6 @@
 package com.hasyame.marvelchampions.ui.achievements
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,14 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,6 +24,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -44,24 +33,27 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicEmptyState
 import com.hasyame.marvelchampions.core.designsystem.component.ComicLoadingScreen
@@ -70,6 +62,7 @@ import com.hasyame.marvelchampions.core.designsystem.component.halftone
 import com.hasyame.marvelchampions.domain.achievements.AchievementCategory
 import com.hasyame.marvelchampions.domain.achievements.AchievementStatusKind
 import com.hasyame.marvelchampions.domain.achievements.DifficultyLevel
+import com.hasyame.marvelchampions.ui.util.aspectLabel
 import java.text.DateFormat
 import java.util.Date
 
@@ -83,6 +76,9 @@ import java.util.Date
 @Composable
 fun AchievementsScreen(
     onBack: () -> Unit,
+    onCollection: () -> Unit,
+    onSettings: () -> Unit,
+    onHistory: () -> Unit,
     viewModel: AchievementsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -107,13 +103,21 @@ fun AchievementsScreen(
                 modifier = Modifier.padding(padding),
             )
 
-            else -> AchievementsContent(state, viewModel, Modifier.padding(padding))
+            else -> AchievementsContent(state, viewModel, onCollection, onSettings, onHistory, Modifier.padding(padding))
         }
     }
 }
 
 @Composable
-private fun AchievementsContent(state: AchievementsUiState, viewModel: AchievementsViewModel, modifier: Modifier) {
+private fun AchievementsContent(
+    state: AchievementsUiState, viewModel: AchievementsViewModel,
+    onCollection: () -> Unit, onSettings: () -> Unit, onHistory: () -> Unit, modifier: Modifier,
+) {
+    var selectedCode by rememberSaveable { mutableStateOf<String?>(null) }
+    var albumOpen by rememberSaveable { mutableStateOf(true) }
+    var filtersOpen by rememberSaveable { mutableStateOf(false) }
+    val selected = state.columns.firstOrNull { it.code == selectedCode } ?: state.columns.firstOrNull()
+
     val byCategory = remember(state.cards) { state.cards.groupBy { it.category } }
     LazyColumn(
         modifier = modifier.fillMaxSize().halftone(MaterialTheme.colorScheme.onBackground),
@@ -128,31 +132,79 @@ private fun AchievementsContent(state: AchievementsUiState, viewModel: Achieveme
             )
         }
         item { CompletionPanel(state) }
-        if (state.recent.isNotEmpty()) {
+        item {
+            androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(selected = albumOpen, onClick = { albumOpen = true },
+                    label = { Text(stringResource(R.string.achievements_album_title)) })
+                FilterChip(selected = !albumOpen, onClick = { albumOpen = false },
+                    label = { Text(stringResource(R.string.achievements_list_title)) })
+            }
+        }
+        if (!albumOpen && state.recent.isNotEmpty()) {
             item { RecentPanel(state.recent) }
         }
-        item { GridPanel(state, viewModel) }
-        item {
-            Text(
-                stringResource(R.string.achievements_list_title),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-        AchievementCategory.entries.forEach { category ->
-            val cards = byCategory[category].orEmpty()
-            if (cards.isEmpty()) {
-                return@forEach
+        if (albumOpen) {
+            item {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    TextButton(onClick = { filtersOpen = !filtersOpen }) { Text(stringResource(R.string.achievements_filters)) }
+                    TextButton(onClick = onHistory) { Text(stringResource(R.string.achievements_history)) }
+                }
+                if (filtersOpen) AchievementFilters(state, viewModel)
             }
-            item(key = "category-$category") {
+            if (state.columns.isEmpty()) {
+                item {
+                    Panel {
+                        Text(stringResource(R.string.achievements_grid_empty))
+                        TextButton(onClick = viewModel::resetFilters) { Text(stringResource(R.string.achievements_reset_filters)) }
+                        TextButton(onClick = onCollection) { Text(stringResource(R.string.achievements_choose_collection)) }
+                        TextButton(onClick = onSettings) { Text(stringResource(R.string.achievements_update_cards)) }
+                    }
+                }
+            } else {
+                item {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(state.columns, key = { it.code }) { hero ->
+                            Column(Modifier.width(120.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                AchievementBadgeImage(AchievementBadge(hero.imageSrc, null), unlocked = true, size = 80.dp)
+                                FilterChip(selected = hero.code == selected?.code, onClick = { selectedCode = hero.code },
+                                    label = { Text(hero.name) })
+                            }
+                        }
+                    }
+                }
+                selected?.let { hero ->
+                    item { Text(hero.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+                    state.rows.groupBy { it.packCode }.forEach { (pack, rows) ->
+                        item(key = "album-pack-$pack") { Text(rows.first().packName, style = MaterialTheme.typography.titleMedium) }
+                        items(rows, key = { "album-${it.key}" }) { scenario ->
+                            AlbumScenario(hero, scenario, state.cell(scenario.key, hero.code))
+                        }
+                    }
+                }
+            }
+        } else {
+            item {
                 Text(
-                    stringResource(AchievementTexts.category(category)),
-                    style = MaterialTheme.typography.titleMedium,
+                    stringResource(R.string.achievements_list_title),
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
-            items(cards, key = { it.id }) { card -> AchievementRow(card) }
+            AchievementCategory.entries.forEach { category ->
+                val cards = byCategory[category].orEmpty()
+                if (cards.isEmpty()) {
+                    return@forEach
+                }
+                item(key = "category-$category") {
+                    Text(
+                        stringResource(AchievementTexts.category(category)),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
+                }
+                items(cards, key = { it.id }) { card -> AchievementRow(card) }
+            }
         }
     }
 }
@@ -211,210 +263,61 @@ private fun RecentPanel(recent: List<AchievementCard>) {
     }
 }
 
-// --- the grid --------------------------------------------------------------------
-
 @Composable
-private fun GridPanel(state: AchievementsUiState, viewModel: AchievementsViewModel) {
+private fun AchievementFilters(state: AchievementsUiState, viewModel: AchievementsViewModel) {
     val filters = state.filters
-    var selected by remember { mutableStateOf<Pair<GridScenario, GridHero>?>(null) }
     Panel {
-        Text(
-            stringResource(R.string.achievements_grid_title),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-        )
-        Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Picker(
-                label = stringResource(R.string.achievements_filter_hero_pack),
-                value = state.heroPacks.firstOrNull { it.code == filters.heroPack }?.name ?: stringResource(R.string.achievements_filter_all),
-                options = listOf(null to stringResource(R.string.achievements_filter_all)) + state.heroPacks.map { it.code to it.name },
-                onPick = viewModel::setHeroPack,
-                modifier = Modifier.weight(1f),
-            )
-            Picker(
-                label = stringResource(R.string.achievements_filter_scenario_pack),
-                value = state.scenarioPacks.firstOrNull { it.code == filters.scenarioPack }?.name ?: stringResource(R.string.achievements_filter_all),
-                options = listOf(null to stringResource(R.string.achievements_filter_all)) + state.scenarioPacks.map { it.code to it.name },
-                onPick = viewModel::setScenarioPack,
-                modifier = Modifier.weight(1f),
-            )
-        }
-        Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Picker(
-                label = stringResource(R.string.achievements_filter_aspect),
-                value = filters.aspect?.replaceFirstChar { it.uppercase() } ?: stringResource(R.string.achievements_filter_all),
-                options = listOf(null to stringResource(R.string.achievements_filter_all)) +
-                    state.aspects.map { it to it.replaceFirstChar { c -> c.uppercase() } },
-                onPick = viewModel::setAspect,
-                modifier = Modifier.weight(1f),
-            )
-            Picker(
-                label = stringResource(R.string.achievements_filter_min_difficulty),
-                value = if (filters.minLevel == DifficultyLevel.UNKNOWN) {
-                    stringResource(R.string.achievements_filter_all)
-                } else {
-                    stringResource(AchievementTexts.level(filters.minLevel))
-                },
-                options = listOf(DifficultyLevel.UNKNOWN to stringResource(R.string.achievements_filter_all)) +
-                    listOf(DifficultyLevel.STANDARD, DifficultyLevel.EXPERT).map { it to stringResource(AchievementTexts.level(it)) },
-                onPick = { viewModel.setMinLevel(it ?: DifficultyLevel.UNKNOWN) },
-                modifier = Modifier.weight(1f),
-            )
-        }
-        Tick(
-            checked = filters.anySeat,
-            label = stringResource(if (filters.anySeat) R.string.achievements_filter_any_seat else R.string.achievements_filter_owner_seat),
-            onChange = viewModel::setAnySeat,
-        )
-        Tick(
-            checked = filters.showLosses,
-            label = stringResource(R.string.achievements_filter_show_losses),
-            onChange = viewModel::setShowLosses,
-        )
-        Row(Modifier.padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Legend(cellColor(CellState.NEVER), stringResource(R.string.achievements_grid_legend_never))
-            Legend(cellColor(CellState.PLAYED), stringResource(R.string.achievements_grid_legend_played))
-            Legend(cellColor(CellState.WON), stringResource(R.string.achievements_grid_legend_won))
-        }
+        Picker(stringResource(R.string.achievements_filter_hero_pack),
+            state.heroPacks.firstOrNull { it.code == filters.heroPack }?.name ?: stringResource(R.string.achievements_filter_all),
+            listOf(null to stringResource(R.string.achievements_filter_all)) + state.heroPacks.map { it.code to it.name },
+            viewModel::setHeroPack, Modifier.fillMaxWidth())
+        Picker(stringResource(R.string.achievements_filter_scenario_pack),
+            state.scenarioPacks.firstOrNull { it.code == filters.scenarioPack }?.name ?: stringResource(R.string.achievements_filter_all),
+            listOf(null to stringResource(R.string.achievements_filter_all)) + state.scenarioPacks.map { it.code to it.name },
+            viewModel::setScenarioPack, Modifier.fillMaxWidth())
+        Picker(stringResource(R.string.achievements_filter_aspect),
+            filters.aspect?.let { aspectLabel(it) } ?: stringResource(R.string.achievements_filter_all),
+            listOf(null to stringResource(R.string.achievements_filter_all)) + state.aspects.map { it to aspectLabel(it) },
+            viewModel::setAspect, Modifier.fillMaxWidth())
+        Picker(stringResource(R.string.achievements_filter_min_difficulty),
+            if (filters.minLevel == DifficultyLevel.UNKNOWN) stringResource(R.string.achievements_filter_all)
+                else stringResource(AchievementTexts.level(filters.minLevel)),
+            listOf(DifficultyLevel.UNKNOWN to stringResource(R.string.achievements_filter_all)) +
+                listOf(DifficultyLevel.STANDARD, DifficultyLevel.EXPERT).map { it to stringResource(AchievementTexts.level(it)) },
+            { viewModel.setMinLevel(it ?: DifficultyLevel.UNKNOWN) }, Modifier.fillMaxWidth())
+        Tick(filters.anySeat, stringResource(R.string.achievements_filter_any_seat), viewModel::setAnySeat)
+        Tick(filters.showLosses, stringResource(R.string.achievements_filter_show_losses), viewModel::setShowLosses)
+        Tick(filters.everyHero, stringResource(R.string.achievements_every_hero), viewModel::setEveryHero)
+        TextButton(onClick = viewModel::resetFilters) { Text(stringResource(R.string.achievements_reset_filters)) }
+    }
+}
 
-        if (state.rows.isEmpty() || state.columns.isEmpty()) {
-            Text(stringResource(R.string.achievements_grid_empty), style = MaterialTheme.typography.bodyMedium)
-            return@Panel
-        }
-
-        // The tapped cell, read out above the grid, where it stays in view
-        // however far down the tapped row is.
-        selected?.let { (row, hero) ->
-            val cell = state.cell(row.key, hero.code)
-            Text(
-                stringResource(R.string.achievements_grid_cell, hero.name, row.name, cell?.attempts ?: 0, cell?.wins ?: 0) +
-                    (cell?.bestLevelWon?.let { " · " + stringResource(R.string.achievements_grid_best_level, stringResource(AchievementTexts.level(it))) } ?: ""),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp),
-            )
-        }
-
-        // Scenario names down the side, kept in view; the heroes and their
-        // cells scroll sideways together.
-        val scroll = rememberScrollState()
-        Row(Modifier.fillMaxWidth()) {
-            Column {
-                Spacer(Modifier.height(HEADER_HEIGHT))
-                state.rows.forEach { row ->
-                    Box(Modifier.height(CELL_SIZE).width(LABEL_WIDTH), contentAlignment = Alignment.CenterStart) {
-                        Text(
-                            row.name,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(end = 4.dp),
-                        )
-                    }
-                }
-            }
-            Column(Modifier.horizontalScroll(scroll)) {
-                Row(Modifier.height(HEADER_HEIGHT), verticalAlignment = Alignment.Bottom) {
-                    state.columns.forEach { hero ->
-                        Box(Modifier.size(CELL_SIZE), contentAlignment = Alignment.Center) {
-                            AchievementBadgeImage(AchievementBadge(hero.imageSrc, null), unlocked = true, size = CELL_SIZE - 4.dp)
-                        }
-                    }
-                }
-                CellCanvas(state, selected, onSelect = { selected = it })
+@Composable
+private fun AlbumScenario(hero: GridHero, scenario: GridScenario, cell: GridCell?) {
+    val status = stringResource(when (cell?.state ?: CellState.NEVER) {
+        CellState.NEVER -> R.string.achievements_grid_legend_never
+        CellState.PLAYED -> R.string.achievements_grid_legend_played
+        CellState.WON -> R.string.achievements_grid_legend_won
+    })
+    val counts = stringResource(R.string.achievements_grid_cell, hero.name, scenario.name, cell?.attempts ?: 0, cell?.wins ?: 0)
+    Panel {
+        Row(Modifier.fillMaxWidth().semantics(mergeDescendants = true) { contentDescription = "$counts. $status" },
+            horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            AsyncImage(model = com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls.cardImage(scenario.imageSrc), contentDescription = null,
+                modifier = Modifier.size(72.dp).clip(RoundedCornerShape(12.dp)),
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                alpha = if (cell?.state == CellState.WON) 1f else 0.5f)
+            Column(Modifier.weight(1f)) {
+                Text(scenario.name, style = MaterialTheme.typography.titleMedium)
+                Text(status, color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.achievements_album_counts, cell?.wins ?: 0, cell?.attempts ?: 0),
+                    style = MaterialTheme.typography.bodySmall)
+                cell?.bestLevelWon?.let { Text(stringResource(AchievementTexts.level(it)), style = MaterialTheme.typography.bodySmall) }
             }
         }
     }
 }
 
-/**
- * The cells, drawn rather than composed: seventy heroes by sixty scenarios
- * is four thousand of them, and four thousand boxes with a click each took
- * seconds to lay out on a modest phone. One drawing, one tap handler that
- * works out which cell was under the finger.
- */
-@Composable
-private fun CellCanvas(
-    state: AchievementsUiState,
-    selected: Pair<GridScenario, GridHero>?,
-    onSelect: (Pair<GridScenario, GridHero>) -> Unit,
-) {
-    val never = cellColor(CellState.NEVER)
-    val played = cellColor(CellState.PLAYED)
-    val won = cellColor(CellState.WON)
-    val measurer = rememberTextMeasurer()
-    val markStyle = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color.White)
-    val columns = state.columns
-    val rows = state.rows
-    Canvas(
-        Modifier
-            .size(CELL_SIZE * columns.size, CELL_SIZE * rows.size)
-            .pointerInput(columns, rows) {
-                detectTapGestures { offset ->
-                    val cell = CELL_SIZE.toPx()
-                    val column = (offset.x / cell).toInt()
-                    val row = (offset.y / cell).toInt()
-                    if (column in columns.indices && row in rows.indices) {
-                        onSelect(rows[row] to columns[column])
-                    }
-                }
-            },
-    ) {
-        val cell = CELL_SIZE.toPx()
-        val inset = 1.dp.toPx()
-        val radius = CornerRadius(3.dp.toPx())
-        rows.forEachIndexed { r, row ->
-            columns.forEachIndexed { c, hero ->
-                val value = state.cell(row.key, hero.code)
-                val colour = when (value?.state) {
-                    CellState.WON -> won
-                    CellState.PLAYED -> played
-                    else -> never
-                }
-                val topLeft = Offset(c * cell + inset, r * cell + inset)
-                val size = Size(cell - 2 * inset, cell - 2 * inset)
-                drawRoundRect(colour, topLeft, size, radius)
-                if (selected != null && selected.first.key == row.key && selected.second.code == hero.code) {
-                    drawRoundRect(Color.White.copy(alpha = 0.35f), topLeft, size, radius)
-                }
-                val mark = when (value?.bestLevelWon) {
-                    DifficultyLevel.EXPERT -> "E"
-                    DifficultyLevel.STANDARD -> "S"
-                    else -> null
-                }
-                if (mark != null) {
-                    val text = measurer.measure(mark, markStyle)
-                    drawText(
-                        text,
-                        topLeft = Offset(
-                            topLeft.x + (size.width - text.size.width) / 2,
-                            topLeft.y + (size.height - text.size.height) / 2,
-                        ),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun cellColor(state: CellState): Color = when (state) {
-    // Darker than the panel it sits on, so an empty cell still reads as a cell.
-    CellState.NEVER -> MaterialTheme.colorScheme.surface
-    CellState.PLAYED -> Color(0xFFE0B94A)
-    CellState.WON -> MaterialTheme.colorScheme.primary
-}
-
-@Composable
-private fun Legend(color: Color, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(12.dp).clip(CircleShape).background(color))
-        Spacer(Modifier.width(4.dp))
-        Text(label, style = MaterialTheme.typography.labelSmall)
-    }
-}
-
-/** A labelled choice: the value on a button, the options in a menu under it. */
 @Composable
 private fun <T> Picker(
     label: String,
@@ -544,7 +447,3 @@ private fun percent(won: Int, cells: Int): Int = if (cells == 0) 0 else Math.rou
 private fun fraction(current: Int, target: Int): Float = if (target == 0) 0f else (current.toFloat() / target).coerceIn(0f, 1f)
 
 fun dateOf(epochMillis: Long): String = DateFormat.getDateInstance(DateFormat.LONG).format(Date(epochMillis))
-
-private val CELL_SIZE = 26.dp
-private val HEADER_HEIGHT = 30.dp
-private val LABEL_WIDTH = 96.dp

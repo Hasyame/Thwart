@@ -1,6 +1,8 @@
 package com.hasyame.marvelchampions.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,32 +10,39 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
@@ -45,20 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.ui.draw.clip
+import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
+import com.hasyame.marvelchampions.core.designsystem.component.halftone
 import com.hasyame.marvelchampions.ui.achievements.AchievementBadgeImage
 import com.hasyame.marvelchampions.ui.achievements.AchievementCard
 import com.hasyame.marvelchampions.ui.achievements.descriptionOf
 import com.hasyame.marvelchampions.ui.achievements.titleOf
-import com.hasyame.marvelchampions.R
-import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
-import com.hasyame.marvelchampions.core.designsystem.component.halftone
 import com.hasyame.marvelchampions.ui.navigation.NavigationIcons
 
 /**
@@ -83,6 +85,7 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val strip by viewModel.achievementStrip.collectAsStateWithLifecycle()
+    var notesOpen by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     val browser = LocalUriHandler.current
 
     LaunchedEffect(state.randomCardCode) {
@@ -114,6 +117,22 @@ fun HomeScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            // The menu, two by two: the rules and the collection, a game and
+            // a card at random, then the games played and what they add up to.
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                MenuTile(stringResource(R.string.destination_rules), NavigationIcons.Book, onRules, Modifier.weight(1f))
+                MenuTile(stringResource(R.string.collection_title), NavigationIcons.Card, onCollection, Modifier.weight(1f))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                MenuTile(stringResource(R.string.play_random), Icons.Filled.Refresh, onRandomGame, Modifier.weight(1f))
+                MenuTile(stringResource(R.string.home_random_card), NavigationIcons.Deck, viewModel::drawRandomCard, Modifier.weight(1f))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                MenuTile(stringResource(R.string.history_title), Icons.Filled.DateRange, onHistory, Modifier.weight(1f))
+                MenuTile(stringResource(R.string.destination_stats), NavigationIcons.Chart, onStats, Modifier.weight(1f))
+            }
+
+
             if (!state.notesDismissed && state.notes != null) {
                 Panel {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -138,7 +157,10 @@ fun HomeScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    Text(
+                    TextButton(onClick = { notesOpen = !notesOpen }) {
+                        Text(stringResource(if (notesOpen) R.string.home_hide_details else R.string.home_show_details))
+                    }
+                    if (notesOpen) Text(
                         state.notes.orEmpty(),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 8.dp),
@@ -156,20 +178,6 @@ fun HomeScreen(
             // front page shows them: the count, the latest earned, the badges.
             strip?.let { AchievementsPanel(it, onAchievements) }
 
-            // The menu, two by two: the rules and the collection, a game and
-            // a card at random, then the games played and what they add up to.
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MenuTile(stringResource(R.string.destination_rules), NavigationIcons.Book, onRules, Modifier.weight(1f))
-                MenuTile(stringResource(R.string.collection_title), NavigationIcons.Card, onCollection, Modifier.weight(1f))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MenuTile(stringResource(R.string.play_random), Icons.Filled.Refresh, onRandomGame, Modifier.weight(1f))
-                MenuTile(stringResource(R.string.home_random_card), NavigationIcons.Deck, viewModel::drawRandomCard, Modifier.weight(1f))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MenuTile(stringResource(R.string.history_title), Icons.Filled.DateRange, onHistory, Modifier.weight(1f))
-                MenuTile(stringResource(R.string.destination_stats), NavigationIcons.Chart, onStats, Modifier.weight(1f))
-            }
 
             Panel {
                 Text(

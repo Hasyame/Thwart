@@ -2,13 +2,6 @@ package com.hasyame.marvelchampions.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hasyame.marvelchampions.data.settings.AppPreferences
-import com.hasyame.marvelchampions.data.repository.CollectionRepository
-import com.hasyame.marvelchampions.data.sync.CardImagePrefetcher
-import com.hasyame.marvelchampions.data.sync.CardSyncManager
-import com.hasyame.marvelchampions.data.sync.CardSyncState
-import com.hasyame.marvelchampions.data.sync.SyncSession
-import com.hasyame.marvelchampions.data.sync.SyncSessionStore
 import com.hasyame.marvelchampions.data.backup.Backup
 import com.hasyame.marvelchampions.data.backup.BackupRepository
 import com.hasyame.marvelchampions.data.backup.BackupResult
@@ -17,10 +10,18 @@ import com.hasyame.marvelchampions.data.bgg.BggAccount
 import com.hasyame.marvelchampions.data.bgg.BggAccountState
 import com.hasyame.marvelchampions.data.bgg.BggClient
 import com.hasyame.marvelchampions.data.bgg.BggResult
+import com.hasyame.marvelchampions.data.repository.CollectionRepository
+import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.data.sync.CardImagePrefetcher
+import com.hasyame.marvelchampions.data.sync.CardSyncManager
+import com.hasyame.marvelchampions.data.sync.CardSyncState
+import com.hasyame.marvelchampions.data.sync.SyncSession
+import com.hasyame.marvelchampions.data.sync.SyncSessionStore
 import com.hasyame.marvelchampions.domain.model.BggReportingMode
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +30,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class SettingsUiState(
     val cardLocale: CardLocale = CardLocale.FRENCH,
@@ -160,15 +160,15 @@ class SettingsViewModel @Inject constructor(
         .map { it?.summary() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), null)
 
-    private val backupMessages = MutableStateFlow<String?>(null)
-    val backupMessage: StateFlow<String?> = backupMessages.asStateFlow()
+    private val backupMessages = MutableStateFlow<BackupNotice?>(null)
+    val backupMessage: StateFlow<BackupNotice?> = backupMessages.asStateFlow()
 
     fun exportBackup(destination: android.net.Uri, includePhotos: Boolean = false) {
         viewModelScope.launch {
             val result = backupRepository.export(destination, includePhotos)
             backupMessages.value = when (result) {
-                is BackupResult.Exported -> "Backup saved."
-                is BackupResult.Failed -> "Could not save the backup: ${result.detail}"
+                is BackupResult.Exported -> BackupNotice.SAVED
+                is BackupResult.Failed -> BackupNotice.SAVE_FAILED
                 else -> null
             }
         }
@@ -184,7 +184,8 @@ class SettingsViewModel @Inject constructor(
                 },
                 onFailure = {
                     pendingSource = null
-                    backupMessages.value = "That file is not a backup: ${it.message}"
+                    pendingBackup.value = null
+                    backupMessages.value = BackupNotice.UNREADABLE
                 },
             )
         }
@@ -198,18 +199,15 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val result = backupRepository.restore(backup, source)
             backupMessages.value = when (result) {
-                is BackupResult.Restored ->
-                    "Restored ${result.summary.decks} decks, " +
-                        "${result.summary.campaigns} campaigns and " +
-                        "${result.summary.plays} games."
-
-                is BackupResult.Failed -> "Could not restore: ${result.detail}"
+                is BackupResult.Restored -> if (result.incomplete) BackupNotice.PARTIAL else BackupNotice.RESTORED
+                is BackupResult.Failed -> BackupNotice.RESTORE_FAILED
                 else -> null
             }
         }
     }
 
     fun cancelRestore() {
+        pendingSource = null
         pendingBackup.value = null
     }
 
@@ -274,3 +272,5 @@ private data class BggTransient(
     val verifying: Boolean = false,
     val error: String? = null,
 )
+
+enum class BackupNotice { SAVED, SAVE_FAILED, UNREADABLE, RESTORED, PARTIAL, RESTORE_FAILED }

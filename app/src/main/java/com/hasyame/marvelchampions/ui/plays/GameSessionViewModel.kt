@@ -10,8 +10,7 @@ import com.hasyame.marvelchampions.data.db.entity.PlayHero
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.data.db.entity.VillainStep
 import com.hasyame.marvelchampions.data.photos.PhotoStore
-import com.hasyame.marvelchampions.data.sync.AutoSync
-import com.hasyame.marvelchampions.data.sync.SyncTrigger
+import com.hasyame.marvelchampions.data.ratings.ofPlay
 import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.repository.EncounterRepository
@@ -19,32 +18,34 @@ import com.hasyame.marvelchampions.data.repository.PlayRecorded
 import com.hasyame.marvelchampions.data.repository.PlayRepository
 import com.hasyame.marvelchampions.data.repository.RandomizerNames
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
+import com.hasyame.marvelchampions.data.repository.RatingRepository
 import com.hasyame.marvelchampions.data.repository.SchemeBriefing
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.domain.achievements.Unlock
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.play.EncounterProgress
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
-import com.hasyame.marvelchampions.data.repository.RatingRepository
-import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
-import com.hasyame.marvelchampions.domain.ratings.RatingSubject
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.hasyame.marvelchampions.domain.play.FearNoEvil
+import kotlinx.serialization.json.Json
 
 /**
  * One player at the table: who they are and which aspect they brought.

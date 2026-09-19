@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.hasyame.marvelchampions.data.backup.Backup
 import com.hasyame.marvelchampions.data.backup.BackupRepository
 import com.hasyame.marvelchampions.data.backup.BackupResult
 import com.hasyame.marvelchampions.data.backup.BackupSettings
@@ -22,6 +21,7 @@ import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -35,7 +35,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import java.io.File
 
 /**
  * Out to a file and back in, with nothing lost on the way.
@@ -78,6 +77,7 @@ class BackupRoundTripTest {
             preferences,
             PhotoStore(context, Dispatchers.Unconfined),
             Dispatchers.Unconfined,
+            sessions = com.hasyame.marvelchampions.data.sync.SyncSessionStore(context, com.hasyame.marvelchampions.data.security.SecretStore()),
         )
     }
 

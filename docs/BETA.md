@@ -24,8 +24,8 @@ not only this phone: your files, a cloud drive, an email to yourself.
 
 A beta has been tested less than a release. That is the entire point of you
 having it. If one goes wrong and takes your campaigns with it, that backup is
-the only way back, because the app has no account and no server. There is no
-copy anywhere else.
+an independent recovery point. Optional sync is not a versioned backup: a
+change or deletion can propagate to your other devices.
 
 ---
 

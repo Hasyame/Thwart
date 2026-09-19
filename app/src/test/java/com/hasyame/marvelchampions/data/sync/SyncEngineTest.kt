@@ -4,11 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
-import com.hasyame.marvelchampions.data.db.entity.PlayEntity
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.JsonArray
 import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
+import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.security.SecretStore
@@ -16,7 +13,10 @@ import com.hasyame.marvelchampions.data.settings.AppPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -453,4 +453,16 @@ class SyncEngineTest {
     /** What the server would hold for a play with this id. */
     private fun playBody(id: String) =
         json.encodeToJsonElement(PlayEntity.serializer(), play(id)) as kotlinx.serialization.json.JsonObject
-}
+    @Test
+    fun retryMustNotDiscardAnEditMadeAfterALostResponse() = runTest {
+        givenLocalPlays(1)
+        api.loseResponseOnAttempt = 1
+        assertTrue(runCatching { engine.sync() }.isFailure)
+        val edited = play("local-0").copy(notes = "audit edited after timeout", updatedAt = 1_700_000_001_000)
+        database.syncRecordDao().putPlay(edited)
+        database.syncStateDao().markDirty(SyncCollection.PLAYS.key, edited.id)
+        api.loseResponseOnAttempt = null
+        engine.sync()
+        engine.sync()
+        assertEquals("audit edited after timeout", api.stored(SyncCollection.PLAYS.key, edited.id)?.body?.get("notes")?.jsonPrimitive?.content)
+    }}

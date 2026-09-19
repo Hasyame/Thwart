@@ -1,6 +1,7 @@
 package com.hasyame.marvelchampions.data.sync
 
 import androidx.room.withTransaction
+import com.hasyame.marvelchampions.core.util.runCatchingCancellable
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
@@ -8,7 +9,6 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -101,7 +101,7 @@ class SyncEngine @Inject constructor(
      * Not only for the push ordering: two concurrent runs would also both read
      * the dirty set, both upload it, and both report the result.
      */
-    private val runLock = Mutex()
+    private val runLock = sessions.dataLock
 
     /**
      * Everything this device has that the account has not been told about.
@@ -136,7 +136,7 @@ class SyncEngine @Inject constructor(
             if (!session.isSignedIn) {
                 throw SyncException(SyncException.UNAUTHORIZED)
             }
-            val limits = runCatching { client.version().limits }.getOrDefault(LimitsDto())
+            val limits = runCatchingCancellable { client.version().limits }.getOrDefault(LimitsDto())
 
             /*
                 A cursor read with another set of collections is a position
@@ -401,44 +401,19 @@ class SyncEngine @Inject constructor(
      * marked clean until the server has said so for that record by name.
      */
     private suspend fun pushPending(limits: LimitsDto): SyncOutcome {
-        val outstanding = pending()
-        if (outstanding.isEmpty()) {
-            return SyncOutcome()
-        }
         var pushed = 0
         var overwritten = 0
         var rejected = 0
         var cursor = 0L
         val assigned = mutableListOf<Long>()
         val startedAt = sessions.current().cursor
-        // Reused for the first batch when a previous run sent one and never
-        // heard back. After that, a fresh id per batch.
-        var retryId = sessions.current().inFlightBatchId
-
-        for (batch in outstanding.batched(limits)) {
-            val sent = batch.associateBy { it.collection.key to it.id }
-            val records = batch.map { record ->
-                val known = syncState.get(record.collection.key, record.id)
-                PushRecordDto(
-                    collection = record.collection.key,
-                    id = record.id,
-                    updatedAt = record.updatedAt.toRfc3339(),
-                    deleted = record.deleted,
-                    // Absent when the server has never seen it. Zero would be a
-                    // claim about a revision that does not exist.
-                    baseRevision = known?.serverRevision?.takeIf { it > 0 },
-                    body = record.body,
-                )
-            }
-            val batchId = retryId.ifBlank { UUID.randomUUID().toString() }
-            retryId = ""
-            // Written down *before* the request, because the failure this
-            // guards against is one where the request arrives and the answer
-            // does not, and an id remembered only on success is no id at all.
-            sessions.beginBatch(batchId)
-            val response = client.push(batchId, records)
-            sessions.endBatch()
-
+        suspend fun send(request: PushRequestDto) {
+            val sent = request.records.associateBy { it.collection to it.id }
+            sessions.beginBatch(request)
+            val response = client.push(request.batchId, request.records)
+            check(response.results.map { it.collection to it.id }.toSet() == sent.keys &&
+                response.results.size == sent.size) { "Incomplete batch acknowledgement" }
+            var batchRejected = 0
             cursor = maxOf(cursor, response.cursor)
             database.withTransaction {
                 for (result in response.results) {
@@ -453,6 +428,16 @@ class SyncEngine @Inject constructor(
                     */
                     if (result.outcome == RecordResultDto.OUTCOME_REJECTED) {
                         rejected++
+                        batchRejected++
+                        val original = sent.getValue(result.collection to result.id)
+                        val collection = SyncCollection.byKey(result.collection)
+                        val current = collection?.let { codec.read(it, result.id) }
+                        if (current != null && (current.body != original.body ||
+                                current.deleted != original.deleted ||
+                                (original.deleted && current.updatedAt.toRfc3339() != original.updatedAt))) {
+                            syncState.markDirty(result.collection, result.id)
+                            continue
+                        }
                         if (result.collection == SyncCollection.RATINGS.key) {
                             codec.forgetRating(result.id)
                         }
@@ -471,14 +456,38 @@ class SyncEngine @Inject constructor(
                     // have that edit marked as synced and never sent: the row
                     // is not dirty any more and nothing will look at it again
                     // until it changes a second time.
-                    if (collection != null && current?.body != sent[key]?.body) {
+                    val original = sent.getValue(key)
+                    if (collection != null && (current?.body != original.body ||
+                            current?.deleted != original.deleted ||
+                            (original.deleted && current.updatedAt.toRfc3339() != original.updatedAt))) {
+                        syncState.markDirty(result.collection, result.id)
                         syncState.noteServerRevision(result.collection, result.id, result.revision)
                     } else {
                         syncState.markSynced(result.collection, result.id, result.revision)
                     }
                 }
             }
-            pushed += response.results.size - rejected
+            // Clear only after local acknowledgement commits. A crash before
+            // this point replays the same request and acknowledgement safely.
+            sessions.endBatch()
+            pushed += response.results.size - batchRejected
+        }
+        sessions.current().inFlightRequest?.let { send(it) }
+        // Older versions saved only an ID. Never attach a changed payload to it.
+        // Fresh IDs still address records by stable ID, preserving later edits.
+        for (batch in pending().batched(limits)) {
+            val records = batch.map { record ->
+                val known = syncState.get(record.collection.key, record.id)
+                PushRecordDto(
+                    collection = record.collection.key,
+                    id = record.id,
+                    updatedAt = record.updatedAt.toRfc3339(),
+                    deleted = record.deleted,
+                    baseRevision = known?.serverRevision?.takeIf { it > 0 },
+                    body = record.body,
+                )
+            }
+            send(PushRequestDto(UUID.randomUUID().toString(), records))
         }
         advanceCursorPast(assigned, startedAt)
         if (rejected > 0) {
@@ -515,7 +524,7 @@ class SyncEngine @Inject constructor(
         if (fresh.isEmpty()) {
             return
         }
-        val contiguous = fresh == (from + 1..fresh.last()).toList()
+        val contiguous = fresh.withIndex().all { (index, revision) -> revision - from == index.toLong() + 1 }
         if (contiguous) {
             sessions.setCursor(fresh.last())
         }
@@ -564,7 +573,7 @@ class SyncEngine @Inject constructor(
      */
     suspend fun planAdoption(): AdoptionPlan = runLock.withLock {
         withContext(ioDispatcher) {
-            val limits = runCatching { client.version().limits }.getOrDefault(LimitsDto())
+            val limits = runCatchingCancellable { client.version().limits }.getOrDefault(LimitsDto())
             val records = mutableListOf<SyncRecordDto>()
             var cursor = 0L
             while (true) {
@@ -618,7 +627,7 @@ class SyncEngine @Inject constructor(
      */
     suspend fun adoptMerging(plan: AdoptionPlan): SyncOutcome = runLock.withLock {
         withContext(ioDispatcher) {
-            val limits = runCatching { client.version().limits }.getOrDefault(LimitsDto())
+            val limits = runCatchingCancellable { client.version().limits }.getOrDefault(LimitsDto())
             val applied = applyPage(plan.records, firstMerge = true)
             // Orphan events get their second chance the same way an ordinary
             // pull gives them one, now that every run in the account has landed.
@@ -657,7 +666,9 @@ class SyncEngine @Inject constructor(
     ): SyncOutcome = runLock.withLock {
         require(exported) { "local data must be exported before it is replaced" }
         withContext(ioDispatcher) {
+            sessions.endBatch()
             database.withTransaction {
+                database.syncStateDao().clearBackupExtras()
                 database.playDao().deleteAll()
                 database.campaignDao().deleteAllRuns()
                 database.savedDeckDao().deleteAll()
@@ -704,6 +715,7 @@ class SyncEngine @Inject constructor(
 
     /** The bookkeeping only. Local data is not touched. */
     suspend fun forgetSyncState() = withContext(ioDispatcher) {
+        sessions.endBatch()
         syncState.clear()
     }
 

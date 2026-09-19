@@ -41,6 +41,7 @@ data class CardSetSummary(
 data class HeroCardRef(
     val code: String,
     val packCode: String,
+    val cardSetCode: String? = null,
 )
 
 /** A hero card's name and picture, in the asked-for language when the database has it, else any. */
@@ -54,6 +55,17 @@ data class HeroCardNames(
 
 @Dao
 interface CardDao {
+
+    @RawQuery(observedEntities = [CardEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity::class])
+    fun observeSearchChanges(query: SupportSQLiteQuery): Flow<Int>
+
+    @RawQuery(observedEntities = [CardEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.PackEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity::class])
+    fun observeCatalogueChanges(query: SupportSQLiteQuery): Flow<Int>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(cards: List<CardEntity>)
@@ -380,7 +392,7 @@ interface CardDao {
      */
     @Query(
         """
-        SELECT code, MIN(packCode) AS packCode
+        SELECT code, MIN(packCode) AS packCode, MIN(cardSetCode) AS cardSetCode
         FROM cards
         WHERE typeCode = 'hero'
         GROUP BY code

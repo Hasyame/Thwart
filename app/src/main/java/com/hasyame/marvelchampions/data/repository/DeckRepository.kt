@@ -1,5 +1,6 @@
 package com.hasyame.marvelchampions.data.repository
 
+import com.hasyame.marvelchampions.core.util.runCatchingCancellable
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.SavedDeckDao
 import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
@@ -14,14 +15,14 @@ import com.hasyame.marvelchampions.data.sync.AutoSync
 import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.domain.deeplink.DeckReference
 import com.hasyame.marvelchampions.domain.model.CardLocale
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 
 /** Why an import failed, in terms the UI can explain without an HTTP code. */
 sealed interface DeckImportError {
@@ -89,10 +90,12 @@ class DeckRepository @Inject constructor(
         withContext(ioDispatcher) { savedDeckDao.getDecks() }
 
     suspend fun delete(id: String) = withContext(ioDispatcher) {
-        savedDeckDao.delete(id, System.currentTimeMillis())
-        syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, id)
-        // So the folder does not keep a ghost, here and on the other devices.
-        folders.forgetDeck(id)
+        syncStateDao.transaction {
+            savedDeckDao.delete(id, System.currentTimeMillis())
+            syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, id)
+            // So the folder does not keep a ghost, here and on the other devices.
+            folders.forgetDeck(id)
+        }
     }
 
     /**
@@ -113,8 +116,10 @@ class DeckRepository @Inject constructor(
      * at the end of it rather than one per card.
      */
     private suspend fun save(deck: SavedDeckEntity) {
-        savedDeckDao.upsert(deck.copy(updatedAt = System.currentTimeMillis()))
-        syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, deck.id)
+        syncStateDao.transaction {
+            savedDeckDao.upsert(deck.copy(updatedAt = System.currentTimeMillis()))
+            syncStateDao.markDirty(SyncCollection.SAVED_DECKS.key, deck.id)
+        }
         autoSync.after(SyncTrigger.DECK_ADDED)
     }
 
@@ -270,7 +275,7 @@ class DeckRepository @Inject constructor(
         if (deck.kind == LOCAL_KIND) {
             return@withContext false
         }
-        val dto = runCatching {
+        val dto = runCatchingCancellable {
             json.decodeFromString(DeckDto.serializer(), deck.rawJson)
         }.getOrNull() ?: return@withContext false
 
@@ -387,7 +392,7 @@ class DeckRepository @Inject constructor(
         val aspects = meta
             ?.takeIf { it.isNotBlank() }
             ?.let {
-                runCatching { json.decodeFromString(DeckMetaDto.serializer(), it) }.getOrNull()
+                runCatchingCancellable { json.decodeFromString(DeckMetaDto.serializer(), it) }.getOrNull()
             }
             ?.aspects
             .orEmpty()

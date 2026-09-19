@@ -6,12 +6,12 @@ import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.sync.AutoSync
 import com.hasyame.marvelchampions.data.sync.SyncTrigger
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Cards the player has starred.
@@ -31,18 +31,20 @@ class FavouriteRepository @Inject constructor(
     fun observeCodes(): Flow<Set<String>> = favouriteDao.observeCodes().map { it.toSet() }
 
     suspend fun toggle(cardCode: String, favourite: Boolean) = withContext(ioDispatcher) {
-        val now = System.currentTimeMillis()
-        if (favourite) {
-            // Starring a card that was starred and unstarred before writes over
-            // the tombstone rather than leaving one, which is what makes the
-            // row visible again.
-            favouriteDao.add(
-                FavouriteCardEntity(cardCode = cardCode, addedAt = now, updatedAt = now),
-            )
-        } else {
-            favouriteDao.remove(cardCode, now)
+        syncStateDao.transaction {
+            val now = System.currentTimeMillis()
+            if (favourite) {
+                // Starring a card that was starred and unstarred before writes over
+                // the tombstone rather than leaving one, which is what makes the
+                // row visible again.
+                favouriteDao.add(
+                    FavouriteCardEntity(cardCode = cardCode, addedAt = now, updatedAt = now),
+                )
+            } else {
+                favouriteDao.remove(cardCode, now)
+            }
+            syncStateDao.markDirty(SyncCollection.FAVOURITE_CARDS.key, cardCode)
         }
-        syncStateDao.markDirty(SyncCollection.FAVOURITE_CARDS.key, cardCode)
         autoSync.after(SyncTrigger.CARD_FAVOURITED)
     }
 }

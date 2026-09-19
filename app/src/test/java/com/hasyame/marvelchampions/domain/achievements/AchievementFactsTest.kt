@@ -1,5 +1,6 @@
 package com.hasyame.marvelchampions.domain.achievements
 
+import com.hasyame.marvelchampions.data.achievements.AchievementFacts
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero

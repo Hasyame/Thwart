@@ -1,6 +1,5 @@
 package com.hasyame.marvelchampions.data.sync
 
-import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,6 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.security.SecretStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -17,6 +17,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 
 /**
  * Who this device is signed in as, and how far through the account it has read.
@@ -104,6 +105,7 @@ data class SyncSession(
      * A fresh id on a retry is precisely the duplicate this exists to prevent.
      */
     val inFlightBatchId: String = "",
+    val inFlightRequest: PushRequestDto? = null,
     /**
      * Ratings the server has refused since the person last read the notice.
      *
@@ -127,6 +129,10 @@ class SyncSessionStore @Inject constructor(
     private val secrets: SecretStore,
 ) {
 
+    /** Serialize account synchronization and portable backup replacement. */
+    internal val dataLock = kotlinx.coroutines.sync.Mutex()
+
+
     val session: Flow<SyncSession> = context.syncStore.data.map { preferences ->
         SyncSession(
             instanceUrl = preferences[KEY_INSTANCE].orEmpty()
@@ -143,6 +149,7 @@ class SyncSessionStore @Inject constructor(
             recoveryIssuedAt = preferences[KEY_RECOVERY_ISSUED].orEmpty(),
             lastSyncedAt = preferences[KEY_LAST_SYNCED] ?: 0,
             inFlightBatchId = preferences[KEY_IN_FLIGHT].orEmpty(),
+            inFlightRequest = preferences[KEY_REQUEST]?.let { Json.decodeFromString<PushRequestDto>(it) },
             rejectedRatings = preferences[KEY_REJECTED] ?: 0,
         )
     }
@@ -202,6 +209,8 @@ class SyncSessionStore @Inject constructor(
             if (previous != null && previous != response.accountId) {
                 preferences.remove(KEY_CURSOR)
                 preferences.remove(KEY_LAST_SYNCED)
+                preferences.remove(KEY_IN_FLIGHT)
+                preferences.remove(KEY_REQUEST)
                 preferences[KEY_ENABLED] = false
                 preferences[KEY_AUTO_SYNC] = false
             }
@@ -226,7 +235,14 @@ class SyncSessionStore @Inject constructor(
 
     suspend fun setInstanceUrl(url: String) {
         context.syncStore.edit { preferences ->
-            val cleaned = url.trim().trimEnd('/')
+            val cleaned = url.trim().trimEnd('/').ifBlank { SyncEndpoints.DEFAULT_BASE_URL }
+            val previous = preferences[KEY_INSTANCE] ?: SyncEndpoints.DEFAULT_BASE_URL
+            if (cleaned != previous) {
+                preferences.remove(KEY_IN_FLIGHT)
+                preferences.remove(KEY_REQUEST)
+                preferences.remove(KEY_CURSOR)
+                preferences.remove(KEY_CURSOR_COLLECTIONS)
+            }
             if (cleaned.isBlank() || cleaned == SyncEndpoints.DEFAULT_BASE_URL) {
                 preferences.remove(KEY_INSTANCE)
             } else {
@@ -285,13 +301,19 @@ class SyncSessionStore @Inject constructor(
     }
 
     /** Remembers a batch id before it is sent, so a retry can reuse it. */
-    suspend fun beginBatch(batchId: String) {
-        context.syncStore.edit { it[KEY_IN_FLIGHT] = batchId }
+    suspend fun beginBatch(request: PushRequestDto) {
+        context.syncStore.edit {
+            it[KEY_IN_FLIGHT] = request.batchId
+            it[KEY_REQUEST] = Json.encodeToString(request)
+        }
     }
 
     /** Forgets it, once the server has answered. */
     suspend fun endBatch() {
-        context.syncStore.edit { it.remove(KEY_IN_FLIGHT) }
+        context.syncStore.edit {
+            it.remove(KEY_IN_FLIGHT)
+            it.remove(KEY_REQUEST)
+        }
     }
 
     /**
@@ -316,6 +338,7 @@ class SyncSessionStore @Inject constructor(
             preferences.remove(KEY_RECOVERY_ISSUED)
             preferences.remove(KEY_LAST_SYNCED)
             preferences.remove(KEY_IN_FLIGHT)
+            preferences.remove(KEY_REQUEST)
             preferences[KEY_ENABLED] = false
             preferences[KEY_AUTO_SYNC] = false
         }
@@ -335,6 +358,7 @@ class SyncSessionStore @Inject constructor(
         val KEY_CURSOR_COLLECTIONS = stringPreferencesKey("cursor_collections")
         val KEY_RECOVERY_ISSUED = stringPreferencesKey("recovery_issued_at")
         val KEY_LAST_SYNCED = longPreferencesKey("last_synced_at")
+        val KEY_REQUEST = stringPreferencesKey("in_flight_request")
         val KEY_IN_FLIGHT = stringPreferencesKey("in_flight_batch")
     }
 }

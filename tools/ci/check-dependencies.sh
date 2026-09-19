@@ -22,8 +22,15 @@ ALLOWLIST="tools/ci/proprietary-allowed.txt"
 echo "Resolving the release runtime classpath..."
 # `dependencies` prints the whole tree; releaseRuntimeClasspath is what actually
 # ships, as opposed to test or debug-only dependencies which F-Droid ignores.
-RESOLVED="$(./gradlew --no-daemon --quiet :app:dependencies \
-    --configuration releaseRuntimeClasspath 2>/dev/null || true)"
+if ! RESOLVED="$(./gradlew --no-daemon --quiet :app:dependencies \
+    --configuration releaseRuntimeClasspath)"; then
+    echo "Gradle could not resolve the classpath."
+    exit 1
+fi
+if grep -qE '(^|[[:space:]])FAILED([[:space:]]|$)' <<< "$RESOLVED"; then
+    echo "The dependency report contains unresolved dependencies."
+    exit 1
+fi
 
 if [ -z "$RESOLVED" ]; then
     echo "Could not resolve the classpath. Failing rather than passing blind."
@@ -39,10 +46,11 @@ COORDINATES="$(printf '%s\n' "$RESOLVED" \
 
 failed=0
 while IFS= read -r prefix; do
+    prefix="${prefix%$'\r'}"
     case "$prefix" in ''|\#*) continue ;; esac
     while IFS= read -r found; do
         [ -z "$found" ] && continue
-        if [ -f "$ALLOWLIST" ] && grep -qxF "$found" "$ALLOWLIST"; then
+        if [ -f "$ALLOWLIST" ] && tr -d '\r' < "$ALLOWLIST" | grep -xF "$found" > /dev/null; then
             echo "  allowed by $ALLOWLIST: $found"
             continue
         fi

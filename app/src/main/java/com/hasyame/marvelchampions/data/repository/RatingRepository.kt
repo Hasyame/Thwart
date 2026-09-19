@@ -6,12 +6,16 @@ import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SyncCollection
+import com.hasyame.marvelchampions.data.ratings.of
+import com.hasyame.marvelchampions.data.ratings.toEntity
 import com.hasyame.marvelchampions.data.sync.AutoSync
 import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
 import com.hasyame.marvelchampions.data.sync.SyncClient
 import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.domain.ratings.RatingWire
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -19,8 +23,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Difficulty ratings: the player's own, and the community's.
@@ -98,17 +100,22 @@ class RatingRepository @Inject constructor(
 
     /** Takes a rating back. The sync tombstones it; the server subtracts it. */
     suspend fun unrate(subject: String) = withContext(ioDispatcher) {
-        ratingDao.remove(subject, System.currentTimeMillis())
+        syncStateDao.transaction {
+            ratingDao.remove(subject, System.currentTimeMillis())
+            syncStateDao.markDirty(SyncCollection.RATINGS.key, subject)
+        }
         changed(subject)
     }
 
     private suspend fun store(rating: RatingEntity) {
-        ratingDao.put(rating)
+        syncStateDao.transaction {
+            ratingDao.put(rating)
+            syncStateDao.markDirty(SyncCollection.RATINGS.key, rating.subject)
+        }
         changed(rating.subject)
     }
 
     private suspend fun changed(subject: String) {
-        syncStateDao.markDirty(SyncCollection.RATINGS.key, subject)
         // The server answers with the subject's new summary the next time it
         // is asked; a screen that just rated must not keep showing the old.
         forget(subject)

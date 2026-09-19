@@ -6,15 +6,16 @@ import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
+import com.hasyame.marvelchampions.data.db.entity.KSerializerOf
+import com.hasyame.marvelchampions.data.db.entity.NO_EXTRAS
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.ratings.of
 import com.hasyame.marvelchampions.domain.model.CardLocale
-import com.hasyame.marvelchampions.domain.ratings.RatingWire
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
-import com.hasyame.marvelchampions.data.db.entity.KSerializerOf
-import com.hasyame.marvelchampions.data.db.entity.NO_EXTRAS
+import com.hasyame.marvelchampions.domain.ratings.RatingWire
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
@@ -163,7 +164,7 @@ data class BackupSummary(
 /** What came of reading or writing a backup, in terms the screen can show. */
 sealed interface BackupResult {
     data class Exported(val bytes: Long) : BackupResult
-    data class Restored(val summary: BackupSummary) : BackupResult
+    data class Restored(val summary: BackupSummary, val incomplete: Boolean = false) : BackupResult
 
     /** The file was read but is not a backup, or is one this build cannot read. */
     data class Unreadable(val detail: String) : BackupResult

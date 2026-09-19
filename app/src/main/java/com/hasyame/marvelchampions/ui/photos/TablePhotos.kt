@@ -1,19 +1,16 @@
 package com.hasyame.marvelchampions.ui.photos
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -23,6 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
@@ -51,16 +50,18 @@ fun rememberTablePhotoCapture(
     // and this composition is recomposed while it is in front. A plain var is
     // reinitialised by that, and the name of the file being written would be
     // lost between launching the camera and hearing back from it.
-    val pending = remember { mutableStateOf<String?>(null) }
+    val pending = androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture(),
     ) { saved ->
         val name = pending.value ?: return@rememberLauncherForActivityResult
         pending.value = null
         scope.launch {
-            if (!saved || photoStore.discardIfEmpty(name)) {
+            if (!saved) {
+                photoStore.delete(name)
                 return@launch
             }
+            if (photoStore.discardIfEmpty(name) || photoStore.file(name) == null) return@launch
             onTaken(name)
         }
     }
@@ -99,12 +100,15 @@ fun TablePhotoButton(
 fun TablePhotoStrip(
     names: List<String>,
     photoStore: PhotoStore,
-    onOpen: (Uri) -> Unit,
     modifier: Modifier = Modifier,
     onDelete: ((String) -> Unit)? = null,
 ) {
     if (names.isEmpty()) {
         return
+    }
+    val opened = remember { mutableStateOf<String?>(null) }
+    opened.value?.let { name ->
+        TablePhotoViewer(names, name, photoStore, onDismiss = { opened.value = null })
     }
     LazyRow(
         modifier = modifier.height(THUMBNAIL),
@@ -119,7 +123,7 @@ fun TablePhotoStrip(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(THUMBNAIL)
-                        .clickable { onOpen(file.toUri()) },
+                        .clickable { opened.value = name },
                 )
                 onDelete?.let { delete ->
                     IconButton(onClick = { delete(name) }) {

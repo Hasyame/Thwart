@@ -55,7 +55,7 @@ rule and the shared fixture are in `docs/spec/synergie-et-draft.md`.
 ## Card sync
 
 WorkManager `CoroutineWorker`, triggered manually from Settings only. Downloads
-both locales into staging tables and swaps them in one Room transaction, so a
+both locales before replacing the catalogue in one Room transaction, so a
 failed or cancelled sync leaves the previous database intact. Progress is
 reported to the UI; the sync never blocks it.
 
@@ -96,13 +96,13 @@ appears twice, it belongs in the declarative schema instead.
 
 ### Engine and content are strictly separable
 
-The app ships the schema and the validator. Campaign templates — which contain
-verbatim campaign book text — are loaded from device storage, not from `assets/`,
-and are gitignored. See the Legal section of the README.
+The app ships the schema and the validator. Bundled campaign templates contain mechanics only and live in `assets/campaigns/`.
+Personal templates can also be imported from device storage and remain gitignored.
+No campaign book prose belongs in committed templates. See the Legal section of the README.
 
 ## Navigation
 
-Navigation Compose 2.9.8, type-safe `@Serializable` routes. Navigation 3 is
+Navigation Compose 2.10.1, type-safe `@Serializable` routes. Navigation 3 is
 stable (1.1.5) and its back-stack-as-state model would suit the five independent
 tabs well, but it was not chosen for milestone 1: the ecosystem around it is
 still thin and the navigation library is not where this project's risk should
@@ -139,3 +139,17 @@ Priority order, reflecting where the logic actually is:
 6. **F3 campaign engine** and Galaxy's Most Wanted, once the campaign content is
    supplied.
 7. **Polish.**
+
+## Portable backups and account sync
+
+Accounts are optional. Local play is complete without signing in. Opt-in sync
+uses the Go server in the separate Thwart Web repository; record bodies and the
+backup document remain shared contracts. A durable request in the device-only
+sync session keeps the original batch ID and payload until acknowledgement.
+Room 27 adds document-level backup metadata so unknown top-level fields survive
+restore/export in the same transaction as the restored rows.
+
+OS cloud backup and device transfer are excluded explicitly. The portable backup
+is the supported transfer path; it omits credentials, card cache and sync
+bookkeeping. Paused games and unfinished drafts remain device-local by design.
+Their export/sync scope is unchanged; new shared fields require web coordination.

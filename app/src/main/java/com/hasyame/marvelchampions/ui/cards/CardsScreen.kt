@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,7 +28,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
@@ -55,6 +55,7 @@ import com.hasyame.marvelchampions.domain.model.CardSort
 @Composable
 fun CardsScreen(
     onCardClick: (String) -> Unit,
+    onSettings: () -> Unit,
     viewModel: CardsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -107,18 +108,25 @@ fun CardsScreen(
 
             Box(Modifier.fillMaxSize()) {
                 when {
-                    state.isDatabaseEmpty ->
-                        EmptyMessage(stringResource(R.string.cards_database_empty))
+                    state.isDatabaseEmpty -> Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.cards_database_empty), modifier = Modifier.padding(16.dp))
+                        androidx.compose.material3.Button(onClick = onSettings) { Text(stringResource(R.string.destination_settings)) }
+                    }
 
                     state.isLoading && state.results.isEmpty() ->
                         ComicLoadingScreen(message = stringResource(R.string.cards_loading))
 
-                    state.results.isEmpty() ->
-                        EmptyMessage(stringResource(R.string.cards_no_results))
+                    state.results.isEmpty() -> Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.cards_no_results))
+                        androidx.compose.material3.TextButton(onClick = { viewModel.onFilterChange(com.hasyame.marvelchampions.domain.model.CardFilter()) }) {
+                            Text(stringResource(R.string.achievements_reset_filters))
+                        }
+                    }
 
                     isWide -> Row(Modifier.fillMaxSize()) {
                         CardList(
                             state = state,
+                            onLoadMore = viewModel::loadMore,
                             onCardClick = viewModel::onCardSelected,
                             modifier = Modifier.weight(1f),
                         )
@@ -135,6 +143,7 @@ fun CardsScreen(
 
                     else -> CardList(
                         state = state,
+                        onLoadMore = viewModel::loadMore,
                         onCardClick = onCardClick,
                         modifier = Modifier.fillMaxSize(),
                     )
@@ -157,6 +166,7 @@ fun CardsScreen(
 @Composable
 private fun CardList(
     state: CardsUiState,
+    onLoadMore: () -> Unit,
     onCardClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -171,6 +181,13 @@ private fun CardList(
                 showPack = index == 0 ||
                     state.results[index - 1].packCode != card.packCode,
             )
+        }
+        if (state.hasMore) {
+            item {
+                androidx.compose.material3.TextButton(onClick = onLoadMore, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.cards_load_more))
+                }
+            }
         }
     }
 }

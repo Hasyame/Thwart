@@ -1,44 +1,45 @@
 package com.hasyame.marvelchampions.data.db
 
 import androidx.room.AutoMigration
-import androidx.room.TypeConverters
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.hasyame.marvelchampions.data.db.dao.CampaignDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.DeckFolderDao
 import com.hasyame.marvelchampions.data.db.dao.DraftSessionDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedModularSetDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedScenarioDao
+import com.hasyame.marvelchampions.data.db.dao.FavouriteDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
-import com.hasyame.marvelchampions.data.db.dao.FavouriteDao
-import com.hasyame.marvelchampions.data.db.dao.RatingDao
+import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.db.dao.PlayDao
 import com.hasyame.marvelchampions.data.db.dao.RandomizerHistoryDao
+import com.hasyame.marvelchampions.data.db.dao.RatingDao
 import com.hasyame.marvelchampions.data.db.dao.SavedDeckDao
+import com.hasyame.marvelchampions.data.db.dao.SyncRecordDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
+import com.hasyame.marvelchampions.data.db.entity.BackupMetadataEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.CardFtsEntity
 import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.DraftSessionEntity
-import com.hasyame.marvelchampions.data.db.entity.ExtrasConverters
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
-import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
+import com.hasyame.marvelchampions.data.db.entity.ExtrasConverters
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
-import com.hasyame.marvelchampions.data.db.entity.RatingEntity
+import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
-import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
+import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHeroConverters
-import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
+import com.hasyame.marvelchampions.data.db.entity.RatingEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
-import com.hasyame.marvelchampions.data.db.dao.SyncRecordDao
-import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.entity.StringListConverters
 import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
 
@@ -64,6 +65,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
 @TypeConverters(PlayHeroConverters::class, StringListConverters::class, ExtrasConverters::class)
 @Database(
     entities = [
+        BackupMetadataEntity::class,
         CardEntity::class,
         CardFtsEntity::class,
         PackEntity::class,
@@ -83,7 +85,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         DeckFolderEntity::class,
         SyncStateEntity::class,
     ],
-    version = 26,
+    version = 27,
     exportSchema = true,
     // Room generates these from the exported schemas, which it can do for
     // anything that only adds a table, or adds a column with a SQL default.
@@ -116,6 +118,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         AutoMigration(from = 23, to = 24),
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
+        AutoMigration(from = 26, to = 27),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {

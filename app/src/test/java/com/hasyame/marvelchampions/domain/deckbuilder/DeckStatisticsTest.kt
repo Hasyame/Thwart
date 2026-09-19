@@ -1,6 +1,7 @@
 package com.hasyame.marvelchampions.domain.deckbuilder
 
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
+import com.hasyame.marvelchampions.data.deckbuilder.DeckStatisticsCalculator
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

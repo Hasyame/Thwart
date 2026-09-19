@@ -45,7 +45,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -568,7 +568,7 @@ private fun FolderTabs(
     onNewFolder: () -> Unit,
 ) {
     val index = folders.indexOfFirst { it.id == selected }.let { if (it < 0) 0 else it + 1 }
-    ScrollableTabRow(selectedTabIndex = index, edgePadding = 8.dp) {
+    SecondaryScrollableTabRow(selectedTabIndex = index, edgePadding = 8.dp) {
         Tab(selected = index == 0, onClick = { onSelect(null) }, text = { Text(stringResource(R.string.decks_folder_all)) })
         folders.forEach { folder ->
             Tab(selected = selected == folder.id, onClick = { onSelect(folder.id) }, text = { Text(folder.name) })

@@ -43,7 +43,7 @@ propres. Décidé avec l'auteur le 2026-09-18, implémenté ici le 2026-09-19.
   pour que le dépôt web garde l'export de cette build comme fixture.
 * Base Room 26 : `plays.mode` et `plays.extra` (auto-migration).
 
-## Écrans
+## Original screen design (superseded by the presentation update below)
 
 * Route à part, `AchievementsRoute`, jamais un onglet des statistiques :
   atteinte depuis l'accueil (panneau sous le nom du compte, à la manière
@@ -65,3 +65,19 @@ propres. Décidé avec l'auteur le 2026-09-18, implémenté ici le 2026-09-19.
   `scenarioById`) : art du héros ou du méchant sur MarvelCDB, couverture de
   Peur de Rien pour sa boîte ; gris et estompés tant qu'ils ne sont pas
   gagnés.
+
+## Android presentation and persistence update
+
+Room 27 retains unknown document fields in `backup_metadata`; backup format 2,
+record bodies, definitions and the shared test vectors are unchanged. The page
+now defaults to every seat, matching the current web presentation, and shows
+owned hero portraits followed by the selected hero's scenario album. Optional
+filters remain available. Repository adapters live under `data/achievements`;
+only pure derivation and models remain under `domain/achievements`.
+
+The Android input adapter resolves legacy hero-set IDs to hero-card IDs only
+when the loaded catalogue contains one distinct hero card for that set. Direct
+card IDs, unknown IDs and ambiguous sets remain unchanged. Stored plays and
+shared derivation vectors are not rewritten. The web adapter must apply the
+same normalization when reading Android games; coordinate this follow-up
+before claiming cross-client parity for legacy set-based records.

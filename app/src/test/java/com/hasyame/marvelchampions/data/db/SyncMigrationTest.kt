@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import java.io.File
 import kotlinx.coroutines.test.runTest
 import org.json.JSONObject
 import org.junit.After
@@ -16,7 +17,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.io.File
 
 /**
  * Every migration since 1.38.0, run against a real version-17 database.
@@ -193,6 +193,23 @@ class SyncMigrationTest {
         }
     }
 
+    @Test
+    fun `version 26 upgrades without losing plays and accepts document metadata`() = runTest {
+        givenAVersion17DatabaseWithARowInEveryTable(version = 26)
+        val database = openAndMigrate()
+        try {
+            assertEquals("Rhino", database.playDao().getPlay("play-1")?.scenarioName)
+            assertEquals(listOf("event-1"), database.campaignDao().getEvents("run-1").map { it.id })
+            assertNull(database.syncStateDao().backupExtras())
+            database.syncStateDao().storeBackupExtras(
+                com.hasyame.marvelchampions.data.db.entity.BackupMetadataEntity(extras = "{\"future\":true}"),
+            )
+            assertEquals("{\"future\":true}", database.syncStateDao().backupExtras())
+        } finally {
+            database.close()
+        }
+    }
+
     // ---------------------------------------------------------------- setup --
 
     /**
@@ -202,8 +219,8 @@ class SyncMigrationTest {
      * Built from the exported schema, statement for statement, so this is the
      * database 1.38.0 actually created rather than an approximation of it.
      */
-    private fun givenAVersion17DatabaseWithARowInEveryTable() {
-        val schema = JSONObject(schemaFile(17).readText()).getJSONObject("database")
+    private fun givenAVersion17DatabaseWithARowInEveryTable(version: Int = 17) {
+        val schema = JSONObject(schemaFile(version).readText()).getJSONObject("database")
         val database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null)
         try {
             val entities = schema.getJSONArray("entities")
@@ -242,7 +259,7 @@ class SyncMigrationTest {
             )
 
             seed(database)
-            database.version = 17
+            database.version = version
         } finally {
             database.close()
         }

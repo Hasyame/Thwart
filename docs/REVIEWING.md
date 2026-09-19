@@ -56,8 +56,10 @@ user as a change in what the app can do.
 
 ### 4. Network code
 
-The app talks to two hosts: **marvelcdb.com** for card data, and
-**boardgamegeek.com**, and only if the user set it up.
+The app uses **marvelcdb.com** and its French endpoint for card data/images,
+**boardgamegeek.com** for optional play reporting, and **thwart.app** (or an
+explicitly selected compatible instance) for optional account sync. Review the
+shared backup/sync contracts against the separate Thwart Web server and client.
 
 Look for: a new base URL or host, anything sending data rather than fetching it,
 anything reading the BoardGameGeek credentials outside the code that logs in,
@@ -182,3 +184,11 @@ reason.
 reason leaves someone who might come back. The same pull request open for six
 months with no reply leaves someone who will not, and who tells other people
 not to bother either.
+
+## Data and recovery checks
+
+Review immutable sync retry payloads, transaction boundaries around dirty markers,
+and the real backup restore/export path, not just serialization round trips.
+Run schema upgrades as well as fresh-install tests. Imports must enforce document,
+photo, entry-count and total decompression limits before replacing stored data.
+The dependency compliance gate must reject failed and unresolved reports.

@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
+import com.hasyame.marvelchampions.data.ratings.of
 import com.hasyame.marvelchampions.data.sync.RatingSummaryDto
 import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.domain.ratings.RatingWire
@@ -171,7 +172,7 @@ fun RatingBadge(
                 },
             )
         }
-        if (mean != null && summary != null) {
+        if (mean != null) {
             Text(
                 text = pluralStringResource(
                     R.plurals.rating_community,
@@ -203,7 +204,7 @@ fun RatingBadge(
                     }
                 }
             }
-        } else if (countOnly && summary != null) {
+        } else if (countOnly) {
             Text(
                 text = pluralStringResource(R.plurals.rating_count_only, summary.count, summary.count),
                 style = MaterialTheme.typography.labelMedium,

@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.data.db.entity.PausedPhase
-import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.db.entity.VillainStep
+import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.ui.photos.TablePhotoButton
 import com.hasyame.marvelchampions.ui.photos.TablePhotoStrip
 import com.hasyame.marvelchampions.ui.photos.rememberTablePhotoCapture
@@ -104,7 +104,6 @@ fun LongBreakPage(
             TablePhotoStrip(
                 names = photos,
                 photoStore = photoStore,
-                onOpen = { },
                 onDelete = onRemovePhoto,
             )
         }

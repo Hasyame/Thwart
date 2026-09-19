@@ -43,7 +43,7 @@ which is how CI builds.
 
 ## Toolchain
 
-JDK 21 · Gradle 9.6.1 · AGP 9.3.1 · Kotlin 2.4.10 · compileSdk 37 · minSdk 28 ·
+JDK 21 · Gradle 9.7.1 · AGP 9.4.1 · Kotlin 2.4.20 · compileSdk 37 · minSdk 28 ·
 targetSdk 37. Versions live in `gradle/libs.versions.toml` only — never inline a
 version in a build file.
 
@@ -57,7 +57,7 @@ Two things about AGP 9 that will bite you:
 
 Two more traps that have already cost time:
 
-- Robolectric 4.16.1 caps at SDK 36 while the app targets 37, so
+- Robolectric tests remain pinned to SDK 36 while the app targets 37, so
   `app/src/test/resources/robolectric.properties` pins `sdk=36`.
 - The configuration cache is on. A custom task must not touch `project` from
   inside `doLast` — resolve paths and values at configuration time.
@@ -90,7 +90,7 @@ parser live, and those are the things that most need tests.
 
 ### Navigation
 
-Navigation Compose 2.9.8 with type-safe `@Serializable` routes
+Navigation Compose 2.10.1 with type-safe `@Serializable` routes
 (`ui/navigation/Routes.kt`). Each of the five tabs is a **nested graph** wrapping
 a start destination; the nesting is what gives each tab an independent back
 stack, via `saveState`/`restoreState` in

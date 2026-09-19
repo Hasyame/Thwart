@@ -2,43 +2,46 @@ package com.hasyame.marvelchampions.data.repository
 
 import android.content.Context
 import android.net.Uri
+import com.hasyame.marvelchampions.core.util.runCatchingCancellable
 import com.hasyame.marvelchampions.data.db.dao.CampaignDao
-import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.db.dao.SyncStateDao
 import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
-import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero
+import com.hasyame.marvelchampions.data.db.entity.SyncCollection
+import com.hasyame.marvelchampions.data.io.readBounded
+import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.domain.campaign.SchemeSetup
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
-import com.hasyame.marvelchampions.domain.ratings.RatingSubject
-import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignHero
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignState
 import com.hasyame.marvelchampions.domain.campaign.engine.HeroCardStats
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
-import com.hasyame.marvelchampions.domain.campaign.template.allSetupSteps
 import com.hasyame.marvelchampions.domain.campaign.template.CampaignTemplate
-import com.hasyame.marvelchampions.domain.campaign.template.faceCardCode
 import com.hasyame.marvelchampions.domain.campaign.template.LocalizedText
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateError
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidationException
 import com.hasyame.marvelchampions.domain.campaign.template.TemplateValidator
-import com.hasyame.marvelchampions.data.settings.AppPreferences
-import com.hasyame.marvelchampions.data.sync.AutoSync
-import com.hasyame.marvelchampions.data.sync.SyncTrigger
+import com.hasyame.marvelchampions.domain.campaign.template.allSetupSteps
+import com.hasyame.marvelchampions.domain.campaign.template.faceCardCode
+import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import com.hasyame.marvelchampions.domain.model.CardLocale
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Display names for everything a campaign template refers to by code.
@@ -344,12 +347,12 @@ class CampaignRepository @Inject constructor(
     }
 
     private fun readBundledTemplates(): List<CampaignTemplate> {
-        val names = runCatching { context.assets.list(CAMPAIGN_ASSET_DIR) }.getOrNull().orEmpty()
+        val names = runCatchingCancellable { context.assets.list(CAMPAIGN_ASSET_DIR) }.getOrNull().orEmpty()
         return names.filter { it.endsWith(".json", ignoreCase = true) }
             .mapNotNull { name ->
-                runCatching {
+                runCatchingCancellable {
                     val text = context.assets.open("$CAMPAIGN_ASSET_DIR/$name").use {
-                        it.readBytes().decodeToString()
+                        it.readBounded(4 * 1024 * 1024).decodeToString()
                     }
                     TemplateValidator.validateOrThrow(
                         json.decodeFromString(CampaignTemplate.serializer(), text),
@@ -369,13 +372,15 @@ class CampaignRepository @Inject constructor(
     suspend fun importTemplate(uri: Uri): TemplateImportResult = withContext(ioDispatcher) {
         try {
             val text = context.contentResolver.openInputStream(uri)?.use {
-                it.readBytes().decodeToString()
+                it.readBounded(4 * 1024 * 1024).decodeToString()
             } ?: return@withContext TemplateImportResult.Unreadable("could not open file")
 
             val template = json.decodeFromString(CampaignTemplate.serializer(), text)
             TemplateImportResult.Success(TemplateValidator.validateOrThrow(template).expanded())
         } catch (invalid: TemplateValidationException) {
             TemplateImportResult.Invalid(invalid.errors)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (error: Exception) {
             TemplateImportResult.Unreadable(error.message)
         }
@@ -405,42 +410,63 @@ class CampaignRepository @Inject constructor(
         }
         val runId = UUID.randomUUID().toString()
         val now = System.currentTimeMillis()
-        campaignDao.insertRun(
-            CampaignRunEntity(
-                id = runId,
-                templateId = template.id,
-                templateName = template.name.resolve(localeCode()),
-                name = name.ifBlank { template.name.resolve(localeCode()) },
-                difficulty = difficulty,
-                standardSet = standardSet,
-                expertSet = expertSet,
-                createdAt = now,
-                // The template travels with the run so it stays readable even
-                // if the source file is moved or deleted.
-                templateJson = json.encodeToString(CampaignTemplate.serializer(), template),
-                updatedAt = now,
-            ),
-        )
-        syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
-        append(
-            runId,
-            CampaignEvent.CampaignStarted(
-                id = UUID.randomUUID().toString(),
-                timestamp = System.currentTimeMillis(),
-                templateId = template.id,
-                difficulty = difficulty,
-                heroes = heroes,
-                startScenarioId = template.startScenarioId
-                    ?: template.scenarios.firstOrNull()?.id.orEmpty(),
-                choices = choices,
-            ),
-        )
+        syncStateDao.transaction {
+            campaignDao.insertRun(
+                CampaignRunEntity(
+                    id = runId,
+                    templateId = template.id,
+                    templateName = template.name.resolve(localeCode()),
+                    name = name.ifBlank { template.name.resolve(localeCode()) },
+                    difficulty = difficulty,
+                    standardSet = standardSet,
+                    expertSet = expertSet,
+                    createdAt = now,
+                    // The template travels with the run so it stays readable even
+                    // if the source file is moved or deleted.
+                    templateJson = json.encodeToString(CampaignTemplate.serializer(), template),
+                    updatedAt = now,
+                ),
+            )
+            syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+            append(
+                runId,
+                CampaignEvent.CampaignStarted(
+                    id = UUID.randomUUID().toString(),
+                    timestamp = System.currentTimeMillis(),
+                    templateId = template.id,
+                    difficulty = difficulty,
+                    heroes = heroes,
+                    startScenarioId = template.startScenarioId
+                        ?: template.scenarios.firstOrNull()?.id.orEmpty(),
+                    choices = choices,
+                ),
+            )
+        }
         runId
+    }
+
+    /** Refuse an incomplete log while preserving every original payload. */
+    private suspend fun readEvents(runId: String): List<CampaignEvent>? {
+        val events = mutableListOf<CampaignEvent>()
+        for (row in campaignDao.getEvents(runId)) {
+            val event = try {
+                json.decodeFromString(CampaignEvent.serializer(), row.payload)
+            } catch (_: kotlinx.serialization.SerializationException) {
+                return null
+            }
+            events += event
+        }
+        return events
+    }
+
+    suspend fun hasUnreadableEvents(runId: String): Boolean = withContext(ioDispatcher) {
+        readEvents(runId) == null
     }
 
     suspend fun load(runId: String, locale: CardLocale): CampaignRun? = withContext(ioDispatcher) {
         val entity = campaignDao.getRun(runId) ?: return@withContext null
-        val stored = runCatching {
+        val events = readEvents(runId) ?: return@withContext null
+        val stored = runCatchingCancellable {
             json.decodeFromString(CampaignTemplate.serializer(), entity.templateJson).expanded()
         }.getOrNull() ?: return@withContext null
 
@@ -452,17 +478,16 @@ class CampaignRepository @Inject constructor(
         // version happened to be installed the day it started.
         val template = bundledTemplates().firstOrNull { it.id == stored.id } ?: stored
         if (template != stored) {
-            campaignDao.setTemplateJson(
-                runId,
-                json.encodeToString(CampaignTemplate.serializer(), template),
-                System.currentTimeMillis(),
-            )
-            syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+            syncStateDao.transaction {
+                campaignDao.setTemplateJson(
+                    runId,
+                    json.encodeToString(CampaignTemplate.serializer(), template),
+                    System.currentTimeMillis(),
+                )
+                syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+            }
         }
 
-        val events = campaignDao.getEvents(runId).mapNotNull { row ->
-            runCatching { json.decodeFromString(CampaignEvent.serializer(), row.payload) }.getOrNull()
-        }
         val heroStats = heroStats(events, locale)
 
         // Folding the log twice — once without the latest scenario result — is
@@ -714,18 +739,20 @@ class CampaignRepository @Inject constructor(
     }
 
     suspend fun append(runId: String, event: CampaignEvent) = withContext(ioDispatcher) {
-        campaignDao.appendEvent(
-            CampaignEventEntity(
-                id = event.id,
-                runId = runId,
-                timestamp = event.timestamp,
-                payload = json.encodeToString(CampaignEvent.serializer(), event),
-            ),
-        )
-        // The event carries no updatedAt of its own: it is written once, never
-        // rewritten, and its own timestamp is the only time it has. All that is
-        // needed is the note that it has not been pushed yet.
-        syncStateDao.markDirty(SyncCollection.CAMPAIGN_EVENTS.key, event.id)
+        syncStateDao.transaction {
+            campaignDao.appendEvent(
+                CampaignEventEntity(
+                    id = event.id,
+                    runId = runId,
+                    timestamp = event.timestamp,
+                    payload = json.encodeToString(CampaignEvent.serializer(), event),
+                ),
+            )
+            // The event carries no updatedAt of its own: it is written once, never
+            // rewritten, and its own timestamp is the only time it has. All that is
+            // needed is the note that it has not been pushed yet.
+            syncStateDao.markDirty(SyncCollection.CAMPAIGN_EVENTS.key, event.id)
+        }
     }
 
     /**
@@ -1019,8 +1046,10 @@ class CampaignRepository @Inject constructor(
         }
 
     suspend fun markFinished(runId: String, finished: Boolean) = withContext(ioDispatcher) {
-        campaignDao.setFinished(runId, finished, System.currentTimeMillis())
-        syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+        syncStateDao.transaction {
+            campaignDao.setFinished(runId, finished, System.currentTimeMillis())
+            syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+        }
         if (finished) {
             autoSync.after(SyncTrigger.CAMPAIGN_FINISHED)
         }
@@ -1077,15 +1106,13 @@ class CampaignRepository @Inject constructor(
     suspend fun foldedRuns(): List<FoldedRun> = withContext(ioDispatcher) {
         val bundled = bundledTemplates()
         campaignDao.getRuns().map { entity ->
-            val stored = runCatching {
+            val stored = runCatchingCancellable {
                 json.decodeFromString(CampaignTemplate.serializer(), entity.templateJson).expanded()
             }.getOrNull()
             val template = stored?.let { s -> bundled.firstOrNull { it.id == s.id } ?: s }
             val state = template?.let { t ->
-                val events = campaignDao.getEvents(entity.id).mapNotNull { row ->
-                    runCatching { json.decodeFromString(CampaignEvent.serializer(), row.payload) }.getOrNull()
-                }
-                runCatching { engine.fold(t, events) }.getOrNull()
+                val events = readEvents(entity.id) ?: return@let null
+                runCatchingCancellable { engine.fold(t, events) }.getOrNull()
             }
             FoldedRun(entity, template, state)
         }
@@ -1131,8 +1158,10 @@ class CampaignRepository @Inject constructor(
         }
 
     suspend fun deleteRun(runId: String) = withContext(ioDispatcher) {
-        campaignDao.deleteRun(runId, System.currentTimeMillis())
-        syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+        syncStateDao.transaction {
+            campaignDao.deleteRun(runId, System.currentTimeMillis())
+            syncStateDao.markDirty(SyncCollection.CAMPAIGN_RUNS.key, runId)
+        }
     }
 
     /**
@@ -1145,15 +1174,11 @@ class CampaignRepository @Inject constructor(
     suspend fun campaignCardsForDeck(deckId: String): List<CampaignGrantedCard> =
         withContext(ioDispatcher) {
             campaignDao.getRuns().flatMap { entity ->
-                val template = runCatching {
+                val template = runCatchingCancellable {
                     json.decodeFromString(CampaignTemplate.serializer(), entity.templateJson).expanded()
                 }.getOrNull() ?: return@flatMap emptyList()
 
-                val events = campaignDao.getEvents(entity.id).mapNotNull { row ->
-                    runCatching {
-                        json.decodeFromString(CampaignEvent.serializer(), row.payload)
-                    }.getOrNull()
-                }
+                val events = readEvents(entity.id) ?: return@flatMap emptyList()
                 val state = engine.fold(template, events)
 
                 // Hero ids in a run are the deck ids they were built from.
@@ -1175,15 +1200,11 @@ class CampaignRepository @Inject constructor(
         locale: CardLocale = CardLocale.FRENCH,
     ): List<CampaignSummary> = withContext(ioDispatcher) {
         campaignDao.getRuns().map { entity ->
-            val template = runCatching {
+            val template = runCatchingCancellable {
                 json.decodeFromString(CampaignTemplate.serializer(), entity.templateJson).expanded()
             }.getOrNull() ?: return@map CampaignSummary(entity)
 
-            val events = campaignDao.getEvents(entity.id).mapNotNull { row ->
-                runCatching {
-                    json.decodeFromString(CampaignEvent.serializer(), row.payload)
-                }.getOrNull()
-            }
+            val events = readEvents(entity.id) ?: return@map CampaignSummary(entity)
             val state = engine.fold(template, events)
             val creditsCounter = template.market?.counterId ?: CampaignEngine.MARKET_COUNTER_FALLBACK
 
