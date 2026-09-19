@@ -677,6 +677,7 @@ class SyncEngine @Inject constructor(
                 database.excludedScenarioDao().clear()
                 database.randomizerHistoryDao().clear()
                 database.favouriteDao().deleteAll()
+                database.favouritePlayDao().deleteAll()
                 // The revisions described rows that are no longer here.
                 syncState.clear()
             }

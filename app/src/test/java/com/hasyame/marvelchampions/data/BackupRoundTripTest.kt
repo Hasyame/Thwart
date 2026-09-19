@@ -71,6 +71,7 @@ class BackupRoundTripTest {
             MarvelChampionsDatabase::class.java,
         ).allowMainThreadQueries().build()
         preferences = AppPreferences(context)
+        kotlinx.coroutines.runBlocking { preferences.setDismissedPacks(emptySet()) }
         repository = BackupRepository(
             context,
             database,
@@ -254,12 +255,12 @@ class BackupRoundTripTest {
         val backup = repository.peek(source).getOrThrow()
         assertTrue("nothing to restore in $path", backup.plays.isNotEmpty())
 
-        assertTrue(repository.restore(backup) is BackupResult.Restored)
+        assertTrue(repository.restore(backup, source) is BackupResult.Restored)
 
         // Read back out and compare to what went in, field by field, rather
         // than counting rows.
         val exported = destination("real-round-trip.json")
-        repository.export(exported)
+        repository.export(exported, includePhotos = backup.photos.isNotEmpty())
         val again = repository.peek(exported).getOrThrow()
 
         assertEquals(backup.ownedPacks.toSet(), again.ownedPacks.toSet())
@@ -271,6 +272,43 @@ class BackupRoundTripTest {
         assertEquals(backup.plays.toSet(), again.plays.toSet())
         assertEquals(backup.randomizerHistory.toSet(), again.randomizerHistory.toSet())
         assertEquals(backup.favouriteCards.toSet(), again.favouriteCards.toSet())
+        assertEquals(backup.favouritePlays.toSet(), again.favouritePlays.toSet())
+        assertEquals(backup.ratings.toSet(), again.ratings.toSet())
+        assertEquals(backup.deckFolders.toSet(), again.deckFolders.toSet())
+        assertEquals(backup.extra, again.extra)
+        assertEquals(backup.settings?.extra, again.settings?.extra)
+        assertEquals(backup.photos.toSet(), again.photos.toSet())
+        if (backup.photos.isNotEmpty()) {
+            java.util.zip.ZipFile(file).use { original ->
+                java.util.zip.ZipFile(File(exported.path!!)).use { result ->
+                    backup.photos.forEach { name ->
+                        val entry = "photos/$name"
+                        org.junit.Assert.assertArrayEquals(
+                            original.getInputStream(original.getEntry(entry)).readBytes(),
+                            result.getInputStream(result.getEntry(entry)).readBytes(),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `unknown settings remain in backups but stay out of account snapshots`() = runTest {
+        val source = destination("future-settings.json")
+        File(source.path!!).writeText("""{"formatVersion":2,"createdAt":1,"settings":{"themeChoice":"light","futureSetting":{"level":0,"enabled":false}}}""")
+        val backup = repository.peek(source).getOrThrow()
+        assertTrue(repository.restore(backup) is BackupResult.Restored)
+        assertTrue(preferences.snapshot().extra.isEmpty())
+        preferences.setThemeChoice(ThemeChoice.DARK)
+        val output = destination("future-settings-out.json")
+        assertTrue(repository.export(output) is BackupResult.Exported)
+        val restored = repository.peek(output).getOrThrow()
+        assertEquals(backup.settings!!.extra, restored.settings!!.extra)
+        assertEquals("dark", restored.settings.themeChoice)
+        assertTrue(repository.restore(backup.copy(settings = null)) is BackupResult.Restored)
+        repository.export(output)
+        assertTrue(repository.peek(output).getOrThrow().settings!!.extra.isEmpty())
     }
 
     // --------------------------------------------------------------- setup ---

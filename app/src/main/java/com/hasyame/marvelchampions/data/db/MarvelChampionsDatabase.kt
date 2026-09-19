@@ -10,6 +10,7 @@ import com.hasyame.marvelchampions.data.db.dao.DeckFolderDao
 import com.hasyame.marvelchampions.data.db.dao.DraftSessionDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedModularSetDao
 import com.hasyame.marvelchampions.data.db.dao.ExcludedScenarioDao
+import com.hasyame.marvelchampions.data.db.dao.FavouritePlayDao
 import com.hasyame.marvelchampions.data.db.dao.FavouriteDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
@@ -30,6 +31,7 @@ import com.hasyame.marvelchampions.data.db.entity.DraftSessionEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.ExtrasConverters
+import com.hasyame.marvelchampions.data.db.entity.FavouritePlayEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
@@ -77,6 +79,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         CampaignEventEntity::class,
         PlayEntity::class,
         FavouriteCardEntity::class,
+        FavouritePlayEntity::class,
         RatingEntity::class,
         ExcludedModularSetEntity::class,
         ExcludedScenarioEntity::class,
@@ -85,7 +88,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         DeckFolderEntity::class,
         SyncStateEntity::class,
     ],
-    version = 27,
+    version = 28,
     exportSchema = true,
     // Room generates these from the exported schemas, which it can do for
     // anything that only adds a table, or adds a column with a SQL default.
@@ -119,6 +122,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         AutoMigration(from = 24, to = 25),
         AutoMigration(from = 25, to = 26),
         AutoMigration(from = 26, to = 27),
+        AutoMigration(from = 27, to = 28, spec = FavouritePlayMigration27To28::class),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {
@@ -133,6 +137,7 @@ abstract class MarvelChampionsDatabase : RoomDatabase() {
     abstract fun campaignDao(): CampaignDao
     abstract fun playDao(): PlayDao
     abstract fun favouriteDao(): FavouriteDao
+    abstract fun favouritePlayDao(): FavouritePlayDao
     abstract fun ratingDao(): RatingDao
     abstract fun excludedModularSetDao(): ExcludedModularSetDao
     abstract fun excludedScenarioDao(): ExcludedScenarioDao

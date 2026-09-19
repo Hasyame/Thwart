@@ -29,6 +29,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -36,6 +38,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -50,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,12 +94,21 @@ fun HistoryScreen(
     viewModel: HistoryViewModel = hiltViewModel(),
 ) {
     val tiles by viewModel.tiles.collectAsStateWithLifecycle()
+    val favourites by viewModel.favourites.collectAsStateWithLifecycle()
+    var onlyFavourites by rememberSaveable { mutableStateOf(false) }
+    val visible = if (onlyFavourites) tiles.filter { it.play.id in favourites } else tiles
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.history_title)) },
+                actions = {
+                    IconToggleButton(checked = onlyFavourites, onCheckedChange = { onlyFavourites = it }) {
+                        Icon(if (onlyFavourites) Icons.Filled.Star else Icons.Outlined.Star,
+                            contentDescription = stringResource(R.string.history_only_favourites))
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
@@ -104,8 +117,8 @@ fun HistoryScreen(
             )
         },
     ) { padding ->
-        if (tiles.isEmpty()) {
-            ComicEmptyState(message = stringResource(R.string.history_empty), modifier = Modifier.padding(padding))
+        if (visible.isEmpty()) {
+            ComicEmptyState(message = stringResource(if (onlyFavourites) R.string.history_no_favourites else R.string.history_empty), modifier = Modifier.padding(padding))
             return@Scaffold
         }
         LazyVerticalGrid(
@@ -115,8 +128,8 @@ fun HistoryScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize().padding(padding),
         ) {
-            items(tiles, key = { it.play.id }) { tile ->
-                PlayTileCard(tile, onOpen = { onOpen(tile.play.id) })
+            items(visible, key = { it.play.id }) { tile ->
+                PlayTileCard(tile, favourite = tile.play.id in favourites, onOpen = { onOpen(tile.play.id) })
             }
         }
     }
@@ -127,7 +140,7 @@ fun HistoryScreen(
  * name band over its head, the result at its foot.
  */
 @Composable
-private fun PlayTileCard(tile: PlayTile, onOpen: () -> Unit) {
+private fun PlayTileCard(tile: PlayTile, favourite: Boolean, onOpen: () -> Unit) {
     val play = tile.play
     Box(
         Modifier
@@ -166,6 +179,7 @@ private fun PlayTileCard(tile: PlayTile, onOpen: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ResultBadge(play.won)
+            if (favourite) Icon(Icons.Filled.Star, contentDescription = stringResource(R.string.history_starred), tint = Color.White, modifier = Modifier.size(24.dp))
             Spacer(Modifier.weight(1f))
             Text(
                 DateFormat.getDateInstance(DateFormat.SHORT).format(Date(play.playedAt)),
@@ -265,6 +279,7 @@ fun PlayDetailScreen(
 ) {
     val tiles by viewModel.tiles.collectAsStateWithLifecycle()
     val message by viewModel.messages.collectAsStateWithLifecycle()
+    val favourites by viewModel.favourites.collectAsStateWithLifecycle()
     val tile = tiles.firstOrNull { it.play.id == playId }
     val snackbar = remember { SnackbarHostState() }
     var confirmDelete by remember { mutableStateOf(false) }
@@ -289,6 +304,10 @@ fun PlayDetailScreen(
                 },
                 actions = {
                     if (tile != null) {
+                        IconToggleButton(checked = playId in favourites, onCheckedChange = { viewModel.setFavourite(playId, it) }) {
+                            Icon(if (playId in favourites) Icons.Filled.Star else Icons.Outlined.Star,
+                                contentDescription = stringResource(if (playId in favourites) R.string.history_unstar else R.string.history_star))
+                        }
                         IconButton(onClick = { confirmDelete = true }) {
                             Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_delete))
                         }

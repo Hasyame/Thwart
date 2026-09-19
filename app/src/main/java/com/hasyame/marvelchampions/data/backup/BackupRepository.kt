@@ -80,10 +80,12 @@ class BackupRepository @Inject constructor(
                     plays = database.playDao().getAllPlays(),
                     randomizerHistory = database.randomizerHistoryDao().getHistory(),
                     favouriteCards = database.favouriteDao().getAll(),
+                    favouritePlays = database.favouritePlayDao().getAll(),
                     ratings = database.ratingDao().getAll().map { RatingWire.of(it) },
                     deckFolders = database.deckFolderDao().getFolders(),
                     photos = photoFiles.map { it.name },
-                    settings = settings,
+                    settings = settings.copy(extra = database.syncStateDao().backupSettingsExtras()
+                        ?.let { json.parseToJsonElement(it).jsonObject } ?: NO_EXTRAS),
                     extra = database.syncStateDao().backupExtras()?.let { json.parseToJsonElement(it).jsonObject } ?: NO_EXTRAS,
                 )
             }
@@ -183,7 +185,10 @@ class BackupRepository @Inject constructor(
                 }
                 sessions.endBatch()
                 database.withTransaction {
-                    database.syncStateDao().storeBackupExtras(BackupMetadataEntity(extras = backup.extra.toString()))
+                    database.syncStateDao().storeBackupExtras(BackupMetadataEntity(
+                        extras = backup.extra.toString(),
+                        settingsExtras = (backup.settings?.extra ?: NO_EXTRAS).toString(),
+                    ))
                     database.playDao().deleteAll()
                     database.campaignDao().deleteAllRuns()
                     database.savedDeckDao().deleteAll()
@@ -192,6 +197,7 @@ class BackupRepository @Inject constructor(
                     database.excludedScenarioDao().clear()
                     database.randomizerHistoryDao().clear()
                     database.favouriteDao().deleteAll()
+                    database.favouritePlayDao().deleteAll()
                     database.ratingDao().deleteAll()
                     database.deckFolderDao().deleteAll()
                     // The revisions described rows that are no longer here, and
@@ -209,6 +215,7 @@ class BackupRepository @Inject constructor(
                     backup.plays.forEach { database.playDao().insert(it) }
                     database.randomizerHistoryDao().insertAll(backup.randomizerHistory)
                     database.favouriteDao().addAll(backup.favouriteCards)
+                    database.favouritePlayDao().addAll(backup.favouritePlays)
                     database.ratingDao().putAll(backup.ratings.map { it.toEntity() })
                     database.deckFolderDao().upsertAll(backup.deckFolders)
                 }

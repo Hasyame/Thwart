@@ -1,0 +1,2 @@
+Ajoutez vos parties aux favoris et retrouvez-les dans l’historique. Consultez les objectifs, paliers et parties des succès, avec une progression commune à tous les joueurs. Préservez les photos et réglages supplémentaires lors des échanges de sauvegardes avec le Web. Les nouvelles installations suivent le thème du système.
+Cette mise à jour migre les données locales. Exportez une sauvegarde avant de l’installer.

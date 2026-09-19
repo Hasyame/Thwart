@@ -84,6 +84,7 @@ enum class SyncCollection(val key: String) {
     EXCLUDED_MODULAR_SETS("excluded_modular_sets"),
     EXCLUDED_SCENARIOS("excluded_scenarios"),
     FAVOURITE_CARDS("favourite_cards"),
+    FAVOURITE_PLAYS("favourite_plays"),
     SAVED_DECKS("saved_decks"),
     CAMPAIGN_RUNS("campaign_runs"),
     CAMPAIGN_EVENTS("campaign_events"),

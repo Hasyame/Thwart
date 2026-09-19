@@ -19,6 +19,9 @@ interface SyncStateDao {
     @Query("SELECT extras FROM backup_metadata WHERE id = 0")
     suspend fun backupExtras(): String?
 
+    @Query("SELECT settingsExtras FROM backup_metadata WHERE id = 0")
+    suspend fun backupSettingsExtras(): String?
+
     @Query("DELETE FROM backup_metadata")
     suspend fun clearBackupExtras()
 

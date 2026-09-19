@@ -261,18 +261,18 @@ class SyncEngineTest {
     @Test
     fun `a collection this build does not know does not hold the cursor`() = runTest {
         // A server from before the collections parameter sends everything.
-        // The starred game sits at the head of the second page, and used to
+        // The unknown record sits at the head of the second page, and used to
         // pin the cursor there: every pull returned that page again, for good.
         api.ignoresCollections = true
         api.seed(SyncCollection.PLAYS.key, "server-1", playBody("server-1"))
         api.seed(SyncCollection.PLAYS.key, "server-2", playBody("server-2"))
-        api.seed("favourite_plays", "server-1", buildJsonObject { put("playId", "server-1") })
+        api.seed("future_collection", "server-1", buildJsonObject { put("playId", "server-1") })
         repeat(4) { api.seed(SyncCollection.PLAYS.key, "server-${it + 3}", playBody("server-${it + 3}")) }
 
         val outcome = engine.sync()
 
         assertFalse("the run must finish rather than stop short", outcome.incomplete)
-        assertNotNull("the play after the star arrived", database.syncRecordDao().play("server-6"))
+        assertNotNull("the play after the unknown record arrived", database.syncRecordDao().play("server-6"))
         assertEquals("the cursor passed everything", api.count().toLong(), sessions.current().cursor)
         assertTrue("and the run ended, rather than asking for the same page again", api.pulls.size <= 5)
     }
@@ -298,14 +298,14 @@ class SyncEngineTest {
 
     @Test
     fun `a pull names the collections this build reads`() = runTest {
-        api.seed("favourite_plays", "server-1", buildJsonObject { put("playId", "server-1") })
+        api.seed("favourite_plays", "server-1", buildJsonObject { put("playId", "server-1"); put("addedAt", 1000) })
         api.seed(SyncCollection.PLAYS.key, "server-1", playBody("server-1"))
 
         val outcome = engine.sync()
 
-        // The fake honours the parameter the way the server does: the star
-        // is never served, and nothing about it reaches this device.
-        assertEquals(1, outcome.pulled)
+        // The newly declared collection is included alongside its play.
+        assertEquals(2, outcome.pulled)
+        assertEquals(1000L, database.favouritePlayDao().getAll().single().addedAt)
         assertNotNull(database.syncRecordDao().play("server-1"))
     }
 
