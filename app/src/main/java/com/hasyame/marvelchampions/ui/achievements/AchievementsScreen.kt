@@ -82,6 +82,10 @@ fun AchievementsScreen(
     viewModel: AchievementsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    AchievementDetailDialogs(state, onDismiss = viewModel::closeDetail, onHistory = {
+        viewModel.closeDetail()
+        onHistory()
+    })
 
     Scaffold(
         topBar = {
@@ -141,7 +145,7 @@ private fun AchievementsContent(
             }
         }
         if (!albumOpen && state.recent.isNotEmpty()) {
-            item { RecentPanel(state.recent) }
+            item { RecentPanel(state.recent, viewModel::showAchievement) }
         }
         if (albumOpen) {
             item {
@@ -177,7 +181,7 @@ private fun AchievementsContent(
                     state.rows.groupBy { it.packCode }.forEach { (pack, rows) ->
                         item(key = "album-pack-$pack") { Text(rows.first().packName, style = MaterialTheme.typography.titleMedium) }
                         items(rows, key = { "album-${it.key}" }) { scenario ->
-                            AlbumScenario(hero, scenario, state.cell(scenario.key, hero.code))
+                            AlbumScenario(hero, scenario, state.cell(scenario.key, hero.code)) { viewModel.showCell(hero.code, scenario.key) }
                         }
                     }
                 }
@@ -203,7 +207,7 @@ private fun AchievementsContent(
                         modifier = Modifier.padding(top = 4.dp),
                     )
                 }
-                items(cards, key = { it.id }) { card -> AchievementRow(card) }
+                items(cards, key = { it.id }) { card -> AchievementRow(card) { viewModel.showAchievement(card.id) } }
             }
         }
     }
@@ -237,7 +241,7 @@ private fun CompletionPanel(state: AchievementsUiState) {
 }
 
 @Composable
-private fun RecentPanel(recent: List<AchievementCard>) {
+private fun RecentPanel(recent: List<AchievementCard>, onOpen: (String) -> Unit) {
     Panel {
         Text(
             stringResource(R.string.achievements_recent_title),
@@ -245,7 +249,7 @@ private fun RecentPanel(recent: List<AchievementCard>) {
             fontWeight = FontWeight.Bold,
         )
         recent.forEach { card ->
-            Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.fillMaxWidth().clickable { onOpen(card.id) }.padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 AchievementBadgeImage(card.badge, unlocked = true, size = 36.dp)
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
@@ -293,7 +297,7 @@ private fun AchievementFilters(state: AchievementsUiState, viewModel: Achievemen
 }
 
 @Composable
-private fun AlbumScenario(hero: GridHero, scenario: GridScenario, cell: GridCell?) {
+private fun AlbumScenario(hero: GridHero, scenario: GridScenario, cell: GridCell?, onClick: () -> Unit) {
     val status = stringResource(when (cell?.state ?: CellState.NEVER) {
         CellState.NEVER -> R.string.achievements_grid_legend_never
         CellState.PLAYED -> R.string.achievements_grid_legend_played
@@ -301,7 +305,7 @@ private fun AlbumScenario(hero: GridHero, scenario: GridScenario, cell: GridCell
     })
     val counts = stringResource(R.string.achievements_grid_cell, hero.name, scenario.name, cell?.attempts ?: 0, cell?.wins ?: 0)
     Panel {
-        Row(Modifier.fillMaxWidth().semantics(mergeDescendants = true) { contentDescription = "$counts. $status" },
+        Row(Modifier.fillMaxWidth().clickable(onClick = onClick).semantics(mergeDescendants = true) { contentDescription = "$counts. $status" },
             horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(model = com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls.cardImage(scenario.imageSrc), contentDescription = null,
                 modifier = Modifier.size(72.dp).clip(RoundedCornerShape(12.dp)),
@@ -365,8 +369,8 @@ private fun Tick(checked: Boolean, label: String, onChange: (Boolean) -> Unit) {
  * not in the collection, which keeps the progress rather than hiding it.
  */
 @Composable
-private fun AchievementRow(card: AchievementCard) {
-    Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxWidth()) {
+private fun AchievementRow(card: AchievementCard, onClick: () -> Unit) {
+    Surface(onClick = onClick, shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AchievementBadgeImage(card.badge, unlocked = card.unlocked, size = 44.dp)

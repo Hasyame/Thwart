@@ -1142,4 +1142,17 @@
     <string name="home_hide_details">Hide release notes</string>
     <string name="achievements_album_title">Hero album</string>
     <string name="campaign_import_unreadable">Could not read the campaign file. Choose a valid campaign template no larger than 4 MB.</string>
+    <string name="achievements_detail_completed">Completed</string>
+    <string name="achievements_detail_remaining">Remaining</string>
+    <string name="achievements_detail_tiers">Tier requirements</string>
+    <string name="achievements_detail_tier">%1$s · %2$d · %3$s</string>
+    <string name="achievements_detail_needed">Still needed: %1$d</string>
+    <string name="achievements_detail_unlock">Unlocking game</string>
+    <string name="achievements_detail_derived">Calculated from your full history, including every hero at the table. Album filters do not change achievements.</string>
+    <string name="achievements_detail_close">Close</string>
+    <string name="history_only_favourites">Starred games only</string>
+    <string name="history_no_favourites">No starred games yet.</string>
+    <string name="history_starred">Starred game</string>
+    <string name="history_star">Star this game</string>
+    <string name="history_unstar">Unstar this game</string>
 </resources>

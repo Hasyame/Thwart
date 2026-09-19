@@ -1184,4 +1184,17 @@
     <string name="home_hide_details">Masquer les notes de version</string>
     <string name="achievements_album_title">Album des héros</string>
     <string name="campaign_import_unreadable">Impossible de lire le fichier de campagne. Choisissez un modèle de campagne valide de 4 Mo maximum.</string>
+    <string name="achievements_detail_completed">Accompli</string>
+    <string name="achievements_detail_remaining">À accomplir</string>
+    <string name="achievements_detail_tiers">Conditions des paliers</string>
+    <string name="achievements_detail_tier">%1$s · %2$d · %3$s</string>
+    <string name="achievements_detail_needed">Encore nécessaire : %1$d</string>
+    <string name="achievements_detail_unlock">Partie du déblocage</string>
+    <string name="achievements_detail_derived">Calculé sur tout votre historique, avec tous les héros à la table. Les filtres de l’album ne modifient pas les succès.</string>
+    <string name="achievements_detail_close">Fermer</string>
+    <string name="history_only_favourites">Parties favorites uniquement</string>
+    <string name="history_no_favourites">Aucune partie favorite pour le moment.</string>
+    <string name="history_starred">Partie favorite</string>
+    <string name="history_star">Ajouter cette partie aux favoris</string>
+    <string name="history_unstar">Retirer cette partie des favoris</string>
 </resources>

@@ -86,9 +86,11 @@ class BackupWebFixtureTest {
 
         assertEquals(2, backup.formatVersion)
         assertContains(expected, again, "backup")
-        // The collection this build does not keep, and the keys it does not
-        // know, went out again exactly as they came in.
-        assertEquals(expected.jsonObject["favouritePlays"], again.jsonObject["favouritePlays"])
+        // Stars are now known records. Their original values survive; local
+        // sync timestamps may be emitted with the same defaults as other rows.
+        assertContains(expected.jsonObject.getValue("favouritePlays"), again.jsonObject.getValue("favouritePlays"), "favouritePlays")
+        assertEquals(0L, backup.favouritePlays.single().updatedAt)
+        assertEquals(null, backup.favouritePlays.single().deletedAt)
         assertEquals(expected.jsonObject["plays"], again.jsonObject["plays"])
     }
 

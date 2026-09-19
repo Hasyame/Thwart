@@ -7,6 +7,7 @@ import com.hasyame.marvelchampions.data.db.entity.CampaignEventEntity
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
+import com.hasyame.marvelchampions.data.db.entity.FavouritePlayEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
@@ -79,6 +80,15 @@ interface SyncRecordDao {
 
     @Upsert
     suspend fun putFavourite(row: FavouriteCardEntity)
+
+    @Query("SELECT * FROM favourite_plays WHERE playId = :id")
+    suspend fun favouritePlay(id: String): FavouritePlayEntity?
+
+    @Query("SELECT * FROM favourite_plays")
+    suspend fun favouritePlays(): List<FavouritePlayEntity>
+
+    @Upsert
+    suspend fun putFavouritePlay(row: FavouritePlayEntity)
 
     // --- decks --------------------------------------------------------------
 

@@ -7,6 +7,7 @@ import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
+import com.hasyame.marvelchampions.data.db.entity.FavouritePlayEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
@@ -111,6 +112,10 @@ class SyncRecordCodec @Inject constructor(
             record(collection, it.cardCode, it.updatedAt, it.deletedAt) { encode(it) }
         }
 
+        SyncCollection.FAVOURITE_PLAYS -> dao.favouritePlay(id)?.let {
+            record(collection, it.playId, it.updatedAt, it.deletedAt) { encode(it) }
+        }
+
         SyncCollection.SAVED_DECKS -> dao.deck(id)?.let {
             record(collection, it.id, it.updatedAt, it.deletedAt) { encode(it) }
         }
@@ -172,6 +177,10 @@ class SyncRecordCodec @Inject constructor(
 
         SyncCollection.FAVOURITE_CARDS -> dao.favourites().map {
             record(collection, it.cardCode, it.updatedAt, it.deletedAt) { encode(it) }
+        }
+
+        SyncCollection.FAVOURITE_PLAYS -> dao.favouritePlays().map {
+            record(collection, it.playId, it.updatedAt, it.deletedAt) { encode(it) }
         }
 
         SyncCollection.SAVED_DECKS -> dao.decks().map {
@@ -308,6 +317,22 @@ class SyncRecordCodec @Inject constructor(
                     SyncMerge.favourite(
                         remote.copy(
                             cardCode = incoming.id,
+                            updatedAt = incoming.updatedAt.toEpochMillis(),
+                            deletedAt = deletedAt,
+                        ),
+                        local,
+                    ),
+                )
+            }
+
+            SyncCollection.FAVOURITE_PLAYS -> {
+                val local = dao.favouritePlay(incoming.id)
+                val remote = incoming.body?.let { decode<FavouritePlayEntity>(it) }
+                    ?: FavouritePlayEntity(incoming.id, local?.addedAt ?: 0)
+                dao.putFavouritePlay(
+                    SyncMerge.favouritePlay(
+                        remote.copy(
+                            playId = incoming.id,
                             updatedAt = incoming.updatedAt.toEpochMillis(),
                             deletedAt = deletedAt,
                         ),
