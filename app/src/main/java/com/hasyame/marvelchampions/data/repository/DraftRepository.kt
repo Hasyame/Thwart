@@ -196,6 +196,9 @@ class DraftRepository @Inject constructor(
                     heroName = heroNameIn(player.heroCode, locale) ?: player.heroName,
                     aspects = player.aspects,
                     slots = player.slots(),
+                    // So a game played from it records the draft mode, which
+                    // the achievements read (docs/spec/achievements §5).
+                    tags = DeckRepository.DRAFT_TAG,
                 )
             }
             sessionDao.clear()

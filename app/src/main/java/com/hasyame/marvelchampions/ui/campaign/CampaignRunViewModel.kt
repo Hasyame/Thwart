@@ -8,9 +8,11 @@ import com.hasyame.marvelchampions.data.db.entity.PausedPhase
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.sync.AutoSync
 import com.hasyame.marvelchampions.data.sync.SyncTrigger
+import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.Job
+import com.hasyame.marvelchampions.domain.achievements.Unlock
 import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
@@ -159,6 +161,8 @@ data class CampaignRunUiState(
     val ratingLabels: Map<String, String> = emptyMap(),
     /** The play just filed, which a scenario rating cites. */
     val lastPlay: PlayEntity? = null,
+    /** The achievements that play unlocked: what this game earned, not what the history held. */
+    val unlocked: List<Unlock> = emptyList(),
 
     /** Counting villain health and scheme threat, if the setting asks for it. */
     val trackEncounter: Boolean = false,
@@ -213,6 +217,7 @@ class CampaignRunViewModel @Inject constructor(
     val photoStore: PhotoStore,
     private val ratings: RatingRepository,
     private val randomizerRepository: RandomizerRepository,
+    private val achievements: AchievementRepository,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(CampaignRunUiState())
@@ -1056,6 +1061,7 @@ class CampaignRunViewModel @Inject constructor(
         victoryPoints: Int = 0,
     ) {
         val locale = preferences.currentCardLocale()
+        val before = achievements.state()
         val play = runCatching {
             repository.recordScenarioPlay(
                 runId = id,
@@ -1070,9 +1076,11 @@ class CampaignRunViewModel @Inject constructor(
         // still says which villain this was, and before the page is shown.
         val subjects = repository.ratingSubjects(id, scenarioId, locale)
         val names = randomizerRepository.loadNames(locale)
+        val unlocked = if (play == null) emptyList() else achievements.unlockedSince(before)
         state.update {
             it.copy(
                 lastPlay = play,
+                unlocked = unlocked,
                 ratingSubjects = subjects,
                 ratingLabels = names.scenarios + names.modularSets,
             )

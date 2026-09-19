@@ -1,11 +1,14 @@
 package com.hasyame.marvelchampions.data.db.entity
 
-import kotlinx.serialization.Serializable
-
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.json.JsonObject
 
 /**
  * One game that was played.
@@ -27,7 +30,9 @@ import androidx.room.PrimaryKey
         Index("scenarioCode"),
     ],
 )
-@Serializable
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable(with = PlayEntity.Codec::class)
+@KeepGeneratedSerializer
 data class PlayEntity(
     @PrimaryKey val id: String,
 
@@ -148,4 +153,31 @@ data class PlayEntity(
 
     /** When this row was deleted, or null while it exists. See [SyncStateEntity]. */
     val deletedAt: Long? = null,
-)
+
+    /**
+     * Which of Thwart's own modes produced the game: `draft` when the
+     * owner's seat was played from a deck the draft built; `sealed`, `daily`
+     * and `shared` are reserved. Null for an ordinary game, and written to
+     * a backup or a sync body only when set. docs/spec/achievements,
+     * data-model.md §3.
+     */
+    val mode: String? = null,
+
+    /**
+     * Keys of this record that this build does not know, as the backup or
+     * the sync handed them over, kept so they go back out untouched. Never
+     * read for meaning. See [WithExtrasSerializer].
+     */
+    @ColumnInfo(defaultValue = "{}")
+    @Transient val extra: JsonObject = NO_EXTRAS,
+) {
+    object Codec : KSerializerOf<PlayEntity>(
+        generated = generatedSerializer(),
+        extrasOf = { it.extra },
+        withExtras = { play, extra -> play.copy(extra = extra) },
+        omitWhenNull = setOf("mode"),
+    )
+
+    /** The seats, the owner's first when one is flagged; otherwise the roster as recorded. */
+    val ownerSeat: PlayHero? get() = roster.firstOrNull { it.isOwner == true } ?: roster.firstOrNull()
+}

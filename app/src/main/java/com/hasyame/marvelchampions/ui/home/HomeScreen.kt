@@ -38,12 +38,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.ui.draw.clip
+import com.hasyame.marvelchampions.ui.achievements.AchievementBadgeImage
+import com.hasyame.marvelchampions.ui.achievements.AchievementCard
+import com.hasyame.marvelchampions.ui.achievements.descriptionOf
+import com.hasyame.marvelchampions.ui.achievements.titleOf
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.halftone
@@ -61,6 +73,7 @@ fun HomeScreen(
     /** Opens the account page; true asks for the "create an account" form. */
     onAccount: (create: Boolean) -> Unit,
     onHistory: () -> Unit,
+    onAchievements: () -> Unit,
     onStats: () -> Unit,
     onRules: () -> Unit,
     onCollection: () -> Unit,
@@ -69,6 +82,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val strip by viewModel.achievementStrip.collectAsStateWithLifecycle()
     val browser = LocalUriHandler.current
 
     LaunchedEffect(state.randomCardCode) {
@@ -137,6 +151,10 @@ fun HomeScreen(
             // A tap on either opens the account page, where the sync switch
             // lives.
             AccountPanel(handle = state.accountHandle, onAccount = onAccount)
+
+            // The achievements, straight under the name, the way a store's
+            // front page shows them: the count, the latest earned, the badges.
+            strip?.let { AchievementsPanel(it, onAchievements) }
 
             // The menu, two by two: the rules and the collection, a game and
             // a card at random, then the games played and what they add up to.
@@ -244,6 +262,99 @@ private fun AccountPanel(handle: String?, onAccount: (create: Boolean) -> Unit) 
         }
     }
 }
+
+/**
+ * The achievements as a store's front page shows them: how many, the
+ * latest one with its words, the earned badges in a row, then the ones
+ * still to earn, greyed. Every part opens the achievements page.
+ */
+@Composable
+private fun AchievementsPanel(strip: HomeAchievements, onOpen: () -> Unit) {
+    Surface(
+        onClick = onOpen,
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            val percent = if (strip.total == 0) 0 else Math.round(strip.unlocked * 100f / strip.total)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    pluralStringResource(R.plurals.achievements_home_count, strip.unlocked, strip.unlocked, strip.total),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    "(" + stringResource(R.string.achievements_completion_rate, percent) + ")",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            LinearProgressIndicator(
+                progress = { if (strip.total == 0) 0f else strip.unlocked.toFloat() / strip.total },
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
+            )
+            strip.latest?.let { latest ->
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 12.dp)) {
+                    AchievementBadgeImage(latest.badge, unlocked = true, size = 52.dp)
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(titleOf(latest), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                        Text(
+                            descriptionOf(latest),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+            if (strip.unlockedCards.isNotEmpty()) {
+                BadgeRow(strip.unlockedCards, unlocked = true)
+            }
+            if (strip.lockedCards.isNotEmpty()) {
+                HorizontalDivider(Modifier.padding(vertical = 10.dp))
+                Text(
+                    stringResource(R.string.achievements_home_locked),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 6.dp),
+                )
+                BadgeRow(strip.lockedCards, unlocked = false)
+            }
+            Text(
+                stringResource(R.string.achievements_home_see),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            )
+        }
+    }
+}
+
+/** As many badges as fit a row, and "+N" for the rest. */
+@Composable
+private fun BadgeRow(cards: List<AchievementCard>, unlocked: Boolean) {
+    val shown = cards.take(BADGES_IN_A_ROW)
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        shown.forEach { card -> AchievementBadgeImage(card.badge, unlocked = unlocked, size = 40.dp) }
+        if (cards.size > shown.size) {
+            Box(
+                Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    stringResource(R.string.achievements_home_more, cards.size - shown.size),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+}
+
+private const val BADGES_IN_A_ROW = 6
 
 /** A rounded panel, like the ones the reference app stacks on its home page. */
 @Composable

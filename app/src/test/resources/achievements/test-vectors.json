@@ -1,0 +1,6379 @@
+{
+  "specVersion": 1,
+  "definitionsSchemaVersion": 1,
+  "difficultyScaleVersion": 1,
+  "note": "Generated from the reference walk of algorithm.md. Both clients must reproduce every expected block exactly; compare as JSON with arrays in order and object keys unordered.",
+  "cases": [
+    {
+      "name": "empty history",
+      "note": "No plays: no cells, everything locked, rates over an owned Core Set.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core"
+            }
+          },
+          {
+            "id": "plays_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 2
+              },
+              {
+                "tier": "silver",
+                "n": 4
+              },
+              {
+                "tier": "gold",
+                "n": 6
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "plays"
+            }
+          },
+          {
+            "id": "true_solo_win",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 1
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [],
+        "achievements": [
+          {
+            "id": "beat_every_scenario_core",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "plays_count",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 6
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "true_solo_win",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 0,
+            "cells": 6
+          },
+          "global": {
+            "won": 0,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "one loss is played, not won",
+      "note": "A lost game gives a played cell and no completion.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core"
+            }
+          },
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 0,
+            "best": "played",
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 0,
+              "best": "played",
+              "bestLevelWon": null,
+              "firstWonAt": null,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "beat_every_scenario_core",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "wins_count",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 0,
+            "cells": 6
+          },
+          "global": {
+            "won": 0,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "one win",
+      "note": "A won cell: best won, the level kept, first win dated; completion 1 of 6 owned cells.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core"
+            }
+          },
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          },
+          {
+            "id": "true_solo_win",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 1
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "beat_every_scenario_core",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "wins_count",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 3
+            },
+            "tier": "bronze",
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "true_solo_win",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "true_solo_win",
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          }
+        ]
+      }
+    },
+    {
+      "name": "loss then win on the same cell",
+      "note": "Two attempts, one win; the cell renders at its best result.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000001000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 2,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000001000,
+            "lastPlayedAt": 1760000001000,
+            "anySeat": {
+              "attempts": 2,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000001000,
+              "lastPlayedAt": 1760000001000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "wins_count",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 3
+            },
+            "tier": "bronze",
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "unordered input is sorted by playedAt then id",
+      "note": "Facts arrive out of order; firstWonAt and the unlock follow the sorted order.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p9",
+            "playedAt": 1760000005000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p1",
+            "playedAt": 1760000001000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p5",
+            "playedAt": 1760000001000,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000001000,
+            "lastPlayedAt": 1760000001000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000001000,
+              "lastPlayedAt": 1760000001000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 2,
+            "wins": 2,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000001000,
+            "lastPlayedAt": 1760000005000,
+            "anySeat": {
+              "attempts": 2,
+              "wins": 2,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000001000,
+              "lastPlayedAt": 1760000005000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "wins_count",
+            "status": "unlocked",
+            "progress": {
+              "current": 3,
+              "target": 3
+            },
+            "tier": "gold",
+            "unlockedAt": 1760000005000,
+            "unlockedByPlayId": "p9"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 2,
+            "cells": 6
+          },
+          "global": {
+            "won": 2,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "wins_count",
+            "unlockedAt": 1760000005000,
+            "unlockedByPlayId": "p9"
+          }
+        ]
+      }
+    },
+    {
+      "name": "same instant, ties by id",
+      "note": "Two wins at the same playedAt: the unlock of the first-win tier is the lower id.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          },
+          {
+            "id": "first_expert_win",
+            "category": "difficulty",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "first_win",
+              "minDifficulty": "expert"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "b",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "a",
+            "playedAt": 1760000000000,
+            "scenarioKey": "klaw",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "wins_count",
+            "status": "locked",
+            "progress": {
+              "current": 2,
+              "target": 3
+            },
+            "tier": "silver",
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "first_expert_win",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "a"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 2,
+            "cells": 6
+          },
+          "global": {
+            "won": 2,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "first_expert_win",
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "a"
+          }
+        ]
+      }
+    },
+    {
+      "name": "expert win outranks standard in a cell",
+      "note": "bestLevelWon is the highest level among wins, whatever the order.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "first_expert_win",
+            "category": "difficulty",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "first_win",
+              "minDifficulty": "expert"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000001000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 2,
+            "wins": 2,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000001000,
+            "anySeat": {
+              "attempts": 2,
+              "wins": 2,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000001000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "first_expert_win",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "first_expert_win",
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          }
+        ]
+      }
+    },
+    {
+      "name": "unknown level counts as won but not as expert",
+      "note": "A v1 play with no difficulty satisfies no minDifficulty.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "first_expert_win",
+            "category": "difficulty",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "first_win",
+              "minDifficulty": "expert"
+            }
+          },
+          {
+            "id": "beat_every_scenario_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "unknown",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "klaw",
+            "level": "unknown",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000000002,
+            "scenarioKey": "ultron",
+            "level": "unknown",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "unknown",
+            "firstWonAt": 1760000000001,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "unknown",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "unknown",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "unknown",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "ultron",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "unknown",
+            "firstWonAt": 1760000000002,
+            "lastPlayedAt": 1760000000002,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "unknown",
+              "firstWonAt": 1760000000002,
+              "lastPlayedAt": 1760000000002
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "first_expert_win",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "beat_every_scenario_core",
+            "status": "unlocked",
+            "progress": {
+              "current": 3,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": 1760000000002,
+            "unlockedByPlayId": "p3"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 3,
+            "cells": 6
+          },
+          "global": {
+            "won": 3,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "beat_every_scenario_core",
+            "unlockedAt": 1760000000002,
+            "unlockedByPlayId": "p3"
+          }
+        ]
+      }
+    },
+    {
+      "name": "box coverage unlocks on the last scenario",
+      "note": "Three Core wins in any order; the unlock is the latest of the meeting facts.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core"
+            }
+          },
+          {
+            "id": "beat_every_scenario_core_expert",
+            "category": "difficulty",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core",
+              "minDifficulty": "expert"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000001000,
+            "scenarioKey": "ultron",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000002000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000002000,
+            "lastPlayedAt": 1760000002000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000002000,
+              "lastPlayedAt": 1760000002000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "ultron",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000001000,
+            "lastPlayedAt": 1760000001000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000001000,
+              "lastPlayedAt": 1760000001000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "beat_every_scenario_core",
+            "status": "unlocked",
+            "progress": {
+              "current": 3,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": 1760000002000,
+            "unlockedByPlayId": "p3"
+          },
+          {
+            "id": "beat_every_scenario_core_expert",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 3,
+            "cells": 6
+          },
+          "global": {
+            "won": 3,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "beat_every_scenario_core",
+            "unlockedAt": 1760000002000,
+            "unlockedByPlayId": "p3"
+          }
+        ]
+      }
+    },
+    {
+      "name": "box coverage on expert needs expert wins everywhere",
+      "note": "One standard win among the three leaves the expert version at 2 of 3.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario_core_expert",
+            "category": "difficulty",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core",
+              "minDifficulty": "expert"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "klaw",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000001000,
+            "scenarioKey": "ultron",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000002000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000002000,
+            "lastPlayedAt": 1760000002000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000002000,
+              "lastPlayedAt": 1760000002000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "ultron",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000001000,
+            "lastPlayedAt": 1760000001000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000001000,
+              "lastPlayedAt": 1760000001000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "beat_every_scenario_core_expert",
+            "status": "locked",
+            "progress": {
+              "current": 2,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 3,
+            "cells": 6
+          },
+          "global": {
+            "won": 3,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "unowned box is unavailable, progress still counted",
+      "note": "Core is not owned: the Core coverage is unavailable while its progress shows.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core"
+            }
+          },
+          {
+            "id": "win_with_every_hero_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "heroes_won",
+              "pack": "core"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "trors"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "beat_every_scenario_core",
+            "status": "unavailable",
+            "progress": {
+              "current": 1,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "win_with_every_hero_core",
+            "status": "unavailable",
+            "progress": {
+              "current": 1,
+              "target": 2
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 0,
+            "cells": 1
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "an unlocked achievement stays unlocked when the box leaves the collection",
+      "note": "Done beats unavailable.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "core"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "ultron",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000000002,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000002,
+            "lastPlayedAt": 1760000000002,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000002,
+              "lastPlayedAt": 1760000000002
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "ultron",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000001,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "beat_every_scenario_core",
+            "status": "unlocked",
+            "progress": {
+              "current": 3,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": 1760000000002,
+            "unlockedByPlayId": "p3"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 0,
+            "cells": 0
+          },
+          "global": {
+            "won": 3,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "beat_every_scenario_core",
+            "unlockedAt": 1760000000002,
+            "unlockedByPlayId": "p3"
+          }
+        ]
+      }
+    },
+    {
+      "name": "global coverage over every scenario",
+      "note": "One scenario short of the whole catalogue: 4 of 5, locked, never unavailable.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "beat_every_scenario",
+            "category": "coverage",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "*"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core",
+          "trors",
+          "fne"
+        ],
+        "facts": [
+          {
+            "id": "p0",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p1",
+            "playedAt": 1760000000001,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000002,
+            "scenarioKey": "ultron",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000000003,
+            "scenarioKey": "crossbones",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "crossbones",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000003,
+            "lastPlayedAt": 1760000000003,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000003,
+              "lastPlayedAt": 1760000000003
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000001,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "ultron",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000002,
+            "lastPlayedAt": 1760000000002,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000002,
+              "lastPlayedAt": 1760000000002
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "beat_every_scenario",
+            "status": "locked",
+            "progress": {
+              "current": 4,
+              "target": 5
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 4,
+            "cells": 15
+          },
+          "global": {
+            "won": 4,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "heroes won counts the owner seat only",
+      "note": "A win with a second seat does not credit that seat for hero coverage.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "win_with_every_hero_core",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "heroes_won",
+              "pack": "core"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 2,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              },
+              {
+                "heroCode": "01010a",
+                "aspects": [
+                  "aggression"
+                ],
+                "isOwner": false
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "win_with_every_hero_core",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 2
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "any-seat tally credits every hero at the table",
+      "note": "The second seat gets a cell with an anySeat win and an empty owner tally.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 2,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              },
+              {
+                "heroCode": "01010a",
+                "aspects": [
+                  "aggression"
+                ],
+                "isOwner": false
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "wins_count",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 3
+            },
+            "tier": "bronze",
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "all four aspects, a two-aspect seat counts for both",
+      "note": "Spider-Woman-style seats meet two aspects at once; pool never counts.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "win_all_aspects",
+            "category": "coverage",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "aspects_won"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "04031a",
+                "aspects": [
+                  "justice",
+                  "protection"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000001000,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "pool"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000002000,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "aggression"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p4",
+            "playedAt": 1760000003000,
+            "scenarioKey": "ultron",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01010a",
+                "aspects": [
+                  "leadership"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 2,
+            "wins": 2,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000001000,
+            "lastPlayedAt": 1760000002000,
+            "anySeat": {
+              "attempts": 2,
+              "wins": 2,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000001000,
+              "lastPlayedAt": 1760000002000
+            }
+          },
+          {
+            "heroCode": "04031a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "ultron",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000003000,
+            "lastPlayedAt": 1760000003000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000003000,
+              "lastPlayedAt": 1760000003000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "win_all_aspects",
+            "status": "unlocked",
+            "progress": {
+              "current": 4,
+              "target": 4
+            },
+            "tier": null,
+            "unlockedAt": 1760000003000,
+            "unlockedByPlayId": "p4"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 2,
+            "cells": 6
+          },
+          "global": {
+            "won": 3,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "win_all_aspects",
+            "unlockedAt": 1760000003000,
+            "unlockedByPlayId": "p4"
+          }
+        ]
+      }
+    },
+    {
+      "name": "all four aspects against one scenario",
+      "note": "Only wins against rhino count; a klaw win with the missing aspect does not.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "rhino_all_aspects",
+            "category": "coverage",
+            "scope": "owned",
+            "hidden": false,
+            "predicate": {
+              "kind": "aspects_won",
+              "scenario": "rhino"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "aggression"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000000002,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "leadership"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p4",
+            "playedAt": 1760000000003,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "protection"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000003,
+            "lastPlayedAt": 1760000000003,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000003,
+              "lastPlayedAt": 1760000000003
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 3,
+            "wins": 3,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000002,
+            "anySeat": {
+              "attempts": 3,
+              "wins": 3,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000002
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "rhino_all_aspects",
+            "status": "locked",
+            "progress": {
+              "current": 3,
+              "target": 4
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 2,
+            "cells": 6
+          },
+          "global": {
+            "won": 2,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "tiers: bronze, then silver, unlock at gold",
+      "note": "Six plays reach gold at the sixth; the tier is the highest threshold met.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "plays_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 2
+              },
+              {
+                "tier": "silver",
+                "n": 4
+              },
+              {
+                "tier": "gold",
+                "n": 6
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "plays"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p0",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p1",
+            "playedAt": 1760000000010,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000020,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000000030,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p4",
+            "playedAt": 1760000000040,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p5",
+            "playedAt": 1760000000050,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 6,
+            "wins": 3,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000050,
+            "anySeat": {
+              "attempts": 6,
+              "wins": 3,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000050
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "plays_count",
+            "status": "unlocked",
+            "progress": {
+              "current": 6,
+              "target": 6
+            },
+            "tier": "gold",
+            "unlockedAt": 1760000000050,
+            "unlockedByPlayId": "p5"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "plays_count",
+            "unlockedAt": 1760000000050,
+            "unlockedByPlayId": "p5"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tiers below the first threshold",
+      "note": "One play: no tier, progress 1 of the top threshold.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "plays_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 2
+              },
+              {
+                "tier": "silver",
+                "n": 4
+              },
+              {
+                "tier": "gold",
+                "n": 6
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "plays"
+            }
+          },
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 0,
+            "best": "played",
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 0,
+              "best": "played",
+              "bestLevelWon": null,
+              "firstWonAt": null,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "plays_count",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 6
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "wins_count",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 3
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 0,
+            "cells": 6
+          },
+          "global": {
+            "won": 0,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "heroes played counts distinct owner heroes",
+      "note": "Three heroes over four plays: silver, one short of gold.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "heroes_played",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 2
+              },
+              {
+                "tier": "silver",
+                "n": 3
+              },
+              {
+                "tier": "gold",
+                "n": 4
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "heroes_played"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01010a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000000002,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p4",
+            "playedAt": 1760000000003,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "04031a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 2,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000002,
+            "anySeat": {
+              "attempts": 2,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000002
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 0,
+            "best": "played",
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 0,
+              "best": "played",
+              "bestLevelWon": null,
+              "firstWonAt": null,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "04031a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000003,
+            "lastPlayedAt": 1760000000003,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000003,
+              "lastPlayedAt": 1760000000003
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "heroes_played",
+            "status": "locked",
+            "progress": {
+              "current": 3,
+              "target": 4
+            },
+            "tier": "silver",
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 2,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "distinct days are UTC days",
+      "note": "Plays on either side of a UTC midnight are two days; the same day twice is one.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "distinct_days",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 2
+              },
+              {
+                "tier": "silver",
+                "n": 3
+              },
+              {
+                "tier": "gold",
+                "n": 5
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "distinct_days"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "d1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "d2",
+            "playedAt": 1760003600000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "d3",
+            "playedAt": 1760227199999,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "d4",
+            "playedAt": 1760227200000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 4,
+            "wins": 4,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760227200000,
+            "anySeat": {
+              "attempts": 4,
+              "wins": 4,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760227200000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "distinct_days",
+            "status": "locked",
+            "progress": {
+              "current": 3,
+              "target": 5
+            },
+            "tier": "silver",
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "true solo needs exactly one player",
+      "note": "A two-player win does not unlock the solo achievement; a solo loss does not either.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "true_solo_win",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 1
+            }
+          },
+          {
+            "id": "four_player_win",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 4
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 2,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              },
+              {
+                "heroCode": "01010a",
+                "aspects": [
+                  "aggression"
+                ],
+                "isOwner": false
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 2,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 2,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "true_solo_win",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "four_player_win",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "four players with four different aspects",
+      "note": "Distinct aspect sets across all seats; a repeated aspect fails the strict one.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "four_player_win",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 4
+            }
+          },
+          {
+            "id": "four_player_four_aspects",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 4,
+              "distinctAspects": true
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 4,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              },
+              {
+                "heroCode": "01010a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": false
+              },
+              {
+                "heroCode": "04031a",
+                "aspects": [
+                  "leadership"
+                ],
+                "isOwner": false
+              },
+              {
+                "heroCode": "21031a",
+                "aspects": [
+                  "protection"
+                ],
+                "isOwner": false
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 4,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              },
+              {
+                "heroCode": "01010a",
+                "aspects": [
+                  "aggression"
+                ],
+                "isOwner": false
+              },
+              {
+                "heroCode": "04031a",
+                "aspects": [
+                  "leadership"
+                ],
+                "isOwner": false
+              },
+              {
+                "heroCode": "21031a",
+                "aspects": [
+                  "protection"
+                ],
+                "isOwner": false
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000001,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "klaw",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "04031a",
+            "scenarioKey": "klaw",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "21031a",
+            "scenarioKey": "klaw",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "04031a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "21031a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "four_player_win",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          },
+          {
+            "id": "four_player_four_aspects",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000001,
+            "unlockedByPlayId": "p2"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 2,
+            "cells": 6
+          },
+          "global": {
+            "won": 2,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "four_player_four_aspects",
+            "unlockedAt": 1760000000001,
+            "unlockedByPlayId": "p2"
+          },
+          {
+            "id": "four_player_win",
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          }
+        ]
+      }
+    },
+    {
+      "name": "a seat with no aspect never has distinct aspects",
+      "note": "Empty aspect sets fail the distinct-aspects rule.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "four_player_four_aspects",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 4,
+              "distinctAspects": true
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 4,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              },
+              {
+                "heroCode": "01010a",
+                "aspects": [],
+                "isOwner": false
+              },
+              {
+                "heroCode": "04031a",
+                "aspects": [
+                  "leadership"
+                ],
+                "isOwner": false
+              },
+              {
+                "heroCode": "21031a",
+                "aspects": [
+                  "protection"
+                ],
+                "isOwner": false
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01010a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "04031a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "21031a",
+            "scenarioKey": "rhino",
+            "attempts": 0,
+            "wins": 0,
+            "best": null,
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": null,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "four_player_four_aspects",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "a finished campaign unlocks at its last play",
+      "note": "The unlock is the latest play of the first qualifying run; a defeat inside disqualifies the clean one.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "finish_campaign",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true
+            }
+          },
+          {
+            "id": "finish_campaign_no_defeat",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true,
+              "noDefeat": true
+            }
+          },
+          {
+            "id": "finish_campaign_expert",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true,
+              "minDifficulty": "expert"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core",
+          "trors"
+        ],
+        "facts": [
+          {
+            "id": "c1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "crossbones",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": "r1",
+            "mode": null
+          },
+          {
+            "id": "c2",
+            "playedAt": 1760000001000,
+            "scenarioKey": "crossbones",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": "r1",
+            "mode": null
+          },
+          {
+            "id": "c3",
+            "playedAt": 1760000002000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": "r1",
+            "mode": null
+          }
+        ],
+        "runs": [
+          {
+            "id": "r1",
+            "templateId": "trors",
+            "level": "standard",
+            "finished": true,
+            "lost": false
+          }
+        ]
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "crossbones",
+            "attempts": 2,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000001000,
+            "lastPlayedAt": 1760000001000,
+            "anySeat": {
+              "attempts": 2,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000001000,
+              "lastPlayedAt": 1760000001000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000002000,
+            "lastPlayedAt": 1760000002000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000002000,
+              "lastPlayedAt": 1760000002000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "finish_campaign",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000002000,
+            "unlockedByPlayId": "c3"
+          },
+          {
+            "id": "finish_campaign_no_defeat",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "finish_campaign_expert",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 2,
+            "cells": 12
+          },
+          "global": {
+            "won": 2,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "finish_campaign",
+            "unlockedAt": 1760000002000,
+            "unlockedByPlayId": "c3"
+          }
+        ]
+      }
+    },
+    {
+      "name": "a lost campaign does not count",
+      "note": "finished but lost: no campaign achievement.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "finish_campaign",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core",
+          "trors"
+        ],
+        "facts": [
+          {
+            "id": "c1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "crossbones",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": "r1",
+            "mode": null
+          }
+        ],
+        "runs": [
+          {
+            "id": "r1",
+            "templateId": "trors",
+            "level": "standard",
+            "finished": true,
+            "lost": true
+          }
+        ]
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "crossbones",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "finish_campaign",
+            "status": "locked",
+            "progress": {
+              "current": 0,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 12
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "a clean expert campaign",
+      "note": "No defeat and expert level: all three campaign achievements, dated at the last play.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "finish_campaign",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true
+            }
+          },
+          {
+            "id": "finish_campaign_no_defeat",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true,
+              "noDefeat": true
+            }
+          },
+          {
+            "id": "finish_campaign_expert",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true,
+              "minDifficulty": "expert"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core",
+          "trors"
+        ],
+        "facts": [
+          {
+            "id": "c1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "crossbones",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": "r1",
+            "mode": null
+          },
+          {
+            "id": "c2",
+            "playedAt": 1760000000500,
+            "scenarioKey": "rhino",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": "r1",
+            "mode": null
+          }
+        ],
+        "runs": [
+          {
+            "id": "r1",
+            "templateId": "trors",
+            "level": "expert",
+            "finished": true,
+            "lost": false
+          }
+        ]
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "crossbones",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000500,
+            "lastPlayedAt": 1760000000500,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000500,
+              "lastPlayedAt": 1760000000500
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "finish_campaign",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000500,
+            "unlockedByPlayId": "c2"
+          },
+          {
+            "id": "finish_campaign_no_defeat",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000500,
+            "unlockedByPlayId": "c2"
+          },
+          {
+            "id": "finish_campaign_expert",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000500,
+            "unlockedByPlayId": "c2"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 2,
+            "cells": 12
+          },
+          "global": {
+            "won": 2,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "finish_campaign",
+            "unlockedAt": 1760000000500,
+            "unlockedByPlayId": "c2"
+          },
+          {
+            "id": "finish_campaign_expert",
+            "unlockedAt": 1760000000500,
+            "unlockedByPlayId": "c2"
+          },
+          {
+            "id": "finish_campaign_no_defeat",
+            "unlockedAt": 1760000000500,
+            "unlockedByPlayId": "c2"
+          }
+        ]
+      }
+    },
+    {
+      "name": "a finished run with no plays unlocks without a date",
+      "note": "Done is true, unlockedAt null, and it is absent from recent.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "finish_campaign",
+            "category": "campaign",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "campaign",
+              "finished": true
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [],
+        "runs": [
+          {
+            "id": "r1",
+            "templateId": "trors",
+            "level": "standard",
+            "finished": true,
+            "lost": false
+          }
+        ]
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [],
+        "achievements": [
+          {
+            "id": "finish_campaign",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 0,
+            "cells": 6
+          },
+          "global": {
+            "won": 0,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "draft mode win",
+      "note": "A win carrying mode draft unlocks the mode achievement; a loss does not.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "draft_win",
+            "category": "mode",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "mode_win",
+              "mode": "draft"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": false,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": "draft"
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "klaw",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": "draft"
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000001,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 0,
+            "best": "played",
+            "bestLevelWon": null,
+            "firstWonAt": null,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 0,
+              "best": "played",
+              "bestLevelWon": null,
+              "firstWonAt": null,
+              "lastPlayedAt": 1760000000000
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "draft_win",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000001,
+            "unlockedByPlayId": "p2"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 6
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "draft_win",
+            "unlockedAt": 1760000000001,
+            "unlockedByPlayId": "p2"
+          }
+        ]
+      }
+    },
+    {
+      "name": "a scenario the catalogue does not know",
+      "note": "An unresolved campaign key keeps its cell and counts for volume, never for completion.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "plays_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 2
+              },
+              {
+                "tier": "silver",
+                "n": 4
+              },
+              {
+                "tier": "gold",
+                "n": 6
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "plays"
+            }
+          },
+          {
+            "id": "beat_every_scenario",
+            "category": "coverage",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "scenarios_won",
+              "pack": "*"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core",
+          "trors",
+          "fne"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "campaign:s9_unknown",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000001,
+            "scenarioKey": "rhino",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "campaign:s9_unknown",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000001,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "plays_count",
+            "status": "locked",
+            "progress": {
+              "current": 2,
+              "target": 6
+            },
+            "tier": "bronze",
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          },
+          {
+            "id": "beat_every_scenario",
+            "status": "locked",
+            "progress": {
+              "current": 1,
+              "target": 5
+            },
+            "tier": null,
+            "unlockedAt": null,
+            "unlockedByPlayId": null
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 1,
+            "cells": 15
+          },
+          "global": {
+            "won": 1,
+            "cells": 20
+          }
+        },
+        "recent": []
+      }
+    },
+    {
+      "name": "recent is newest first, ties by id",
+      "note": "Three unlocks, two at the same instant.",
+      "input": {
+        "definitionsVersion": 1,
+        "definitions": [
+          {
+            "id": "true_solo_win",
+            "category": "table",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "table_win",
+              "players": 1
+            }
+          },
+          {
+            "id": "first_expert_win",
+            "category": "difficulty",
+            "scope": "global",
+            "hidden": false,
+            "predicate": {
+              "kind": "first_win",
+              "minDifficulty": "expert"
+            }
+          },
+          {
+            "id": "wins_count",
+            "category": "volume",
+            "scope": "global",
+            "hidden": false,
+            "tiers": [
+              {
+                "tier": "bronze",
+                "n": 1
+              },
+              {
+                "tier": "silver",
+                "n": 2
+              },
+              {
+                "tier": "gold",
+                "n": 3
+              }
+            ],
+            "predicate": {
+              "kind": "count",
+              "what": "wins"
+            }
+          }
+        ],
+        "catalogue": {
+          "heroes": [
+            {
+              "code": "01001a",
+              "packCode": "core"
+            },
+            {
+              "code": "01010a",
+              "packCode": "core"
+            },
+            {
+              "code": "04031a",
+              "packCode": "trors"
+            },
+            {
+              "code": "21031a",
+              "packCode": "mts"
+            }
+          ],
+          "scenarios": [
+            {
+              "key": "rhino",
+              "packCode": "core"
+            },
+            {
+              "key": "klaw",
+              "packCode": "core"
+            },
+            {
+              "key": "ultron",
+              "packCode": "core"
+            },
+            {
+              "key": "crossbones",
+              "packCode": "trors"
+            },
+            {
+              "key": "fne_s1_musee",
+              "packCode": "fne"
+            }
+          ]
+        },
+        "ownedPacks": [
+          "core"
+        ],
+        "facts": [
+          {
+            "id": "p1",
+            "playedAt": 1760000000000,
+            "scenarioKey": "rhino",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p2",
+            "playedAt": 1760000000000,
+            "scenarioKey": "klaw",
+            "level": "expert",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          },
+          {
+            "id": "p3",
+            "playedAt": 1760000000001,
+            "scenarioKey": "ultron",
+            "level": "standard",
+            "won": true,
+            "players": 1,
+            "seats": [
+              {
+                "heroCode": "01001a",
+                "aspects": [
+                  "justice"
+                ],
+                "isOwner": true
+              }
+            ],
+            "campaignRunId": null,
+            "mode": null
+          }
+        ],
+        "runs": []
+      },
+      "expected": {
+        "definitionsVersion": 1,
+        "scaleVersion": 1,
+        "cells": [
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "klaw",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "rhino",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "expert",
+            "firstWonAt": 1760000000000,
+            "lastPlayedAt": 1760000000000,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "expert",
+              "firstWonAt": 1760000000000,
+              "lastPlayedAt": 1760000000000
+            }
+          },
+          {
+            "heroCode": "01001a",
+            "scenarioKey": "ultron",
+            "attempts": 1,
+            "wins": 1,
+            "best": "won",
+            "bestLevelWon": "standard",
+            "firstWonAt": 1760000000001,
+            "lastPlayedAt": 1760000000001,
+            "anySeat": {
+              "attempts": 1,
+              "wins": 1,
+              "best": "won",
+              "bestLevelWon": "standard",
+              "firstWonAt": 1760000000001,
+              "lastPlayedAt": 1760000000001
+            }
+          }
+        ],
+        "achievements": [
+          {
+            "id": "true_solo_win",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          },
+          {
+            "id": "first_expert_win",
+            "status": "unlocked",
+            "progress": {
+              "current": 1,
+              "target": 1
+            },
+            "tier": null,
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          },
+          {
+            "id": "wins_count",
+            "status": "unlocked",
+            "progress": {
+              "current": 3,
+              "target": 3
+            },
+            "tier": "gold",
+            "unlockedAt": 1760000000001,
+            "unlockedByPlayId": "p3"
+          }
+        ],
+        "completion": {
+          "owned": {
+            "won": 3,
+            "cells": 6
+          },
+          "global": {
+            "won": 3,
+            "cells": 20
+          }
+        },
+        "recent": [
+          {
+            "id": "wins_count",
+            "unlockedAt": 1760000000001,
+            "unlockedByPlayId": "p3"
+          },
+          {
+            "id": "first_expert_win",
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          },
+          {
+            "id": "true_solo_win",
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          }
+        ]
+      }
+    }
+  ]
+}

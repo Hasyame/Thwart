@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -47,6 +48,7 @@ import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.halftone
+import com.hasyame.marvelchampions.domain.achievements.Completion
 import com.hasyame.marvelchampions.ui.campaign.CampaignListViewModel
 
 /**
@@ -69,9 +71,11 @@ fun PlayScreen(
     onDraft: () -> Unit,
     onResumeCampaign: (String) -> Unit,
     onResumePausedGame: (String) -> Unit,
+    onAchievements: () -> Unit,
     viewModel: CampaignListViewModel = hiltViewModel(),
 ) {
     val summaries by viewModel.summaries.collectAsStateWithLifecycle()
+    val achievementProgress by viewModel.achievementProgress.collectAsStateWithLifecycle()
     val paused by viewModel.pausedGame.collectAsStateWithLifecycle()
     val hasVersusPack by viewModel.hasVersusPack.collectAsStateWithLifecycle()
     val draftInProgress by viewModel.draftInProgress.collectAsStateWithLifecycle()
@@ -201,7 +205,46 @@ fun PlayScreen(
                     onClick = onVersus,
                 )
             }
+
+            // The achievements, as a figure rather than a word, under the
+            // ways to start a game and never beside them: the hub stays
+            // about starting something, and a figure is what gets tapped.
+            achievementProgress?.let { progress -> AchievementEntry(progress, onAchievements) }
         }
+    }
+}
+
+@Composable
+private fun AchievementEntry(progress: Completion, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 4.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(Icons.Filled.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Column(Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.achievements_hub_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    stringResource(R.string.achievements_hub_progress, progress.won, progress.cells),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            LinearProgressIndicator(
+                progress = { if (progress.cells == 0) 0f else (progress.won.toFloat() / progress.cells).coerceIn(0f, 1f) },
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            )
+        }
+        Icon(
+            Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

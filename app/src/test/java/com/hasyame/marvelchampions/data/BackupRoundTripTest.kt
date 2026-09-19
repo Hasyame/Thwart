@@ -180,10 +180,10 @@ class BackupRoundTripTest {
         val text = File(file.path!!).readText()
         assertTrue("excludedScenarios missing", text.contains("\"excludedScenarios\""))
         assertTrue("settings missing", text.contains("\"settings\""))
-        // The version is deliberately not bumped. An older build ignores keys it
-        // does not know, so it can still read this file and merely loses the two
-        // sections, which beats refusing the backup outright.
-        assertTrue(text.contains("\"formatVersion\": 1"))
+        // Format 2 since the achievements: a seat's isOwner and a play's mode.
+        // An older build reads the file all the same and keeps what it does
+        // not know, which beats refusing the backup outright.
+        assertTrue(text.contains("\"formatVersion\": 2"))
     }
 
     @Test

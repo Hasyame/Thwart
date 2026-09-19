@@ -1,0 +1,390 @@
+{
+  "_note": "Achievement definitions. Master copy: this file, in the web repository; Android bundles a byte-identical snapshot. Names and descriptions are translation keys achievement.<id>.title / .description. docs/spec/achievements/data-model.md section 4.",
+  "schemaVersion": 1,
+  "definitionsVersion": 1,
+  "difficultyScaleVersion": 1,
+  "achievements": [
+    {
+      "id": "beat_every_scenario_core",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "core"
+      }
+    },
+    {
+      "id": "beat_every_scenario_trors",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "trors"
+      }
+    },
+    {
+      "id": "beat_every_scenario_gmw",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "gmw"
+      }
+    },
+    {
+      "id": "beat_every_scenario_mts",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "mts"
+      }
+    },
+    {
+      "id": "beat_every_scenario_sm",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "sm"
+      }
+    },
+    {
+      "id": "beat_every_scenario_mut_gen",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "mut_gen"
+      }
+    },
+    {
+      "id": "beat_every_scenario_next_evol",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "next_evol"
+      }
+    },
+    {
+      "id": "beat_every_scenario_aoa",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "aoa"
+      }
+    },
+    {
+      "id": "beat_every_scenario_aos",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "aos"
+      }
+    },
+    {
+      "id": "beat_every_scenario_fne",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "fne"
+      }
+    },
+    {
+      "id": "beat_every_scenario",
+      "category": "coverage",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "*"
+      }
+    },
+    {
+      "id": "win_with_every_hero_core",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "heroes_won",
+        "pack": "core"
+      }
+    },
+    {
+      "id": "win_with_every_hero",
+      "category": "coverage",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "heroes_won",
+        "pack": "*"
+      }
+    },
+    {
+      "id": "win_all_aspects",
+      "category": "coverage",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "aspects_won"
+      }
+    },
+    {
+      "id": "rhino_all_aspects",
+      "category": "coverage",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "aspects_won",
+        "scenario": "rhino"
+      }
+    },
+    {
+      "id": "first_expert_win",
+      "category": "difficulty",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "first_win",
+        "minDifficulty": "expert"
+      }
+    },
+    {
+      "id": "beat_every_scenario_core_expert",
+      "category": "difficulty",
+      "scope": "owned",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "core",
+        "minDifficulty": "expert"
+      }
+    },
+    {
+      "id": "beat_every_scenario_expert",
+      "category": "difficulty",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "scenarios_won",
+        "pack": "*",
+        "minDifficulty": "expert"
+      }
+    },
+    {
+      "id": "plays_count",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "tiers": [
+        {
+          "tier": "bronze",
+          "n": 10
+        },
+        {
+          "tier": "silver",
+          "n": 50
+        },
+        {
+          "tier": "gold",
+          "n": 100
+        },
+        {
+          "tier": "platinum",
+          "n": 500
+        }
+      ],
+      "predicate": {
+        "kind": "count",
+        "what": "plays"
+      }
+    },
+    {
+      "id": "wins_count",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "tiers": [
+        {
+          "tier": "bronze",
+          "n": 10
+        },
+        {
+          "tier": "silver",
+          "n": 50
+        },
+        {
+          "tier": "gold",
+          "n": 100
+        },
+        {
+          "tier": "platinum",
+          "n": 500
+        }
+      ],
+      "predicate": {
+        "kind": "count",
+        "what": "wins"
+      }
+    },
+    {
+      "id": "heroes_played",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "tiers": [
+        {
+          "tier": "bronze",
+          "n": 10
+        },
+        {
+          "tier": "silver",
+          "n": 25
+        },
+        {
+          "tier": "gold",
+          "n": 50
+        }
+      ],
+      "predicate": {
+        "kind": "count",
+        "what": "heroes_played"
+      }
+    },
+    {
+      "id": "distinct_days",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "tiers": [
+        {
+          "tier": "bronze",
+          "n": 10
+        },
+        {
+          "tier": "silver",
+          "n": 50
+        },
+        {
+          "tier": "gold",
+          "n": 100
+        },
+        {
+          "tier": "platinum",
+          "n": 365
+        }
+      ],
+      "predicate": {
+        "kind": "count",
+        "what": "distinct_days"
+      }
+    },
+    {
+      "id": "true_solo_win",
+      "category": "table",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "table_win",
+        "players": 1
+      }
+    },
+    {
+      "id": "two_player_win",
+      "category": "table",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "table_win",
+        "players": 2
+      }
+    },
+    {
+      "id": "three_player_win",
+      "category": "table",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "table_win",
+        "players": 3
+      }
+    },
+    {
+      "id": "four_player_win",
+      "category": "table",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "table_win",
+        "players": 4
+      }
+    },
+    {
+      "id": "four_player_four_aspects",
+      "category": "table",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "table_win",
+        "players": 4,
+        "distinctAspects": true
+      }
+    },
+    {
+      "id": "finish_campaign",
+      "category": "campaign",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "campaign",
+        "finished": true
+      }
+    },
+    {
+      "id": "finish_campaign_no_defeat",
+      "category": "campaign",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "campaign",
+        "finished": true,
+        "noDefeat": true
+      }
+    },
+    {
+      "id": "finish_campaign_expert",
+      "category": "campaign",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "campaign",
+        "finished": true,
+        "minDifficulty": "expert"
+      }
+    },
+    {
+      "id": "draft_win",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "draft"
+      }
+    }
+  ]
+}

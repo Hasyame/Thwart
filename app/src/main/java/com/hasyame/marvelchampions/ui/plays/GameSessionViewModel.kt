@@ -12,6 +12,7 @@ import com.hasyame.marvelchampions.data.db.entity.VillainStep
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.sync.AutoSync
 import com.hasyame.marvelchampions.data.sync.SyncTrigger
+import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
@@ -20,6 +21,7 @@ import com.hasyame.marvelchampions.data.repository.RandomizerNames
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
 import com.hasyame.marvelchampions.data.repository.SchemeBriefing
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.domain.achievements.Unlock
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.play.EncounterProgress
@@ -209,6 +211,12 @@ data class GameSessionUiState(
      * row is about. Null until then, and again once the table is reset.
      */
     val lastPlay: PlayEntity? = null,
+    /**
+     * The achievements the game just filed unlocked, for the result page to
+     * celebrate. Only what this game earned: the state before it is compared
+     * with the state after. Empty again once the table is reset.
+     */
+    val unlocked: List<Unlock> = emptyList(),
     /** The player's own ratings, by subject key, for whatever is in view. */
     val ownRatings: Map<String, Int> = emptyMap(),
     /** The community's, by subject key, for the scenario and sets in view. */
@@ -273,6 +281,7 @@ class GameSessionViewModel @Inject constructor(
     private val autoSync: AutoSync,
     private val json: Json,
     private val ratings: RatingRepository,
+    private val achievements: AchievementRepository,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(GameSessionUiState())
@@ -863,9 +872,15 @@ class GameSessionViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
+            // The first seat is the player's own: the one this device's
+            // achievements credit, and the one whose deck says whether the
+            // game was a draft's.
+            val ownDeck = first.deckId?.let { deckRepository.getDeck(it) }
+            val before = achievements.state()
             val play = PlayEntity(
                     id = playRepository.newPlayId(),
                     photos = current.photos.joinToString(","),
+                    mode = DeckRepository.DRAFT_TAG.takeIf { DeckRepository.hasTag(ownDeck?.tags, it) },
                     playedAt = System.currentTimeMillis(),
                     scenarioCode = scenarioCode,
                     scenarioName = current.names.scenarios[scenarioCode] ?: scenarioCode,
@@ -879,11 +894,12 @@ class GameSessionViewModel @Inject constructor(
                     // Every seat, each hero with its own aspect. The fields
                     // above cannot express that, which is why the statistics
                     // used to credit the first player and nobody else.
-                    roster = current.heroes.map {
+                    roster = current.heroes.mapIndexed { index, seat ->
                         PlayHero(
-                            code = it.heroCode,
-                            name = it.displayName(current.names.heroes),
-                            aspect = it.aspect,
+                            code = seat.heroCode,
+                            name = seat.displayName(current.names.heroes),
+                            aspect = seat.aspect,
+                            isOwner = true.takeIf { index == 0 },
                         )
                     },
                     players = current.heroes.size,
@@ -904,6 +920,7 @@ class GameSessionViewModel @Inject constructor(
             // this game, and needs it by id to cite as evidence.
             state.update { it.copy(lastPlay = play) }
             finished.value = playRepository.record(play)
+            state.update { it.copy(unlocked = achievements.unlockedSince(before)) }
         }
     }
 
@@ -930,6 +947,7 @@ class GameSessionViewModel @Inject constructor(
         finished.value = null
         state.value = state.value.copy(
             lastPlay = null,
+            unlocked = emptyList(),
             phase = SessionPhase.SETUP,
             timer = TimerState(),
             firstPlayerIndex = null,

@@ -37,6 +37,21 @@ data class CardSetSummary(
     val packCode: String,
 )
 
+/** A hero card by code, with the pack it comes in: what the achievements' grid ranges over. */
+data class HeroCardRef(
+    val code: String,
+    val packCode: String,
+)
+
+/** A hero card's name and picture, in the asked-for language when the database has it, else any. */
+data class HeroCardNames(
+    val code: String,
+    val localName: String?,
+    val anyName: String?,
+    val localImage: String?,
+    val anyImage: String?,
+)
+
 @Dao
 interface CardDao {
 
@@ -64,6 +79,9 @@ interface CardDao {
 
     @Query("SELECT COUNT(*) FROM cards")
     fun observeCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM cards")
+    suspend fun count(): Int
 
     @Query("SELECT * FROM cards WHERE code = :code AND locale = :locale")
     suspend fun getCard(code: String, locale: String): CardEntity?
@@ -354,6 +372,38 @@ interface CardDao {
         """,
     )
     suspend fun randomPlayerCard(locale: String): CardEntity?
+
+    /**
+     * Every hero card, one row per code whatever the languages loaded, with
+     * its pack. The achievements count heroes by card code, not by set: each
+     * printing of an identity is its own column.
+     */
+    @Query(
+        """
+        SELECT code, MIN(packCode) AS packCode
+        FROM cards
+        WHERE typeCode = 'hero'
+        GROUP BY code
+        ORDER BY code
+        """,
+    )
+    suspend fun getHeroCards(): List<HeroCardRef>
+
+    /** The same hero cards with a name and a picture, preferring [locale]. */
+    @Query(
+        """
+        SELECT code,
+               MAX(CASE WHEN locale = :locale THEN name END) AS localName,
+               MIN(name) AS anyName,
+               MAX(CASE WHEN locale = :locale THEN imageSrc END) AS localImage,
+               MIN(imageSrc) AS anyImage
+        FROM cards
+        WHERE typeCode = 'hero'
+        GROUP BY code
+        ORDER BY code
+        """,
+    )
+    suspend fun getHeroCards(locale: String): List<HeroCardNames>
 
     /** Hero identities, which are cards rather than sets. */
     @Query(
