@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,8 +64,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,12 +88,82 @@ import com.hasyame.marvelchampions.domain.draft.DraftPlayer
 import com.hasyame.marvelchampions.domain.draft.DraftRules
 import com.hasyame.marvelchampions.domain.draft.DraftSettings
 import com.hasyame.marvelchampions.domain.draft.IdentityMode
+import com.hasyame.marvelchampions.domain.draft.SealedEngine
 import com.hasyame.marvelchampions.ui.decks.problemMessage
 import com.hasyame.marvelchampions.ui.util.aspectLabel
 import kotlin.math.roundToInt
 
 /** A printed card is 63 by 88 mm. */
 private const val CARD_RATIO = 63f / 88f
+
+@Composable
+private fun SealedPage(state: DraftUiState, viewModel: DraftViewModel, onCardDetail: (String) -> Unit) {
+    val draft = state.draft ?: return
+    val player = draft.currentPlayer
+    val building = SealedEngine.isBuilding(draft)
+    val opened = SealedEngine.openedBoosters(draft)
+    val gridState = rememberLazyGridState()
+    LaunchedEffect(draft.current, opened, building) { gridState.scrollToItem(0) }
+    val visibleCards = if (building) state.offer.sortedBy { it.name } else {
+        draft.sealedPools.getOrNull(draft.current).orEmpty()
+            .drop((opened - 1).coerceAtLeast(0) * SealedEngine.BOOSTER_SIZE)
+            .take(if (opened == 0) 0 else SealedEngine.BOOSTER_SIZE)
+            .mapNotNull { code -> state.offer.firstOrNull { it.canonicalCode == code } }
+    }
+    LazyVerticalGrid(columns = GridCells.Adaptive(160.dp), state = gridState, modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.draft_identity_title, player.index + 1), style = MaterialTheme.typography.titleLarge)
+                Text(player.heroName, style = MaterialTheme.typography.titleLarge)
+                if (building) Text("${player.cardCount} / ${player.deckSize}")
+                Text(stringResource(R.string.sealed_description))
+                if (!building && opened > 0) Text(stringResource(R.string.sealed_booster_progress, opened))
+                SealedActions(state, viewModel)
+            }
+        }
+        items(visibleCards) { card ->
+            val selected = player.picks.count { it == card.canonicalCode }
+            val copies = draft.sealedPools[draft.current].count { it == card.canonicalCode }
+            val removeLabel = "${stringResource(R.string.decks_remove_card)}: ${card.name}"
+            val addLabel = "${stringResource(R.string.decks_add_card)}: ${card.name}"
+            Column {
+                CardArt(card.imageSrc, Modifier.clickable(onClickLabel = card.name) { onCardDetail(card.canonicalCode) }
+                    .semantics { contentDescription = card.name })
+                Text(card.name, minLines = 3, maxLines = 3, overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(vertical = 8.dp))
+                if (building) Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                TextButton(onClick = { viewModel.selectSealed(card.canonicalCode, false) }, enabled = selected > 0,
+                    modifier = Modifier.width(48.dp).semantics { contentDescription = removeLabel }) { Text("−") }
+                Text("$selected / $copies", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+                TextButton(onClick = { viewModel.selectSealed(card.canonicalCode, true) }, enabled = card.canonicalCode in state.takeable,
+                    modifier = Modifier.width(48.dp).semantics { contentDescription = addLabel }) { Text("+") }
+                }
+            }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            if (visibleCards.isNotEmpty()) SealedActions(state, viewModel)
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SealedActions(state: DraftUiState, viewModel: DraftViewModel) {
+    val draft = state.draft ?: return
+    val opened = SealedEngine.openedBoosters(draft)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        when {
+            SealedEngine.isBuilding(draft) -> Button(onClick = viewModel::confirmSealed, enabled = draft.currentPlayer.isFull) { Text(stringResource(R.string.limited_next)) }
+            opened < SealedEngine.BOOSTER_COUNT -> {
+                Button(onClick = viewModel::openBooster) { Text(stringResource(R.string.sealed_open_booster, opened + 1)) }
+                OutlinedButton(onClick = viewModel::openAllBoosters) { Text(stringResource(R.string.sealed_open_all)) }
+            }
+            else -> Button(onClick = viewModel::buildSealedDeck) { Text(stringResource(R.string.sealed_build)) }
+        }
+    }
+}
 
 /**
  * The draft, from the settings to the saved decks: one screen whose page is
@@ -97,19 +173,19 @@ private const val CARD_RATIO = 63f / 88f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DraftScreen(
+    initiallySealed: Boolean = false,
     onBack: () -> Unit,
     onSaved: () -> Unit,
+    onPlay: (String, List<String>) -> Unit,
     onCardDetail: (String) -> Unit,
     viewModel: DraftViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(state.isLoading) {
+        if (!state.isLoading && state.phase == DraftPhase.SETUP && initiallySealed) viewModel.setSealed(true)
+    }
     var confirmAbandon by remember { mutableStateOf(false) }
 
-    LaunchedEffect(state.savedDeckIds) {
-        if (state.savedDeckIds != null) {
-            onSaved()
-        }
-    }
 
     val isWide = currentWindowAdaptiveInfoV2().windowSizeClass
         .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
@@ -117,8 +193,8 @@ fun DraftScreen(
     if (confirmAbandon) {
         AlertDialog(
             onDismissRequest = { confirmAbandon = false },
-            title = { Text(stringResource(R.string.draft_abandon)) },
-            text = { Text(stringResource(R.string.draft_abandon_confirm)) },
+            title = { Text(stringResource(if (state.draft?.settings?.sealed == true) R.string.sealed_abandon else R.string.draft_abandon)) },
+            text = { Text(stringResource(if (state.draft?.settings?.sealed == true) R.string.sealed_abandon_confirm else R.string.draft_abandon_confirm)) },
             confirmButton = {
                 TextButton(onClick = {
                     confirmAbandon = false
@@ -146,7 +222,7 @@ fun DraftScreen(
                 actions = {
                     if (state.phase != DraftPhase.SETUP) {
                         TextButton(onClick = { confirmAbandon = true }) {
-                            Text(stringResource(R.string.draft_abandon))
+                            Text(stringResource(if (state.draft?.settings?.sealed == true) R.string.sealed_abandon else R.string.draft_abandon))
                         }
                     }
                 },
@@ -155,9 +231,17 @@ fun DraftScreen(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
+                state.savedDeckIds != null -> Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.limited_play_next))
+                    listOf("random" to R.string.limited_random, "campaign" to R.string.limited_campaign, "own" to R.string.limited_own).forEach { (mode, label) ->
+                        Button(onClick = { onPlay(mode, state.savedDeckIds.orEmpty()) }) { Text(stringResource(label)) }
+                    }
+                    OutlinedButton(onClick = onSaved) { Text(stringResource(R.string.limited_later)) }
+                }
                 state.isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
                 state.phase == DraftPhase.SETUP -> SetupPage(state, viewModel)
                 state.phase == DraftPhase.IDENTITY -> IdentityPage(state, viewModel, isWide)
+                state.phase == DraftPhase.PICK && state.draft?.settings?.sealed == true -> SealedPage(state, viewModel, onCardDetail)
                 state.phase == DraftPhase.PICK -> PickPage(state, viewModel, isWide, onCardDetail)
                 state.phase == DraftPhase.FINISH -> FinishPage(state, viewModel)
             }
@@ -223,6 +307,23 @@ private fun SetupPage(state: DraftUiState, viewModel: DraftViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            listOf(false, true).forEach { sealed ->
+                val chosen = settings.sealed == sealed
+                Button(
+                    onClick = { viewModel.setSealed(sealed) },
+                    modifier = Modifier.weight(1f).semantics { selected = chosen },
+                    shape = RoundedCornerShape(3.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (chosen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = if (chosen) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = if (chosen) 5.dp else 0.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                ) { Text(stringResource(if (sealed) R.string.sealed_mode else R.string.draft_mode), fontWeight = FontWeight.Black) }
+            }
+        }
+        if (settings.sealed) Text(stringResource(R.string.sealed_description))
         Section(stringResource(R.string.draft_setup_players)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 (DraftSettings.MIN_PLAYERS..DraftSettings.MAX_PLAYERS).forEach { count ->
@@ -247,7 +348,7 @@ private fun SetupPage(state: DraftUiState, viewModel: DraftViewModel) {
             }
         }
 
-        Section(stringResource(R.string.draft_setup_offer_size)) {
+        if (!settings.sealed) Section(stringResource(R.string.draft_setup_offer_size)) {
             StepSlider(
                 value = settings.offerSize,
                 range = DraftSettings.MIN_OFFER_SIZE..DraftSettings.MAX_OFFER_SIZE,
@@ -462,6 +563,22 @@ private fun AspectsAndSize(state: DraftUiState, player: DraftPlayer, hero: Draft
     val isLast = draft.current + 1 >= draft.players.size
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(top = 8.dp)) {
+        var collectionOpen by remember { mutableStateOf(false) }
+        OutlinedButton(onClick = { collectionOpen = !collectionOpen }) {
+            Text(stringResource(R.string.limited_collection))
+        }
+        if (collectionOpen) {
+            Text(stringResource(R.string.limited_collection_hint))
+            state.packNames.toList().sortedBy { it.second }.forEach { (code, name) ->
+                OutlinedTextField(
+                    value = (draft.collection?.get(code) ?: 0).toString(),
+                    onValueChange = { value -> value.toIntOrNull()?.let { viewModel.setPackQuantity(code, it) } },
+                    label = { Text(name) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
         HorizontalDivider()
         Text(stringResource(R.string.draft_aspects_title), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
         if (imposed != null) {
@@ -503,7 +620,7 @@ private fun AspectsAndSize(state: DraftUiState, player: DraftPlayer, hero: Draft
             enabled = player.isReady && (imposed != null || player.aspects.size == hero.rules.aspectCount),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(stringResource(if (isLast) R.string.draft_identity_start else R.string.draft_identity_confirm))
+            Text(stringResource(if (!isLast) R.string.draft_identity_confirm else if (draft.settings.sealed) R.string.sealed_start else R.string.draft_identity_start))
         }
     }
 }
@@ -782,7 +899,12 @@ private fun FinishPage(state: DraftUiState, viewModel: DraftViewModel) {
             if (state.isSaving) {
                 CircularProgressIndicator(Modifier.height(20.dp).width(20.dp))
             } else {
-                Text(stringResource(R.string.draft_finish_save))
+                Text(stringResource(if (draft.settings.sealed) R.string.sealed_finish else R.string.draft_finish_save))
+            }
+        }
+        if (draft.settings.sealed) {
+            OutlinedButton(onClick = viewModel::reviseSealed, enabled = !state.isSaving) {
+                Text(stringResource(R.string.action_back))
             }
         }
     }

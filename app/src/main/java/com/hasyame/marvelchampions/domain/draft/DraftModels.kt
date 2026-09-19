@@ -17,6 +17,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class DraftState(
+    val collection: Map<String, Int>? = null,
+    val sealedPools: List<List<String>> = emptyList(),
+    val sealedOpened: List<Int> = emptyList(),
+    val sealedBuilding: List<Boolean> = emptyList(),
     val settings: DraftSettings = DraftSettings(),
     val players: List<DraftPlayer> = emptyList(),
     val phase: DraftPhase = DraftPhase.SETUP,
@@ -54,6 +58,7 @@ data class DraftState(
 
 @Serializable
 data class DraftSettings(
+    val sealed: Boolean = false,
     val players: Int = 1,
     /** Leave out cards the identity cannot play: the phase 1 rule. */
     val synergyOnly: Boolean = false,

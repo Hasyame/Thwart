@@ -49,6 +49,18 @@ object AchievementTexts {
         "finish_campaign_no_defeat" to R.string.achievement_finish_campaign_no_defeat_title,
         "finish_campaign_expert" to R.string.achievement_finish_campaign_expert_title,
         "draft_win" to R.string.achievement_draft_win_title,
+        "draft_wins_5" to R.string.achievement_draft_wins_5_title,
+        "draft_wins_10" to R.string.achievement_draft_wins_10_title,
+        "draft_wins_50" to R.string.achievement_draft_wins_50_title,
+        "sealed_win" to R.string.achievement_sealed_win_title,
+        "sealed_wins_5" to R.string.achievement_sealed_wins_5_title,
+        "sealed_wins_10" to R.string.achievement_sealed_wins_10_title,
+        "sealed_wins_50" to R.string.achievement_sealed_wins_50_title,
+        "losses_1" to R.string.achievement_losses_1_title,
+        "losses_5" to R.string.achievement_losses_5_title,
+        "losses_10" to R.string.achievement_losses_10_title,
+        "losses_50" to R.string.achievement_losses_50_title,
+        "losses_100" to R.string.achievement_losses_100_title,
     )
 
     /** The counting achievements' descriptions take the top threshold, and are plurals. */
@@ -87,6 +99,18 @@ object AchievementTexts {
         "finish_campaign_no_defeat" to R.string.achievement_finish_campaign_no_defeat_description,
         "finish_campaign_expert" to R.string.achievement_finish_campaign_expert_description,
         "draft_win" to R.string.achievement_draft_win_description,
+        "draft_wins_5" to R.string.achievement_draft_wins_5_description,
+        "draft_wins_10" to R.string.achievement_draft_wins_10_description,
+        "draft_wins_50" to R.string.achievement_draft_wins_50_description,
+        "sealed_win" to R.string.achievement_sealed_win_description,
+        "sealed_wins_5" to R.string.achievement_sealed_wins_5_description,
+        "sealed_wins_10" to R.string.achievement_sealed_wins_10_description,
+        "sealed_wins_50" to R.string.achievement_sealed_wins_50_description,
+        "losses_1" to R.string.achievement_losses_1_description,
+        "losses_5" to R.string.achievement_losses_5_description,
+        "losses_10" to R.string.achievement_losses_10_description,
+        "losses_50" to R.string.achievement_losses_50_description,
+        "losses_100" to R.string.achievement_losses_100_description,
     )
 
     @StringRes
@@ -145,7 +169,19 @@ object AchievementTexts {
         "three_player_win" to "01019a",
         "four_player_win" to "01029a",
         "four_player_four_aspects" to "04031a",
-        "draft_win" to "21031a",
+        "draft_win" to "05001a",
+        "draft_wins_5" to "04031a",
+        "draft_wins_10" to "01029a",
+        "draft_wins_50" to "21031a",
+        "sealed_win" to "04001a",
+        "sealed_wins_5" to "16029a",
+        "sealed_wins_10" to "01040a",
+        "sealed_wins_50" to "09001a",
+        "losses_1" to "01001a",
+        "losses_5" to "05001a",
+        "losses_10" to "35001a",
+        "losses_50" to "34001a",
+        "losses_100" to "03001a",
     )
 
     val scenarioById: Map<String, String> = mapOf(

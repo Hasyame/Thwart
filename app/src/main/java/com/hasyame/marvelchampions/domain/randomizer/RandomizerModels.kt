@@ -120,6 +120,8 @@ data class RandomizerPools(
 )
 
 data class RandomizerFilters(
+    val unplayedOnly: Boolean = false,
+    val playedPairs: Set<Pair<String, String>> = emptySet(),
     val excludedScenarios: Set<String> = emptySet(),
     val excludedHeroes: Set<String> = emptySet(),
     val excludedAspects: Set<String> = emptySet(),

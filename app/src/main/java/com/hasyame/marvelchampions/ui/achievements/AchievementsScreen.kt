@@ -79,10 +79,11 @@ fun AchievementsScreen(
     onCollection: () -> Unit,
     onSettings: () -> Unit,
     onHistory: () -> Unit,
+    onPrepare: (com.hasyame.marvelchampions.domain.achievements.AchievementChallenge) -> Unit,
     viewModel: AchievementsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    AchievementDetailDialogs(state, onDismiss = viewModel::closeDetail, onHistory = {
+    AchievementDetailDialogs(state, onDismiss = viewModel::closeDetail, onPrepare = onPrepare, onHistory = {
         viewModel.closeDetail()
         onHistory()
     })

@@ -4,6 +4,7 @@ import android.util.Log
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.DraftSessionDao
 import com.hasyame.marvelchampions.data.db.dao.OwnedPackDao
+import com.hasyame.marvelchampions.data.db.dao.PackDao
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.DraftSessionEntity
 import com.hasyame.marvelchampions.data.deckbuilder.toDeckCardInfo
@@ -50,6 +51,7 @@ class DraftRepository @Inject constructor(
     private val sessionDao: DraftSessionDao,
     private val cardDao: CardDao,
     private val ownedPackDao: OwnedPackDao,
+    private val packDao: PackDao,
     private val deckRepository: DeckRepository,
     private val builderRepository: DeckBuilderRepository,
     private val json: Json,
@@ -82,6 +84,11 @@ class DraftRepository @Inject constructor(
 
     // --- the shelf -----------------------------------------------------------------
 
+    suspend fun collection(): Map<String, Int> = ownedPackDao.getOwned().associate { it.packCode to it.quantity }
+
+    suspend fun packNames(locale: CardLocale): Map<String, String> =
+        packDao.getTranslations(locale.code).associate { it.packCode to it.name }
+
     /** The identities the collection holds, with their deck building rules. */
     suspend fun ownedHeroes(locale: CardLocale): List<DraftHero> = withContext(ioDispatcher) {
         builderRepository.heroes(locale)
@@ -97,7 +104,7 @@ class DraftRepository @Inject constructor(
      * opened, since none of it is written down with the state.
      */
     suspend fun context(state: DraftState, locale: CardLocale): DraftContext = withContext(ioDispatcher) {
-        val owned = ownedPackDao.getOwned().associate { it.packCode to it.quantity }
+        val owned = state.collection ?: collection()
         val stock = DraftStockBuilder.build(stockRows(locale), owned)
 
         val heroCodes = state.players.mapNotNull { it.heroCode }.distinct()
@@ -199,7 +206,7 @@ class DraftRepository @Inject constructor(
                         slots = player.slots(),
                         // So a game played from it records the draft mode, which
                         // the achievements read (docs/spec/achievements §5).
-                        tags = DeckRepository.DRAFT_TAG,
+                        tags = if (state.settings.sealed) "sealed" else DeckRepository.DRAFT_TAG,
                     )
                 }
                 sessionDao.clear()

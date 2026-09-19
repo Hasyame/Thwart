@@ -701,7 +701,7 @@ class CampaignRepository @Inject constructor(
                 isOwner = true.takeIf { index == 0 },
             )
         }
-        val mode = DeckRepository.DRAFT_TAG.takeIf { tag ->
+        val mode = listOf(DeckRepository.DRAFT_TAG, "sealed").firstOrNull { tag ->
             DeckRepository.hasTag(heroes.firstOrNull()?.let { decks[it.id] }?.tags, tag)
         }
 
