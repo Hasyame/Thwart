@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -32,7 +33,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import java.io.File
 
 /**
  * A backup written by Thwart Web, format 2, imports here losslessly and
@@ -69,6 +69,7 @@ class BackupWebFixtureTest {
             AppPreferences(context),
             PhotoStore(context, Dispatchers.Unconfined),
             Dispatchers.Unconfined,
+            sessions = com.hasyame.marvelchampions.data.sync.SyncSessionStore(context, com.hasyame.marvelchampions.data.security.SecretStore()),
         )
     }
 

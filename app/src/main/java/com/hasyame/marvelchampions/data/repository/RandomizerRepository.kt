@@ -9,6 +9,7 @@ import com.hasyame.marvelchampions.data.seed.CardSeedSource
 import com.hasyame.marvelchampions.data.seed.SetNameOverrides
 import com.hasyame.marvelchampions.domain.campaign.SchemeSetup
 import com.hasyame.marvelchampions.domain.model.CardLocale
+import com.hasyame.marvelchampions.domain.play.FearNoEvil
 import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.HeroAssignment
 import com.hasyame.marvelchampions.domain.randomizer.HeroRef
@@ -16,13 +17,12 @@ import com.hasyame.marvelchampions.domain.randomizer.RandomizerDraw
 import com.hasyame.marvelchampions.domain.randomizer.RandomizerPools
 import com.hasyame.marvelchampions.domain.randomizer.ScenarioRule
 import com.hasyame.marvelchampions.domain.randomizer.SetRef
-import kotlinx.coroutines.CoroutineDispatcher
-import com.hasyame.marvelchampions.domain.play.FearNoEvil
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 /** A versus game: who you face, and which side you are on. */
 private data class VersusScenario(
@@ -275,29 +275,35 @@ class RandomizerRepository @Inject constructor(
         val difficulty = draw.difficulty ?: return
         val now = System.currentTimeMillis()
         val id = UUID.randomUUID().toString()
-        historyDao.insert(
-            RandomizerHistoryEntity(
-                id = id,
-                createdAt = now,
-                scenarioCode = scenario,
-                difficulty = difficulty.name,
-                playerCount = draw.playerCount,
-                heroes = draw.heroes.joinToString(",") { "${it.heroCode}:${it.aspect}" },
-                modularSetCodes = draw.modularSetCodes.joinToString(","),
-                updatedAt = now,
-            ),
-        )
-        syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+        syncStateDao.transaction {
+            historyDao.insert(
+                RandomizerHistoryEntity(
+                    id = id,
+                    createdAt = now,
+                    scenarioCode = scenario,
+                    difficulty = difficulty.name,
+                    playerCount = draw.playerCount,
+                    heroes = draw.heroes.joinToString(",") { "${it.heroCode}:${it.aspect}" },
+                    modularSetCodes = draw.modularSetCodes.joinToString(","),
+                    updatedAt = now,
+                ),
+            )
+            syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+        }
     }
 
     suspend fun setBeaten(id: String, beaten: Boolean) {
-        historyDao.setBeaten(id, beaten, System.currentTimeMillis())
-        syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+        syncStateDao.transaction {
+            historyDao.setBeaten(id, beaten, System.currentTimeMillis())
+            syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+        }
     }
 
     suspend fun deleteHistoryEntry(id: String) {
-        historyDao.delete(id, System.currentTimeMillis())
-        syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+        syncStateDao.transaction {
+            historyDao.delete(id, System.currentTimeMillis())
+            syncStateDao.markDirty(SyncCollection.RANDOMIZER_HISTORY.key, id)
+        }
     }
 
     companion object {

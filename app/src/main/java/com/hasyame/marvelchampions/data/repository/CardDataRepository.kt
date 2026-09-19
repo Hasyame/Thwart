@@ -2,10 +2,9 @@ package com.hasyame.marvelchampions.data.repository
 
 import androidx.room.withTransaction
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
+import com.hasyame.marvelchampions.data.db.deriveSynergy
 import com.hasyame.marvelchampions.data.db.entity.PackEntity
 import com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity
-import com.hasyame.marvelchampions.data.db.deriveSynergy
-import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.data.db.toEntity
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbApi
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls
@@ -13,13 +12,14 @@ import com.hasyame.marvelchampions.data.marvelcdb.dto.CardDto
 import com.hasyame.marvelchampions.data.marvelcdb.dto.PackDto
 import com.hasyame.marvelchampions.data.marvelcdb.dto.PackMetadataDto
 import com.hasyame.marvelchampions.data.seed.CardSeedSource
+import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.model.CardLocale
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 
 /** Progress of a card refresh, for the Settings screen. */
 data class CardSyncProgress(
@@ -43,7 +43,8 @@ class CardDataRepository @Inject constructor(
 ) {
 
     suspend fun isEmpty(): Boolean = withContext(ioDispatcher) {
-        database.packDao().countPacks() == 0
+        database.packDao().countPacks() == 0 ||
+            CardLocale.entries.any { database.cardDao().countForLocale(it.code) == 0 }
     }
 
     /**
@@ -52,24 +53,27 @@ class CardDataRepository @Inject constructor(
      * Returns false when the build has no seed, which is a normal state — CI
      * builds that way — and means the user has to run a sync.
      */
-    suspend fun seedIfEmpty(): Boolean = withContext(ioDispatcher) {
+    suspend fun seedIfEmpty(afterSeed: suspend () -> Unit = {}): Boolean = withContext(ioDispatcher) {
         if (!isEmpty()) {
             return@withContext true
         }
         val metadata = seed.readPackMetadata().packs.associateBy { it.code }
-        var seeded = false
-        for (locale in CardLocale.entries) {
-            val packs = seed.readPacks(locale) ?: continue
-            val cards = seed.readCards(locale) ?: continue
-            if (locale == CardLocale.ENGLISH || !seeded) {
-                storePacks(packs, metadata, locale)
-            } else {
-                addPackTranslations(packs, locale)
-            }
-            storeCards(cards, locale)
-            seeded = true
+        // Load every locale before writing; a missing or broken seed must not
+        // leave packs present with an empty or partially translated catalogue.
+        val packsByLocale = CardLocale.entries.associateWith { seed.readPacks(it) ?: return@withContext false }
+        val cardsByLocale = CardLocale.entries.associateWith { seed.readCards(it) ?: return@withContext false }
+        if (packsByLocale.values.any { it.isEmpty() } || cardsByLocale.values.any { it.isEmpty() }) {
+            return@withContext false
         }
-        seeded
+        database.withTransaction {
+            storePacks(packsByLocale.getValue(CardLocale.ENGLISH), metadata, CardLocale.ENGLISH)
+            packsByLocale.forEach { (locale, packs) ->
+                if (locale != CardLocale.ENGLISH) addPackTranslations(packs, locale)
+            }
+            cardsByLocale.forEach { (locale, cards) -> storeCards(cards, locale) }
+            afterSeed()
+            true
+        }
     }
 
     /**
@@ -122,7 +126,7 @@ class CardDataRepository @Inject constructor(
     /**
      * Refreshes both locales from MarvelCDB.
      *
-     * Each locale is replaced inside a single transaction, so cancelling mid
+     * Both locales are replaced inside a single transaction, so cancelling mid
      * way — the Settings screen offers that — leaves the previous data intact
      * rather than a half-written database.
      */
@@ -135,25 +139,20 @@ class CardDataRepository @Inject constructor(
         val packsByLocale = CardLocale.entries.associateWith { locale ->
             api.getPacksAt(MarvelCdbUrls.packs(locale))
         }
-        coroutineContext.ensureActive()
-        storePacks(
-            packs = packsByLocale.getValue(CardLocale.ENGLISH),
-            metadata = metadata,
-            locale = CardLocale.ENGLISH,
-        )
-        packsByLocale.forEach { (locale, packs) ->
-            if (locale != CardLocale.ENGLISH) {
-                addPackTranslations(packs, locale)
-            }
-        }
-
-        for (locale in CardLocale.entries) {
+        val cardsByLocale = CardLocale.entries.associateWith { locale ->
             onProgress(CardSyncProgress(CardSyncProgress.Step.DOWNLOADING_CARDS, locale))
-            val cards = api.getAllCardsAt(MarvelCdbUrls.allCards(locale))
-            coroutineContext.ensureActive()
-
-            onProgress(CardSyncProgress(CardSyncProgress.Step.STORING_CARDS, locale))
-            storeCards(cards, locale)
+            api.getAllCardsAt(MarvelCdbUrls.allCards(locale))
+        }
+        coroutineContext.ensureActive()
+        database.withTransaction {
+            storePacks(packsByLocale.getValue(CardLocale.ENGLISH), metadata, CardLocale.ENGLISH)
+            packsByLocale.forEach { (locale, packs) ->
+                if (locale != CardLocale.ENGLISH) addPackTranslations(packs, locale)
+            }
+            cardsByLocale.forEach { (locale, cards) ->
+                onProgress(CardSyncProgress(CardSyncProgress.Step.STORING_CARDS, locale))
+                storeCards(cards, locale)
+            }
         }
         onProgress(CardSyncProgress(CardSyncProgress.Step.DONE))
     }

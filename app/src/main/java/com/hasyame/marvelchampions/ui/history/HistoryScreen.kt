@@ -29,7 +29,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -373,7 +373,7 @@ fun PlayDetailScreen(
                 val photos = play.photos.split(',').filter { it.isNotBlank() }
                 if (photos.isNotEmpty()) {
                     Panel(stringResource(R.string.history_photos)) {
-                        TablePhotoStrip(names = photos, photoStore = viewModel.photoStore, onOpen = { })
+                        TablePhotoStrip(names = photos, photoStore = viewModel.photoStore)
                     }
                 }
 
@@ -395,7 +395,7 @@ fun PlayDetailScreen(
                     // Only for a game not yet sent, so it is never sent twice.
                     if (!play.reportedToBgg) {
                         OutlinedButton(onClick = { viewModel.report(play.id) }, modifier = Modifier.weight(1f)) {
-                            Icon(Icons.Filled.Send, contentDescription = null)
+                            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null)
                             Spacer(Modifier.width(6.dp))
                             Text(stringResource(R.string.history_send_bgg))
                         }

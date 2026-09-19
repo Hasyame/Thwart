@@ -58,7 +58,7 @@ fun LongBreakNotes(
             )
         }
         val photos = game.photos.split(",").filter { it.isNotBlank() }
-        TablePhotoStrip(names = photos, photoStore = photoStore, onOpen = { })
+        TablePhotoStrip(names = photos, photoStore = photoStore)
     }
 }
 

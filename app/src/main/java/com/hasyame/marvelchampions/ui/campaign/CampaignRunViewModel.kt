@@ -2,49 +2,49 @@ package com.hasyame.marvelchampions.ui.campaign
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.db.entity.PausedPhase
+import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.photos.PhotoStore
-import com.hasyame.marvelchampions.data.sync.AutoSync
-import com.hasyame.marvelchampions.data.sync.SyncTrigger
 import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.Job
-import com.hasyame.marvelchampions.domain.achievements.Unlock
-import com.hasyame.marvelchampions.domain.ratings.RatingSubject
-import com.hasyame.marvelchampions.data.db.entity.PlayEntity
+import com.hasyame.marvelchampions.data.repository.CampaignRun
+import com.hasyame.marvelchampions.data.repository.EncounterRepository
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
 import com.hasyame.marvelchampions.data.repository.RatingRepository
-import com.hasyame.marvelchampions.ui.plays.LongBreakDraft
-import java.util.UUID
-import com.hasyame.marvelchampions.data.repository.CampaignRun
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.data.sync.AutoSync
+import com.hasyame.marvelchampions.data.sync.SyncTrigger
+import com.hasyame.marvelchampions.domain.achievements.Unlock
 import com.hasyame.marvelchampions.domain.campaign.engine.AnswerSet
-import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
-import com.hasyame.marvelchampions.domain.campaign.engine.EvaluationContext
-import com.hasyame.marvelchampions.domain.campaign.engine.ConditionEvaluator
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEngine
+import com.hasyame.marvelchampions.domain.campaign.engine.CampaignEvent
 import com.hasyame.marvelchampions.domain.campaign.engine.CampaignState
+import com.hasyame.marvelchampions.domain.campaign.engine.ConditionEvaluator
+import com.hasyame.marvelchampions.domain.campaign.engine.EvaluationContext
 import com.hasyame.marvelchampions.domain.campaign.engine.TimerState
 import com.hasyame.marvelchampions.domain.campaign.engine.amountOf
-import com.hasyame.marvelchampions.data.db.dao.CardDao
-import com.hasyame.marvelchampions.data.repository.EncounterRepository
+import com.hasyame.marvelchampions.domain.campaign.template.TrackedSide
+import com.hasyame.marvelchampions.domain.campaign.template.villainStages
 import com.hasyame.marvelchampions.domain.play.Encounter
 import com.hasyame.marvelchampions.domain.play.EncounterProgress
-import com.hasyame.marvelchampions.domain.campaign.template.TrackedSide
-import com.hasyame.marvelchampions.domain.play.EncounterSide
 import com.hasyame.marvelchampions.domain.play.EncounterSetup
-import kotlinx.coroutines.flow.first
-import com.hasyame.marvelchampions.domain.campaign.template.villainStages
+import com.hasyame.marvelchampions.domain.play.EncounterSide
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
+import com.hasyame.marvelchampions.ui.plays.LongBreakDraft
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
+import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import kotlinx.serialization.json.Json
 
 /**
  * Where a run currently is, as one page at a time rather than a single long
@@ -108,6 +108,7 @@ data class ScenarioOutcomeSummary(
 )
 
 data class CampaignRunUiState(
+    val unreadableEvents: Boolean = false,
     /**
      * What is being written down while the scenario is put away.
      *
@@ -253,6 +254,10 @@ class CampaignRunViewModel @Inject constructor(
     private suspend fun reload() {
         val id = runId ?: return
         val locale = preferences.currentCardLocale()
+        if (repository.hasUnreadableEvents(id)) {
+            state.value = state.value.copy(run = null, isLoading = false, unreadableEvents = true)
+            return
+        }
         // Before the run is read, so the briefing shows its drawn cards on the
         // first frame rather than filling them in a moment later.
         repository.ensureSetupDraws(id, locale)
@@ -271,6 +276,7 @@ class CampaignRunViewModel @Inject constructor(
         }
         state.value = state.value.copy(
             run = run,
+            unreadableEvents = false,
             elapsedMillis = run?.timer?.elapsedAt(System.currentTimeMillis()) ?: 0,
             isLoading = false,
             resumedBreak = pausedGameDao.current()?.takeIf { it.campaignRunId == id },

@@ -8,11 +8,13 @@ import com.hasyame.marvelchampions.data.db.entity.PackEntity
 import com.hasyame.marvelchampions.domain.model.CardFilter
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.search.CardQueryBuilder
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 /** The values offered in the filter sheet, derived from what is in the database. */
 data class CardFilterOptions(
@@ -39,6 +41,12 @@ class CardSearchRepository @Inject constructor(
      * Core Set, a hero pack, a scenario pack — is not in the MarvelCDB API at
      * all. It comes from the curated pack metadata held on the pack row.
      */
+    fun observeSearchChanges(): Flow<Int> = cardDao.observeSearchChanges(SimpleSQLiteQuery("SELECT 1"))
+
+    fun observeFilterOptions(locale: CardLocale): Flow<CardFilterOptions> =
+        cardDao.observeCatalogueChanges(SimpleSQLiteQuery("SELECT 1"))
+            .map { filterOptions(locale) }.flowOn(ioDispatcher)
+
     suspend fun getPack(packCode: String): PackEntity? =
         withContext(ioDispatcher) { packDao.getPack(packCode) }
 

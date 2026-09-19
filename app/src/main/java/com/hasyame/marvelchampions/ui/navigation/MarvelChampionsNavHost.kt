@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.hasyame.marvelchampions.ui.achievements.AchievementsScreen
 import com.hasyame.marvelchampions.ui.campaign.CampaignRecordScreen
 import com.hasyame.marvelchampions.ui.campaign.CampaignRunScreen
 import com.hasyame.marvelchampions.ui.campaign.CampaignScreen
@@ -16,21 +17,20 @@ import com.hasyame.marvelchampions.ui.cards.CardsScreen
 import com.hasyame.marvelchampions.ui.collection.CollectionScreen
 import com.hasyame.marvelchampions.ui.decks.DeckScreen
 import com.hasyame.marvelchampions.ui.decks.DecksScreen
-import com.hasyame.marvelchampions.ui.achievements.AchievementsScreen
+import com.hasyame.marvelchampions.ui.decks.NewDeckScreen
+import com.hasyame.marvelchampions.ui.draft.DraftScreen
 import com.hasyame.marvelchampions.ui.history.HistoryScreen
 import com.hasyame.marvelchampions.ui.history.PlayDetailScreen
 import com.hasyame.marvelchampions.ui.home.HomeScreen
-import com.hasyame.marvelchampions.ui.decks.NewDeckScreen
+import com.hasyame.marvelchampions.ui.play.PlayScreen
 import com.hasyame.marvelchampions.ui.plays.GameSessionScreen
 import com.hasyame.marvelchampions.ui.plays.PlaysScreen
-import com.hasyame.marvelchampions.ui.rules.RulesScreen
-import com.hasyame.marvelchampions.ui.play.PlayScreen
 import com.hasyame.marvelchampions.ui.randomizer.RandomizerScreen
-import com.hasyame.marvelchampions.ui.draft.DraftScreen
-import com.hasyame.marvelchampions.ui.versus.VersusScreen
+import com.hasyame.marvelchampions.ui.rules.RulesScreen
 import com.hasyame.marvelchampions.ui.settings.AboutScreen
 import com.hasyame.marvelchampions.ui.settings.SettingsScreen
 import com.hasyame.marvelchampions.ui.settings.sync.SyncAccountScreen
+import com.hasyame.marvelchampions.ui.versus.VersusScreen
 
 @Composable
 fun MarvelChampionsNavHost(
@@ -70,7 +70,12 @@ fun MarvelChampionsNavHost(
                 )
             }
             composable<AchievementsRoute> {
-                AchievementsScreen(onBack = { navController.popBackStack() })
+                AchievementsScreen(
+                    onBack = { navController.popBackStack() },
+                    onCollection = { navController.navigate(CollectionRoute) },
+                    onSettings = { navController.navigate(SettingsRoute) },
+                    onHistory = { navController.navigate(HistoryRoute) },
+                )
             }
             composable<PlayDetailRoute> { entry ->
                 PlayDetailScreen(
@@ -92,6 +97,7 @@ fun MarvelChampionsNavHost(
         navigation<CardsGraph>(startDestination = CardsRoute) {
             composable<CardsRoute> {
                 CardsScreen(
+                    onSettings = { navController.navigate(SettingsRoute) },
                     onCardClick = { code -> navController.navigate(CardDetailRoute(code)) },
                 )
             }
@@ -191,6 +197,7 @@ fun MarvelChampionsNavHost(
             }
             composable<RandomizerRoute> {
                 RandomizerScreen(
+                    onCollection = { navController.navigate(CollectionRoute) },
                     onBack = { navController.popBackStack() },
                     onPlayDraw = { scenario, heroes, modulars, difficulty, standardSet ->
                         navController.navigate(
@@ -237,7 +244,12 @@ fun MarvelChampionsNavHost(
             // Reached from the play hub, a game's result and the statistics:
             // it stays in the Play back stack, so the tab keeps its place.
             composable<AchievementsRoute> {
-                AchievementsScreen(onBack = { navController.popBackStack() })
+                AchievementsScreen(
+                    onBack = { navController.popBackStack() },
+                    onCollection = { navController.navigate(CollectionRoute) },
+                    onSettings = { navController.navigate(SettingsRoute) },
+                    onHistory = { navController.navigate(HistoryRoute) },
+                )
             }
             composable<CampaignRoute> {
                 CampaignScreen(
@@ -299,7 +311,12 @@ fun MarvelChampionsNavHost(
                 )
             }
             composable<AchievementsRoute> {
-                AchievementsScreen(onBack = { navController.popBackStack() })
+                AchievementsScreen(
+                    onBack = { navController.popBackStack() },
+                    onCollection = { navController.navigate(CollectionRoute) },
+                    onSettings = { navController.navigate(SettingsRoute) },
+                    onHistory = { navController.navigate(HistoryRoute) },
+                )
             }
         }
         navigation<SettingsGraph>(startDestination = SettingsRoute) {

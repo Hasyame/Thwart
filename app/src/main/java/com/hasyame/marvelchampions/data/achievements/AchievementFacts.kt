@@ -1,8 +1,9 @@
-package com.hasyame.marvelchampions.domain.achievements
+package com.hasyame.marvelchampions.data.achievements
 
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero
+import com.hasyame.marvelchampions.domain.achievements.*
 import com.hasyame.marvelchampions.domain.play.FearNoEvil
 
 /**

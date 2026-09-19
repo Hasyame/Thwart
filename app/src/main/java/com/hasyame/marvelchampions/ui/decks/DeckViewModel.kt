@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
+import com.hasyame.marvelchampions.data.deckbuilder.DeckStatisticsCalculator
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
 import com.hasyame.marvelchampions.data.repository.CollectionRepository
 import com.hasyame.marvelchampions.data.repository.DeckBuilderRepository
@@ -15,7 +16,6 @@ import com.hasyame.marvelchampions.data.repository.DeckImportResult
 import com.hasyame.marvelchampions.data.repository.DeckRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckStatistics
-import com.hasyame.marvelchampions.domain.deckbuilder.DeckStatisticsCalculator
 import com.hasyame.marvelchampions.domain.deckbuilder.DeckValidation
 import com.hasyame.marvelchampions.domain.deckbuilder.HeroDeckRules
 import com.hasyame.marvelchampions.domain.deckbuilder.IdentityTraits
@@ -23,6 +23,8 @@ import com.hasyame.marvelchampions.domain.deckbuilder.SynergyWarning
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.model.PackType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,8 +36,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Locale
-import javax.inject.Inject
 
 /** A card a campaign put in this deck; it lives on the run, not in the deck. */
 data class CampaignCardRow(

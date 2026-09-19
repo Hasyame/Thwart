@@ -23,7 +23,7 @@ import com.hasyame.marvelchampions.core.designsystem.theme.AspectProtection
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun comicTopBarColors(): TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+fun comicTopBarColors(): TopAppBarColors = TopAppBarDefaults.topAppBarColors(
     containerColor = MaterialTheme.colorScheme.surface,
     scrolledContainerColor = MaterialTheme.colorScheme.surface,
     titleContentColor = MaterialTheme.colorScheme.onSurface,

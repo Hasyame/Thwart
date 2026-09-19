@@ -11,20 +11,14 @@ import com.hasyame.marvelchampions.data.db.entity.SyncCollection
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.data.sync.AutoSync
 import com.hasyame.marvelchampions.data.sync.SyncTrigger
-import com.hasyame.marvelchampions.domain.model.BggPlay
-import com.hasyame.marvelchampions.domain.model.BggPlayer
 import com.hasyame.marvelchampions.domain.model.BggReportingMode
+import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.UUID
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /** What happened when a play was recorded, so the UI can say something true. */
 sealed interface PlayRecorded {
@@ -109,8 +103,10 @@ class PlayRepository @Inject constructor(
             play
         }
         val stamped = located.copy(updatedAt = System.currentTimeMillis())
-        playDao.insert(stamped)
-        syncStateDao.markDirty(SyncCollection.PLAYS.key, stamped.id)
+        syncStateDao.transaction {
+            playDao.insert(stamped)
+            syncStateDao.markDirty(SyncCollection.PLAYS.key, stamped.id)
+        }
         // A finished scenario is the moment somebody is most likely to pick up
         // another device and carry on, so it does not wait behind the report to
         // BoardGameGeek below, which may not happen at all.
@@ -146,8 +142,10 @@ class PlayRepository @Inject constructor(
 
         when (result) {
             is BggResult.Success -> {
-                playDao.markReported(play.id, System.currentTimeMillis())
-                syncStateDao.markDirty(SyncCollection.PLAYS.key, play.id)
+                syncStateDao.transaction {
+                    playDao.markReported(play.id, System.currentTimeMillis())
+                    syncStateDao.markDirty(SyncCollection.PLAYS.key, play.id)
+                }
                 PlayRecorded.SavedAndReported
             }
 
@@ -167,7 +165,9 @@ class PlayRepository @Inject constructor(
      * otherwise put the game back.
      */
     suspend fun delete(playId: String) = withContext(ioDispatcher) {
-        playDao.delete(playId, System.currentTimeMillis())
-        syncStateDao.markDirty(SyncCollection.PLAYS.key, playId)
+        syncStateDao.transaction {
+            playDao.delete(playId, System.currentTimeMillis())
+            syncStateDao.markDirty(SyncCollection.PLAYS.key, playId)
+        }
     }
 }

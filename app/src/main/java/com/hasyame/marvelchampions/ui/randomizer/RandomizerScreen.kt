@@ -17,15 +17,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -35,12 +34,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,19 +46,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
-import com.hasyame.marvelchampions.ui.ratings.RatingBadge
-import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
-import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.repository.RandomizerRepository
-import com.hasyame.marvelchampions.domain.randomizer.Difficulty
 import com.hasyame.marvelchampions.domain.randomizer.DrawField
+import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.ui.plays.PlaysViewModel
+import com.hasyame.marvelchampions.ui.ratings.RatingBadge
 import com.hasyame.marvelchampions.ui.util.ChoiceOption
 import com.hasyame.marvelchampions.ui.util.ChooseValueDialog
 import com.hasyame.marvelchampions.ui.util.aspectLabel
@@ -73,6 +65,7 @@ import com.hasyame.marvelchampions.ui.util.difficultyLabel
 @Composable
 fun RandomizerScreen(
     onBack: () -> Unit,
+    onCollection: () -> Unit,
     onPlayDraw: (
         scenarioCode: String,
         heroes: String,
@@ -111,26 +104,18 @@ fun RandomizerScreen(
             state.hasNoOwnedPacks -> Box(
                 Modifier.fillMaxSize().padding(padding).padding(32.dp),
                 contentAlignment = Alignment.Center,
-            ) { Text(stringResource(R.string.randomizer_no_packs)) }
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(stringResource(R.string.randomizer_no_packs))
+                    Button(onClick = onCollection) { Text(stringResource(R.string.collection_title)) }
+                }
+            }
 
             else -> LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                item {
-                    DrawCard(state = state, viewModel = viewModel)
-                }
-                item {
-                    // Said once, where somebody wondering "why is that missing"
-                    // is looking. The alternative is them concluding the app has
-                    // lost a scenario, which is what happened.
-                    Text(
-                        text = stringResource(R.string.randomizer_collection_note),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
                 item {
                     Row(
                         Modifier.fillMaxWidth(),
@@ -181,6 +166,19 @@ fun RandomizerScreen(
                     ) {
                         Text(stringResource(R.string.randomizer_play_this))
                     }
+                }
+                item {
+                    DrawCard(state = state, viewModel = viewModel)
+                }
+                item {
+                    // Said once, where somebody wondering "why is that missing"
+                    // is looking. The alternative is them concluding the app has
+                    // lost a scenario, which is what happened.
+                    Text(
+                        text = stringResource(R.string.randomizer_collection_note),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
                 item { FiltersCard(state = state, viewModel = viewModel) }
 

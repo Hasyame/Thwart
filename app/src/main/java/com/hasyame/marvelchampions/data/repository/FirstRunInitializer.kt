@@ -60,12 +60,12 @@ class FirstRunInitializer @Inject constructor(
             return FirstRunOutcome.ALREADY_READY
         }
 
-        val seeded = cardDataRepository.seedIfEmpty()
-
-        // Only ever pre-seed a collection the user has never touched, so a
-        // deliberately emptied collection is not silently refilled.
-        if (collectionRepository.isEmpty()) {
-            collectionRepository.setOwnedBulk(PRESEEDED_COLLECTION, owned = true)
+        val seeded = cardDataRepository.seedIfEmpty {
+            // Commit initial ownership together with the catalogue, so process
+            // death cannot bypass collection setup on the following launch.
+            if (collectionRepository.isEmpty()) {
+                collectionRepository.setOwnedBulk(PRESEEDED_COLLECTION, owned = true)
+            }
         }
 
         return if (seeded) FirstRunOutcome.SEEDED else FirstRunOutcome.NEEDS_SYNC

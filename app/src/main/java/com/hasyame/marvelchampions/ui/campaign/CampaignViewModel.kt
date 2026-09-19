@@ -9,6 +9,7 @@ import com.hasyame.marvelchampions.data.repository.CollectionRepository
 import com.hasyame.marvelchampions.domain.achievements.Completion
 import com.hasyame.marvelchampions.data.repository.DraftRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
@@ -31,7 +32,7 @@ import javax.inject.Inject
 data class CampaignListUiState(
     val runs: List<CampaignRunEntity> = emptyList(),
     val importErrors: List<TemplateError> = emptyList(),
-    val importMessage: String? = null,
+    val importMessage: Int? = null,
     val pendingTemplateId: String? = null,
 )
 
@@ -89,7 +90,7 @@ class CampaignListViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     private val importErrors = MutableStateFlow<List<TemplateError>>(emptyList())
-    private val importMessage = MutableStateFlow<String?>(null)
+    private val importMessage = MutableStateFlow<Int?>(null)
 
     /**
      * Runs with their statistics. Folded per run, which is cheap at this scale
@@ -120,7 +121,7 @@ class CampaignListViewModel @Inject constructor(
         )
 
     val errors: StateFlow<List<TemplateError>> = importErrors
-    val message: StateFlow<String?> = importMessage
+    val message: StateFlow<Int?> = importMessage
 
     /** Holds a template that validated, until difficulty and decks are chosen. */
     private val _importedTemplate = MutableStateFlow<ImportedTemplate?>(null)
@@ -154,7 +155,7 @@ class CampaignListViewModel @Inject constructor(
 
                 is TemplateImportResult.Unreadable -> {
                     importErrors.value = emptyList()
-                    importMessage.value = result.message
+                    importMessage.value = R.string.campaign_import_unreadable
                 }
             }
         }

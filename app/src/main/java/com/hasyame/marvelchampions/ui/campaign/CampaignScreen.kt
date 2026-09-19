@@ -199,7 +199,7 @@ fun CampaignScreen(
             title = { Text(stringResource(R.string.campaign_template_invalid)) },
             text = {
                 Column {
-                    message?.let { Text(it) }
+                    message?.let { Text(stringResource(it)) }
                     errors.forEach { Text("• $it", style = MaterialTheme.typography.bodySmall) }
                 }
             },

@@ -1,6 +1,8 @@
 package com.hasyame.marvelchampions.data.repository
 
 import android.content.Context
+import com.hasyame.marvelchampions.core.util.runCatchingCancellable
+import com.hasyame.marvelchampions.data.achievements.AchievementFacts
 import com.hasyame.marvelchampions.data.db.dao.CampaignDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
@@ -11,7 +13,6 @@ import com.hasyame.marvelchampions.data.seed.SetNameOverrides
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.achievements.AchievementDefinitions
 import com.hasyame.marvelchampions.domain.achievements.AchievementDerivation
-import com.hasyame.marvelchampions.domain.achievements.AchievementFacts
 import com.hasyame.marvelchampions.domain.achievements.AchievementState
 import com.hasyame.marvelchampions.domain.achievements.Catalogue
 import com.hasyame.marvelchampions.domain.achievements.DefinitionsFile
@@ -24,15 +25,14 @@ import com.hasyame.marvelchampions.domain.achievements.Unlock
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.play.FearNoEvil
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * The achievements: the definitions file, the catalogue the grid ranges
@@ -77,7 +77,7 @@ class AchievementRepository @Inject constructor(
      * does not care.
      */
     suspend fun definitions(): Definitions = withContext(ioDispatcher) {
-        definitionsCache ?: runCatching {
+        definitionsCache ?: runCatchingCancellable {
             val text = context.assets.open(DEFINITIONS_ASSET).bufferedReader().use { it.readText() }
             Definitions.Loaded(AchievementDefinitions.parse(text))
         }.getOrElse { Definitions.Refused(it.message ?: it.javaClass.simpleName) }
@@ -92,24 +92,12 @@ class AchievementRepository @Inject constructor(
      * come from its template. Built from the card data, never from the
      * plays: a scenario nobody has played is still a row to fill.
      */
-    suspend fun catalogue(): Catalogue = withContext(ioDispatcher) {
-        // Built once per card database: the state is derived after every
-        // game, and the scenario rules are a file to read and decode.
-        val stamp = cardDao.count()
-        catalogueCache?.takeIf { it.first == stamp }?.let { return@withContext it.second }
-        buildCatalogue().also { catalogueCache = stamp to it }
-    }
-
-    @Volatile
-    private var catalogueCache: Pair<Int, Catalogue>? = null
-
-    @Volatile
-    private var namesCache: Triple<Int, CardLocale, Names>? = null
+    suspend fun catalogue(): Catalogue = withContext(ioDispatcher) { buildCatalogue() }
 
     private suspend fun buildCatalogue(): Catalogue {
         val heroes = cardDao.getHeroCards().map { HeroRef(it.code, it.packCode) }.sortedBy { it.code }
         val scenarios = LinkedHashMap<String, ScenarioRef>()
-        runCatching { seeds.readScenarioRules() }.getOrNull()?.scenarios?.forEach { rule ->
+        runCatchingCancellable { seeds.readScenarioRules() }.getOrNull()?.scenarios?.forEach { rule ->
             scenarios.putIfAbsent(rule.code, ScenarioRef(rule.code, rule.packCode))
         }
         val fnePack = fearNoEvil.packCode() ?: FearNoEvil.TEMPLATE_ID
@@ -137,12 +125,14 @@ class AchievementRepository @Inject constructor(
      */
     fun observeInput(): Flow<DeriveInput?> = combine(
         playDao.observePlays(),
-        campaignDao.observeRuns(),
+        campaignDao.observeAchievementChanges(androidx.sqlite.db.SimpleSQLiteQuery("SELECT 1")),
         collection.observeOwnedCodes(),
-    ) { plays, _, owned ->
+        cardDao.observeCatalogueChanges(androidx.sqlite.db.SimpleSQLiteQuery("SELECT 1")),
+        preferences.cardLocale,
+    ) { plays, _, owned, _, _ ->
         val definitions = (definitions() as? Definitions.Loaded)?.file ?: return@combine null
         input(definitions, catalogue(), owned, plays)
-    }.distinctUntilChanged().flowOn(ioDispatcher)
+    }.flowOn(ioDispatcher)
 
     /** The state, kept current. */
     fun observeState(): Flow<AchievementState?> = observeInput().map { it?.let(AchievementDerivation::derive) }
@@ -208,11 +198,7 @@ class AchievementRepository @Inject constructor(
 
     suspend fun names(): Names = names(preferences.currentCardLocale())
 
-    suspend fun names(locale: CardLocale): Names = withContext(ioDispatcher) {
-        val stamp = cardDao.count()
-        namesCache?.takeIf { it.first == stamp && it.second == locale }?.let { return@withContext it.third }
-        buildNames(locale).also { namesCache = Triple(stamp, locale, it) }
-    }
+    suspend fun names(locale: CardLocale): Names = withContext(ioDispatcher) { buildNames(locale) }
 
     private suspend fun buildNames(locale: CardLocale): Names {
         val heroes = cardDao.getHeroCards(locale.code)
@@ -233,6 +219,8 @@ class AchievementRepository @Inject constructor(
     }
 
     /** The first villain of a scenario's set that has a picture, in the card language or English. */
+    suspend fun scenarioFace(key: String): String? = scenarioFace(key, preferences.currentCardLocale())
+
     suspend fun scenarioFace(key: String, locale: CardLocale): String? = withContext(ioDispatcher) {
         if (FearNoEvil.isFne(key)) {
             return@withContext null

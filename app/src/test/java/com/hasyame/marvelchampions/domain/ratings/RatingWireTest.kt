@@ -2,6 +2,9 @@ package com.hasyame.marvelchampions.domain.ratings
 
 import com.hasyame.marvelchampions.data.db.entity.PlayEntity
 import com.hasyame.marvelchampions.data.db.entity.PlayHero
+import com.hasyame.marvelchampions.data.ratings.of
+import com.hasyame.marvelchampions.data.ratings.ofPlay
+import com.hasyame.marvelchampions.data.ratings.toEntity
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject

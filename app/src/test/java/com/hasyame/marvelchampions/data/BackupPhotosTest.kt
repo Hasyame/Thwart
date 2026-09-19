@@ -8,6 +8,9 @@ import com.hasyame.marvelchampions.data.backup.BackupResult
 import com.hasyame.marvelchampions.data.db.MarvelChampionsDatabase
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -19,9 +22,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import java.io.File
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 /**
  * The backup file, with and without the photographs.
@@ -56,6 +56,7 @@ class BackupPhotosTest {
             AppPreferences(context),
             photos,
             Dispatchers.Unconfined,
+            sessions = com.hasyame.marvelchampions.data.sync.SyncSessionStore(context, com.hasyame.marvelchampions.data.security.SecretStore()),
         )
     }
 
@@ -174,4 +175,53 @@ class BackupPhotosTest {
         assertTrue(File(photoDirectory(), "named.jpg").isFile)
         assertFalse(File(photoDirectory(), "smuggled.jpg").isFile)
     }
+    @Test
+    fun unknownDocumentFieldsSurviveActualRestoreAndExport() = runTest {
+        val original = com.hasyame.marvelchampions.data.backup.Backup(
+            createdAt = 1L,
+            extra = kotlinx.serialization.json.JsonObject(mapOf("auditFutureField" to kotlinx.serialization.json.JsonPrimitive("keep me"))),
+        )
+        assertTrue(repository.restore(original) is BackupResult.Restored)
+        val target = destination("audit-roundtrip.json")
+        assertTrue(repository.export(target) is BackupResult.Exported)
+        assertEquals(original.extra, repository.peek(target).getOrThrow().extra)
+    }
+
+    @Test
+    fun photoStoreCannotDeleteOutsidePhotoDirectory() = runTest {
+        val sentinel = File(context.filesDir, "audit-sentinel.txt")
+        sentinel.writeText("synthetic audit data")
+        try {
+            photos.delete("../audit-sentinel.txt")
+            assertTrue("photo deletion must remain in play_photos", sentinel.exists())
+        } finally {
+            sentinel.delete()
+        }
+    }    @Test
+    fun photoReadsAndCleanupRejectTraversal() = runTest {
+        val sentinel = File(context.filesDir, "sentinel.jpg")
+        sentinel.writeBytes(byteArrayOf())
+        try {
+            assertEquals(null, photos.file("../sentinel.jpg"))
+            assertFalse(photos.discardIfEmpty("../sentinel.jpg"))
+            assertTrue(sentinel.exists())
+        } finally {
+            sentinel.delete()
+        }
+    }
+
+    @Test
+    fun logicalWritesAndDirtyMarkersRollBackTogether() = runTest {
+        val failure = runCatching {
+            database.syncStateDao().transaction {
+                database.ownedPackDao().upsert(com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity("synthetic", 1))
+                database.syncStateDao().markDirty("ownedPacks", "synthetic")
+                error("interrupted operation")
+            }
+        }
+        assertTrue(failure.isFailure)
+        assertTrue(database.ownedPackDao().getOwned().isEmpty())
+        assertEquals(null, database.syncStateDao().get("ownedPacks", "synthetic"))
+    }
+
 }

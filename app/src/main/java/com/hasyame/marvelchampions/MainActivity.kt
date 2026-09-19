@@ -3,11 +3,12 @@ package com.hasyame.marvelchampions
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.activity.SystemBarStyle
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,10 +33,7 @@ class MainActivity : AppCompatActivity() {
     private var sharedLink by mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // The top bar is now solid red and runs under the status bar, so the
-        // status icons have to be light in both themes. The default picks them
-        // from the theme, which puts dark icons on red in light mode.
-        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT))
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         sharedLink = extractDeckLink(intent)
 
@@ -43,13 +41,17 @@ class MainActivity : AppCompatActivity() {
             val themeViewModel: ThemeViewModel = hiltViewModel()
             val choice by themeViewModel.themeChoice.collectAsStateWithLifecycle()
 
-            MarvelChampionsTheme(
-                darkTheme = when (choice) {
-                    ThemeChoice.LIGHT -> false
-                    ThemeChoice.DARK -> true
-                    ThemeChoice.SYSTEM -> isSystemInDarkTheme()
-                },
-            ) {
+            val dark = when (choice) {
+                ThemeChoice.LIGHT -> false
+                ThemeChoice.DARK -> true
+                ThemeChoice.SYSTEM -> isSystemInDarkTheme()
+            }
+            SideEffect {
+                val bars = if (dark) SystemBarStyle.dark(Color.TRANSPARENT)
+                    else SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                enableEdgeToEdge(statusBarStyle = bars, navigationBarStyle = bars)
+            }
+            MarvelChampionsTheme(darkTheme = dark) {
                 MarvelChampionsApp(
                     sharedLink = sharedLink,
                     onSharedLinkHandled = { sharedLink = null },

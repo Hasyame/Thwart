@@ -55,6 +55,17 @@ data class HeroCardNames(
 @Dao
 interface CardDao {
 
+    @RawQuery(observedEntities = [CardEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity::class])
+    fun observeSearchChanges(query: SupportSQLiteQuery): Flow<Int>
+
+    @RawQuery(observedEntities = [CardEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.PackEntity::class,
+        com.hasyame.marvelchampions.data.db.entity.PackTranslationEntity::class])
+    fun observeCatalogueChanges(query: SupportSQLiteQuery): Flow<Int>
+
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(cards: List<CardEntity>)
 

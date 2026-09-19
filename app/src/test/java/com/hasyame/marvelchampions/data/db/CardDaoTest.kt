@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.data.db
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import app.cash.turbine.test
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.domain.search.SearchNormalizer
@@ -205,6 +206,40 @@ class CardDaoTest {
             cardSetName = set,
             cardSetTypeNameCode = "villain",
         )
+
+    @Test
+    fun `search invalidates when card content changes without a count change`() = runTest {
+        dao.insertAll(listOf(card("audit-1", "en", "Before")))
+        dao.observeSearchChanges(androidx.sqlite.db.SimpleSQLiteQuery("SELECT 1")).test {
+            awaitItem()
+            dao.insertAll(listOf(card("audit-1", "en", "After")))
+            awaitItem()
+            assertEquals(1, dao.countForLocale("en"))
+            assertEquals("After", dao.getCard("audit-1", "en")?.name)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `search invalidates when a favourite changes`() = runTest {
+        dao.observeSearchChanges(androidx.sqlite.db.SimpleSQLiteQuery("SELECT 1")).test {
+            awaitItem()
+            database.favouriteDao().add(com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity("audit-1", addedAt = 0))
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `a larger search page reaches cards beyond the initial two hundred`() = runTest {
+        dao.insertAll((1..205).map { card("audit-$it", "en", "Synthetic $it") })
+        val query = com.hasyame.marvelchampions.domain.search.CardQueryBuilder.build(
+            filter = com.hasyame.marvelchampions.domain.model.CardFilter(),
+            locale = com.hasyame.marvelchampions.domain.model.CardLocale.ENGLISH,
+            ownedPackCodes = emptySet(), limit = 401, offset = 0,
+        )
+        assertEquals(205, dao.queryCards(androidx.sqlite.db.SimpleSQLiteQuery(query.sql, query.args.toTypedArray())).size)
+    }
 
     private fun card(
         code: String,

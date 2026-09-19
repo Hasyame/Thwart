@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CampaignDao {
 
+    @androidx.room.RawQuery(observedEntities = [CampaignRunEntity::class, CampaignEventEntity::class])
+    fun observeAchievementChanges(query: androidx.sqlite.db.SupportSQLiteQuery): Flow<Int>
+
     /**
      * Creates a run.
      *

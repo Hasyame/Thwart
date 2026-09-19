@@ -3,19 +3,19 @@ package com.hasyame.marvelchampions.data.photos
 import android.content.Context
 import androidx.core.content.FileProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 /**
  * Photographs of a table, kept beside the play they belong to.
  *
  * Private storage, and nothing else. A picture of somebody's living room is not
- * something to put in the shared gallery without being asked, and the app has
- * no server to send it to. It is in the app's own directory and it goes when
+ * something to put in the shared gallery without being asked, and account sync
+ * never uploads photographs. It is in the app's own directory and it goes when
  * the app goes.
  *
  * A backup carries these only when the player asks for it. Left alone, a
@@ -53,32 +53,35 @@ class PhotoStore @Inject constructor(
     }
 
     /** Where a remembered name actually lives, or null if the file has gone. */
-    fun file(name: String): File? = File(directory(), name).takeIf { it.isFile }
+    private fun resolve(name: String): File? {
+        if (!SAFE_NAME.matches(name)) return null
+        val root = directory().canonicalFile
+        return File(root, name).canonicalFile.takeIf { it.parentFile == root }
+    }
+
+    fun file(name: String): File? = resolve(name)?.takeIf { it.isFile }
 
     /** Every photograph currently held, for a backup that was asked to carry them. */
     suspend fun files(): List<File> = withContext(ioDispatcher) {
-        directory().listFiles().orEmpty().filter { it.isFile }.sortedBy { it.name }
+        directory().listFiles().orEmpty().filter { it.isFile && resolve(it.name) == it.canonicalFile }.sortedBy { it.name }
     }
 
     /**
      * Puts a photograph back, under a name taken from a file the player chose.
      *
-     * The name is stripped to its last segment before it is used. A backup is
+     * Only a plain file name inside the photo directory is accepted. A backup is
      * an ordinary document that anyone can edit, and an entry called
      * `../../databases/plays.db` would otherwise be written wherever it liked.
      * Anything that is not a plain photograph name is refused outright.
      */
     suspend fun write(name: String, bytes: ByteArray): Boolean = withContext(ioDispatcher) {
-        val safe = File(name).name
-        if (safe != name || !SAFE_NAME.matches(safe)) {
-            return@withContext false
-        }
-        File(directory(), safe).writeBytes(bytes)
+        val target = resolve(name) ?: return@withContext false
+        target.writeBytes(bytes)
         true
     }
 
     suspend fun delete(name: String) = withContext(ioDispatcher) {
-        File(directory(), name).delete()
+        resolve(name)?.delete()
         Unit
     }
 
@@ -89,7 +92,7 @@ class PhotoStore @Inject constructor(
      * thumbnail in the play is worse than no photo.
      */
     suspend fun discardIfEmpty(name: String): Boolean = withContext(ioDispatcher) {
-        val file = File(directory(), name)
+        val file = resolve(name) ?: return@withContext false
         if (file.exists() && file.length() == 0L) {
             file.delete()
             true

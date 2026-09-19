@@ -49,8 +49,6 @@ class AchievementPresenter @Inject constructor(
     private val preferences: AppPreferences,
 ) {
 
-    /** Villain picture by scenario key, looked up once per process. */
-    private val scenarioFaces = HashMap<String, String?>()
 
     suspend fun cards(
         state: AchievementState,
@@ -104,7 +102,7 @@ class AchievementPresenter @Inject constructor(
             scenario = p.scenario
         }
         if (scenario != null) {
-            val face = scenarioFaces.getOrPut(scenario) { repository.scenarioFace(scenario, locale) }
+            val face = repository.scenarioFace(scenario, locale)
             return AchievementBadge(face, CampaignCovers.of(FearNoEvil.TEMPLATE_ID).takeIf { FearNoEvil.isFne(scenario) })
         }
         return AchievementBadge(names.heroFaces[AchievementTexts.FALLBACK_HERO], null)
