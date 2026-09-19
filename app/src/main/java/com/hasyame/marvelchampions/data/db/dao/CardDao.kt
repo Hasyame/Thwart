@@ -41,6 +41,7 @@ data class CardSetSummary(
 data class HeroCardRef(
     val code: String,
     val packCode: String,
+    val cardSetCode: String? = null,
 )
 
 /** A hero card's name and picture, in the asked-for language when the database has it, else any. */
@@ -391,7 +392,7 @@ interface CardDao {
      */
     @Query(
         """
-        SELECT code, MIN(packCode) AS packCode
+        SELECT code, MIN(packCode) AS packCode, MIN(cardSetCode) AS cardSetCode
         FROM cards
         WHERE typeCode = 'hero'
         GROUP BY code

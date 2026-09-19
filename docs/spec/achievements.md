@@ -74,3 +74,10 @@ now defaults to every seat, matching the current web presentation, and shows
 owned hero portraits followed by the selected hero's scenario album. Optional
 filters remain available. Repository adapters live under `data/achievements`;
 only pure derivation and models remain under `domain/achievements`.
+
+The Android input adapter resolves legacy hero-set IDs to hero-card IDs only
+when the loaded catalogue contains one distinct hero card for that set. Direct
+card IDs, unknown IDs and ambiguous sets remain unchanged. Stored plays and
+shared derivation vectors are not rewritten. The web adapter must apply the
+same normalization when reading Android games; coordinate this follow-up
+before claiming cross-client parity for legacy set-based records.

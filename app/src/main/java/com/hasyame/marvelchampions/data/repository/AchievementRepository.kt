@@ -3,6 +3,7 @@ package com.hasyame.marvelchampions.data.repository
 import android.content.Context
 import com.hasyame.marvelchampions.core.util.runCatchingCancellable
 import com.hasyame.marvelchampions.data.achievements.AchievementFacts
+import com.hasyame.marvelchampions.data.achievements.HeroAliases
 import com.hasyame.marvelchampions.data.db.dao.CampaignDao
 import com.hasyame.marvelchampions.data.db.dao.CardDao
 import com.hasyame.marvelchampions.data.db.dao.PackDao
@@ -155,7 +156,9 @@ class AchievementRepository @Inject constructor(
         val campaignKeys = plays.filter { it.campaignRunId != null && it.deletedAt == null }
             .associate { it.id to campaignKeyOf(it, folded) }
         val resolver = AchievementFacts.CampaignResolver { play -> campaignKeys[play.id] }
+        val heroAliases = HeroAliases(cardDao.getHeroCards())
         val facts: List<PlayFact> = plays.mapNotNull { AchievementFacts.factOf(it, resolver) }
+            .map(heroAliases::resolve)
         val runs: List<RunFact> = folded.values.map { run ->
             AchievementFacts.runFactOf(run.entity, lost = run.state?.campaignLost == true)
         }
