@@ -4,7 +4,9 @@ import com.hasyame.marvelchampions.data.db.dao.PausedGameDao
 import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
 import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.data.repository.CollectionRepository
+import com.hasyame.marvelchampions.domain.achievements.Completion
 import com.hasyame.marvelchampions.data.repository.DraftRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import androidx.lifecycle.ViewModel
@@ -41,6 +43,7 @@ class CampaignListViewModel @Inject constructor(
     private val cardDao: CardDao,
     private val collectionRepository: CollectionRepository,
     private val preferences: AppPreferences,
+    private val achievements: AchievementRepository,
     val photoStore: PhotoStore,
 ) : ViewModel() {
 
@@ -74,6 +77,16 @@ class CampaignListViewModel @Inject constructor(
     val draftInProgress: StateFlow<Boolean> = draftRepository.observeSession()
         .map { it != null && it.players.isNotEmpty() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+    /**
+     * How much of the collection's grid is won, for the hub's discreet
+     * entry to the achievements: a figure and a bar rather than a word,
+     * since a figure is what gets tapped. Null while the definitions are
+     * refused, and the entry is not shown.
+     */
+    val achievementProgress: StateFlow<Completion?> = achievements.observeState()
+        .map { it?.completion?.owned }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     private val importErrors = MutableStateFlow<List<TemplateError>>(emptyList())
     private val importMessage = MutableStateFlow<String?>(null)

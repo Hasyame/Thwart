@@ -38,15 +38,7 @@ class BackupRepository @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) {
 
-    /**
-     * Indented on purpose. A backup is read by people at least as often as by
-     * the app — usually when something has already gone wrong.
-     */
-    private val json = Json {
-        prettyPrint = true
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+    private val json = DOCUMENT_JSON
 
     /**
      * @param includePhotos writes an archive carrying the table photographs
@@ -135,14 +127,10 @@ class BackupRepository @Inject constructor(
                 bytes.decodeToString()
             }
 
-            val backup = json.decodeFromString(Backup.serializer(), text)
-            if (backup.formatVersion > Backup.CURRENT_FORMAT_VERSION) {
-                error(
-                    "this backup was written by a newer version of the app " +
-                        "(format ${backup.formatVersion})",
-                )
-            }
-            backup
+            // A newer format still reads: the convention shared with the web
+            // is that unknown keys are kept and written back, not refused, so
+            // a phone one release behind round-trips a newer file whole.
+            json.decodeFromString(Backup.serializer(), text)
         }
     }
 
@@ -262,13 +250,24 @@ class BackupRepository @Inject constructor(
         context.packageManager.getPackageInfo(context.packageName, 0).versionName
     }.getOrNull().orEmpty()
 
-    private companion object {
-        val DATE = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+    companion object {
+        private val DATE = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+
+        /**
+         * Indented on purpose. A backup is read by people at least as often
+         * as by the app, usually when something has already gone wrong.
+         * Shared with the tests, so a fixture is read exactly as a file is.
+         */
+        val DOCUMENT_JSON: Json = Json {
+            prettyPrint = true
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
 
         /** The document, under the same name whether or not it is alone. */
-        const val DOCUMENT_ENTRY = "backup.json"
+        internal const val DOCUMENT_ENTRY = "backup.json"
 
         /** Photographs live in their own folder, so the archive reads clearly. */
-        const val PHOTO_PREFIX = "photos/"
+        internal const val PHOTO_PREFIX = "photos/"
     }
 }

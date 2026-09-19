@@ -16,6 +16,7 @@ import com.hasyame.marvelchampions.ui.cards.CardsScreen
 import com.hasyame.marvelchampions.ui.collection.CollectionScreen
 import com.hasyame.marvelchampions.ui.decks.DeckScreen
 import com.hasyame.marvelchampions.ui.decks.DecksScreen
+import com.hasyame.marvelchampions.ui.achievements.AchievementsScreen
 import com.hasyame.marvelchampions.ui.history.HistoryScreen
 import com.hasyame.marvelchampions.ui.history.PlayDetailScreen
 import com.hasyame.marvelchampions.ui.home.HomeScreen
@@ -52,6 +53,7 @@ fun MarvelChampionsNavHost(
                     // lit while it is open, as it does for Settings itself.
                     onAccount = { create -> navController.navigate(SyncAccountRoute(create)) },
                     onHistory = { navController.navigate(HistoryRoute) },
+                    onAchievements = { navController.navigate(AchievementsRoute) },
                     // The statistics keep their own graph, left the bar for
                     // this tile; Home stays lit while they are open.
                     onStats = { navController.navigate(StatsGraph) },
@@ -66,6 +68,9 @@ fun MarvelChampionsNavHost(
                     onBack = { navController.popBackStack() },
                     onOpen = { playId -> navController.navigate(PlayDetailRoute(playId)) },
                 )
+            }
+            composable<AchievementsRoute> {
+                AchievementsScreen(onBack = { navController.popBackStack() })
             }
             composable<PlayDetailRoute> { entry ->
                 PlayDetailScreen(
@@ -161,6 +166,7 @@ fun MarvelChampionsNavHost(
                     onResumeCampaign = { runId ->
                         navController.navigate(CampaignRunRoute(runId))
                     },
+                    onAchievements = { navController.navigate(AchievementsRoute) },
                 )
             }
             composable<VersusRoute> {
@@ -216,6 +222,7 @@ fun MarvelChampionsNavHost(
                     replayId = args.replayId,
                     onBack = { navController.popBackStack() },
                     onOpenPlays = { navController.navigate(PlaysRoute) },
+                    onOpenAchievements = { navController.navigate(AchievementsRoute) },
                 )
             }
             composable<PlaysRoute> {
@@ -224,7 +231,13 @@ fun MarvelChampionsNavHost(
                     onPlayAgain = { playId ->
                         navController.navigate(GameSessionRoute(replayId = playId))
                     },
+                    onAchievements = { navController.navigate(AchievementsRoute) },
                 )
+            }
+            // Reached from the play hub, a game's result and the statistics:
+            // it stays in the Play back stack, so the tab keeps its place.
+            composable<AchievementsRoute> {
+                AchievementsScreen(onBack = { navController.popBackStack() })
             }
             composable<CampaignRoute> {
                 CampaignScreen(
@@ -254,6 +267,7 @@ fun MarvelChampionsNavHost(
                     runId = entry.toRoute<CampaignRunRoute>().runId,
                     onBack = { navController.popBackStack() },
                     onCardClick = { code -> navController.navigate(CardDetailRoute(code)) },
+                    onAchievements = { navController.navigate(AchievementsRoute) },
                 )
             }
             // A card opened from a campaign stays in the Campaign back stack.
@@ -281,7 +295,11 @@ fun MarvelChampionsNavHost(
                     onPlayAgain = { playId ->
                         navController.navigate(GameSessionRoute(replayId = playId))
                     },
+                    onAchievements = { navController.navigate(AchievementsRoute) },
                 )
+            }
+            composable<AchievementsRoute> {
+                AchievementsScreen(onBack = { navController.popBackStack() })
             }
         }
         navigation<SettingsGraph>(startDestination = SettingsRoute) {

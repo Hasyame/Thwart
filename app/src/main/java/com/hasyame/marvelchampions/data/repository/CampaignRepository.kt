@@ -661,16 +661,23 @@ class CampaignRepository @Inject constructor(
         // hero played which aspect. Flattening them into one list first is what
         // made hero-with-aspect pair the first player against every aspect
         // anybody at the table had brought.
-        val roster = heroes.map { hero ->
-            val heroAspects = hero.deckId
-                ?.let { deckRepository.getDeck(it)?.aspects }
+        val decks = heroes.associate { hero -> hero.id to hero.deckId?.let { deckRepository.getDeck(it) } }
+        // The first hero is the player's own: the seat this device's
+        // achievements credit, and whose deck says whether the game was a
+        // draft's.
+        val roster = heroes.mapIndexed { index, hero ->
+            val heroAspects = decks[hero.id]?.aspects
                 ?.let { DeckRepository.parseAspects(it) }
                 .orEmpty()
             PlayHero(
                 code = hero.heroCardCode.orEmpty(),
                 name = hero.name,
                 aspect = heroAspects.joinToString(", "),
+                isOwner = true.takeIf { index == 0 },
             )
+        }
+        val mode = DeckRepository.DRAFT_TAG.takeIf { tag ->
+            DeckRepository.hasTag(heroes.firstOrNull()?.let { decks[it.id] }?.tags, tag)
         }
 
         val aspects = roster.flatMap { it.aspect.split(',') }
@@ -700,6 +707,7 @@ class CampaignRepository @Inject constructor(
                 elapsedMillis = elapsedMillis,
                 victoryPoints = victoryPoints,
                 campaignRunId = runId,
+                mode = mode,
             )
         playRepository.record(play)
         play
@@ -1056,6 +1064,49 @@ class CampaignRepository @Inject constructor(
                 .filter { cardDao.getSetType(it) == MODULAR_SET_TYPE }
             listOf(RatingSubject.scenario(setCode)) + modular.map { RatingSubject.modular(it, setCode) }
         }
+
+    /**
+     * A run folded for reading only: the bundled template when one is
+     * newer, the stored copy otherwise, and the engine's answer over its
+     * log. Nothing is rewritten and nothing is marked dirty, unlike [load],
+     * because this is read for every run at once whenever the history
+     * changes, and a reading must not have side effects.
+     */
+    data class FoldedRun(val entity: CampaignRunEntity, val template: CampaignTemplate?, val state: CampaignState?)
+
+    suspend fun foldedRuns(): List<FoldedRun> = withContext(ioDispatcher) {
+        val bundled = bundledTemplates()
+        campaignDao.getRuns().map { entity ->
+            val stored = runCatching {
+                json.decodeFromString(CampaignTemplate.serializer(), entity.templateJson).expanded()
+            }.getOrNull()
+            val template = stored?.let { s -> bundled.firstOrNull { it.id == s.id } ?: s }
+            val state = template?.let { t ->
+                val events = campaignDao.getEvents(entity.id).mapNotNull { row ->
+                    runCatching { json.decodeFromString(CampaignEvent.serializer(), row.payload) }.getOrNull()
+                }
+                runCatching { engine.fold(t, events) }.getOrNull()
+            }
+            FoldedRun(entity, template, state)
+        }
+    }
+
+    /**
+     * The card-set code of the villain a campaign scenario was fought
+     * against, the same reading as [ratingSubjects]: the template's villain
+     * deck for the run's difficulty, or the one the campaign drew when the
+     * template draws them. Null when nothing resolves.
+     */
+    suspend fun scenarioSetCode(run: FoldedRun, scenarioId: String): String? = withContext(ioDispatcher) {
+        val template = run.template ?: return@withContext null
+        val state = run.state ?: return@withContext null
+        val scenario = template.scenarios.firstOrNull { it.id == scenarioId } ?: return@withContext null
+        val setup = scenario.baseSetup ?: return@withContext null
+        val drawn = CampaignEngine.drawnCards(state, scenarioId, VILLAIN_DRAW_ID).firstOrNull()
+        val villain = setup.villainStages(state.difficulty, drawn).firstOrNull() ?: drawn
+            ?: return@withContext null
+        cardDao.getCardPreferringLocale(villain, localeCode())?.cardSetCode
+    }
 
     /** The template a run was started from, or null for a run this device no longer has. */
     suspend fun templateIdOf(runId: String): String? = withContext(ioDispatcher) {

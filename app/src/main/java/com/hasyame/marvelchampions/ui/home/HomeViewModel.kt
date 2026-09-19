@@ -5,14 +5,21 @@ import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.dao.CardDao
+import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
+import com.hasyame.marvelchampions.domain.achievements.AchievementDerivation
+import com.hasyame.marvelchampions.ui.achievements.AchievementCard
+import com.hasyame.marvelchampions.ui.achievements.AchievementPresenter
 import com.hasyame.marvelchampions.data.sync.SyncSessionStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,10 +50,32 @@ class HomeViewModel @Inject constructor(
     private val preferences: AppPreferences,
     private val cardDao: CardDao,
     private val sessions: SyncSessionStore,
+    private val achievements: AchievementRepository,
+    private val presenter: AchievementPresenter,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = state.asStateFlow()
+
+    /**
+     * The achievements as a store's front page shows them: the count, the
+     * latest earned, a row of badges. Read from the history like the page
+     * itself; null while the definitions are refused, and nothing is shown.
+     */
+    val achievementStrip: StateFlow<HomeAchievements?> = achievements.observeInput()
+        .map { input ->
+            val derived = input?.let(AchievementDerivation::derive) ?: return@map null
+            val cards = presenter.cards(derived, input.definitions, input.catalogue, achievements.names())
+            val byId = cards.associateBy { it.id }
+            HomeAchievements(
+                unlocked = cards.count { it.unlocked },
+                total = cards.size,
+                latest = derived.recent.firstOrNull()?.let { byId[it.id] },
+                unlockedCards = derived.recent.mapNotNull { byId[it.id] },
+                lockedCards = cards.filterNot { it.unlocked },
+            )
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     init {
         val info = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -119,3 +148,15 @@ class HomeViewModel @Inject constructor(
         val PARAGRAPH_BREAK = Regex("\\n[ \\t]*\\n")
     }
 }
+
+/** What the home page says about the achievements. */
+data class HomeAchievements(
+    val unlocked: Int,
+    val total: Int,
+    /** The most recently earned, shown with its words. */
+    val latest: AchievementCard?,
+    /** Earned, newest first. */
+    val unlockedCards: List<AchievementCard>,
+    /** Not yet, in the file's order. */
+    val lockedCards: List<AchievementCard>,
+)

@@ -21,6 +21,14 @@ data object HomeRoute
 @Serializable
 data object HistoryRoute
 
+/**
+ * What the history adds up to as things to earn: the grid and the named
+ * achievements. Its own page, reached from Home, the Play hub, the
+ * statistics and a game's result, in whichever graph the caller is.
+ */
+@Serializable
+data object AchievementsRoute
+
 /** One game of the history, read back. */
 @Serializable
 data class PlayDetailRoute(val playId: String)

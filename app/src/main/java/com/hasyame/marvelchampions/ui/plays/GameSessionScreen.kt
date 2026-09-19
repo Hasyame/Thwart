@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.ui.achievements.UnlockedAchievements
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.core.designsystem.component.halftone
@@ -92,6 +93,7 @@ fun GameSessionScreen(
     resumeId: String? = null,
     replayId: String? = null,
     onOpenPlays: () -> Unit,
+    onOpenAchievements: () -> Unit,
     viewModel: GameSessionViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -248,6 +250,16 @@ fun GameSessionScreen(
 
                             is PlayRecorded.SavedReportFailed ->
                                 stringResource(R.string.session_saved_not_sent, outcome.detail)
+                        },
+                    )
+
+                    // What this game earned, before the ratings: the one
+                    // moment somebody wants to hear it.
+                    UnlockedAchievements(
+                        unlocked = state.unlocked,
+                        onOpen = {
+                            viewModel.reset()
+                            onOpenAchievements()
                         },
                     )
 

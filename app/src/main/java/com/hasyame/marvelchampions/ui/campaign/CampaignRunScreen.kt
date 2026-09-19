@@ -59,6 +59,7 @@ import com.hasyame.marvelchampions.ui.plays.CorrectTimeDialog
 import com.hasyame.marvelchampions.ui.plays.EncounterPanel
 import com.hasyame.marvelchampions.ui.util.KeepScreenOn
 import com.hasyame.marvelchampions.R
+import com.hasyame.marvelchampions.ui.achievements.UnlockedAchievements
 import com.hasyame.marvelchampions.ui.ratings.RatingPanel
 import com.hasyame.marvelchampions.domain.ratings.RatingSubject
 import com.hasyame.marvelchampions.data.db.entity.PausedGameEntity
@@ -91,6 +92,7 @@ fun CampaignRunScreen(
     runId: String,
     onBack: () -> Unit,
     onCardClick: (String) -> Unit,
+    onAchievements: () -> Unit,
     viewModel: CampaignRunViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -223,7 +225,10 @@ fun CampaignRunScreen(
                     RunPage.RESULT -> ResultPage(
                         run = run,
                         summary = state.summary,
-                        ratings = { RatingRows(state, viewModel::rate) },
+                        ratings = {
+                            UnlockedAchievements(state.unlocked, onOpen = onAchievements)
+                            RatingRows(state, viewModel::rate)
+                        },
                         onNext = viewModel::continueFromOutcome,
                         onConcede = viewModel::concedeCampaign,
                         onMarket = { viewModel.goTo(RunPage.MARKET) },
@@ -233,7 +238,10 @@ fun CampaignRunScreen(
 
                     RunPage.DEFEAT -> DefeatPage(
                         summary = state.summary,
-                        ratings = { RatingRows(state, viewModel::rate) },
+                        ratings = {
+                            UnlockedAchievements(state.unlocked, onOpen = onAchievements)
+                            RatingRows(state, viewModel::rate)
+                        },
                         onRetry = viewModel::retryScenario,
                         onContinue = viewModel::continueFromOutcome,
                         onBreak = onBack,

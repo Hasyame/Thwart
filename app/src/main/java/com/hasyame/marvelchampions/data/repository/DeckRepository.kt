@@ -184,6 +184,8 @@ class DeckRepository @Inject constructor(
          * adds by hand what was never optional.
          */
         slots: Map<String, Int> = emptyMap(),
+        /** Comma-separated marks on the deck; `draft` for one the draft built. */
+        tags: String? = null,
     ): String = withContext(ioDispatcher) {
         val id = "$LOCAL_ID_PREFIX${UUID.randomUUID()}"
         save(
@@ -200,7 +202,7 @@ class DeckRepository @Inject constructor(
                 ignoreDeckLimitSlots = "",
                 descriptionMd = null,
                 version = null,
-                tags = null,
+                tags = tags,
                 rawJson = "",
                 lastSyncedAt = System.currentTimeMillis(),
             ),
@@ -413,6 +415,13 @@ class DeckRepository @Inject constructor(
     companion object {
         /** Marks a deck built in the app rather than imported. */
         const val LOCAL_KIND: String = "LOCAL"
+
+        /** The tag the draft puts on the decks it builds, as the web does. */
+        const val DRAFT_TAG: String = "draft"
+
+        /** Whether a deck's comma-separated tags carry [tag]. */
+        fun hasTag(tags: String?, tag: String): Boolean =
+            tags.orEmpty().split(',').any { it.trim().equals(tag, ignoreCase = true) }
 
         /** The four aspects a deck can be customised from. */
         private val ASPECT_FACTIONS =

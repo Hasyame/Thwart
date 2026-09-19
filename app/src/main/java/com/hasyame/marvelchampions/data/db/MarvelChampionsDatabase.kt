@@ -23,6 +23,7 @@ import com.hasyame.marvelchampions.data.db.entity.CardEntity
 import com.hasyame.marvelchampions.data.db.entity.CardFtsEntity
 import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.DraftSessionEntity
+import com.hasyame.marvelchampions.data.db.entity.ExtrasConverters
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
 import com.hasyame.marvelchampions.data.db.entity.OwnedPackEntity
@@ -60,7 +61,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
  * They share a file because the cross-device bundle is a separate
  * serialisation concern, not a storage one.
  */
-@TypeConverters(PlayHeroConverters::class, StringListConverters::class)
+@TypeConverters(PlayHeroConverters::class, StringListConverters::class, ExtrasConverters::class)
 @Database(
     entities = [
         CardEntity::class,
@@ -82,7 +83,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         DeckFolderEntity::class,
         SyncStateEntity::class,
     ],
-    version = 25,
+    version = 26,
     exportSchema = true,
     // Room generates these from the exported schemas, which it can do for
     // anything that only adds a table, or adds a column with a SQL default.
@@ -114,6 +115,7 @@ import com.hasyame.marvelchampions.data.db.entity.SyncStateEntity
         AutoMigration(from = 22, to = 23),
         AutoMigration(from = 23, to = 24),
         AutoMigration(from = 24, to = 25),
+        AutoMigration(from = 25, to = 26),
     ],
 )
 abstract class MarvelChampionsDatabase : RoomDatabase() {

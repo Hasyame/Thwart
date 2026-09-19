@@ -104,6 +104,7 @@ import kotlin.math.roundToInt
 fun PlaysScreen(
     onBack: (() -> Unit)? = null,
     onPlayAgain: (String) -> Unit,
+    onAchievements: () -> Unit = {},
     viewModel: PlaysViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -179,6 +180,13 @@ fun PlaysScreen(
 
         LazyColumn(Modifier.fillMaxSize().padding(padding), state = listState) {
             item(key = "overall") { Overall(state) }
+            // From the figures to what they add up to: the reader is already
+            // in a reflective mood here, so the achievements are one tap away.
+            item(key = "achievements") {
+                TextButton(onClick = onAchievements, modifier = Modifier.padding(horizontal = 12.dp)) {
+                    Text(stringResource(R.string.achievements_stats_link))
+                }
+            }
             if (state.byAspect.isNotEmpty()) {
                 item(key = "aspects") {
                     AspectChart(

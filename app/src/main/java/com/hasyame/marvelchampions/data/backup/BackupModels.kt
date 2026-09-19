@@ -13,7 +13,13 @@ import com.hasyame.marvelchampions.data.db.entity.SavedDeckEntity
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.ratings.RatingWire
 import com.hasyame.marvelchampions.domain.model.ThemeChoice
+import com.hasyame.marvelchampions.data.db.entity.KSerializerOf
+import com.hasyame.marvelchampions.data.db.entity.NO_EXTRAS
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.json.JsonObject
 
 /**
  * Everything the app cannot rebuild for itself.
@@ -23,10 +29,23 @@ import kotlinx.serialization.Serializable
  * several-megabyte one that goes stale. What is here is what the player made —
  * their collection, decks, campaigns and play history — and none of it exists
  * anywhere else, because this app has no account and no server.
+ *
+ * The same document is what the web writes and what the sync server
+ * exports, so it is read with the shared rules: a file of format 1 or 2
+ * imports, every export is format 2, and keys this build does not know,
+ * on the document or on a play, are kept and written back untouched
+ * rather than dropped (docs/spec/achievements/sync.md §2).
  */
-@Serializable
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable(with = Backup.Codec::class)
+@KeepGeneratedSerializer
 data class Backup(
-    /** Bumped only when a later version can no longer read an earlier file. */
+    /**
+     * The shape of the document. 2 since the achievements: a play's seats
+     * carry `isOwner` and a play may carry `mode`. Bumped when the record
+     * gains a field a reader must know about; never for a field an older
+     * reader can carry through unread.
+     */
     val formatVersion: Int = CURRENT_FORMAT_VERSION,
     /** When the file was written, epoch milliseconds. For the restore summary. */
     val createdAt: Long,
@@ -82,7 +101,15 @@ data class Backup(
      * settings alone in the first case.
      */
     val settings: BackupSettings? = null,
+    /** Keys of the document this build does not know, kept for the export. */
+    @Transient val extra: JsonObject = NO_EXTRAS,
 ) {
+    object Codec : KSerializerOf<Backup>(
+        generated = generatedSerializer(),
+        extrasOf = { it.extra },
+        withExtras = { backup, extra -> backup.copy(extra = extra) },
+    )
+
     /** What a restore is about to bring in, for the confirmation. */
     fun summary(): BackupSummary = BackupSummary(
         createdAt = createdAt,
@@ -94,7 +121,7 @@ data class Backup(
     )
 
     companion object {
-        const val CURRENT_FORMAT_VERSION = 1
+        const val CURRENT_FORMAT_VERSION = 2
     }
 }
 
