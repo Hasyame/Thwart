@@ -43,7 +43,7 @@ which is how CI builds.
 
 ## Toolchain
 
-JDK 21 · Gradle 9.7.1 · AGP 9.4.1 · Kotlin 2.4.20 · compileSdk 37 · minSdk 28 ·
+JDK 21 · Gradle 9.7.1 · AGP 9.4.1 · Kotlin 2.4.10 · compileSdk 37 · minSdk 28 ·
 targetSdk 37. Versions live in `gradle/libs.versions.toml` only — never inline a
 version in a build file.
 

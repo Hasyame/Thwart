@@ -2,7 +2,8 @@
 # Toolchain — versions resolved against the live Maven metadata on 2026-09-19,
 # newest entry that is not an alpha/beta/rc.
 agp = "9.4.1"
-kotlin = "2.4.20"
+# CodeQL 2.27.0 rejects Kotlin 2.4.20; retain this version until its extractor supports it.
+kotlin = "2.4.10"
 ksp = "2.3.12"
 
 # AndroidX / Compose
