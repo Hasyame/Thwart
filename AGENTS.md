@@ -11,6 +11,12 @@ Everything below was checked against the repository on 2026-09-19 (branch
 Statements marked **Unknown / requires confirmation** could not be verified
 from the repository alone.
 
+Current implementation update: Room is version 27 with a 26→27 auto-migration
+for local backup metadata. Achievements use an accessible hero/scenario album
+instead of the canvas grid, and catalogue changes invalidate derived inputs.
+The dependency catalog is authoritative for current versions. The dated
+release and F-Droid notes below are historical, not publication instructions.
+
 ---
 
 ## 1. Architecture

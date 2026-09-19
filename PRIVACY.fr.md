@@ -1,66 +1,72 @@
 # Politique de confidentialité
 
-Thwart est faite par une seule personne, Benoît Breul, et cette page dit ce qu'elle fait de vos informations. En résumé : presque rien, et rien ne me parvient.
+Thwart est maintenu par Benoît Breul. Mise à jour : 19 septembre 2026.
 
-Dernière mise à jour : 22 août 2026.
+## Utilisation locale
 
-## Ce qui reste sur votre téléphone
+L’application est utilisable sans compte. Decks, collection, campagnes,
+historique, notes, photos de table et réglages sont conservés sur votre appareil.
+La désinstallation supprime cette copie locale. Les réglages permettent de créer
+une sauvegarde portable ; les photos ne sont incluses que si vous le demandez.
 
-Tout ce que vous créez dans l'application :
+## Fonctions réseau
 
-- Vos decks, et les extensions que vous possédez
-- Vos campagnes, et chaque choix qui y est enregistré
-- Votre historique de parties, les durées, les scores et les notes
-- Les photos que vous prenez de la table
-- Vos réglages
+- **MarvelCDB :** mises à jour des cartes, importation de decks et images utilisent
+  MarvelCDB et son site français. Ces serveurs reçoivent les informations habituelles
+  des requêtes web, notamment votre adresse IP. Votre historique local de parties
+  n’est pas envoyé à MarvelCDB.
+- **Compte Thwart facultatif :** la connexion puis l’activation de la synchronisation
+  envoient les enregistrements pris en charge (collection, decks, campagnes, parties,
+  favoris, réglages et évaluations) au serveur choisi, thwart.app par défaut.
+  Les notes de ces enregistrements sont transmises avec eux. L’authentification
+  transmet les informations saisies pour le compte. Vos autres appareils connectés
+  et le client web peuvent accéder aux données du compte. Les fichiers photo ne
+  sont pas téléversés par la synchronisation du compte. Consultez la politique
+  propre au serveur avant de choisir une autre instance.
+- **Évaluations communautaires :** les évaluations facultatives utilisent le service
+  Thwart. Leur justification fait référence à une partie ou une campagne enregistrée.
+  Une évaluation synchronisée ne doit pas être considérée comme une préférence
+  locale anonyme.
+- **Envoi facultatif à BoardGameGeek :** après configuration, l’application peut
+  envoyer les détails des parties terminées et le lieu saisi à BoardGameGeek.
+  Les identifiants sont chiffrés localement avec Android Keystore et utilisés
+  pour se connecter à BoardGameGeek.
+- **Partage et assistance :** les exports vont vers la destination choisie. Les
+  rapports de plantage restent sur l’appareil jusqu’à ce que vous choisissiez
+  d’ouvrir puis d’envoyer un message avec votre application de messagerie.
+  Aucun service de rapport de plantage ne reçoit d’envoi automatique.
 
-Rien de tout cela n'est envoyé. Il n'y a aucun compte à créer, aucun serveur à moi où cela pourrait aller, et aucune copie ailleurs que sur votre téléphone.
-Si vous désinstallez l'application, tout disparaît (c'est pour cela qu'elle propose un fichier de sauvegarde que vous gardez vous-même).
+La synchronisation propage les modifications et suppressions ; ce n’est pas une
+sauvegarde versionnée. Conservez une sauvegarde indépendante avant une bêta ou
+le remplacement de vos données par une restauration.
 
-Les photos sont conservées dans le stockage privé de l'application, pas dans votre galerie, et les autres applications ne peuvent pas les lire.
+## Autorisations et transferts
 
-## Ce qui quitte votre téléphone
+L’application déclare l’accès à Internet. Les bibliothèques Android peuvent ajouter
+les autorisations nécessaires aux tâches planifiées ; consultez les informations
+Android du paquet installé. Thwart ne demande pas l’accès à la localisation, aux
+contacts ou au microphone. La prise de photo utilise votre application photo,
+sans demander l’autorisation caméra dans Thwart. Les photos restent dans le
+stockage privé de l’application.
 
-Trois choses, dont deux seulement si vous le demandez.
+La sauvegarde cloud Android et le transfert entre appareils sont exclus. Utilisez
+la sauvegarde portable explicite pour déplacer les données prises en charge.
+Les identifiants, le suivi technique de synchronisation, les parties en pause et
+les drafts inachevés ne figurent pas dans ce document portable.
 
-**Les données de cartes, depuis MarvelCDB.** L'application télécharge les informations de cartes depuis [marvelcdb.com](https://marvelcdb.com) pour pouvoir vous les montrer, et récupère les images pendant que vous naviguez. Ce sont des requêtes web ordinaires. Rien vous concernant n'y est joint, et rien n'est envoyé à MarvelCDB. Comme pour toute requête web, les serveurs de MarvelCDB voient la requête arriver, ce qui inclut votre adresse IP. Leurs pratiques de confidentialité sont les leurs, pas les miennes.
+## Publicité et suivi
 
-**BoardGameGeek, uniquement si vous le configurez.** L'application peut envoyer une partie terminée vers votre compte BoardGameGeek. C'est désactivé tant que vous ne l'activez pas en saisissant vos propres identifiants. Ceux-ci sont chiffrés avec une clé conservée dans le keystore Android et ne quittent jamais votre téléphone, sauf pour se connecter à BoardGameGeek. Je ne les vois jamais. Si vous ne touchez pas à ce réglage, l'application ne contacte jamais BoardGameGeek.
-
-**Un rapport de plantage, uniquement si vous l'envoyez.** Si l'application plante, elle écrit ce qui s'est passé dans un fichier sur votre téléphone. Rien n'est envoyé automatiquement. Si vous choisissez de le signaler, l'application ouvre votre propre messagerie avec ce fichier joint, et c'est vous qui décidez d'appuyer sur envoyer. Vous pouvez lire exactement ce que vous envoyez avant de l'envoyer.
-
-## Ce que l'application ne fait pas
-
-- Aucune publicité, et aucune régie publicitaire
-- Aucune analyse d'usage, aucune télémétrie, aucun service de rapport de
-  plantage
-- Aucun pistage d'aucune sorte, et aucun identifiant publicitaire
-- Aucun compte, aucune inscription, aucun profil
-- Aucune revente ni partage de vos données, puisqu'il n'y en a aucune à vendre
-- Aucune localisation, aucun contact, aucun microphone
-
-## Permissions
-
-L'application demande une seule permission : **l'accès à internet**, pour télécharger les données et images de cartes, et pour BoardGameGeek si vous l'activez.
-
-Elle ne demande **pas** la permission caméra. Quand vous photographiez la table, l'application confie le travail à l'appareil photo de votre téléphone et récupère la photo ensuite.
-
-La sauvegarde automatique d'Android dans le cloud est désactivée pour cette application : vos données ne sont donc pas copiées vers Google Drive à votre insu.
+L’application ne contient ni réseau publicitaire, ni SDK de mesure d’audience,
+ni identifiant publicitaire, ni service automatique de rapport de plantage.
 
 ## Enfants
 
-Thwart est un compagnon pour un jeu de cartes et ne s'adresse pas aux enfants de moins de 13 ans. Elle ne collecte rien de personne, enfants compris.
+Thwart accompagne un jeu de cartes et ne s’adresse pas aux enfants de moins de 13 ans.
 
-## Modifications
+## Contact et modifications
 
-Si cela change un jour, je mettrai cette page à jour et je le dirai dans les notes de version.
+Questions : **marvelchampcompanion@proton.me**. Les changements de comportement
+doivent être reflétés ici et dans les notes de version. Code source :
+[Hasyame/Thwart](https://github.com/Hasyame/Thwart).
 
-## Contact
-
-Une question, ou quelque chose ici qui ne correspond pas à ce que vous voyez l'application faire : **marvelchampcompanion@proton.me**
-
-L'application est entièrement open source. Si vous préférez vérifier plutôt que me croire sur parole, le code est sur [github.com/Hasyame/Thwart](https://github.com/Hasyame/Thwart).
-
----
-
-Thwart est un projet de fan non officiel. Elle n'est ni affiliée, ni soutenue, ni liée à Fantasy Flight Games ou Marvel.
+Thwart est un projet de fans non officiel, sans affiliation à Fantasy Flight Games ou Marvel.
