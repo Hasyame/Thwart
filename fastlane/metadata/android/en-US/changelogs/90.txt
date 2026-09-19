@@ -1,0 +1,2 @@
+Improve sync recovery, backup safety and card search. Make achievements easier to browse and restore coverage for older games. Add photo zoom and clearer navigation, filters and recovery messages. Update dependencies while preserving CodeQL compatibility.
+This update migrates local storage. Export a backup before updating.

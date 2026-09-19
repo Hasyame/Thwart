@@ -1,0 +1,2 @@
+Amélioration de la synchronisation, des sauvegardes et de la recherche. Succès plus lisibles et progression corrigée pour les anciennes parties. Zoom sur les photos, navigation, filtres et messages améliorés. Dépendances mises à jour avec compatibilité CodeQL.
+Cette mise à jour migre les données locales. Exportez une sauvegarde avant de l’installer.
