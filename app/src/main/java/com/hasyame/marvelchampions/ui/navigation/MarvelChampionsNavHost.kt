@@ -40,6 +40,13 @@ fun MarvelChampionsNavHost(
     sharedLink: String? = null,
     onSharedLinkHandled: () -> Unit = {},
 ) {
+    val prepareChallenge: (com.hasyame.marvelchampions.domain.achievements.AchievementChallenge) -> Unit = { challenge ->
+        when (challenge.destination) {
+            "campaign" -> navController.navigate(StartCampaignRoute(expert = challenge.expert))
+            "draft", "sealed" -> navController.navigate(DraftRoute(sealed = challenge.destination == "sealed"))
+            else -> navController.navigate(GameSessionRoute(challengeJson = kotlinx.serialization.json.Json.encodeToString(challenge)))
+        }
+    }
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -71,6 +78,7 @@ fun MarvelChampionsNavHost(
             }
             composable<AchievementsRoute> {
                 AchievementsScreen(
+                    onPrepare = prepareChallenge,
                     onBack = { navController.popBackStack() },
                     onCollection = { navController.navigate(CollectionRoute) },
                     onSettings = { navController.navigate(SettingsRoute) },
@@ -168,7 +176,7 @@ fun MarvelChampionsNavHost(
                     },
                     onCampaigns = { navController.navigate(CampaignRoute) },
                     onVersus = { navController.navigate(VersusRoute) },
-                    onDraft = { navController.navigate(DraftRoute) },
+                    onDraft = { navController.navigate(DraftRoute()) },
                     onResumeCampaign = { runId ->
                         navController.navigate(CampaignRunRoute(runId))
                     },
@@ -178,12 +186,18 @@ fun MarvelChampionsNavHost(
             composable<VersusRoute> {
                 VersusScreen(onBack = { navController.popBackStack() })
             }
-            composable<DraftRoute> {
+            composable<DraftRoute> { entry ->
                 DraftScreen(
+                    initiallySealed = entry.toRoute<DraftRoute>().sealed,
                     onBack = { navController.popBackStack() },
                     // The decks are in the Decks tab like any other; the
                     // draft itself has nothing left to show.
                     onSaved = { navController.popBackStack() },
+                    onPlay = { mode, ids ->
+                        val decks = ids.joinToString(",")
+                        if (mode == "campaign") navController.navigate(StartCampaignRoute(decks))
+                        else navController.navigate(GameSessionRoute(deckIds = decks, randomScenario = mode == "random"))
+                    },
                     onCardDetail = { code -> navController.navigate(CardDetailRoute(code)) },
                 )
             }
@@ -219,6 +233,9 @@ fun MarvelChampionsNavHost(
             composable<GameSessionRoute> { entry ->
                 val args = entry.toRoute<GameSessionRoute>()
                 GameSessionScreen(
+                    challengeJson = args.challengeJson,
+                    deckIds = args.deckIds,
+                    randomScenario = args.randomScenario,
                     scenarioCode = args.scenarioCode,
                     difficulty = args.difficulty,
                     heroes = args.heroes,
@@ -245,6 +262,7 @@ fun MarvelChampionsNavHost(
             // it stays in the Play back stack, so the tab keeps its place.
             composable<AchievementsRoute> {
                 AchievementsScreen(
+                    onPrepare = prepareChallenge,
                     onBack = { navController.popBackStack() },
                     onCollection = { navController.navigate(CollectionRoute) },
                     onSettings = { navController.navigate(SettingsRoute) },
@@ -256,7 +274,7 @@ fun MarvelChampionsNavHost(
                     onBack = { navController.popBackStack() },
                     onOpenRun = { runId -> navController.navigate(CampaignRunRoute(runId)) },
                     onOpenRecord = { runId -> navController.navigate(CampaignRecordRoute(runId)) },
-                    onStartCampaign = { navController.navigate(StartCampaignRoute) },
+                    onStartCampaign = { navController.navigate(StartCampaignRoute()) },
                 )
             }
             composable<CampaignRecordRoute> { entry ->
@@ -265,8 +283,10 @@ fun MarvelChampionsNavHost(
                     onBack = { navController.popBackStack() },
                 )
             }
-            composable<StartCampaignRoute> {
+            composable<StartCampaignRoute> { entry ->
                 StartCampaignScreen(
+                    initiallyExpert = entry.toRoute<StartCampaignRoute>().expert,
+                    deckIds = entry.toRoute<StartCampaignRoute>().deckIds,
                     onBack = { navController.popBackStack() },
                     onStarted = { runId ->
                         navController.popBackStack()
@@ -312,6 +332,7 @@ fun MarvelChampionsNavHost(
             }
             composable<AchievementsRoute> {
                 AchievementsScreen(
+                    onPrepare = prepareChallenge,
                     onBack = { navController.popBackStack() },
                     onCollection = { navController.navigate(CollectionRoute) },
                     onSettings = { navController.navigate(SettingsRoute) },

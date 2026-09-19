@@ -21,7 +21,7 @@ import com.hasyame.marvelchampions.ui.util.aspectLabel
 
 /** Details always use full history, independent of the album's display filters. */
 @Composable
-fun AchievementDetailDialogs(state: AchievementsUiState, onDismiss: () -> Unit, onHistory: () -> Unit) {
+fun AchievementDetailDialogs(state: AchievementsUiState, onDismiss: () -> Unit, onHistory: () -> Unit, onPrepare: (com.hasyame.marvelchampions.domain.achievements.AchievementChallenge) -> Unit) {
     val detail = state.detail
     val album = state.albumDetail
     if (detail == null && album == null) return
@@ -30,6 +30,9 @@ fun AchievementDetailDialogs(state: AchievementsUiState, onDismiss: () -> Unit, 
         title = { Text(if (detail != null) titleOf(detail.card) else "${album!!.hero} · ${album.scenario}") },
         text = {
             LazyColumn(Modifier.fillMaxWidth().heightIn(max = 440.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                state.challenge?.let { challenge ->
+                    item { TextButton(onClick = { onPrepare(challenge) }) { Text(stringResource(R.string.achievement_prepare)) } }
+                }
                 if (detail != null) {
                     item {
                         Text(descriptionOf(detail.card))

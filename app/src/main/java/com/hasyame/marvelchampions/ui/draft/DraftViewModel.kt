@@ -17,6 +17,7 @@ import com.hasyame.marvelchampions.domain.draft.DraftRules
 import com.hasyame.marvelchampions.domain.draft.DraftSettings
 import com.hasyame.marvelchampions.domain.draft.DraftState
 import com.hasyame.marvelchampions.domain.draft.IdentityMode
+import com.hasyame.marvelchampions.domain.draft.SealedEngine
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 /** Why the draft cannot go on from where it is. */
@@ -42,6 +45,7 @@ sealed interface DraftMessage {
 data class DeckLine(val card: DraftCard, val count: Int, val signature: Boolean)
 
 data class DraftUiState(
+    val packNames: Map<String, String> = emptyMap(),
     /** Null until the saved session, or its absence, has been read. */
     val draft: DraftState? = null,
     val isLoading: Boolean = true,
@@ -86,15 +90,19 @@ class DraftViewModel @Inject constructor(
 
     /** The card data, built once identities exist and kept for the draft's life. */
     private var context: DraftContext? = null
+    private val persistence = Mutex()
 
     init {
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
             val heroes = repository.ownedHeroes(locale)
             val saved = repository.currentSession()
+            val collection = saved?.collection ?: repository.collection()
+            val packNames = repository.packNames(locale)
             state.update {
                 it.copy(
-                    draft = saved ?: DraftState(),
+                    draft = (saved ?: DraftState()).copy(collection = collection),
+                    packNames = packNames,
                     heroes = heroes,
                     poolAspectAvailable = repository.poolAspectAvailable(),
                     isLoading = false,
@@ -109,6 +117,54 @@ class DraftViewModel @Inject constructor(
     }
 
     // --- setup ---------------------------------------------------------------------
+
+    fun setSealed(on: Boolean) = updateSettings { it.copy(sealed = on) }
+
+    fun setPackQuantity(code: String, quantity: Int) {
+        val draft = state.value.draft ?: return
+        if (draft.phase != DraftPhase.IDENTITY) return
+        commit(draft.copy(collection = draft.collection.orEmpty() + (code to quantity.coerceIn(0, 99))))
+        context = null
+    }
+
+    fun selectSealed(code: String, add: Boolean) {
+        val draft = state.value.draft ?: return
+        val ctx = context ?: return
+        val next = SealedEngine.select(draft, code, add, ctx)
+        commit(next)
+        resolveTable(next)
+    }
+
+    fun openBooster() {
+        val draft = state.value.draft ?: return
+        val next = SealedEngine.openBooster(draft)
+        commit(next)
+        resolveTable(next)
+    }
+
+    fun buildSealedDeck() {
+        val draft = state.value.draft ?: return
+        val next = SealedEngine.buildDeck(draft)
+        commit(next)
+        resolveTable(next)
+    }
+
+    fun openAllBoosters() {
+        val draft = state.value.draft ?: return
+        val next = SealedEngine.openAll(draft)
+        commit(next)
+        resolveTable(next)
+    }
+
+    fun confirmSealed() {
+        val draft = state.value.draft ?: return
+        if (!draft.currentPlayer.isFull) return
+        val next = if (draft.current + 1 < draft.players.size) draft.copy(current = draft.current + 1)
+        else draft.copy(phase = DraftPhase.FINISH)
+        commit(next)
+        resolveTable(next)
+        if (next.phase == DraftPhase.FINISH) proposeNames(next)
+    }
 
     fun setPlayers(count: Int) = updateSettings { it.copy(players = count.coerceIn(DraftSettings.MIN_PLAYERS, DraftSettings.MAX_PLAYERS)) }
 
@@ -221,7 +277,16 @@ class DraftViewModel @Inject constructor(
                 state.update { it.copy(message = DraftMessage.Shortfalls(shortfalls)) }
                 return@launch
             }
-            val started = DraftEngine.start(stocked, ctx)
+            val started = if (draft.settings.sealed) SealedEngine.deal(stocked, ctx) else DraftEngine.start(stocked, ctx)
+            if (draft.settings.sealed) {
+                val shortages = started.sealedPools.mapIndexedNotNull { i, pool ->
+                    if (pool.size < SealedEngine.POOL_SIZE) DraftEngine.Shortfall(i, SealedEngine.POOL_SIZE, pool.size) else null
+                }
+                if (shortages.isNotEmpty()) {
+                    state.update { it.copy(message = DraftMessage.Shortfalls(shortages)) }
+                    return@launch
+                }
+            }
             commit(started)
             resolveTable(started)
         }
@@ -283,12 +348,21 @@ class DraftViewModel @Inject constructor(
         commit(draft.copy(players = players))
     }
 
+    fun reviseSealed() {
+        val draft = state.value.draft ?: return
+        if (!draft.settings.sealed || draft.phase != DraftPhase.FINISH) return
+        val next = draft.copy(phase = DraftPhase.PICK, current = 0)
+        commit(next)
+        resolveTable(next)
+    }
+
     fun finish() {
+        if (state.value.isSaving || state.value.savedDeckIds != null) return
         val draft = state.value.draft ?: return
         val ctx = context ?: return
         state.update { it.copy(isSaving = true) }
         viewModelScope.launch {
-            when (val outcome = repository.finish(draft, ctx, preferences.currentCardLocale())) {
+            when (val outcome = persistence.withLock { repository.finish(draft, ctx, preferences.currentCardLocale()) }) {
                 is DraftOutcome.Saved -> state.update { it.copy(isSaving = false, savedDeckIds = outcome.deckIds) }
                 is DraftOutcome.Illegal -> state.update {
                     it.copy(isSaving = false, message = DraftMessage.Illegal(outcome.playerIndex, outcome.problems))
@@ -299,9 +373,10 @@ class DraftViewModel @Inject constructor(
 
     fun abandon() {
         viewModelScope.launch {
-            repository.clear()
+            persistence.withLock { repository.clear() }
             context = null
-            state.update { it.copy(draft = DraftState(), offer = emptyList(), deck = emptyList(), message = null) }
+            val collection = repository.collection()
+            state.update { it.copy(draft = DraftState(collection = collection), offer = emptyList(), deck = emptyList(), message = null, savedDeckIds = null) }
         }
     }
 
@@ -330,8 +405,9 @@ class DraftViewModel @Inject constructor(
 
     /** Writes the state down, then shows it. */
     private fun commit(draft: DraftState) {
+        if (state.value.isSaving || state.value.savedDeckIds != null) return
         state.update { it.copy(draft = draft) }
-        viewModelScope.launch { repository.save(draft) }
+        viewModelScope.launch { persistence.withLock { repository.save(draft) } }
     }
 
     private suspend fun ensureContext(draft: DraftState, locale: CardLocale, rebuild: Boolean = false): DraftContext {
@@ -357,8 +433,13 @@ class DraftViewModel @Inject constructor(
         val opened = player?.picks?.size ?: 0
         state.update {
             it.copy(
-                offer = draft.offer.mapNotNull { code -> ctx.pool[code] },
-                takeable = draft.offer.filter { code -> DraftEngine.takeable(draft, code, ctx) }.toSet(),
+                offer = (if (draft.settings.sealed) draft.sealedPools.getOrNull(draft.current).orEmpty().distinct() else draft.offer)
+                    .mapNotNull { code -> ctx.pool[code] },
+                takeable = if (draft.settings.sealed) {
+                    draft.sealedPools.getOrNull(draft.current).orEmpty().filter { code ->
+                        SealedEngine.select(draft, code, true, ctx) != draft
+                    }.toSet()
+                } else draft.offer.filter { code -> DraftEngine.takeable(draft, code, ctx) }.toSet(),
                 // The pack open now counts as opened; what waits after it
                 // is what was built, which can be fewer than the picks left.
                 packsOpened = opened + 1,
@@ -372,13 +453,17 @@ class DraftViewModel @Inject constructor(
     private fun proposeNames(draft: DraftState) {
         viewModelScope.launch {
             val taken = repository.takenDeckNames().toMutableList()
-            val players = draft.players.map { player ->
+            val current = state.value.draft ?: return@launch
+            if (current.phase != DraftPhase.FINISH) return@launch
+            val players = current.players.map { player ->
                 val rules = state.value.hero(player.heroCode)?.rules
-                val name = DraftNaming.defaultName(player.heroName, player.aspects, rules, taken)
+                val prefix = if (draft.settings.sealed) "SEALED-" else "DRAFT-"
+                val name = DraftNaming.defaultName(player.heroName, player.aspects, rules,
+                    taken.map { it.replaceFirst(prefix, "DRAFT-") }).replaceFirst("DRAFT-", prefix)
                 taken += name
                 player.copy(deckName = player.deckName ?: name)
             }
-            commit(draft.copy(players = players))
+            commit(current.copy(players = players))
         }
     }
 }

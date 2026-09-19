@@ -24,7 +24,7 @@ import kotlinx.serialization.json.jsonPrimitive
 object AchievementDefinitions {
 
     /** The shape of a definition this build understands. */
-    const val SCHEMA_VERSION = 1
+    const val SCHEMA_VERSION = 2
 
     class Refused(message: String) : IllegalArgumentException(message)
 
@@ -79,7 +79,11 @@ object AchievementDefinitions {
             noDefeat = p["noDefeat"]?.jsonPrimitive?.booleanOrNull ?: false,
             minDifficulty = p.level("minDifficulty"),
         )
-        "mode_win" -> Predicate.ModeWin(p.string("mode").also { require(it in PLAY_MODES) { "mode $it" } })
+        "mode_win" -> Predicate.ModeWin(
+            p.string("mode").also { require(it in PLAY_MODES) { "mode $it" } },
+            if ("n" in p) p.int("n").also { require(it > 0) } else 1,
+        )
+        "loss_count" -> Predicate.LossCount(p.int("n").also { require(it > 0) })
         else -> throw Refused("unknown predicate kind $kind")
     }
 

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.domain.achievements.AchievementDerivation
 import com.hasyame.marvelchampions.domain.achievements.AchievementDetails
+import com.hasyame.marvelchampions.domain.achievements.AchievementChallenge
+import com.hasyame.marvelchampions.domain.achievements.achievementChallenge
 import com.hasyame.marvelchampions.domain.achievements.PlayFact
 import com.hasyame.marvelchampions.domain.achievements.TargetKind
 import com.hasyame.marvelchampions.domain.achievements.AchievementState
@@ -57,6 +59,7 @@ data class AchievementDetail(val card: AchievementCard, val targets: List<Achiev
 data class AlbumDetail(val hero: String, val scenario: String, val plays: List<AchievementPlayEvidence>)
 
 data class AchievementsUiState(
+    val challenge: AchievementChallenge? = null,
     val loaded: Boolean = false,
     /** Why the definitions could not be read, when they could not. */
     val refused: String? = null,
@@ -213,6 +216,11 @@ class AchievementsViewModel @Inject constructor(
         }
 
         return AchievementsUiState(
+            challenge = when (selection) {
+                is Selection.Named -> input.definitions.firstOrNull { it.id == selection.id }?.let { achievementChallenge(input, it) }
+                is Selection.Album -> AchievementChallenge(hero = selection.hero, scenario = selection.scenario, expert = filters.minLevel == DifficultyLevel.EXPERT)
+                null -> null
+            },
             loaded = true,
             owned = state.completion.owned,
             global = state.completion.global,

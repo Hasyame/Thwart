@@ -77,6 +77,9 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameSessionScreen(
+    challengeJson: String? = null,
+    deckIds: String = "",
+    randomScenario: Boolean = false,
     onBack: () -> Unit,
     scenarioCode: String? = null,
     difficulty: String? = null,
@@ -106,7 +109,11 @@ fun GameSessionScreen(
         // The three are exclusive. A paused game or a game being played again
         // brings its own scenario, heroes and difficulty, and taking half
         // from the route is how they disagree.
-        if (resumeId != null) {
+        if (challengeJson != null) {
+            viewModel.prefillChallenge(kotlinx.serialization.json.Json.decodeFromString(challengeJson))
+        } else if (deckIds.isNotBlank()) {
+            viewModel.prefillDecks(deckIds.split(','), randomScenario)
+        } else if (resumeId != null) {
             viewModel.resume(resumeId)
         } else if (replayId != null) {
             viewModel.replay(replayId)
@@ -322,6 +329,9 @@ private fun SetupPhase(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        if (state.challengeUnavailable) {
+            Text(stringResource(R.string.achievement_setup_unavailable), color = MaterialTheme.colorScheme.error)
+        }
         // Same note as the randomiser, for the same reason: everything on this
         // screen is filtered by the collection, and a player who does not know
         // that concludes something is missing.

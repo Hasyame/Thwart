@@ -88,7 +88,8 @@ sealed interface Predicate {
     data class Count(val what: CountWhat) : Predicate
     data class TableWin(val players: Int, val distinctAspects: Boolean = false) : Predicate
     data class Campaign(val noDefeat: Boolean = false, val minDifficulty: DifficultyLevel? = null) : Predicate
-    data class ModeWin(val mode: String) : Predicate
+    data class ModeWin(val mode: String, val n: Int = 1) : Predicate
+    data class LossCount(val n: Int) : Predicate
 }
 
 enum class CountWhat { PLAYS, WINS, HEROES_PLAYED, DISTINCT_DAYS }

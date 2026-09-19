@@ -64,6 +64,9 @@ class RandomizerRepository @Inject constructor(
     private val fearNoEvil: FearNoEvilCatalog,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
+    suspend fun heroSetAliases(): Map<String, String> = cardDao.getHeroCards().mapNotNull { hero ->
+        hero.cardSetCode?.let { hero.code to it }
+    }.toMap()
 
     /**
      * Builds the draw pools from the packs the user owns.

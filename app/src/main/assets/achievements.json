@@ -1,7 +1,7 @@
 {
   "_note": "Achievement definitions. Master copy: this file, in the web repository; Android bundles a byte-identical snapshot. Names and descriptions are translation keys achievement.<id>.title / .description. docs/spec/achievements/data-model.md section 4.",
-  "schemaVersion": 1,
-  "definitionsVersion": 1,
+  "schemaVersion": 2,
+  "definitionsVersion": 2,
   "difficultyScaleVersion": 1,
   "achievements": [
     {
@@ -383,7 +383,135 @@
       "hidden": false,
       "predicate": {
         "kind": "mode_win",
-        "mode": "draft"
+        "mode": "draft",
+        "n": 1
+      }
+    },
+    {
+      "id": "draft_wins_5",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "draft",
+        "n": 5
+      }
+    },
+    {
+      "id": "draft_wins_10",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "draft",
+        "n": 10
+      }
+    },
+    {
+      "id": "draft_wins_50",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "draft",
+        "n": 50
+      }
+    },
+    {
+      "id": "sealed_win",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "sealed",
+        "n": 1
+      }
+    },
+    {
+      "id": "sealed_wins_5",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "sealed",
+        "n": 5
+      }
+    },
+    {
+      "id": "sealed_wins_10",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "sealed",
+        "n": 10
+      }
+    },
+    {
+      "id": "sealed_wins_50",
+      "category": "mode",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "mode_win",
+        "mode": "sealed",
+        "n": 50
+      }
+    },
+    {
+      "id": "losses_1",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "loss_count",
+        "n": 1
+      }
+    },
+    {
+      "id": "losses_5",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "loss_count",
+        "n": 5
+      }
+    },
+    {
+      "id": "losses_10",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "loss_count",
+        "n": 10
+      }
+    },
+    {
+      "id": "losses_50",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "loss_count",
+        "n": 50
+      }
+    },
+    {
+      "id": "losses_100",
+      "category": "volume",
+      "scope": "global",
+      "hidden": false,
+      "predicate": {
+        "kind": "loss_count",
+        "n": 100
       }
     }
   ]

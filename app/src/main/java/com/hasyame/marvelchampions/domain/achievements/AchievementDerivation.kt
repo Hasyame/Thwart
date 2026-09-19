@@ -181,8 +181,12 @@ object AchievementDerivation {
             }
 
             is Predicate.ModeWin -> {
-                val fact = wins.firstOrNull { it.mode == p.mode }
-                Verdict(fact != null, if (fact == null) 0 else 1, 1, fact)
+                val matching = wins.filter { it.mode == p.mode }
+                Verdict(matching.size >= p.n, minOf(matching.size, p.n), p.n, matching.getOrNull(p.n - 1))
+            }
+            is Predicate.LossCount -> {
+                val matching = facts.filter { !it.won }
+                Verdict(matching.size >= p.n, minOf(matching.size, p.n), p.n, matching.getOrNull(p.n - 1))
             }
         }
 

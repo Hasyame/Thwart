@@ -69,7 +69,7 @@ data object CampaignRoute
 
 /** Page 0: choose campaign, name, roster and difficulty. */
 @Serializable
-data object StartCampaignRoute
+data class StartCampaignRoute(val deckIds: String = "", val expert: Boolean = false)
 
 /** A finished campaign, read only. */
 @Serializable
@@ -113,7 +113,7 @@ data object VersusRoute
 
 /** Decks built one pick at a time, from the collection. Resumes where it was left. */
 @Serializable
-data object DraftRoute
+data class DraftRoute(val sealed: Boolean = false)
 
 @Serializable
 data object SettingsGraph
@@ -161,6 +161,9 @@ data object PlaysRoute
  */
 @Serializable
 data class GameSessionRoute(
+    val challengeJson: String? = null,
+    val deckIds: String = "",
+    val randomScenario: Boolean = false,
     val scenarioCode: String? = null,
     val difficulty: String? = null,
     val heroes: String? = null,

@@ -49,13 +49,23 @@ data class RandomizerUiState(
     val ratingSummaries: Map<String, RatingSummaryDto> = emptyMap(),
     /** The player's own ratings for the same. */
     val ownRatings: Map<String, Int> = emptyMap(),
-)
+) {
+    val playable: Boolean get() {
+        if (!draw.isComplete) return false
+        if (!filters.unplayedOnly) return true
+        val code = draw.scenarioCode ?: return false
+        val scenario = if (com.hasyame.marvelchampions.domain.play.FearNoEvil.isFne(code))
+            com.hasyame.marvelchampions.domain.play.FearNoEvil.split(code).first else code
+        return draw.heroes.size == draw.playerCount && draw.heroes.none { (it.heroCode to scenario) in filters.playedPairs }
+    }
+}
 
 @HiltViewModel
 class RandomizerViewModel @Inject constructor(
     private val repository: RandomizerRepository,
     private val preferences: AppPreferences,
     private val ratings: RatingRepository,
+    private val achievements: com.hasyame.marvelchampions.data.repository.AchievementRepository,
 ) : ViewModel() {
 
     private val draw = MutableStateFlow(RandomizerDraw())
@@ -67,6 +77,7 @@ class RandomizerViewModel @Inject constructor(
     private val loading = MutableStateFlow(true)
 
     private var rules: Map<String, ScenarioRule> = emptyMap()
+    private var historyReady = false
     private var beatenScenarios: Set<String> = emptySet()
 
     /** Sets the collection says are missing. Never drawn, and see below. */
@@ -137,6 +148,16 @@ class RandomizerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            achievements.observeInput().collect { input ->
+                historyReady = input != null
+                val aliases = repository.heroSetAliases()
+                filters.value = filters.value.copy(playedPairs = input?.facts.orEmpty().flatMap { fact ->
+                    fact.seats.map { seat -> (aliases[seat.heroCode] ?: seat.heroCode) to fact.scenarioKey }
+                }.toSet())
+                if (filters.value.unplayedOnly) rollAll()
+            }
+        }
+        viewModelScope.launch {
             val locale = preferences.currentCardLocale()
             rules = repository.loadRules()
             pools.value = repository.loadPools(locale)
@@ -182,7 +203,13 @@ class RandomizerViewModel @Inject constructor(
     }
 
     /** Rerolls everything that is not locked. */
+    fun setUnplayedOnly(on: Boolean) {
+        filters.value = filters.value.copy(unplayedOnly = on)
+        rollAll()
+    }
+
     fun rollAll() {
+        if (filters.value.unplayedOnly && !historyReady) { draw.value = RandomizerDraw(); return }
         draw.value = ScenarioRandomizer.draw(
             pools = pools.value,
             rules = rules,
