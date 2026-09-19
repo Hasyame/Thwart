@@ -1,0 +1,11 @@
+Succès.
+
+Tout ce que vous avez battu, avec qui, et quoi jouer ensuite, lu dans
+l'historique de vos parties : une grille héros x scénarios avec ses
+filtres, et trente et un succès nommés (boîtes, difficulté, volume,
+nombre de joueurs, campagnes, draft). L'accueil montre votre compte, le
+dernier succès gagné et vos badges ; la page de résultat d'une partie dit
+ce qu'elle a débloqué.
+
+Les sauvegardes passent au format 2 : la place du joueur et le mode de
+jeu sont notés, et les champs d'une version plus récente sont conservés.

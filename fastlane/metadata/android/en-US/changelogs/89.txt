@@ -1,0 +1,10 @@
+Achievements.
+
+Everything you have beaten, with whom, and what to play next, read from
+your game history: a heroes x scenarios grid with its filters, and
+thirty-one named achievements (box coverage, difficulty, volume, table
+size, campaigns, draft). The home page shows your count, the latest one
+earned and your badges; a game's result page says what it unlocked.
+
+Backups move to format 2: the owner's seat and the game mode are
+recorded, and fields from a newer app are kept rather than dropped.
