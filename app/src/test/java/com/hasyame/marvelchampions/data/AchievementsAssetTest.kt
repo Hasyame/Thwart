@@ -51,8 +51,8 @@ class AchievementsAssetTest {
         val file = AchievementDefinitions.parse(bundled.decodeToString())
         assertEquals(AchievementDefinitions.SCHEMA_VERSION, file.schemaVersion)
         assertEquals(DifficultyLevel.SCALE_VERSION, file.difficultyScaleVersion)
-        assertEquals(1, file.definitionsVersion)
-        assertEquals(31, file.achievements.size)
+        assertEquals(2, file.definitionsVersion)
+        assertEquals(43, file.achievements.size)
     }
 
     @Test
@@ -73,14 +73,14 @@ class AchievementsAssetTest {
     @Test
     fun `vectors are pinned to the all seat contract and match the web when available`() {
         val vectors = javaClass.getResource("/achievements/test-vectors.json")!!.readBytes()
-        assertEquals("9f0ccd2042ebd0976bd29d971a8c232df2066402d8322e9600aabbbac99a3c30", sha256(vectors))
+        assertEquals("1c08289539f7c67f8a40d9b539f7afa1709a5e67938b101c8156c764cf376ba9", sha256(vectors))
         val web = File(System.getenv("THWART_WEB_DIR") ?: WEB_CHECKOUT, "docs/spec/achievements/test-vectors.json")
         if (web.isFile) assertEquals("Shared vectors drifted", sha256(web.readBytes()), sha256(vectors))
     }
 
     private companion object {
-        /** `web/public/achievements.json` at Thwart Web commit a99569726c3ec470fb8c39dfc9a34248fa087b10 (2026-09-18). */
-        const val WEB_SHA256 = "2fac996e5c36133219fd7c2c8460b291d4b831ddbbb095259033924a2b88dfd0"
+        /** `web/public/achievements.json` at Web 8148f9931c49175886d637741fa277446ac8a7d8 (2026-09-20). */
+        const val WEB_SHA256 = "aa7e18db71076a5448340d3fb95a55615f41a94f506207dbbc26f241042770fb"
         const val WEB_CHECKOUT = "C:/Thwart Web"
     }
 }

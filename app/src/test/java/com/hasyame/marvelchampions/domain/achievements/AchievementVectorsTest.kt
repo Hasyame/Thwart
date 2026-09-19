@@ -63,6 +63,29 @@ class AchievementVectorsTest {
         }
     }
 
+    @Test
+    fun `challenge chooses an owned missing target and preserves table requirements`() {
+        file.getValue("cases").jsonArray.forEach { case ->
+            val input = input(case.jsonObject.getValue("input").jsonObject)
+            input.definitions.forEach { definition ->
+                val challenge = achievementChallenge(input, definition)
+                AchievementDetails.targets(input, definition)?.let { targets ->
+                    val target = targets.firstOrNull { it.completedBy == null && (it.pack == null || it.pack in input.ownedPacks) }
+                    if (target == null) assertEquals(null, challenge)
+                    else assertEquals(target.key, when (target.kind) {
+                        TargetKind.HERO -> challenge?.hero
+                        TargetKind.SCENARIO -> challenge?.scenario
+                        TargetKind.ASPECT -> challenge?.aspect
+                    })
+                }
+                (definition.predicate as? Predicate.TableWin)?.let {
+                    assertEquals(it.players, challenge?.players)
+                    assertEquals(it.distinctAspects, challenge?.distinctAspects)
+                }
+            }
+        }
+    }
+
     private fun input(o: JsonObject): DeriveInput = DeriveInput(
         definitions = o.getValue("definitions").jsonArray.map { AchievementDefinitions.definition(it.jsonObject) },
         definitionsVersion = o.getValue("definitionsVersion").jsonPrimitive.content.toInt(),

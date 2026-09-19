@@ -27,6 +27,26 @@ object ScenarioRandomizer {
         locked: Set<DrawField> = emptySet(),
         random: Random = Random.Default,
     ): RandomizerDraw {
+        if (filters.unplayedOnly) {
+            val candidates = pools.scenarios.filter { it.code !in filters.excludedScenarios }
+                .filter { DrawField.SCENARIO !in locked || it.code == previous.scenarioCode ||
+                    (previous.scenarioCode?.let(FearNoEvil::isFne) == true && it.code == FearNoEvil.split(previous.scenarioCode!!).first) }
+                .shuffled(random)
+            for (scenario in candidates) {
+                val heroes = pools.heroes.filter { it.code !in filters.excludedHeroes && (it.code to scenario.code) !in filters.playedPairs }
+                val count = if (DrawField.PLAYER_COUNT in locked) previous.playerCount else filters.minPlayers
+                if (DrawField.HEROES in locked) {
+                    if (previous.heroes.size < count || previous.heroes.any { (it.heroCode to scenario.code) in filters.playedPairs }) continue
+                } else if (heroes.size < count) continue
+                val result = draw(
+                    pools.copy(scenarios = listOf(scenario), heroes = heroes), rules,
+                    filters.copy(unplayedOnly = false, maxPlayers = minOf(filters.maxPlayers, if (DrawField.HEROES in locked) previous.heroes.size else heroes.size)),
+                    previous, locked, random,
+                )
+                if (result.isComplete && result.heroes.size == result.playerCount) return result
+            }
+            return RandomizerDraw()
+        }
         // A pack is restricted exactly when some scenario names it as its own
         // pool. Derived from the rules rather than passed in, so the two cannot
         // disagree about which packs those are.

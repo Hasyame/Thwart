@@ -156,6 +156,7 @@ enum class SessionPhase {
 }
 
 data class GameSessionUiState(
+    val challengeUnavailable: Boolean = false,
     val phase: SessionPhase = SessionPhase.SETUP,
     val pools: RandomizerPools = RandomizerPools(),
     val names: RandomizerNames = RandomizerNames(),
@@ -283,12 +284,73 @@ class GameSessionViewModel @Inject constructor(
     private val json: Json,
     private val ratings: RatingRepository,
     private val achievements: AchievementRepository,
+    private val draftRepository: com.hasyame.marvelchampions.data.repository.DraftRepository,
 ) : ViewModel() {
 
     private val state = MutableStateFlow(GameSessionUiState())
     val uiState: StateFlow<GameSessionUiState> = state.asStateFlow()
 
     private var prefilled = false
+
+    fun prefillChallenge(challenge: com.hasyame.marvelchampions.domain.achievements.AchievementChallenge) {
+        if (prefilled) return
+        prefilled = true
+        viewModelScope.launch {
+            val ready = uiState.first { !it.isLoading }
+            val heroes = draftRepository.ownedHeroes(preferences.currentCardLocale())
+                .sortedBy { if (it.card.code == challenge.hero) 0 else 1 }
+                .filter { challenge.hero == null || it.card.code == challenge.hero || challenge.players > 1 }
+                .filter { !challenge.distinctAspects || it.rules.aspectCount == 1 }
+                .take(challenge.players)
+            val seats = heroes.mapIndexed { i, hero ->
+                val aspects = com.hasyame.marvelchampions.domain.draft.DraftEngine.imposedAspects(hero.rules)
+                    ?: ((listOfNotNull(challenge.aspect) + com.hasyame.marvelchampions.domain.achievements.CLASSIC_ASPECTS.drop(if (challenge.distinctAspects) i else 0))
+                        .distinct().take(hero.rules.aspectCount))
+                SessionHero(hero.card.code, aspects.joinToString(","), heroName = hero.card.name)
+            }
+            val pools = ready.pools
+            val difficulties = pools.difficulties.filter { if (challenge.expert) it.isExpert else it.isStandard }.toSet()
+            val filters = com.hasyame.marvelchampions.domain.randomizer.RandomizerFilters(
+                minPlayers = challenge.players, maxPlayers = challenge.players, allowedDifficulties = difficulties,
+            )
+            val draw = com.hasyame.marvelchampions.domain.randomizer.ScenarioRandomizer.draw(
+                pools.copy(scenarios = pools.scenarios.filter { challenge.scenario == null || it.code == challenge.scenario }),
+                randomizerRepository.loadRules(), filters,
+            )
+            if (seats.size != challenge.players || difficulties.isEmpty() || draw.scenarioCode == null ||
+                (challenge.hero != null && heroes.none { it.card.code == challenge.hero }) ||
+                (challenge.aspect != null && seats.none { challenge.aspect in it.aspect.split(",") })
+            ) {
+                state.update { it.copy(challengeUnavailable = true) }
+                return@launch
+            }
+            state.update { it.copy(heroes = seats, scenarioCode = draw.scenarioCode.orEmpty(),
+                difficulty = if (difficulties.isEmpty()) "" else draw.difficulty?.name?.lowercase().orEmpty(),
+                standardSet = draw.standardSet?.name?.lowercase().orEmpty(), modularSetCodes = draw.modularSetCodes) }
+        }
+    }
+
+    fun prefillDecks(ids: List<String>, randomScenario: Boolean) {
+        if (prefilled) return
+        prefilled = true
+        viewModelScope.launch {
+            val ready = uiState.first { !it.isLoading }
+            val decks = deckRepository.observeDecks().first().associateBy { it.id }
+            val heroes = ids.mapNotNull { decks[it] }.take(4).map { deck ->
+                SessionHero(deck.heroCode, deck.aspects, deck.id, deck.name, deck.heroName)
+            }
+            state.update { it.copy(heroes = heroes) }
+            if (randomScenario && heroes.isNotEmpty()) {
+                val draw = com.hasyame.marvelchampions.domain.randomizer.ScenarioRandomizer.draw(
+                    ready.pools, randomizerRepository.loadRules(),
+                    com.hasyame.marvelchampions.domain.randomizer.RandomizerFilters(minPlayers = heroes.size, maxPlayers = heroes.size),
+                )
+                state.update { it.copy(scenarioCode = draw.scenarioCode.orEmpty(),
+                    difficulty = draw.difficulty?.name?.lowercase() ?: "standard_i",
+                    standardSet = draw.standardSet?.name?.lowercase().orEmpty(), modularSetCodes = draw.modularSetCodes) }
+            }
+        }
+    }
 
     private val finished = MutableStateFlow<PlayRecorded?>(null)
     val recorded: StateFlow<PlayRecorded?> = finished.asStateFlow()
@@ -881,7 +943,7 @@ class GameSessionViewModel @Inject constructor(
             val play = PlayEntity(
                     id = playRepository.newPlayId(),
                     photos = current.photos.joinToString(","),
-                    mode = DeckRepository.DRAFT_TAG.takeIf { DeckRepository.hasTag(ownDeck?.tags, it) },
+                    mode = listOf(DeckRepository.DRAFT_TAG, "sealed").firstOrNull { DeckRepository.hasTag(ownDeck?.tags, it) },
                     playedAt = System.currentTimeMillis(),
                     scenarioCode = scenarioCode,
                     scenarioName = current.names.scenarios[scenarioCode] ?: scenarioCode,

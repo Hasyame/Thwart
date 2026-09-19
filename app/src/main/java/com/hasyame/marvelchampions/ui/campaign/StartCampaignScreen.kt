@@ -74,6 +74,8 @@ private const val MAX_PLAYERS = 4
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartCampaignScreen(
+    initiallyExpert: Boolean = false,
+    deckIds: String = "",
     onBack: () -> Unit,
     onStarted: (String) -> Unit,
     viewModel: StartCampaignViewModel = hiltViewModel(),
@@ -85,13 +87,13 @@ fun StartCampaignScreen(
     // since another one's questions are not these.
     var choices by remember { mutableStateOf(mapOf<String, String>()) }
     var name by remember { mutableStateOf("") }
-    var difficulty by remember { mutableStateOf("") }
+    var difficulty by remember { mutableStateOf(if (initiallyExpert) "expert" else "") }
     // Which physical sets of encounter cards go in. Left to the app unless the
     // table says otherwise, which is both the answer for somebody who owns one
     // of each and the feature for somebody who owns several.
     var standardSet by remember { mutableStateOf(RANDOM_SET) }
     var expertSet by remember { mutableStateOf(RANDOM_SET) }
-    var roster by remember { mutableStateOf(emptyList<String>()) }
+    var roster by remember { mutableStateOf(deckIds.split(',').filter { it.isNotBlank() }) }
 
     val template: CampaignTemplate? =
         state.templates.firstOrNull { it.id == chosenTemplateId } ?: state.templates.firstOrNull()

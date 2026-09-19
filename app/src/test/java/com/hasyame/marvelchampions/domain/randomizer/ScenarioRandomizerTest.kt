@@ -9,6 +9,16 @@ import org.junit.Test
 import kotlin.random.Random
 
 class ScenarioRandomizerTest {
+    @Test fun `unplayed excludes every previously played seat and reports exhaustion`() {
+        val played = pools.scenarios.flatMap { scenario -> pools.heroes.map { it.code to scenario.code } }.toSet()
+        val filters = RandomizerFilters(unplayedOnly = true, playedPairs = played - ("spider_man" to "rhino"), minPlayers = 1, maxPlayers = 1)
+        val result = draw(filters = filters)
+        assertEquals("rhino", result.scenarioCode)
+        assertEquals("spider_man", result.heroes.single().heroCode)
+        assertFalse(draw(filters = filters.copy(playedPairs = played)).isComplete)
+        assertFalse(draw(filters = filters.copy(minPlayers = 2, maxPlayers = 2)).isComplete)
+        assertFalse(draw(filters = filters, previous = RandomizerDraw(scenarioCode = "klaw"), locked = setOf(DrawField.SCENARIO)).isComplete)
+    }
 
     private val pools = RandomizerPools(
         scenarios = listOf(

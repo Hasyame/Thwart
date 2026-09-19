@@ -12,6 +12,9 @@ The local workspace is active. Each application has its own feature branch.
   retain local opaque metadata.
 - [Approved capability completion](003-PARITY-COMPLETION.md): starred Android plays,
   Web photos and owner filtering, new-install theme and retained navigation.
+- [Limited formats and game preparation](004-LIMITED-MODES-AND-GAME-SETUP.md):
+  temporary collections, unplayed pairings, achievement setup, sealed boosters
+  and the hand-off from saved limited decks into games.
 - [Implementation inventory](IMPLEMENTATION_INVENTORY.md): code-backed baseline,
   instruction conflicts and the scope of the later parity audit.
 - [Visual identity and achievements](001-IDENTITY-AND-ACHIEVEMENTS.md): first feature

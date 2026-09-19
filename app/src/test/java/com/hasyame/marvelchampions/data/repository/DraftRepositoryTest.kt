@@ -96,6 +96,7 @@ class DraftRepositoryTest {
             sessionDao = database.draftSessionDao(),
             cardDao = database.cardDao(),
             ownedPackDao = database.ownedPackDao(),
+            packDao = database.packDao(),
             deckRepository = decks,
             builderRepository = builder,
             json = json,
@@ -192,6 +193,20 @@ class DraftRepositoryTest {
         }
         val saved = drafts.finish(state, context, CardLocale.ENGLISH) as DraftOutcome.Saved
         assertEquals("DRAFT-SPIDERMAN-JUSTICE-02", decks.getDeck(saved.deckIds.single())!!.name)
+    }
+
+    @Test
+    fun `temporary collection persists without changing the saved shelf`() = runTest {
+        val original = drafts.collection()
+        val session = draft().copy(collection = original.mapValues { it.value * 2 }, sealedOpened = listOf(3))
+        drafts.save(session)
+        assertEquals(session, drafts.currentSession())
+        assertEquals(original, drafts.collection())
+        val normal = drafts.context(draft(), CardLocale.ENGLISH)
+        val temporary = drafts.context(session, CardLocale.ENGLISH)
+        normal.initialStock.forEach { (code, count) ->
+            assertEquals(count * 2, temporary.initialStock[code])
+        }
     }
 
     @Test

@@ -135,7 +135,7 @@ fun RandomizerScreen(
                         }
                         OutlinedButton(
                             onClick = viewModel::saveDraw,
-                            enabled = state.draw.isComplete,
+                            enabled = state.playable,
                             modifier = Modifier.weight(1f),
                         ) {
                             Text(stringResource(R.string.randomizer_save_draw))
@@ -161,7 +161,7 @@ fun RandomizerScreen(
                                 state.draw.standardSet?.name?.lowercase().orEmpty(),
                             )
                         },
-                        enabled = state.draw.isComplete,
+                        enabled = state.playable,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(R.string.randomizer_play_this))
@@ -432,6 +432,12 @@ private fun DrawRow(
 private fun FiltersCard(state: RandomizerUiState, viewModel: RandomizerViewModel) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = state.filters.unplayedOnly,
+                onClick = { viewModel.setUnplayedOnly(!state.filters.unplayedOnly) },
+                label = { Text(stringResource(R.string.unplayed_only)) },
+            )
+            if (state.filters.unplayedOnly && !state.playable) Text(stringResource(R.string.no_unplayed))
             Text(
                 text = stringResource(R.string.cards_filters),
                 style = MaterialTheme.typography.titleMedium,
