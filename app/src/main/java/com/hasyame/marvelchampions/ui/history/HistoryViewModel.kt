@@ -9,6 +9,7 @@ import com.hasyame.marvelchampions.data.photos.PhotoStore
 import com.hasyame.marvelchampions.data.repository.CampaignRepository
 import com.hasyame.marvelchampions.data.repository.PlayRecorded
 import com.hasyame.marvelchampions.data.repository.PlayRepository
+import com.hasyame.marvelchampions.data.repository.FavouritePlayRepository
 import com.hasyame.marvelchampions.data.settings.AppPreferences
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import com.hasyame.marvelchampions.domain.play.FearNoEvil
@@ -44,11 +45,19 @@ data class PlayTile(
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     private val plays: PlayRepository,
+    private val starredPlays: FavouritePlayRepository,
     private val cardDao: CardDao,
     private val campaigns: CampaignRepository,
     private val preferences: AppPreferences,
     val photoStore: PhotoStore,
 ) : ViewModel() {
+
+    val favourites = starredPlays.observeIds()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), emptySet())
+
+    fun setFavourite(playId: String, favourite: Boolean) {
+        viewModelScope.launch { starredPlays.toggle(playId, favourite) }
+    }
 
     /** Villain image by scenario code, or by "run:scenario" for a campaign's. */
     private val faces = mutableMapOf<String, String?>()

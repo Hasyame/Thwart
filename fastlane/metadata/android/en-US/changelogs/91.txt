@@ -1,0 +1,2 @@
+Star your favourite plays and filter history to find them quickly. Explore achievement objectives, tiers and contributing plays with shared all-player progress rules. Preserve photos and extra settings when exchanging backups with the Web app. New installations follow the system theme.
+This update migrates local storage. Export a backup before updating.

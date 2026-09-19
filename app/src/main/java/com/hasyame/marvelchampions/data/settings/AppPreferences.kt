@@ -48,8 +48,29 @@ private val dropRetiredKeys = object : DataMigration<Preferences> {
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     name = "settings",
-    produceMigrations = { listOf(dropRetiredKeys) },
+    produceMigrations = { context ->
+        @Suppress("DEPRECATION")
+        val info = context.packageManager.getPackageInfo(context.packageName, 0)
+        listOf(initialThemeMigration(info.lastUpdateTime > info.firstInstallTime), dropRetiredKeys)
+    },
 )
+
+/** A device-local fallback, never an explicit choice sent during the first account merge. */
+private val INITIAL_THEME = stringPreferencesKey("initial_theme_choice")
+
+/** Pin the legacy implicit dark theme on upgrades; only new installs follow the system. */
+internal fun initialThemeMigration(existingInstall: Boolean): DataMigration<Preferences> =
+    object : DataMigration<Preferences> {
+        private val theme = stringPreferencesKey("theme_choice")
+        override suspend fun shouldMigrate(currentData: Preferences) =
+            !currentData.contains(theme) && !currentData.contains(INITIAL_THEME)
+        override suspend fun migrate(currentData: Preferences): Preferences = currentData.toMutablePreferences().apply {
+            if (!contains(theme) && !contains(INITIAL_THEME)) {
+                this[INITIAL_THEME] = if (existingInstall || currentData.asMap().isNotEmpty()) ThemeChoice.DARK.code else ThemeChoice.SYSTEM.code
+            }
+        }.toPreferences()
+        override suspend fun cleanUp() = Unit
+    }
 
 /**
  * User preferences.
@@ -142,7 +163,7 @@ class AppPreferences @Inject constructor(
 
     /** Light, dark, or whatever the system is doing. */
     val themeChoice: Flow<ThemeChoice> = context.dataStore.data.map { preferences ->
-        ThemeChoice.fromCode(preferences[KEY_THEME])
+        ThemeChoice.fromCode(preferences[KEY_THEME] ?: preferences[INITIAL_THEME])
     }
 
     suspend fun setThemeChoice(choice: ThemeChoice) {

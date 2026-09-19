@@ -1,0 +1,16 @@
+{
+  "sourceRepository": "https://github.com/Hasyame/Thwart-Web",
+  "sourceBaseCommit": "94136016112a406f5267b05255a90471b46786d1",
+  "provenance": "Content pinned by SHA-256; sourceBaseCommit identifies the base checkout, including when documents are uncommitted.",
+  "files": {
+    "AGENTS.md": "0baac36b3b72c2a6e86a02a9f8117202645ee96d43820720e1ec2a77f447c524",
+    "specs/001-IDENTITY-AND-ACHIEVEMENTS.md": "53dc31f5c342ad391c5ca476c68f5156b6f9fcdb682375be7e7d331ac7b85b8a",
+    "specs/002-BACKUP-PORTABILITY.md": "3fa1956b4a3d603892fe98e4e2af568a61d22693862227eed36d07151f4256e9",
+    "specs/003-PARITY-COMPLETION.md": "b6b9de890f904b2e6cfcfe68beb082589a8403e5a93ab305550457342684233c",
+    "specs/FEATURE_TEMPLATE.md": "e4632423b4f08974abb2824f67071fd9381c1a429b4e94daff78c5731da6e4fc",
+    "specs/IMPLEMENTATION_INVENTORY.md": "d1dadf7a7784f471fa0390cb92210ecf53b246610d9ee4094f8d87dd03826299",
+    "specs/PARITY_REPORT.md": "d3d3733206f6701f2b4ecabe6b207650ccaf0774c080c7fb7a92961ee24c2999",
+    "specs/README.md": "027b37c0ed49566ef3e06df5fa2998b760d9710c6f7c793cf77cdc3e17260587",
+    "specs/WORKSPACE_AND_HARMONIZATION_PLAN.md": "217f82d4c2894fac2f0f97a3b5a7e7e09b19aa0c54bc216f2904e6458ca53900"
+  }
+}

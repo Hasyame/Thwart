@@ -210,6 +210,27 @@ class SyncMigrationTest {
         }
     }
 
+    @Test
+    fun `version 27 materializes previously imported web stars`() = runTest {
+        givenAVersion17DatabaseWithARowInEveryTable(version = 27)
+        SQLiteDatabase.openOrCreateDatabase(databaseFile, null).use { old ->
+            old.execSQL("INSERT INTO backup_metadata(id, extras) VALUES (0, ?)", arrayOf(
+                """{"favouritePlays":[{"playId":"play-1","addedAt":1234}],"future":true}""",
+            ))
+        }
+        val database = openAndMigrate()
+        try {
+            val star = database.favouritePlayDao().getAll().single()
+            assertEquals("play-1", star.playId)
+            assertEquals(1234L, star.addedAt)
+            assertEquals("Rhino", database.playDao().getPlay("play-1")?.scenarioName)
+            assertEquals("{\"future\":true}", database.syncStateDao().backupExtras())
+            assertTrue(database.syncStateDao().get("favourite_plays", "play-1")!!.dirty)
+        } finally {
+            database.close()
+        }
+    }
+
     // ---------------------------------------------------------------- setup --
 
     /**

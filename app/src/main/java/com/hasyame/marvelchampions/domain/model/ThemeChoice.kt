@@ -3,10 +3,8 @@ package com.hasyame.marvelchampions.domain.model
 /**
  * Which theme the app uses, as chosen in Settings.
  *
- * [DARK] is the default. Red on near-black is the palette this game is drawn
- * in, and it is what a table lit for playing wants — following the system
- * would put half the players in a bright white app in a dim room. The choice
- * stays, including following the system for anyone who prefers that.
+ * New installations are initialized to [SYSTEM] by AppPreferences. [DARK]
+ * remains the fallback for legacy/invalid stored codes, preserving old installs.
  */
 enum class ThemeChoice(val code: String) {
     SYSTEM("system"),

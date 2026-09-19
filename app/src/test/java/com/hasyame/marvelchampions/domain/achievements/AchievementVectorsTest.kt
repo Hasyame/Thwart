@@ -47,6 +47,22 @@ class AchievementVectorsTest {
         assertEquals(failures.joinToString("\n\n"), 0, failures.size)
     }
 
+    @Test
+    fun `detail checklists match shared progress and ignore input order`() {
+        file.getValue("cases").jsonArray.forEach { case ->
+            val input = input(case.jsonObject.getValue("input").jsonObject)
+            val state = AchievementDerivation.derive(input)
+            input.definitions.forEach { definition ->
+                AchievementDetails.targets(input, definition)?.let { targets ->
+                    val progress = state.achievements.first { it.id == definition.id }.progress
+                    assertEquals(definition.id, progress.target, targets.size)
+                    assertEquals(definition.id, progress.current, targets.count { it.completedBy != null })
+                    assertEquals(targets, AchievementDetails.targets(input.copy(facts = input.facts.reversed()), definition))
+                }
+            }
+        }
+    }
+
     private fun input(o: JsonObject): DeriveInput = DeriveInput(
         definitions = o.getValue("definitions").jsonArray.map { AchievementDefinitions.definition(it.jsonObject) },
         definitionsVersion = o.getValue("definitionsVersion").jsonPrimitive.content.toInt(),

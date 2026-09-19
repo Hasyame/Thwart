@@ -2563,8 +2563,8 @@
       }
     },
     {
-      "name": "heroes won counts the owner seat only",
-      "note": "A win with a second seat does not credit that seat for hero coverage.",
+      "name": "heroes won credits every seat at the table",
+      "note": "A win with a second seat credits that seat for hero coverage too.",
       "input": {
         "definitionsVersion": 1,
         "definitions": [
@@ -2698,32 +2698,38 @@
         "achievements": [
           {
             "id": "win_with_every_hero_core",
-            "status": "locked",
+            "status": "unlocked",
             "progress": {
-              "current": 1,
+              "current": 2,
               "target": 2
             },
             "tier": null,
-            "unlockedAt": null,
-            "unlockedByPlayId": null
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
           }
         ],
         "completion": {
           "owned": {
-            "won": 1,
+            "won": 2,
             "cells": 6
           },
           "global": {
-            "won": 1,
+            "won": 2,
             "cells": 20
           }
         },
-        "recent": []
+        "recent": [
+          {
+            "id": "win_with_every_hero_core",
+            "unlockedAt": 1760000000000,
+            "unlockedByPlayId": "p1"
+          }
+        ]
       }
     },
     {
-      "name": "any-seat tally credits every hero at the table",
-      "note": "The second seat gets a cell with an anySeat win and an empty owner tally.",
+      "name": "every seat gets a cell",
+      "note": "The second seat gets a cell with a win; its owner tally stays empty, which is informational.",
       "input": {
         "definitionsVersion": 1,
         "definitions": [
@@ -2883,11 +2889,11 @@
         ],
         "completion": {
           "owned": {
-            "won": 1,
+            "won": 2,
             "cells": 6
           },
           "global": {
-            "won": 1,
+            "won": 2,
             "cells": 20
           }
         },
@@ -3769,7 +3775,7 @@
       }
     },
     {
-      "name": "heroes played counts distinct owner heroes",
+      "name": "heroes played counts distinct heroes at every seat",
       "note": "Three heroes over four plays: silver, one short of gold.",
       "input": {
         "definitionsVersion": 1,
@@ -4402,11 +4408,11 @@
         ],
         "completion": {
           "owned": {
-            "won": 1,
+            "won": 2,
             "cells": 6
           },
           "global": {
-            "won": 1,
+            "won": 2,
             "cells": 20
           }
         },
@@ -4745,11 +4751,11 @@
         ],
         "completion": {
           "owned": {
-            "won": 2,
+            "won": 4,
             "cells": 6
           },
           "global": {
-            "won": 2,
+            "won": 8,
             "cells": 20
           }
         },
@@ -4964,11 +4970,11 @@
         ],
         "completion": {
           "owned": {
-            "won": 1,
+            "won": 2,
             "cells": 6
           },
           "global": {
-            "won": 1,
+            "won": 4,
             "cells": 20
           }
         },

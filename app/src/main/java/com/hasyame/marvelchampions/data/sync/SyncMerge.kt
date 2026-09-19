@@ -2,6 +2,7 @@ package com.hasyame.marvelchampions.data.sync
 
 import com.hasyame.marvelchampions.data.backup.BackupSettings
 import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
+import com.hasyame.marvelchampions.data.db.entity.FavouritePlayEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.RatingEntity
@@ -59,6 +60,17 @@ object SyncMerge {
         incoming: FavouriteCardEntity,
         local: FavouriteCardEntity?,
     ): FavouriteCardEntity = when {
+        local == null -> incoming
+        // Only while both are live. A tombstone has no starring date worth
+        // preserving, and taking one would resurrect the earlier moment.
+        local.deletedAt != null || incoming.deletedAt != null -> incoming
+        else -> incoming.copy(addedAt = minOf(incoming.addedAt, local.addedAt))
+    }
+
+    fun favouritePlay(
+        incoming: FavouritePlayEntity,
+        local: FavouritePlayEntity?,
+    ): FavouritePlayEntity = when {
         local == null -> incoming
         // Only while both are live. A tombstone has no starring date worth
         // preserving, and taking one would resurrect the earlier moment.

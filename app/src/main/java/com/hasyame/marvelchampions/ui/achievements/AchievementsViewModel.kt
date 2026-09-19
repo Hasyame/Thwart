@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.repository.AchievementRepository
 import com.hasyame.marvelchampions.domain.achievements.AchievementDerivation
+import com.hasyame.marvelchampions.domain.achievements.AchievementDetails
+import com.hasyame.marvelchampions.domain.achievements.PlayFact
+import com.hasyame.marvelchampions.domain.achievements.TargetKind
 import com.hasyame.marvelchampions.domain.achievements.AchievementState
 import com.hasyame.marvelchampions.domain.achievements.AchievementStatusKind
 import com.hasyame.marvelchampions.domain.achievements.CLASSIC_ASPECTS
@@ -48,6 +51,11 @@ enum class CellState { NEVER, PLAYED, WON }
 
 data class GridCell(val state: CellState, val bestLevelWon: DifficultyLevel?, val attempts: Int, val wins: Int)
 
+data class AchievementPlayEvidence(val id: String, val date: Long, val level: DifficultyLevel, val scenario: String, val heroes: String, val won: Boolean)
+data class AchievementTargetRow(val key: String, val kind: TargetKind, val name: String, val pack: String?, val completedBy: AchievementPlayEvidence?)
+data class AchievementDetail(val card: AchievementCard, val targets: List<AchievementTargetRow>?, val unlock: AchievementPlayEvidence?)
+data class AlbumDetail(val hero: String, val scenario: String, val plays: List<AchievementPlayEvidence>)
+
 data class AchievementsUiState(
     val loaded: Boolean = false,
     /** Why the definitions could not be read, when they could not. */
@@ -66,6 +74,8 @@ data class AchievementsUiState(
     val cells: Map<String, GridCell> = emptyMap(),
     val cards: List<AchievementCard> = emptyList(),
     val recent: List<AchievementCard> = emptyList(),
+    val detail: AchievementDetail? = null,
+    val albumDetail: AlbumDetail? = null,
 ) {
     fun cell(scenarioKey: String, heroCode: String): GridCell? = cells[scenarioKey + "\u0000" + heroCode]
 }
@@ -84,6 +94,15 @@ class AchievementsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val filters = MutableStateFlow(GridFilters())
+    private sealed interface Selection {
+        data class Named(val id: String) : Selection
+        data class Album(val hero: String, val scenario: String) : Selection
+    }
+    private val selection = MutableStateFlow<Selection?>(null)
+
+    fun showAchievement(id: String) { selection.value = Selection.Named(id) }
+    fun showCell(hero: String, scenario: String) { selection.value = Selection.Album(hero, scenario) }
+    fun closeDetail() { selection.value = null }
 
     private data class Prepared(
         val input: DeriveInput,
@@ -105,9 +124,9 @@ class AchievementsViewModel @Inject constructor(
         }
     }.flowOn(Dispatchers.Default)
 
-    val uiState: StateFlow<AchievementsUiState> = combine(prepared, filters) { prepared, filters ->
+    val uiState: StateFlow<AchievementsUiState> = combine(prepared, filters, selection) { prepared, filters, selection ->
         if (prepared == null) AchievementsUiState(loaded = true, refused = "", filters = filters)
-        else build(prepared, filters)
+        else build(prepared, filters, selection)
     }.flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), AchievementsUiState())
 
@@ -121,12 +140,34 @@ class AchievementsViewModel @Inject constructor(
     fun setAnySeat(anySeat: Boolean) = filters.update { it.copy(anySeat = anySeat) }
     fun setShowLosses(show: Boolean) = filters.update { it.copy(showLosses = show) }
 
-    private fun build(prepared: Prepared, filters: GridFilters): AchievementsUiState {
+    private fun build(prepared: Prepared, filters: GridFilters, selection: Selection?): AchievementsUiState {
         val input = prepared.input
         val state = prepared.state
         val names = prepared.names
         val cards = prepared.cards
         val byId = cards.associateBy { it.id }
+        fun evidence(fact: PlayFact) = AchievementPlayEvidence(fact.id, fact.playedAt, fact.level,
+            names.scenarios[fact.scenarioKey] ?: fact.scenarioKey,
+            fact.seats.joinToString(", ") { names.heroes[it.heroCode] ?: it.heroCode }, fact.won)
+        val detail = (selection as? Selection.Named)?.let { selected ->
+            val card = byId[selected.id] ?: return@let null
+            val definition = input.definitions.firstOrNull { it.id == selected.id } ?: return@let null
+            val unlockId = state.achievements.firstOrNull { it.id == selected.id }?.unlockedByPlayId
+            AchievementDetail(card, AchievementDetails.targets(input, definition)?.map { target ->
+                AchievementTargetRow(target.key, target.kind, when (target.kind) {
+                    TargetKind.HERO -> names.heroes[target.key] ?: target.key
+                    TargetKind.SCENARIO -> names.scenarios[target.key] ?: target.key
+                    TargetKind.ASPECT -> target.key
+                }, target.pack?.let { names.packs[it] ?: it }, target.completedBy?.let(::evidence))
+            }, input.facts.firstOrNull { it.id == unlockId }?.let(::evidence))
+        }
+        val albumDetail = (selection as? Selection.Album)?.let { selected ->
+            AlbumDetail(names.heroes[selected.hero] ?: selected.hero,
+                names.scenarios[selected.scenario] ?: selected.scenario,
+                input.facts.filter { fact -> fact.scenarioKey == selected.scenario &&
+                    fact.seats.any { it.heroCode == selected.hero } }
+                    .sortedWith(compareByDescending<PlayFact> { it.playedAt }.thenBy { it.id }).map(::evidence))
+        }
 
         // The grid's state: the same derivation over the games the filters keep.
         val gridState = if (filters.aspect == null && filters.minLevel == DifficultyLevel.UNKNOWN) {
@@ -186,6 +227,8 @@ class AchievementsViewModel @Inject constructor(
             cells = cells,
             cards = cards,
             recent = state.recent.mapNotNull { byId[it.id] }.take(RECENT_SHOWN),
+            detail = detail,
+            albumDetail = albumDetail,
         )
     }
 

@@ -5,6 +5,7 @@ import com.hasyame.marvelchampions.data.db.entity.CampaignRunEntity
 import com.hasyame.marvelchampions.data.db.entity.DeckFolderEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedModularSetEntity
 import com.hasyame.marvelchampions.data.db.entity.ExcludedScenarioEntity
+import com.hasyame.marvelchampions.data.db.entity.FavouritePlayEntity
 import com.hasyame.marvelchampions.data.db.entity.FavouriteCardEntity
 import com.hasyame.marvelchampions.data.db.entity.KSerializerOf
 import com.hasyame.marvelchampions.data.db.entity.NO_EXTRAS
@@ -76,6 +77,7 @@ data class Backup(
     val plays: List<PlayEntity> = emptyList(),
     val randomizerHistory: List<RandomizerHistoryEntity> = emptyList(),
     val favouriteCards: List<FavouriteCardEntity> = emptyList(),
+    val favouritePlays: List<FavouritePlayEntity> = emptyList(),
     /**
      * Difficulty ratings, in the shape they take on the wire rather than as
      * rows: the server's export writes this field from the sync bodies, and a
@@ -137,7 +139,9 @@ data class Backup(
  * still restores here, and one written before a field existed still restores
  * there.
  */
-@Serializable
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable(with = BackupSettings.Codec::class)
+@KeepGeneratedSerializer
 data class BackupSettings(
     /** The language card text is stored and shown in, as [CardLocale.code]. */
     val cardLocale: String = "",
@@ -149,7 +153,14 @@ data class BackupSettings(
     val trackEncounter: Boolean = false,
     /** Packs the player has been offered and turned down. */
     val dismissedPacks: List<String> = emptyList(),
-)
+    @Transient val extra: JsonObject = NO_EXTRAS,
+) {
+    object Codec : KSerializerOf<BackupSettings>(
+        generated = generatedSerializer(),
+        extrasOf = { it.extra },
+        withExtras = { settings, extra -> settings.copy(extra = extra) },
+    )
+}
 
 /** The counts shown before a restore, so nobody replaces data blindly. */
 data class BackupSummary(
