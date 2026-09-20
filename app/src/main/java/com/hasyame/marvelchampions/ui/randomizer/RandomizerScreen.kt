@@ -24,7 +24,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -81,7 +81,7 @@ fun RandomizerScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            ComicTopAppBar(
                 colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.destination_randomizer)) },
                 navigationIcon = {
@@ -342,7 +342,7 @@ private fun DrawCard(state: RandomizerUiState, viewModel: RandomizerViewModel) {
                 // map is inline so it can host the composable label lookup;
                 // joinToString is not, hence the two steps.
                 value = state.draw.heroes
-                    .map { aspectLabel(it.aspect) }
+                    .map { hero -> hero.aspect.split(",").map { aspectLabel(it.trim()) }.joinToString(" / ") }
                     .takeIf { it.isNotEmpty() }
                     ?.joinToString(", ")
                     ?: stringResource(R.string.randomizer_none),
@@ -398,10 +398,10 @@ private fun DrawRow(
                 Text(shown, style = MaterialTheme.typography.titleMedium)
             }
         },
-        modifier = Modifier.clickable { choosing = true },
+        modifier = Modifier.clickable(enabled = !viewModel.isFixed(field)) { choosing = true },
         trailingContent = {
             Row {
-                IconButton(onClick = { viewModel.toggleLock(field) }) {
+                IconButton(enabled = !viewModel.isFixed(field), onClick = { viewModel.toggleLock(field) }) {
                     Icon(
                         imageVector = Icons.Filled.Lock,
                         contentDescription = stringResource(
@@ -414,7 +414,7 @@ private fun DrawRow(
                         },
                     )
                 }
-                IconButton(onClick = {
+                IconButton(enabled = !viewModel.isFixed(field), onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     viewModel.reroll(field)
                 }) {

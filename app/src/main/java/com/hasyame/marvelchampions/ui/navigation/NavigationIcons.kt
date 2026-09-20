@@ -1,250 +1,57 @@
 package com.hasyame.marvelchampions.ui.navigation
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.PathBuilder
-import androidx.compose.ui.graphics.vector.path
+import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.unit.dp
 
-/**
- * The navigation bar icons Material does not have.
- *
- * Five of the six tabs carried a generic symbol that described a widget rather
- * than a game: a magnifying glass for Cards, a bulleted list for Decks, a video
- * player's triangle for Play, a dialog's information "i" for Rules, and a star
- * for Stats, which is what the app already uses for favourites. Settings keeps
- * its gear, because a gear is what everyone looks for and being clever there
- * would cost more than it gained.
- *
- * All of them are solid silhouettes rather than outlines, and that is the whole
- * design decision. Drawn as outlines they were legible at 96px and turned into
- * a smear at the 24dp a navigation bar actually uses: a 1.7 wide stroke leaves
- * barely a pixel of gap at that size, so a card, its border and the letter
- * inside it ran together. A filled shape with the detail knocked out of it
- * survives being small, which is the only size that matters here.
- *
- * Every shape is drawn here from scratch. Nothing is traced from a Fantasy
- * Flight product, and none of the game's own iconography appears.
- */
+/** The same 24-unit artwork as Web's NavIcon.svelte, with rounded 1.8-unit strokes. */
 internal object NavigationIcons {
+    val Home by lazy { outline("Home", "m2 11 10-9 10 9M5 9v12h5v-7h4v7h5V9") }
+    val Card by lazy { outline("Card",
+        "M5 3h8a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z",
+        "m7 8 2-2 2 2-2 3Z M20 15a4 4 0 1 1-8 0 4 4 0 1 1 8 0 M19 18l3 3",
+    ) }
+    val Deck by lazy {
+        builder("Deck").apply {
+            stroke("m5 17-3-1 3-13 12 3")
+            stroke("M10 7h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z")
+            stroke("m14 10 1.2 3 3.3.2-2.5 2.1.8 3.2-2.8-1.7-2.8 1.7.8-3.2-2.5-2.1 3.3-.2Z", 1.2f)
+        }.build()
+    }
+    val Play by lazy {
+        builder("Play").apply {
+            stroke("M12 2 21 6v6c0 5-9 10-9 10S3 17 3 12V6Z")
+            addPath(PathParser().parsePathString("m13 5-6 8h5l-1 6 6-9h-5Z").toNodes(), fill = SolidColor(Color.Black))
+        }.build()
+    }
+    val Book by lazy { outline("Rules", "M12 5C8 2 4 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-2-1-6-2-10 1Zm0 0v16") }
+    val Chart by lazy { outline("Stats", "M3 3v18h18M7 17v-4m5 4V9m5 8V5m-11 2 5-3 4 1 5-3") }
+    val Trophy by lazy { outline("Achievements", "M7 3h10v5a5 5 0 0 1-10 0ZM7 5H3v3a4 4 0 0 0 5 4m9-7h4v3a4 4 0 0 1-5 4M12 13v5m-5 3h10m-8-3h6") }
+    val Collection by lazy { outline("Collection", "m3 7 9-4 9 4-9 4Zm0 0v12l9 3 9-3V7M12 11v11m-5-7h2m6 0h2") }
+    val History by lazy { outline("History", "M3 10a9 9 0 1 1 1 7M3 4v6h6m3-4v6l4 3") }
+    val Campaign by lazy { outline("Campaign", "m3 5 6-2 6 3 6-2v16l-6 2-6-3-6 2Zm6-2v16m6-13v16") }
+    val Random by lazy { outline("Random", "m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z") }
 
-    /**
-     * A single card, with the M cut out of it.
-     *
-     * Knocked out rather than drawn on top: the icon is tinted a single colour
-     * by [androidx.compose.material3.Icon], so the only way to show the letter
-     * is to let the bar behind show through.
-     */
-    val Card: ImageVector by lazy {
-        icon("Card") {
-            // Even-odd, so the second subpath makes a hole in the first.
-            filled(PathFillType.EvenOdd) {
-                moveTo(7f, 2.5f)
-                horizontalLineTo(17f)
-                quadTo(19f, 2.5f, 19f, 4.5f)
-                verticalLineTo(19.5f)
-                quadTo(19f, 21.5f, 17f, 21.5f)
-                horizontalLineTo(7f)
-                quadTo(5f, 21.5f, 5f, 19.5f)
-                verticalLineTo(4.5f)
-                quadTo(5f, 2.5f, 7f, 2.5f)
-                close()
-
-                moveTo(8.9f, 16.8f)
-                verticalLineTo(7.2f)
-                horizontalLineTo(10.6f)
-                lineTo(12f, 10.8f)
-                lineTo(13.4f, 7.2f)
-                horizontalLineTo(15.1f)
-                verticalLineTo(16.8f)
-                horizontalLineTo(13.7f)
-                verticalLineTo(10.4f)
-                lineTo(12f, 14.4f)
-                lineTo(10.3f, 10.4f)
-                verticalLineTo(16.8f)
-                close()
-            }
-        }
+    val Website by lazy { outline("Website", "M21 12a9 9 0 1 1-18 0 9 9 0 1 1 18 0 M3 12h18 M12 3c5 5 5 13 0 18-5-5-5-13 0-18") }
+    val GitHub by lazy {
+        builder("GitHub").apply {
+            addPath(PathParser().parsePathString("M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z").toNodes(), fill = SolidColor(Color.Black))
+        }.build()
     }
 
-    /**
-     * Three cards, stepped rather than fanned.
-     *
-     * A fan was the first idea and the wrong one: rotated cards in a single
-     * colour merge into a shape that reads as a shirt. Stepping them up and to
-     * the right keeps every gap axis-aligned, which is what survives being
-     * drawn at 24dp.
-     *
-     * The two cards behind are L-shapes rather than whole cards. Only the strip
-     * that clears the card in front of them is ever visible, and drawing the
-     * hidden remainder would fill the gap that makes them separate cards.
-     */
-    val Deck: ImageVector by lazy {
-        icon("Deck") {
-            filled {
-                // Back card: its top edge and its right-hand column.
-                moveTo(11.8f, 3.2f)
-                horizontalLineTo(17.4f)
-                quadTo(18.8f, 3.2f, 18.8f, 4.6f)
-                verticalLineTo(13.4f)
-                quadTo(18.8f, 14.8f, 17.4f, 14.8f)
-                horizontalLineTo(16.6f)
-                verticalLineTo(5.4f)
-                horizontalLineTo(10.4f)
-                verticalLineTo(4.6f)
-                quadTo(10.4f, 3.2f, 11.8f, 3.2f)
-                close()
-
-                // Middle card, the same shape one step down and left.
-                moveTo(9f, 6f)
-                horizontalLineTo(14.6f)
-                quadTo(16f, 6f, 16f, 7.4f)
-                verticalLineTo(16.2f)
-                quadTo(16f, 17.6f, 14.6f, 17.6f)
-                horizontalLineTo(13.8f)
-                verticalLineTo(8.2f)
-                horizontalLineTo(7.6f)
-                verticalLineTo(7.4f)
-                quadTo(7.6f, 6f, 9f, 6f)
-                close()
-
-                // The card in front, whole.
-                moveTo(6.2f, 8.8f)
-                horizontalLineTo(11.8f)
-                quadTo(13.2f, 8.8f, 13.2f, 10.2f)
-                verticalLineTo(19f)
-                quadTo(13.2f, 20.4f, 11.8f, 20.4f)
-                horizontalLineTo(6.2f)
-                quadTo(4.8f, 20.4f, 4.8f, 19f)
-                verticalLineTo(10.2f)
-                quadTo(4.8f, 8.8f, 6.2f, 8.8f)
-                close()
-            }
-        }
+    private fun builder(name: String) = ImageVector.Builder(name, 24.dp, 24.dp, 24f, 24f)
+    private fun outline(name: String, vararg paths: String): ImageVector = builder(name).apply {
+        paths.forEach { stroke(it) }
+    }.build()
+    private fun ImageVector.Builder.stroke(data: String, width: Float = 1.8f) {
+        addPath(
+            pathData = PathParser().parsePathString(data).toNodes(),
+            stroke = SolidColor(Color.Black), strokeLineWidth = width,
+            strokeLineCap = StrokeCap.Round, strokeLineJoin = StrokeJoin.Round,
+        )
     }
-
-    /**
-     * A closed fist, for Play.
-     *
-     * A play triangle is what a video player uses, and this tab is where a game
-     * of superheroes begins. The fist is the app's own drawing rather than any
-     * icon from the game: nothing here is copied from a Fantasy Flight product.
-     */
-    val Fist: ImageVector by lazy {
-        icon("Fist") {
-            filled {
-                moveTo(6.4f, 9.2f)
-                quadTo(6.4f, 7.6f, 8f, 7.6f)
-                horizontalLineTo(9.2f)
-                verticalLineTo(6.6f)
-                quadTo(9.2f, 5.2f, 10.6f, 5.2f)
-                quadTo(12f, 5.2f, 12f, 6.6f)
-                verticalLineTo(7.6f)
-                horizontalLineTo(13f)
-                verticalLineTo(6.2f)
-                quadTo(13f, 4.8f, 14.4f, 4.8f)
-                quadTo(15.8f, 4.8f, 15.8f, 6.2f)
-                verticalLineTo(7.6f)
-                horizontalLineTo(16.8f)
-                verticalLineTo(7f)
-                quadTo(16.8f, 5.7f, 18.1f, 5.7f)
-                quadTo(19.4f, 5.7f, 19.4f, 7f)
-                verticalLineTo(13.6f)
-                quadTo(19.4f, 18.9f, 14.6f, 18.9f)
-                horizontalLineTo(11.4f)
-                quadTo(7.6f, 18.9f, 6.2f, 15.6f)
-                lineTo(4.5f, 11.7f)
-                quadTo(4f, 10.5f, 5.1f, 10f)
-                quadTo(6.1f, 9.5f, 6.7f, 10.6f)
-                close()
-            }
-        }
-    }
-
-    /**
-     * An open book, for Rules.
-     *
-     * It replaces an information "i", which is what a dialog uses to tell you
-     * something. This tab is a reference you read, so it is a book.
-     */
-    val Book: ImageVector by lazy {
-        icon("Book") {
-            filled {
-                moveTo(11.2f, 6.5f)
-                quadTo(8.6f, 4.6f, 4.2f, 4.9f)
-                quadTo(3f, 5f, 3f, 6.1f)
-                verticalLineTo(17.4f)
-                quadTo(3f, 18.5f, 4.2f, 18.4f)
-                quadTo(8.2f, 18.2f, 11.2f, 20f)
-                close()
-
-                moveTo(12.8f, 6.5f)
-                quadTo(15.4f, 4.6f, 19.8f, 4.9f)
-                quadTo(21f, 5f, 21f, 6.1f)
-                verticalLineTo(17.4f)
-                quadTo(21f, 18.5f, 19.8f, 18.4f)
-                quadTo(15.8f, 18.2f, 12.8f, 20f)
-                close()
-            }
-        }
-    }
-
-    /**
-     * Three rising bars, for Stats.
-     *
-     * A star said "favourite", which is a different thing the app also has. The
-     * tab holds games played and win rates, so it gets the shape that means
-     * counting.
-     */
-    val Chart: ImageVector by lazy {
-        icon("Chart") {
-            filled {
-                roundedRect(3.5f, 13f, 4.6f, 7.5f, 1.1f)
-                roundedRect(9.7f, 8.5f, 4.6f, 12f, 1.1f)
-                roundedRect(15.9f, 4f, 4.6f, 16.5f, 1.1f)
-            }
-        }
-    }
-
-    private fun icon(name: String, content: ImageVector.Builder.() -> Unit): ImageVector =
-        ImageVector.Builder(
-            name = name,
-            defaultWidth = SIZE.dp,
-            defaultHeight = SIZE.dp,
-            viewportWidth = SIZE,
-            viewportHeight = SIZE,
-        ).apply(content).build()
-
-    /** Tinted by Icon(), so the colour named here is only a placeholder. */
-    private fun ImageVector.Builder.filled(
-        fillType: PathFillType = PathFillType.NonZero,
-        content: PathBuilder.() -> Unit,
-    ) {
-        path(fill = SolidColor(Color.Black), pathFillType = fillType, pathBuilder = content)
-    }
-
-    private fun PathBuilder.roundedRect(
-        x: Float,
-        y: Float,
-        width: Float,
-        height: Float,
-        radius: Float,
-    ) {
-        val right = x + width
-        val bottom = y + height
-        moveTo(x + radius, y)
-        lineTo(right - radius, y)
-        quadTo(right, y, right, y + radius)
-        lineTo(right, bottom - radius)
-        quadTo(right, bottom, right - radius, bottom)
-        lineTo(x + radius, bottom)
-        quadTo(x, bottom, x, bottom - radius)
-        lineTo(x, y + radius)
-        quadTo(x, y, x + radius, y)
-        close()
-    }
-
-    private const val SIZE = 24f
 }

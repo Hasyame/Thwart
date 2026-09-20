@@ -11,16 +11,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -44,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hasyame.marvelchampions.ui.navigation.NavigationIcons
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
@@ -112,7 +110,7 @@ fun PlayScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            ComicTopAppBar(
                 colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.destination_play)) },
             )
@@ -129,7 +127,7 @@ fun PlayScreen(
         ) {
             inProgress.firstOrNull()?.let { running ->
                 Choice(
-                    icon = Icons.Filled.PlayArrow,
+                    icon = NavigationIcons.Campaign,
                     title = stringResource(R.string.play_continue),
                     subtitle = running.entity.name.ifBlank { running.entity.templateName },
                     onClick = { onResumeCampaign(running.entity.id) },
@@ -145,7 +143,7 @@ fun PlayScreen(
             // says it is on a break.
             paused?.takeIf { it.campaignRunId.isBlank() }?.let { game ->
                 Choice(
-                    icon = Icons.Filled.PlayArrow,
+                    icon = NavigationIcons.Play,
                     title = stringResource(R.string.paused_game_title),
                     subtitle = game.scenarioName,
                     onClick = { showPaused = true },
@@ -154,7 +152,7 @@ fun PlayScreen(
 
             if (draftInProgress) {
                 Choice(
-                    icon = Icons.Filled.PlayArrow,
+                    icon = NavigationIcons.Deck,
                     title = stringResource(R.string.play_draft_resume),
                     subtitle = stringResource(R.string.play_draft_detail),
                     onClick = onDraft,
@@ -168,26 +166,26 @@ fun PlayScreen(
             )
 
             Choice(
-                icon = Icons.Filled.Refresh,
+                icon = NavigationIcons.Random,
                 title = stringResource(R.string.play_random),
                 subtitle = stringResource(R.string.play_random_detail),
                 onClick = onRandomDraw,
             )
             Choice(
-                icon = Icons.Filled.PlayArrow,
+                icon = NavigationIcons.Play,
                 title = stringResource(R.string.play_own),
                 subtitle = stringResource(R.string.play_own_detail),
                 onClick = onOwnSetup,
             )
             Choice(
-                icon = Icons.Filled.Star,
+                icon = NavigationIcons.Campaign,
                 title = stringResource(R.string.play_campaign),
                 subtitle = stringResource(R.string.play_campaign_detail),
                 onClick = onCampaigns,
             )
             if (!draftInProgress) {
                 Choice(
-                    icon = Icons.Filled.Refresh,
+                    icon = NavigationIcons.Deck,
                     title = stringResource(R.string.play_draft),
                     subtitle = stringResource(R.string.play_draft_detail),
                     onClick = onDraft,
@@ -199,7 +197,7 @@ fun PlayScreen(
             // because the setup screen would have no leaders to offer.
             if (hasVersusPack) {
                 Choice(
-                    icon = Icons.Filled.PlayArrow,
+                    icon = NavigationIcons.Play,
                     title = stringResource(R.string.versus_setup_title),
                     subtitle = stringResource(R.string.versus_subtitle),
                     onClick = onVersus,
@@ -221,7 +219,7 @@ private fun AchievementEntry(progress: Completion, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Icon(Icons.Filled.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Icon(NavigationIcons.Trophy, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(

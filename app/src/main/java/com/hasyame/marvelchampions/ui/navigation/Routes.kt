@@ -106,7 +106,7 @@ data object StatsGraph
 data object RandomizerGraph
 
 @Serializable
-data object RandomizerRoute
+data class RandomizerRoute(val deckIds: String = "")
 
 @Serializable
 data object VersusRoute
@@ -202,3 +202,14 @@ data class GameSessionRoute(
      */
     val replayId: String? = null,
 )
+
+/** Keep the selected game mode as a destination, not a custom-game prefill flag. */
+fun limitedGameRoute(mode: String, ids: List<String>): Any {
+    val decks = ids.joinToString(",")
+    return when (mode) {
+        "random" -> RandomizerRoute(decks)
+        "campaign" -> StartCampaignRoute(decks)
+        "own" -> GameSessionRoute(deckIds = decks)
+        else -> error("Unknown limited game destination: $mode")
+    }
+}

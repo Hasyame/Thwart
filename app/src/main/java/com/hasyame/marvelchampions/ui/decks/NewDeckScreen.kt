@@ -28,7 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,7 +61,7 @@ fun NewDeckScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            ComicTopAppBar(
             colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.decks_new)) },
                 navigationIcon = {

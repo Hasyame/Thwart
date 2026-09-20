@@ -1,0 +1,1 @@
+Random games after a draft or sealed now open the randomizer and keep your saved decks, heroes and aspects. Own setup is now called Custom game. Comic title banners and navigation icons now match the Web style, with a red selected tab and clearer shortcuts.

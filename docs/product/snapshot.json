@@ -1,13 +1,13 @@
 {
   "sourceRepository": "https://github.com/Hasyame/Thwart-Web",
-  "sourceBaseCommit": "798dae5b97c62f9159b16f59a2a429cba46c88a8",
+  "sourceBaseCommit": "90f166a90d06b2d8d681e6d60e86d2c1ac002835",
   "provenance": "Content pinned by SHA-256; sourceBaseCommit identifies the base checkout, including when documents are uncommitted.",
   "files": {
     "AGENTS.md": "0baac36b3b72c2a6e86a02a9f8117202645ee96d43820720e1ec2a77f447c524",
     "specs/001-IDENTITY-AND-ACHIEVEMENTS.md": "53dc31f5c342ad391c5ca476c68f5156b6f9fcdb682375be7e7d331ac7b85b8a",
     "specs/002-BACKUP-PORTABILITY.md": "bde06ac2ca0c968821c61ac4b61a639cb38da97350344dda2e19d449999cbac1",
     "specs/003-PARITY-COMPLETION.md": "91083385e4df6996db72028f6edb32669d754c7f1541f82c6e70910b3aadca35",
-    "specs/004-LIMITED-MODES-AND-GAME-SETUP.md": "25a70423057b97c4d520c6cb410a4e5ae4a660db5b81914289701e1c4c86d7f9",
+    "specs/004-LIMITED-MODES-AND-GAME-SETUP.md": "e994de623ddfa3376f8a3cf0a2c43c1afebee16b1cc00a82921d9b0f930b933b",
     "specs/FEATURE_TEMPLATE.md": "e4632423b4f08974abb2824f67071fd9381c1a429b4e94daff78c5731da6e4fc",
     "specs/IMPLEMENTATION_INVENTORY.md": "d1dadf7a7784f471fa0390cb92210ecf53b246610d9ee4094f8d87dd03826299",
     "specs/PARITY_REPORT.md": "2bd695f984bb00e477ae627ee465c72fe649f47f79f9044528acbdce1e5d755b",

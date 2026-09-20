@@ -330,7 +330,11 @@ class GameSessionViewModel @Inject constructor(
         }
     }
 
-    fun prefillDecks(ids: List<String>, randomScenario: Boolean) {
+    fun prefillDecks(
+        ids: List<String>, randomScenario: Boolean,
+        scenarioCode: String? = null, difficulty: String? = null,
+        modularSets: String? = null, standardSet: String? = null, autoStart: Boolean = false,
+    ) {
         if (prefilled) return
         prefilled = true
         viewModelScope.launch {
@@ -339,7 +343,16 @@ class GameSessionViewModel @Inject constructor(
             val heroes = ids.mapNotNull { decks[it] }.take(4).map { deck ->
                 SessionHero(deck.heroCode, deck.aspects, deck.id, deck.name, deck.heroName)
             }
-            state.update { it.copy(heroes = heroes) }
+            if (heroes.size != ids.size) {
+                state.update { it.copy(challengeUnavailable = true) }
+                return@launch
+            }
+            state.update { it.copy(
+                heroes = heroes, scenarioCode = scenarioCode ?: it.scenarioCode,
+                difficulty = difficulty ?: it.difficulty,
+                modularSetCodes = modularSets?.split(",")?.filter(String::isNotBlank) ?: it.modularSetCodes,
+                standardSet = standardSet?.takeIf(String::isNotBlank),
+            ) }
             if (randomScenario && heroes.isNotEmpty()) {
                 val draw = com.hasyame.marvelchampions.domain.randomizer.ScenarioRandomizer.draw(
                     ready.pools, randomizerRepository.loadRules(),
@@ -349,6 +362,7 @@ class GameSessionViewModel @Inject constructor(
                     difficulty = draw.difficulty?.name?.lowercase() ?: "standard_i",
                     standardSet = draw.standardSet?.name?.lowercase().orEmpty(), modularSetCodes = draw.modularSetCodes) }
             }
+            if (autoStart) start()
         }
     }
 

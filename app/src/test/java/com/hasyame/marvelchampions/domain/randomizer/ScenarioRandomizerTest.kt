@@ -9,6 +9,22 @@ import org.junit.Test
 import kotlin.random.Random
 
 class ScenarioRandomizerTest {
+    @Test fun `limited decks keep every aspect and seat through rerolls and novelty exhaustion`() {
+        val heroes = listOf(HeroAssignment("spider_man", "justice,protection"), HeroAssignment("she_hulk", "aggression"))
+        val previous = RandomizerDraw(playerCount = 2, heroes = heroes)
+        val locked = setOf(DrawField.HEROES, DrawField.ASPECTS, DrawField.PLAYER_COUNT)
+        repeat(20) { seed ->
+            val result = draw(previous = previous, locked = locked, seed = seed)
+            assertEquals(heroes, result.heroes)
+            assertEquals(2, result.playerCount)
+            assertTrue(result.isComplete)
+        }
+        val played = pools.scenarios.map { "spider_man" to it.code }.toSet()
+        assertFalse(draw(previous = previous, locked = locked,
+            filters = RandomizerFilters(unplayedOnly = true, playedPairs = played)).isComplete)
+        assertEquals(heroes, draw(previous = previous, locked = locked).heroes)
+    }
+
     @Test fun `unplayed excludes every previously played seat and reports exhaustion`() {
         val played = pools.scenarios.flatMap { scenario -> pools.heroes.map { it.code to scenario.code } }.toSet()
         val filters = RandomizerFilters(unplayedOnly = true, playedPairs = played - ("spider_man" to "rhino"), minPlayers = 1, maxPlayers = 1)

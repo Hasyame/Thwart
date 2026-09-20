@@ -1,8 +1,6 @@
 package com.hasyame.marvelchampions.ui.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.hasyame.marvelchampions.R
 import kotlin.reflect.KClass
@@ -39,7 +37,7 @@ enum class TopLevelDestination(
     HOME(
         route = HomeRoute::class,
         graphRoute = HomeGraph::class,
-        icon = Icons.Filled.Home,
+        icon = NavigationIcons.Home,
         labelRes = R.string.destination_home,
         alsoGraphs = listOf(SettingsGraph::class, StatsGraph::class),
     ),
@@ -58,7 +56,7 @@ enum class TopLevelDestination(
     PLAY(
         route = PlayRoute::class,
         graphRoute = PlayGraph::class,
-        icon = NavigationIcons.Fist,
+        icon = NavigationIcons.Play,
         labelRes = R.string.destination_play,
     ),
     RULES(

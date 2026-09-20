@@ -31,7 +31,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -122,7 +122,7 @@ fun CampaignScreen(
     Scaffold(
         topBar = {
             Column {
-                CenterAlignedTopAppBar(
+                ComicTopAppBar(
                     colors = comicTopBarColors(),
                     title = { Text(stringResource(R.string.destination_campaign)) },
                     navigationIcon = {
