@@ -20,11 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -97,7 +95,7 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            ComicTopAppBar(
                 colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
@@ -121,14 +119,14 @@ fun HomeScreen(
             // a card at random, then the games played and what they add up to.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 MenuTile(stringResource(R.string.destination_rules), NavigationIcons.Book, onRules, Modifier.weight(1f))
-                MenuTile(stringResource(R.string.collection_title), NavigationIcons.Card, onCollection, Modifier.weight(1f))
+                MenuTile(stringResource(R.string.collection_title), NavigationIcons.Collection, onCollection, Modifier.weight(1f))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MenuTile(stringResource(R.string.play_random), Icons.Filled.Refresh, onRandomGame, Modifier.weight(1f))
+                MenuTile(stringResource(R.string.play_random), NavigationIcons.Random, onRandomGame, Modifier.weight(1f))
                 MenuTile(stringResource(R.string.home_random_card), NavigationIcons.Deck, viewModel::drawRandomCard, Modifier.weight(1f))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MenuTile(stringResource(R.string.history_title), Icons.Filled.DateRange, onHistory, Modifier.weight(1f))
+                MenuTile(stringResource(R.string.history_title), NavigationIcons.History, onHistory, Modifier.weight(1f))
                 MenuTile(stringResource(R.string.destination_stats), NavigationIcons.Chart, onStats, Modifier.weight(1f))
             }
 
@@ -203,13 +201,13 @@ fun HomeScreen(
                 LinkRow(
                     title = stringResource(R.string.home_web),
                     subtitle = stringResource(R.string.home_web_note),
-                    icon = { Icon(NavigationIcons.Deck, contentDescription = null) },
+                    icon = { Icon(NavigationIcons.Website, contentDescription = null) },
                     onClick = { browser.openUri(WEB_URL) },
                 )
                 LinkRow(
                     title = stringResource(R.string.home_github),
                     subtitle = stringResource(R.string.home_github_note),
-                    icon = { Icon(NavigationIcons.Book, contentDescription = null) },
+                    icon = { Icon(NavigationIcons.GitHub, contentDescription = null) },
                     onClick = { browser.openUri(GITHUB_URL) },
                 )
             }

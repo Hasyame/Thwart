@@ -66,7 +66,7 @@ fun MarvelChampionsNavHost(
                     onStats = { navController.navigate(StatsGraph) },
                     onRules = { navController.navigate(RulesRoute) },
                     onCollection = { navController.navigate(CollectionRoute) },
-                    onRandomGame = { navController.navigate(RandomizerRoute) },
+                    onRandomGame = { navController.navigate(RandomizerRoute()) },
                     onCard = { code -> navController.navigate(CardDetailRoute(code)) },
                 )
             }
@@ -169,7 +169,7 @@ fun MarvelChampionsNavHost(
         navigation<PlayGraph>(startDestination = PlayRoute) {
             composable<PlayRoute> {
                 PlayScreen(
-                    onRandomDraw = { navController.navigate(RandomizerRoute) },
+                    onRandomDraw = { navController.navigate(RandomizerRoute()) },
                     onOwnSetup = { navController.navigate(GameSessionRoute()) },
                     onResumePausedGame = { pausedId ->
                         navController.navigate(GameSessionRoute(resumeId = pausedId))
@@ -194,9 +194,7 @@ fun MarvelChampionsNavHost(
                     // draft itself has nothing left to show.
                     onSaved = { navController.popBackStack() },
                     onPlay = { mode, ids ->
-                        val decks = ids.joinToString(",")
-                        if (mode == "campaign") navController.navigate(StartCampaignRoute(decks))
-                        else navController.navigate(GameSessionRoute(deckIds = decks, randomScenario = mode == "random"))
+                        navController.navigate(limitedGameRoute(mode, ids))
                     },
                     onCardDetail = { code -> navController.navigate(CardDetailRoute(code)) },
                 )
@@ -209,7 +207,8 @@ fun MarvelChampionsNavHost(
                     onBack = { navController.popBackStack() },
                 )
             }
-            composable<RandomizerRoute> {
+            composable<RandomizerRoute> { entry ->
+                val deckIds = entry.toRoute<RandomizerRoute>().deckIds
                 RandomizerScreen(
                     onCollection = { navController.navigate(CollectionRoute) },
                     onBack = { navController.popBackStack() },
@@ -219,6 +218,7 @@ fun MarvelChampionsNavHost(
                                 // Was dropped, so the session had every part of
                                 // the draw except the scenario it was for, could
                                 // not start, and fell back to the setup page.
+                                deckIds = deckIds,
                                 scenarioCode = scenario.takeIf { it.isNotBlank() },
                                 difficulty = difficulty.takeIf { it.isNotBlank() },
                                 heroes = heroes,

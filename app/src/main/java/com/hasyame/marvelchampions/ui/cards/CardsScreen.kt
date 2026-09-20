@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.CenterAlignedTopAppBar
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -77,7 +77,7 @@ fun CardsScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
+            ComicTopAppBar(
                 colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.destination_cards)) },
                 scrollBehavior = scrollBehavior,

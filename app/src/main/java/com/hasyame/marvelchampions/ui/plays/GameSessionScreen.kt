@@ -18,7 +18,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -112,7 +112,7 @@ fun GameSessionScreen(
         if (challengeJson != null) {
             viewModel.prefillChallenge(kotlinx.serialization.json.Json.decodeFromString(challengeJson))
         } else if (deckIds.isNotBlank()) {
-            viewModel.prefillDecks(deckIds.split(','), randomScenario)
+            viewModel.prefillDecks(deckIds.split(','), randomScenario, scenarioCode, difficulty, modularSets, standardSet, autoStart)
         } else if (resumeId != null) {
             viewModel.resume(resumeId)
         } else if (replayId != null) {
@@ -140,7 +140,7 @@ fun GameSessionScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            ComicTopAppBar(
                 colors = comicTopBarColors(),
                 title = { Text(stringResource(R.string.session_title)) },
                 navigationIcon = {
