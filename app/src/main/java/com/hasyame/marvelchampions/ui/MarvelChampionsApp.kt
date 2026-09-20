@@ -6,6 +6,9 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import com.hasyame.marvelchampions.core.designsystem.theme.HeadingFill
+import com.hasyame.marvelchampions.core.designsystem.theme.HeadingInk
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -109,15 +112,17 @@ private fun AppContent(
         }
     }
 
-    // Gold pill behind the selected tab. The stock indicator is a pale tint of
-    // the primary, which against a red header reads as the bar being a lighter
-    // shade rather than as a selection. Built out here because the items lambda
-    // below is not composable.
+    // Match the red and white selected state of Web navigation.
     val itemColors = NavigationSuiteDefaults.itemColors(
-        navigationBarItemColors = NavigationBarItemDefaults.colors(
-            selectedIconColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        navigationRailItemColors = NavigationRailItemDefaults.colors(
+            selectedIconColor = HeadingInk,
             selectedTextColor = MaterialTheme.colorScheme.primary,
-            indicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
+            indicatorColor = HeadingFill,
+        ),
+        navigationBarItemColors = NavigationBarItemDefaults.colors(
+            selectedIconColor = HeadingInk,
+            selectedTextColor = MaterialTheme.colorScheme.primary,
+            indicatorColor = HeadingFill,
         ),
     )
 

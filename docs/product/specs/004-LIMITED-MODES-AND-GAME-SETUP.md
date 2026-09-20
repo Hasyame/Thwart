@@ -52,3 +52,22 @@ The same day they requested separate draft and sealed victory milestones at
 Definitions schema/version 2 and shared boundary vectors implement these on both
 clients. Existing game-card portraits illustrate the milestones; no new artwork
 is bundled. The first draft achievement retains its existing identifier.
+
+On 2026-09-20 the owner reported that the random limited-game choice incorrectly
+opened custom setup. It must open the actual randomizer, with saved deck IDs,
+heroes and all aspects fixed while scenario, difficulty and modules remain
+randomizable. Playing the draw retains those decks. The common user-facing label
+for own setup is now "Custom game" / "Partie personnalisée" throughout both apps.
+
+Web provides a visible back action and keeps the completed limited-deck chooser
+in its browser history entry. Returning from any offered game mode, including
+browser back and reloading that entry, must not start a fresh draft or save the
+same decks twice. A new visit from the Play hub may start a new limited session.
+The owner also approved comic title banners on main Android screens, with readable
+contrast, wrapping and support for enlarged text; card/deck names remain readable.
+
+The owner additionally requested Android navigation and button icons to follow
+the Web artwork on 2026-09-20. Use the same outlined card/search, deck/star,
+shield/lightning, home, rules/book, campaign/map, collection, history and trophy
+symbols, with a red selected indicator and contrasting light icon. Preserve the
+five Android navigation graphs and their labels and independent back stacks.

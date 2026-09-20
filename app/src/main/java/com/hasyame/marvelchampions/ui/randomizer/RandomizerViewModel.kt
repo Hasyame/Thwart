@@ -1,5 +1,9 @@
 package com.hasyame.marvelchampions.ui.randomizer
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
+import com.hasyame.marvelchampions.ui.navigation.RandomizerRoute
+import com.hasyame.marvelchampions.data.repository.DeckRepository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hasyame.marvelchampions.data.db.entity.RandomizerHistoryEntity
@@ -63,10 +67,22 @@ data class RandomizerUiState(
 @HiltViewModel
 class RandomizerViewModel @Inject constructor(
     private val repository: RandomizerRepository,
+    private val decks: DeckRepository,
+    savedStateHandle: SavedStateHandle,
     private val preferences: AppPreferences,
     private val ratings: RatingRepository,
     private val achievements: com.hasyame.marvelchampions.data.repository.AchievementRepository,
 ) : ViewModel() {
+
+    private val deckIds = savedStateHandle.toRoute<RandomizerRoute>().deckIds.split(",").filter { it.isNotBlank() }
+    private var fixedHeroes: List<HeroAssignment> = emptyList()
+    fun isFixed(field: DrawField): Boolean = deckIds.isNotEmpty() && field in setOf(
+        DrawField.HEROES, DrawField.ASPECTS, DrawField.PLAYER_COUNT,
+    )
+    private fun fixedPrevious(): RandomizerDraw = if (deckIds.isEmpty()) draw.value else draw.value.copy(
+        heroes = fixedHeroes, playerCount = deckIds.size,
+    )
+    private fun fixedLocks(): Set<DrawField> = DrawField.entries.filter(::isFixed).toSet()
 
     private val draw = MutableStateFlow(RandomizerDraw())
     private val locked = MutableStateFlow<Set<DrawField>>(emptySet())
@@ -166,6 +182,13 @@ class RandomizerViewModel @Inject constructor(
             // not guaranteed to have delivered by the time we draw, and a first
             // draw offering a set the player has not got is the whole bug.
             missingModularSets = repository.getExcludedModularSets()
+            if (deckIds.isNotEmpty()) {
+                val aliases = repository.heroSetAliases()
+                fixedHeroes = deckIds.mapNotNull { decks.getDeck(it) }.map {
+                    HeroAssignment(aliases[it.heroCode] ?: it.heroCode, it.aspects)
+                }
+                locked.value = locked.value + fixedLocks()
+            }
             loading.value = false
             if (pools.value.scenarios.isNotEmpty()) {
                 rollAll()
@@ -209,13 +232,14 @@ class RandomizerViewModel @Inject constructor(
     }
 
     fun rollAll() {
+        if (loading.value || (deckIds.isNotEmpty() && fixedHeroes.size != deckIds.size)) return
         if (filters.value.unplayedOnly && !historyReady) { draw.value = RandomizerDraw(); return }
         draw.value = ScenarioRandomizer.draw(
             pools = pools.value,
             rules = rules,
             filters = effectiveFilters(),
-            previous = draw.value,
-            locked = locked.value,
+            previous = fixedPrevious(),
+            locked = locked.value + fixedLocks(),
         )
     }
 
@@ -224,12 +248,13 @@ class RandomizerViewModel @Inject constructor(
      * whether it is locked.
      */
     fun reroll(field: DrawField) {
+        if (isFixed(field)) return
         draw.value = ScenarioRandomizer.draw(
             pools = pools.value,
             rules = rules,
             filters = effectiveFilters(),
-            previous = draw.value,
-            locked = DrawField.entries.toSet() - field,
+            previous = fixedPrevious(),
+            locked = (DrawField.entries.toSet() - field) + fixedLocks(),
         )
     }
 
@@ -261,6 +286,7 @@ class RandomizerViewModel @Inject constructor(
     }
 
     fun choose(field: DrawField, values: List<String>) {
+        if (isFixed(field)) return
         val current = draw.value
         draw.value = when (field) {
             // A Fear No Evil job chosen by hand still draws its villain: this
@@ -338,6 +364,7 @@ class RandomizerViewModel @Inject constructor(
     }
 
     fun toggleLock(field: DrawField) {
+        if (isFixed(field)) return
         locked.value = if (field in locked.value) locked.value - field else locked.value + field
     }
 

@@ -596,7 +596,7 @@
     <string name="plays_stat_streak">Série en cours</string>
     <string name="plays_stat_best_streak">Meilleure série</string>
     <string name="plays_stat_campaign">Campagne</string>
-    <string name="session_title">Nouvelle partie</string>
+    <string name="session_title">Partie personnalisée</string>
     <string name="session_villain">Méchant</string>
     <string name="session_scenario">Scénario</string>
     <string name="session_table">À la table</string>
@@ -620,7 +620,7 @@
     <string name="play_start_something">COMMENCER UNE PARTIE</string>
     <string name="play_random">Partie aléatoire</string>
     <string name="play_random_detail">Laissez l\'application choisir un scénario, des héros et des affinités parmi ce que vous possédez.</string>
-    <string name="play_own">Ma propre partie</string>
+    <string name="play_own">Partie personnalisée</string>
     <string name="play_own_detail">Choisissez tout vous-même. L\'application chronomètre la partie.</string>
     <string name="play_campaign">Campagne</string>
     <string name="play_campaign_detail">Démarrez une campagne, ou ouvrez-en une terminée.</string>
@@ -1215,7 +1215,7 @@
     <string name="limited_play_next">Decks enregistrés. Que souhaitez-vous jouer ?</string>
     <string name="limited_random">Partie aléatoire</string>
     <string name="limited_campaign">Campagne</string>
-    <string name="limited_own">Choisir ma partie</string>
+    <string name="limited_own">Partie personnalisée</string>
     <string name="limited_later">Jouer plus tard</string>
     <string name="achievement_prepare">Préparer une partie pour ce succès</string>
     <string name="achievement_draft_win_title">Novice du draft</string>

@@ -572,7 +572,7 @@
     <string name="plays_stat_streak">Win streak</string>
     <string name="plays_stat_best_streak">Best streak</string>
     <string name="plays_stat_campaign">Campaign</string>
-    <string name="session_title">New game</string>
+    <string name="session_title">Custom game</string>
     <string name="session_villain">Villain</string>
     <string name="session_scenario">Scenario</string>
     <string name="session_table">At the table</string>
@@ -596,7 +596,7 @@
     <string name="play_start_something">START A GAME</string>
     <string name="play_random">Random game</string>
     <string name="play_random_detail">Let the app pick a scenario, heroes and aspects from what you own.</string>
-    <string name="play_own">My own setup</string>
+    <string name="play_own">Custom game</string>
     <string name="play_own_detail">Choose everything yourself. The app times the game.</string>
     <string name="play_campaign">Campaign</string>
     <string name="play_campaign_detail">Start a campaign, or open one you have finished.</string>
@@ -1173,7 +1173,7 @@
     <string name="limited_play_next">Decks saved. What would you like to play?</string>
     <string name="limited_random">Random game</string>
     <string name="limited_campaign">Campaign</string>
-    <string name="limited_own">Choose my own game</string>
+    <string name="limited_own">Custom game</string>
     <string name="limited_later">Play later</string>
     <string name="achievement_prepare">Prepare a game for this achievement</string>
     <string name="achievement_draft_win_title">Young Drafter</string>
