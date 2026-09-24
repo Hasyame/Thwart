@@ -1,0 +1,13 @@
+A finished game no longer comes back.
+
+A game ends the moment it is written down, so leaving the result and
+coming back offers a new game rather than the one just played, and a game
+resumed from a long break stops being offered once it is in the history.
+
+Play again on the result lays the same scenario, difficulty, decks and
+modular sets out again, ready to change before you start.
+
+The shelf of decks opens the draft or the sealed builder directly. The
+draft's collection for the session moves above the identity, grouped and
+searchable, and the identities now follow it: a hero pack brought for the
+evening can be drafted.
