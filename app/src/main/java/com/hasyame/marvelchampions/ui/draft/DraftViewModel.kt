@@ -11,6 +11,7 @@ import com.hasyame.marvelchampions.domain.draft.DraftCard
 import com.hasyame.marvelchampions.domain.draft.DraftContext
 import com.hasyame.marvelchampions.domain.draft.DraftEngine
 import com.hasyame.marvelchampions.domain.draft.DraftNaming
+import com.hasyame.marvelchampions.domain.draft.DraftPack
 import com.hasyame.marvelchampions.domain.draft.DraftPhase
 import com.hasyame.marvelchampions.domain.draft.DraftPlayer
 import com.hasyame.marvelchampions.domain.draft.DraftRules
@@ -20,6 +21,8 @@ import com.hasyame.marvelchampions.domain.draft.IdentityMode
 import com.hasyame.marvelchampions.domain.draft.SealedEngine
 import com.hasyame.marvelchampions.domain.model.CardLocale
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,6 +49,10 @@ data class DeckLine(val card: DraftCard, val count: Int, val signature: Boolean)
 
 data class DraftUiState(
     val packNames: Map<String, String> = emptyMap(),
+    /** Every pack, in release order, with its type and what the collection has. */
+    val packs: List<DraftPack> = emptyList(),
+    /** Cards the session's collection puts on the shelf, for the summary line. */
+    val shelfCards: Int = 0,
     /** Null until the saved session, or its absence, has been read. */
     val draft: DraftState? = null,
     val isLoading: Boolean = true,
@@ -90,19 +97,29 @@ class DraftViewModel @Inject constructor(
 
     /** The card data, built once identities exist and kept for the draft's life. */
     private var context: DraftContext? = null
+
+    /** The pending reading of the shelf, cancelled by the next change to it. */
+    private var collectionWatch: Job? = null
     private val persistence = Mutex()
 
     init {
         viewModelScope.launch {
             val locale = preferences.currentCardLocale()
-            val heroes = repository.ownedHeroes(locale)
             val saved = repository.currentSession()
             val collection = saved?.collection ?: repository.collection()
+            // The identities follow the collection this draft is played from,
+            // so a hero pack somebody brought for the evening can be drafted
+            // and not merely lend its cards to the others.
+            val heroes = repository.heroesIn(collection, locale)
             val packNames = repository.packNames(locale)
+            val packs = repository.packs(locale)
+            val shelf = repository.shelfSize(collection, locale)
             state.update {
                 it.copy(
                     draft = (saved ?: DraftState()).copy(collection = collection),
                     packNames = packNames,
+                    packs = packs,
+                    shelfCards = shelf,
                     heroes = heroes,
                     poolAspectAvailable = repository.poolAspectAvailable(),
                     isLoading = false,
@@ -125,6 +142,38 @@ class DraftViewModel @Inject constructor(
         if (draft.phase != DraftPhase.IDENTITY) return
         commit(draft.copy(collection = draft.collection.orEmpty() + (code to quantity.coerceIn(0, 99))))
         context = null
+        followCollection()
+    }
+
+    /** Back to the saved collection, for a draft that was adjusted and should not be. */
+    fun resetCollection() {
+        val draft = state.value.draft ?: return
+        if (draft.phase != DraftPhase.IDENTITY) return
+        viewModelScope.launch {
+            commit(draft.copy(collection = repository.collection()))
+            context = null
+            followCollection()
+        }
+    }
+
+    /**
+     * The identities and the shelf, read again from the collection this draft
+     * is played from.
+     *
+     * A beat after the last tap and cancelling the one before it: a stepper
+     * is pressed several times in a row, and each press would otherwise read
+     * every hero's deck building rules from the database again.
+     */
+    private fun followCollection() {
+        collectionWatch?.cancel()
+        collectionWatch = viewModelScope.launch {
+            delay(COLLECTION_SETTLE_MS)
+            val collection = state.value.draft?.collection ?: return@launch
+            val locale = preferences.currentCardLocale()
+            val heroes = repository.heroesIn(collection, locale)
+            val shelf = repository.shelfSize(collection, locale)
+            state.update { it.copy(heroes = heroes, shelfCards = shelf) }
+        }
     }
 
     fun selectSealed(code: String, add: Boolean) {
@@ -466,4 +515,9 @@ class DraftViewModel @Inject constructor(
             commit(current.copy(players = players))
         }
     }
+    private companion object {
+        /** Long enough for a run of taps on a stepper to be one reading. */
+        const val COLLECTION_SETTLE_MS = 250L
+    }
+
 }

@@ -1,6 +1,10 @@
 package com.hasyame.marvelchampions.ui.plays
 
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,9 +32,11 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,10 +45,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
@@ -95,6 +105,30 @@ fun GameSessionScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val recorded by viewModel.recorded.collectAsStateWithLifecycle()
+
+    /*
+     * The result of a filed game belongs to this screen rather than to the
+     * session, which ended when the game was written down. Leaving for
+     * another tab therefore puts it away, and coming back to Play offers a
+     * new game instead of the one just finished; the rating and the
+     * BoardGameGeek entry are on the game's row in the history.
+     *
+     * "Left" means this destination stopped while the app stayed in front.
+     * Turning the phone or putting the app away stops it too, and those keep
+     * the result, because the player has not gone anywhere.
+     */
+    val host = LocalContext.current.findActivity()
+    val destination = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(destination, host) {
+        val watcher = LifecycleEventObserver { _, event ->
+            val inForeground = host?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == true
+            if (event == Lifecycle.Event.ON_STOP && inForeground) {
+                viewModel.dismissRecorded()
+            }
+        }
+        destination.addObserver(watcher)
+        onDispose { destination.removeObserver(watcher) }
+    }
 
     // Leaving mid-game throws away a running clock and everything set up, so
     // it asks first. Only while playing: backing out of the setup loses nothing
@@ -259,7 +293,7 @@ fun GameSessionScreen(
                     UnlockedAchievements(
                         unlocked = state.unlocked,
                         onOpen = {
-                            viewModel.reset()
+                            viewModel.newGame()
                             onOpenAchievements()
                         },
                     )
@@ -282,14 +316,30 @@ fun GameSessionScreen(
                         )
                     }
 
-                    Button(
-                        onClick = viewModel::reset,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.session_another)) }
+                    // The same game again, which is what a table usually
+                    // wants next, and an empty setup beside it.
+                    if (state.lastTable != null) {
+                        Button(
+                            onClick = viewModel::playAgain,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.session_play_again)) }
+                    }
+
+                    if (state.lastTable == null) {
+                        Button(
+                            onClick = viewModel::newGame,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.session_another)) }
+                    } else {
+                        OutlinedButton(
+                            onClick = viewModel::newGame,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.session_another)) }
+                    }
 
                     OutlinedButton(
                         onClick = {
-                            viewModel.reset()
+                            viewModel.newGame()
                             onOpenPlays()
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -297,7 +347,7 @@ fun GameSessionScreen(
 
                     OutlinedButton(
                         onClick = {
-                            viewModel.reset()
+                            viewModel.newGame()
                             onBack()
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -305,7 +355,7 @@ fun GameSessionScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { viewModel.reset(); onBack() }) {
+                TextButton(onClick = { viewModel.newGame(); onBack() }) {
                     Text(stringResource(R.string.session_back_to_menu))
                 }
             },
@@ -331,6 +381,26 @@ private fun SetupPhase(
     ) {
         if (state.challengeUnavailable) {
             Text(stringResource(R.string.achievement_setup_unavailable), color = MaterialTheme.colorScheme.error)
+        }
+        // Where this table came from, when it is the one just played. Said
+        // once, because the second sentence of it is "change what you like".
+        if (state.playAgainNote) {
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(Modifier.padding(12.dp)) {
+                    Text(
+                        stringResource(R.string.session_play_again_note),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    TextButton(
+                        onClick = viewModel::dismissPlayAgainNote,
+                        modifier = Modifier.align(Alignment.End),
+                    ) { Text(stringResource(R.string.action_got_it)) }
+                }
+            }
         }
         // Same note as the randomiser, for the same reason: everything on this
         // screen is filtered by the collection, and a player who does not know
@@ -997,3 +1067,14 @@ private fun PlayingPhase(
 }
 
 private const val TICK_MILLIS = 1_000L
+
+/**
+ * The activity this composition is in, through whatever context wrappers
+ * Compose hands over. Used to tell a tab change from the whole app being put
+ * away: both stop this destination, only one of them means the player left.
+ */
+private tailrec fun Context.findActivity(): ComponentActivity? = when (this) {
+    is ComponentActivity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}

@@ -124,6 +124,10 @@ fun MarvelChampionsNavHost(
                     // its legality is visible and fixable there and then.
                     onDeckImported = { deckId -> navController.navigate(DeckDetailRoute(deckId)) },
                     onBuildDeck = { navController.navigate(NewDeckRoute) },
+                    // The draft lives in the Play graph, and opening it from
+                    // here puts it on the Decks stack, so "later" and the back
+                    // gesture both return to the shelf it was started from.
+                    onDraftDeck = { sealed -> navController.navigate(DeckDraftRoute(sealed = sealed)) },
                     onEditDeck = { deckId -> navController.navigate(DeckDetailRoute(deckId)) },
                     sharedLink = sharedLink,
                     onSharedLinkHandled = onSharedLinkHandled,
@@ -134,6 +138,24 @@ fun MarvelChampionsNavHost(
                     deckId = entry.toRoute<DeckDetailRoute>().deckId,
                     onBack = { navController.popBackStack() },
                     onCardClick = { code -> navController.navigate(CardDetailRoute(code)) },
+                )
+            }
+            // The draft, on the Decks back stack: the deck it builds is
+            // filed on this shelf, so this is where saving it comes back to.
+            composable<DeckDraftRoute> { entry ->
+                DraftScreen(
+                    initiallySealed = entry.toRoute<DeckDraftRoute>().sealed,
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() },
+                    onPlay = { mode, ids ->
+                        // A game is played on the Play tab whichever shelf the
+                        // deck was built from, so the draft is left behind and
+                        // the game starts there.
+                        navController.popBackStack()
+                        navController.navigateToTopLevelDestination(TopLevelDestination.PLAY)
+                        navController.navigate(limitedGameRoute(mode, ids))
+                    },
+                    onCardDetail = { code -> navController.navigate(CardDetailRoute(code)) },
                 )
             }
             composable<NewDeckRoute> {
