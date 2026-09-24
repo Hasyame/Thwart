@@ -1,8 +1,8 @@
 package com.hasyame.marvelchampions.ui.draft
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -46,15 +48,16 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,8 +68,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -77,10 +80,13 @@ import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
 import com.hasyame.marvelchampions.R
 import com.hasyame.marvelchampions.core.designsystem.component.ComicPanel
+import com.hasyame.marvelchampions.core.designsystem.component.ComicTopAppBar
 import com.hasyame.marvelchampions.core.designsystem.component.aspectColor
 import com.hasyame.marvelchampions.core.designsystem.component.comicTopBarColors
 import com.hasyame.marvelchampions.data.marvelcdb.MarvelCdbUrls
 import com.hasyame.marvelchampions.data.repository.DraftHero
+import com.hasyame.marvelchampions.domain.draft.DraftPack
+import com.hasyame.marvelchampions.domain.draft.SessionCollection
 import com.hasyame.marvelchampions.domain.draft.DraftCard
 import com.hasyame.marvelchampions.domain.draft.DraftEngine
 import com.hasyame.marvelchampions.domain.draft.DraftPhase
@@ -89,6 +95,7 @@ import com.hasyame.marvelchampions.domain.draft.DraftRules
 import com.hasyame.marvelchampions.domain.draft.DraftSettings
 import com.hasyame.marvelchampions.domain.draft.IdentityMode
 import com.hasyame.marvelchampions.domain.draft.SealedEngine
+import com.hasyame.marvelchampions.domain.model.PackType
 import com.hasyame.marvelchampions.ui.decks.problemMessage
 import com.hasyame.marvelchampions.ui.util.aspectLabel
 import kotlin.math.roundToInt
@@ -444,6 +451,10 @@ private fun IdentityPage(state: DraftUiState, viewModel: DraftViewModel, isWide:
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxSize(),
     ) {
+        // Above the identity, because it decides which identities there are.
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            SessionCollectionPanel(state, viewModel)
+        }
         item(span = { GridItemSpan(maxLineSpan) }) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
@@ -563,23 +574,6 @@ private fun AspectsAndSize(state: DraftUiState, player: DraftPlayer, hero: Draft
     val isLast = draft.current + 1 >= draft.players.size
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(top = 8.dp)) {
-        var collectionOpen by remember { mutableStateOf(false) }
-        OutlinedButton(onClick = { collectionOpen = !collectionOpen }) {
-            Text(stringResource(R.string.limited_collection))
-        }
-        if (collectionOpen) {
-            Text(stringResource(R.string.limited_collection_hint))
-            state.packNames.toList().sortedBy { it.second }.forEach { (code, name) ->
-                OutlinedTextField(
-                    value = (draft.collection?.get(code) ?: 0).toString(),
-                    onValueChange = { value -> value.toIntOrNull()?.let { viewModel.setPackQuantity(code, it) } },
-                    label = { Text(name) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-        HorizontalDivider()
         Text(stringResource(R.string.draft_aspects_title), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
         if (imposed != null) {
             Text(stringResource(R.string.draft_aspects_imposed), style = MaterialTheme.typography.bodyMedium)
@@ -909,3 +903,186 @@ private fun FinishPage(state: DraftUiState, viewModel: DraftViewModel) {
         }
     }
 }
+
+/**
+ * The collection this draft is played from, which is the saved one until
+ * somebody changes it for the evening.
+ *
+ * Folded, because most drafts play from the collection as it stands and the
+ * summary line says so in a sentence. Open, it is the packs grouped the way
+ * the collection page groups them, each with a stepper; only what is on the
+ * table is listed until a search or the switch asks for the rest, since the
+ * point of looking further is usually a box somebody else brought.
+ */
+@Composable
+private fun SessionCollectionPanel(state: DraftUiState, viewModel: DraftViewModel) {
+    val draft = state.draft ?: return
+    var open by rememberSaveable { mutableStateOf(false) }
+    var query by rememberSaveable { mutableStateOf("") }
+    var everyPack by rememberSaveable { mutableStateOf(false) }
+
+    val countOf = { pack: DraftPack -> SessionCollection.copies(draft.collection, pack) }
+    val changed = SessionCollection.changed(state.packs, draft.collection)
+    val onTable = SessionCollection.onTable(state.packs, draft.collection)
+
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                Modifier.fillMaxWidth().clickable { open = !open },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    if (open) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                )
+                Spacer(Modifier.width(8.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.limited_collection), style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        if (changed == 0) {
+                            pluralStringResource(R.plurals.draft_session_summary_same, onTable, onTable)
+                        } else {
+                            pluralStringResource(R.plurals.draft_session_summary_changed, changed, onTable, changed)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            if (!open) {
+                return@Column
+            }
+
+            Text(
+                stringResource(R.string.limited_collection_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                label = { Text(stringResource(R.string.draft_session_search)) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = everyPack, onCheckedChange = { everyPack = it })
+                Text(stringResource(R.string.draft_session_every_pack), Modifier.weight(1f))
+                if (changed > 0) {
+                    TextButton(onClick = viewModel::resetCollection) {
+                        Text(stringResource(R.string.draft_session_reset))
+                    }
+                }
+            }
+            Text(
+                stringResource(R.string.draft_session_shelf, state.heroes.size, state.shelfCards),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            val shown = SessionCollection.shown(state.packs, draft.collection, query, everyPack)
+            if (shown.isEmpty()) {
+                Text(stringResource(R.string.draft_session_no_pack), style = MaterialTheme.typography.bodySmall)
+                return@Column
+            }
+            // Grouped as the collection page groups them, each group in
+            // release order, which is the order the packs arrive in.
+            PACK_GROUPS.forEach { type ->
+                val group = shown.filter { PackType.fromName(it.type) == type }
+                if (group.isEmpty()) {
+                    return@forEach
+                }
+                Text(
+                    packTypeLabel(type),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+                group.forEach { pack -> PackRow(pack, countOf(pack), viewModel) }
+            }
+        }
+    }
+}
+
+/** One pack: what it is called, what this draft has of it, and two steps. */
+@Composable
+private fun PackRow(pack: DraftPack, count: Int, viewModel: DraftViewModel) {
+    val changed = count != pack.owned
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            // A tint rather than the container colour: the container is the
+            // comic red, and a row of it drowned the pack's own name and the
+            // signs on its two buttons.
+            .background(
+                if (changed) MaterialTheme.colorScheme.primary.copy(alpha = 0.18f) else Color.Transparent,
+            )
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                pack.name,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (count == 0) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+            )
+            // What the saved collection has, said only where the two differ.
+            if (changed) {
+                Text(
+                    pluralStringResource(R.plurals.draft_session_saved_count, pack.owned, pack.owned),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        // The same stepper the sealed table uses, labelled for a reader
+        // who hears the button rather than seeing the sign on it.
+        val fewer = stringResource(R.string.draft_session_fewer, pack.name)
+        val more = stringResource(R.string.draft_session_more, pack.name)
+        TextButton(
+            onClick = { viewModel.setPackQuantity(pack.code, count - 1) },
+            enabled = count > 0,
+            modifier = Modifier.width(48.dp).semantics { contentDescription = fewer },
+        ) { Text("−") }
+        Text(
+            count.toString(),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.width(32.dp),
+        )
+        TextButton(
+            onClick = { viewModel.setPackQuantity(pack.code, count + 1) },
+            enabled = count < MAX_COPIES,
+            modifier = Modifier.width(48.dp).semantics { contentDescription = more },
+        ) { Text("+") }
+    }
+}
+
+/** The order the collection page lists pack types in. */
+private val PACK_GROUPS = listOf(
+    PackType.CORE,
+    PackType.CAMPAIGN_BOX,
+    PackType.HERO_PACK,
+    PackType.SCENARIO_PACK,
+    PackType.MODULAR_SET,
+    PackType.UNKNOWN,
+)
+
+@Composable
+private fun packTypeLabel(type: PackType): String = when (type) {
+    PackType.CORE -> stringResource(R.string.pack_type_core)
+    PackType.HERO_PACK -> stringResource(R.string.pack_type_hero)
+    PackType.SCENARIO_PACK -> stringResource(R.string.pack_type_scenario)
+    PackType.CAMPAIGN_BOX -> stringResource(R.string.pack_type_campaign_box)
+    PackType.MODULAR_SET -> stringResource(R.string.pack_type_modular_set)
+    PackType.UNKNOWN -> stringResource(R.string.pack_type_unknown)
+}
+
+/** As many copies of one pack as the collection page allows. */
+private const val MAX_COPIES = 99

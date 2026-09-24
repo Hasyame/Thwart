@@ -589,7 +589,7 @@
     <string name="session_saved_can_send">Saved. You can send it to BoardGameGeek from the plays screen.</string>
     <string name="session_saved_not_sent">Saved. Not sent to BoardGameGeek: %1$s</string>
     <string name="session_see_stats">See my stats</string>
-    <string name="session_another">Play another</string>
+    <string name="session_another">New game</string>
     <string name="destination_play">Play</string>
     <string name="destination_stats">Stats</string>
     <string name="play_continue">Continue campaign</string>
@@ -1202,4 +1202,31 @@
     <string name="achievement_losses_50_description">Finish 50 games in defeat. Every attempt is part of your heroic journey.</string>
     <string name="achievement_losses_100_title">I Can Do This All Day</string>
     <string name="achievement_losses_100_description">Finish 100 games in defeat. Every attempt is part of your heroic journey.</string>
+
+    <!-- The end of a game, and the draft or sealed deck from the shelf. -->
+    <string name="action_got_it">Got it</string>
+    <string name="session_play_again">Play again</string>
+    <string name="session_play_again_note">Same scenario, difficulty, decks and modular sets as the game you just recorded. Change anything you like before you start.</string>
+    <string name="decks_draft">Draft a deck</string>
+    <string name="decks_sealed">Build a sealed deck</string>
+    <string name="decks_limited_note">Draft or sealed: the deck is built from your collection a pick at a time, and a game is offered as soon as it is saved.</string>
+    <string name="draft_session_search">Find a pack</string>
+    <string name="draft_session_every_pack">Show every pack</string>
+    <string name="draft_session_reset">Back to my collection</string>
+    <string name="draft_session_fewer">One copy fewer of %1$s</string>
+    <string name="draft_session_more">One copy more of %1$s</string>
+    <string name="draft_session_no_pack">No pack by that name.</string>
+    <string name="draft_session_shelf">On the shelf, from your collection. Identities: %1$d, cards: %2$d</string>
+    <plurals name="draft_session_summary_same">
+        <item quantity="one">%1$d pack, as in your collection</item>
+        <item quantity="other">%1$d packs, as in your collection</item>
+    </plurals>
+    <plurals name="draft_session_summary_changed">
+        <item quantity="one">%1$d packs, %2$d changed for this draft</item>
+        <item quantity="other">%1$d packs, %2$d changed for this draft</item>
+    </plurals>
+    <plurals name="draft_session_saved_count">
+        <item quantity="one">%1$d in your collection</item>
+        <item quantity="other">%1$d in your collection</item>
+    </plurals>
 </resources>
