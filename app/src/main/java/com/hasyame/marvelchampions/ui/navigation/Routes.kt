@@ -115,6 +115,17 @@ data object VersusRoute
 @Serializable
 data class DraftRoute(val sealed: Boolean = false)
 
+/**
+ * The same draft, started from the shelf of decks.
+ *
+ * Its own route rather than a second registration of [DraftRoute], so which
+ * one a navigation means is never in question: this one belongs to the Decks
+ * back stack, and saving the decks returns to the shelf they joined. The
+ * screen behind both is the same, as the deck page's two routes are.
+ */
+@Serializable
+data class DeckDraftRoute(val sealed: Boolean = false)
+
 @Serializable
 data object SettingsGraph
 

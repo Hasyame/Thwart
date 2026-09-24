@@ -1,0 +1,15 @@
+Une partie terminée ne revient plus.
+
+Une partie se termine au moment où elle est enregistrée : quitter le
+résultat et revenir propose une nouvelle partie plutôt que celle qui vient
+d'être jouée, et une partie reprise après une longue pause n'est plus
+proposée une fois dans l'historique.
+
+Rejouer, sur le résultat, remet en place le même scénario, la même
+difficulté, les mêmes decks et les mêmes sets modulaires, à modifier avant
+de commencer.
+
+L'étagère de decks ouvre directement le draft ou le scellé. La collection
+du draft passe au-dessus de l'identité, groupée et cherchable, et les
+identités la suivent : un paquet héros apporté pour la soirée peut être
+drafté.

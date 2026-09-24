@@ -219,6 +219,20 @@ data class GameSessionUiState(
      * with the state after. Empty again once the table is reset.
      */
     val unlocked: List<Unlock> = emptyList(),
+    /**
+     * The table the game just filed was played at, for playing it again.
+     *
+     * Taken from the session and not from the play it wrote, because a play
+     * records heroes where the session knows decks, and reading a play back
+     * has to guess which deck each seat used. Null until a game is filed.
+     */
+    val lastTable: SessionTable? = null,
+    /**
+     * True while the setup holds the table of the game just recorded, so the
+     * screen can say where it came from. Cleared as soon as the game starts,
+     * the note is dismissed, or the table is emptied.
+     */
+    val playAgainNote: Boolean = false,
     /** The player's own ratings, by subject key, for whatever is in view. */
     val ownRatings: Map<String, Int> = emptyMap(),
     /** The community's, by subject key, for the scenario and sets in view. */
@@ -262,6 +276,92 @@ data class GameSessionUiState(
         get() = Difficulty.entries
             .firstOrNull { it.name.lowercase() == difficulty }
             ?.isExpert == true
+}
+
+/**
+ * A table, as it stood when its game was filed: what "play again" lays out.
+ *
+ * The scenario code is the one the session used, so a Fear No Evil job keeps
+ * the villain drawn with it rather than becoming the job alone.
+ */
+data class SessionTable(
+    val scenarioCode: String,
+    val difficulty: String,
+    val standardSet: String?,
+    val heroes: List<SessionHero>,
+    val modularSetCodes: List<String>,
+)
+
+/**
+ * The session once the game has been written down: over.
+ *
+ * The game ends the moment it is filed, and the table is cleared there and
+ * then. It used to stay in the playing phase until the result was dismissed,
+ * so walking to the Decks tab and back landed on the finished game again,
+ * with "forget this game" the only way out of a game already in the history.
+ * What the result page needs is kept — the play, what it unlocked, and the
+ * table for playing it again — and the table itself is not.
+ */
+fun GameSessionUiState.filed(): GameSessionUiState = copy(
+    phase = SessionPhase.SETUP,
+    lastTable = scenarioCode?.let {
+        SessionTable(it, difficulty, standardSet, heroes, modularSetCodes)
+    },
+    scenarioCode = null,
+    heroes = emptyList(),
+    modularSetCodes = emptyList(),
+    standardSet = null,
+    photos = emptyList(),
+    resumedFrom = null,
+    longBreak = null,
+    timer = TimerState(),
+    firstPlayerIndex = null,
+    elapsedMillis = 0,
+    isFinishing = false,
+    playAgainNote = false,
+)
+
+/** The result page put away: the game itself is already over. */
+fun GameSessionUiState.withoutResult(): GameSessionUiState =
+    copy(lastPlay = null, unlocked = emptyList(), ownRatings = emptyMap())
+
+/** An empty table: what "new game" leaves behind. */
+fun GameSessionUiState.emptied(): GameSessionUiState = withoutResult().copy(
+    lastTable = null,
+    scenarioCode = null,
+    heroes = emptyList(),
+    modularSetCodes = emptyList(),
+    standardSet = null,
+    photos = emptyList(),
+    resumedFrom = null,
+    longBreak = null,
+    phase = SessionPhase.SETUP,
+    timer = TimerState(),
+    firstPlayerIndex = null,
+    elapsedMillis = 0,
+    isFinishing = false,
+    playAgainNote = false,
+)
+
+/**
+ * The same game again, on the setup screen rather than started, so a seat or
+ * a modular set can still change before the clock runs.
+ */
+fun GameSessionUiState.laidOutAgain(): GameSessionUiState {
+    val table = lastTable ?: return withoutResult()
+    return withoutResult().copy(
+        phase = SessionPhase.SETUP,
+        scenarioCode = table.scenarioCode,
+        difficulty = table.difficulty,
+        standardSet = table.standardSet,
+        heroes = table.heroes,
+        modularSetCodes = table.modularSetCodes,
+        timer = TimerState(),
+        firstPlayerIndex = null,
+        elapsedMillis = 0,
+        isFinishing = false,
+        playAgainNote = true,
+    )
 }
 
 /**
@@ -751,7 +851,8 @@ class GameSessionViewModel @Inject constructor(
         if (!current.canStart) {
             return
         }
-        state.value = current.copy(phase = SessionPhase.BRIEFING)
+        // Whatever put this table on the setup screen has been read by now.
+        state.value = current.copy(phase = SessionPhase.BRIEFING, playAgainNote = false)
 
         val scenario = current.scenarioCode ?: return
         viewModelScope.launch {
@@ -996,7 +1097,19 @@ class GameSessionViewModel @Inject constructor(
             // Kept while the result is on screen: the rating row asks about
             // this game, and needs it by id to cite as evidence.
             state.update { it.copy(lastPlay = play) }
-            finished.value = playRepository.record(play)
+            val outcome = playRepository.record(play)
+            // A game put away for a long break and then played to the end is
+            // in the history now, so the note the hub offers to resume goes
+            // with it. There is only ever one such note, and this session came
+            // from it.
+            if (current.resumedFrom != null) {
+                pausedGameDao.clear()
+            }
+            // The result first and the ended session second, in this order and
+            // without a suspension between them, so the setup screen is never
+            // on show for a frame between the game and its result.
+            finished.value = outcome
+            state.update { it.filed() }
             state.update { it.copy(unlocked = achievements.unlockedSince(before)) }
         }
     }
@@ -1019,23 +1132,34 @@ class GameSessionViewModel @Inject constructor(
         )
     }
 
-    /** Back to setup, keeping the choices so a rematch is one tap. */
-    fun reset() {
+    /** An empty table: the result is put away and nothing is chosen. */
+    fun newGame() {
         finished.value = null
-        state.value = state.value.copy(
-            lastPlay = null,
-            unlocked = emptyList(),
-            phase = SessionPhase.SETUP,
-            timer = TimerState(),
-            firstPlayerIndex = null,
-            elapsedMillis = 0,
-            // Cleared, or a rematch could never be finished.
-            isFinishing = false,
-        )
+        state.value = state.value.emptied()
     }
 
+    /**
+     * The same game again: same scenario, difficulty, decks and modular sets,
+     * on the setup screen rather than started.
+     */
+    fun playAgain() {
+        finished.value = null
+        state.value = state.value.laidOutAgain()
+    }
+
+    /** The note that says where this table came from, read and dismissed. */
+    fun dismissPlayAgainNote() {
+        state.update { it.copy(playAgainNote = false) }
+    }
+
+    /**
+     * The result page put away, leaving the table as the filed game left it:
+     * empty. The game is already in the history, and its rating and its
+     * BoardGameGeek entry are on it there.
+     */
     fun dismissRecorded() {
         finished.value = null
+        state.update { it.withoutResult() }
     }
 }
 

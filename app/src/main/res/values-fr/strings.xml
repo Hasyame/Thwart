@@ -613,7 +613,7 @@
     <string name="session_saved_can_send">Enregistrée. Vous pouvez l\'envoyer sur BoardGameGeek depuis l\'écran des parties.</string>
     <string name="session_saved_not_sent">Enregistrée. Non envoyée sur BoardGameGeek : %1$s</string>
     <string name="session_see_stats">Voir mes stats</string>
-    <string name="session_another">Rejouer</string>
+    <string name="session_another">Nouvelle partie</string>
     <string name="destination_play">Jouer</string>
     <string name="destination_stats">Stats</string>
     <string name="play_continue">Reprendre la campagne</string>
@@ -1244,4 +1244,34 @@
     <string name="achievement_losses_50_description">Terminez 50 parties sur une défaite. Chaque tentative fait partie de votre parcours héroïque.</string>
     <string name="achievement_losses_100_title">Je peux faire ça toute la journée</string>
     <string name="achievement_losses_100_description">Terminez 100 parties sur une défaite. Chaque tentative fait partie de votre parcours héroïque.</string>
+
+    <!-- La fin d'une partie, et le deck drafté ou scellé depuis l'étagère. -->
+    <string name="action_got_it">Compris</string>
+    <string name="session_play_again">Rejouer</string>
+    <string name="session_play_again_note">Même scénario, même difficulté, mêmes decks et mêmes sets modulaires que la partie que vous venez d’enregistrer. Changez ce que vous voulez avant de commencer.</string>
+    <string name="decks_draft">Drafter un deck</string>
+    <string name="decks_sealed">Construire un deck scellé</string>
+    <string name="decks_limited_note">Draft ou scellé : le deck se construit à partir de votre collection, carte après carte, et une partie vous est proposée dès qu’il est enregistré.</string>
+    <string name="draft_session_search">Chercher un pack</string>
+    <string name="draft_session_every_pack">Afficher tous les packs</string>
+    <string name="draft_session_reset">Revenir à ma collection</string>
+    <string name="draft_session_fewer">Un exemplaire de moins de %1$s</string>
+    <string name="draft_session_more">Un exemplaire de plus de %1$s</string>
+    <string name="draft_session_no_pack">Aucun pack de ce nom.</string>
+    <string name="draft_session_shelf">Sur l’étagère, depuis votre collection. Identités : %1$d, cartes : %2$d</string>
+    <plurals name="draft_session_summary_same">
+        <item quantity="one">%1$d pack, comme dans votre collection</item>
+        <item quantity="many">%1$d packs, comme dans votre collection</item>
+        <item quantity="other">%1$d packs, comme dans votre collection</item>
+    </plurals>
+    <plurals name="draft_session_summary_changed">
+        <item quantity="one">%1$d packs, %2$d modifié pour ce draft</item>
+        <item quantity="many">%1$d packs, %2$d modifiés pour ce draft</item>
+        <item quantity="other">%1$d packs, %2$d modifiés pour ce draft</item>
+    </plurals>
+    <plurals name="draft_session_saved_count">
+        <item quantity="one">%1$d dans votre collection</item>
+        <item quantity="many">%1$d dans votre collection</item>
+        <item quantity="other">%1$d dans votre collection</item>
+    </plurals>
 </resources>

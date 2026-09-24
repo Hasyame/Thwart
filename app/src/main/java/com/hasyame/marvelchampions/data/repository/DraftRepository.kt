@@ -16,7 +16,9 @@ import com.hasyame.marvelchampions.domain.draft.DraftCard
 import com.hasyame.marvelchampions.domain.draft.DraftContext
 import com.hasyame.marvelchampions.domain.draft.DraftNaming
 import com.hasyame.marvelchampions.domain.draft.DraftRules
+import com.hasyame.marvelchampions.domain.draft.DraftPack
 import com.hasyame.marvelchampions.domain.draft.DraftState
+import com.hasyame.marvelchampions.domain.draft.SessionCollection
 import com.hasyame.marvelchampions.domain.draft.DraftStockBuilder
 import com.hasyame.marvelchampions.domain.draft.StockRow
 import com.hasyame.marvelchampions.domain.model.CardLocale
@@ -89,7 +91,49 @@ class DraftRepository @Inject constructor(
     suspend fun packNames(locale: CardLocale): Map<String, String> =
         packDao.getTranslations(locale.code).associate { it.packCode to it.name }
 
-    /** The identities the collection holds, with their deck building rules. */
+    /**
+     * The packs, in release order, with their type and how many the saved
+     * collection holds: what the draft's own collection is adjusted from.
+     */
+    suspend fun packs(locale: CardLocale): List<DraftPack> = withContext(ioDispatcher) {
+        val names = packNames(locale)
+        val owned = collection()
+        packDao.getPacks().map { pack ->
+            DraftPack(
+                code = pack.code,
+                name = names[pack.code] ?: pack.code,
+                type = pack.type,
+                owned = owned[pack.code] ?: 0,
+            )
+        }
+    }
+
+    /**
+     * The identities a collection holds, with their deck building rules.
+     *
+     * The collection is the draft's own when it has one, so a hero pack
+     * somebody brought for the evening can be drafted rather than only
+     * lending its cards to everybody else's decks.
+     */
+    suspend fun heroesIn(collection: Map<String, Int>, locale: CardLocale): List<DraftHero> =
+        withContext(ioDispatcher) {
+            builderRepository.heroes(locale)
+                .filter { SessionCollection.holds(collection, it.card.packCode) }
+                .mapNotNull { choice ->
+                    builderRepository.heroRules(choice.card.code, locale)?.let { DraftHero(choice.card, it) }
+                }
+        }
+
+    /**
+     * How many cards a collection puts on the shelf, for the draft's own
+     * collection page to say what changing a pack quantity did.
+     */
+    suspend fun shelfSize(collection: Map<String, Int>, locale: CardLocale): Int =
+        withContext(ioDispatcher) {
+            DraftStockBuilder.build(stockRows(locale), collection).stock.values.sum()
+        }
+
+    /** The identities the saved collection holds, with their deck building rules. */
     suspend fun ownedHeroes(locale: CardLocale): List<DraftHero> = withContext(ioDispatcher) {
         builderRepository.heroes(locale)
             .filter { it.owned }

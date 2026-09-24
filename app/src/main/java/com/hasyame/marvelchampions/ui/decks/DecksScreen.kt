@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
@@ -104,6 +106,11 @@ fun DecksScreen(
     onEditDeck: (String) -> Unit,
     onDeckImported: (String) -> Unit,
     onBuildDeck: () -> Unit,
+    /**
+     * Opens the draft, set to draft or to sealed. A deck built there is a
+     * deck like any other, so it starts from this shelf as well as from Play.
+     */
+    onDraftDeck: (sealed: Boolean) -> Unit,
     /** A link shared into the app, imported once on arrival. */
     sharedLink: String? = null,
     onSharedLinkHandled: () -> Unit = {},
@@ -195,6 +202,14 @@ fun DecksScreen(
                     onNewFolder = {
                         dialOpen = false
                         newFolderOpen = true
+                    },
+                    onDraft = {
+                        dialOpen = false
+                        onDraftDeck(false)
+                    },
+                    onSealed = {
+                        dialOpen = false
+                        onDraftDeck(true)
                     },
                 )
             }
@@ -653,10 +668,27 @@ private fun SpeedDial(
     onNewDeck: () -> Unit,
     onImport: () -> Unit,
     onNewFolder: () -> Unit,
+    onDraft: () -> Unit,
+    onSealed: () -> Unit,
 ) {
     Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (open) {
+            // What the two limited entries are, said once above them: they
+            // build a deck rather than open one, and they end in a game.
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.widthIn(max = 260.dp),
+            ) {
+                Text(
+                    stringResource(R.string.decks_limited_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                )
+            }
             DialEntry(stringResource(R.string.decks_folder_new), Icons.Filled.AddCircle, onNewFolder)
+            DialEntry(stringResource(R.string.decks_sealed), Icons.Filled.Refresh, onSealed)
+            DialEntry(stringResource(R.string.decks_draft), Icons.Filled.Refresh, onDraft)
             DialEntry(stringResource(R.string.decks_import_deck), Icons.Filled.Share, onImport)
             DialEntry(stringResource(R.string.decks_new_deck), Icons.Filled.Add, onNewDeck)
         }
