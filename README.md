@@ -57,10 +57,16 @@ way to stay current with this app.
 
 ### From F-Droid
 
-Thwart is going through F-Droid's review. Once it is in, it can be installed and
-updated from the F-Droid client like any other app there. The F-Droid build
-differs from the GitHub one in a single way, explained under [Legal](#legal):
-it arrives without the bundled card snapshot and asks before fetching the cards.
+F-Droid distribution is tracked in [fdroid/](fdroid/). GitHub releases are the
+current direct download channel. Release APKs contain no card database: the app
+asks before fetching it on first launch, regardless of distribution channel.
+
+### In a browser
+
+Use **[thwart.app](https://thwart.app)** on a phone or computer, or install its
+web app from the browser. An optional Thwart account keeps supported data in
+sync with Android. The Android alpha sign-up is also available on the site;
+it is separate from downloading a GitHub release.
 
 ### On a PC
 
@@ -81,11 +87,24 @@ offline-first app from a server rather defeats the point.
 
 ## What it does
 
-In use, and being played with. Current release:
-**[v1.22.0](https://github.com/Hasyame/Thwart/releases/latest)**.
+See the **[latest stable release](https://github.com/Hasyame/Thwart/releases/latest)**
+for the current APK and release notes. Android and Web develop independently;
+features in an unreleased branch are not part of the downloadable app.
 
-Every feature planned for the app is in. The work from here is campaign content
-rather than machinery.
+- **Draft and sealed.** Build from the physical copies in your collection,
+  with an optional synergy filter and temporary collection settings for the
+  session. Draft one card at a time, or open six sealed boosters of ten cards
+  and build from the resulting pool. Save the decks, then use them in a random
+  game, a custom game or a campaign. The randomizer keeps their heroes and aspects.
+- **Achievements.** Track hero/scenario completion and milestones, including
+  draft and sealed victories and encouragement after defeats. Progress comes
+  from play history. Eligible achievements can prepare a game to attempt them.
+- **New combinations.** Limit random setups to hero/scenario pairings you have
+  never played, with the other collection and setup rules still applied.
+- **Play again.** A recorded game ends when its result is saved. Set up the
+  same game again from its result or history, or star it for later.
+- **Comic presentation.** Angled title banners and clear navigation icons,
+  with separate back stacks for the five main tabs.
 
 - **Card database.** The full MarvelCDB catalogue including encounter cards.
   Every row carries its art, its aspect as a colour, and its resource cost where
@@ -256,7 +275,8 @@ rather than machinery.
   language of the app are different settings, because a French player with an
   English collection is a normal thing to be. Either can be French or English,
   and the app can also just follow the phone.
-- **Dark theme**, on by default, with a light one if you prefer. Both are built
+- **System, dark or light theme.** New installations follow the device setting.
+  Both light and dark themes are built
   around the game's aspect colours meaning only one thing: aggression red,
   justice gold, leadership blue and protection green belong to the cards, so the
   app's own chrome stays out of that palette.
@@ -273,15 +293,11 @@ rather than machinery.
   guessing an English title risks printing something that does not match the
   card in your hand. When the encounter cards appear, the steps gain the usual
   tappable chips.
-- **Fear No Evil and Shadowland in the randomiser.** Nine scenarios the card
-  database has not got. Civil War looked like the same problem and was not, since
-  the card database had it all along under a set type nothing else uses, so
-  these would need a curated list.
-
-Campaigns are added after they have been played, so the mechanics in a template
-come from experience rather than from a reading of the book. That is the whole
-roadmap. No further app features are planned, and anything else will come from
-something going wrong at a real table.
+Fear No Evil is already supported outside its campaign. Later Web additions,
+including its redesigned campaign pages and supplementary card/image sources,
+should not be assumed to be in Android until the Android release notes say so.
+Follow [issues](https://github.com/Hasyame/Thwart/issues) and release notes for
+current work rather than treating this README as a fixed roadmap.
 
 ## Privacy
 
