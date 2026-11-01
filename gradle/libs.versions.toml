@@ -2,7 +2,7 @@
 # Toolchain — versions resolved against the live Maven metadata on 2026-08-01,
 # newest entry that is not an alpha/beta/rc.
 agp = "9.4.0"
-kotlin = "2.4.10"
+kotlin = "2.4.21"
 ksp = "2.3.11"
 
 # AndroidX / Compose
@@ -24,7 +24,7 @@ hilt = "2.60.1"
 androidxHilt = "1.4.0"
 
 # Network / serialization
-kotlinxSerialization = "1.11.0"
+kotlinxSerialization = "1.12.0"
 okhttp = "5.5.0"
 retrofit = "3.0.0"
 
